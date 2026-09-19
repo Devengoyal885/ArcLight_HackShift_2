@@ -1,0 +1,59 @@
+.cap-score {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-2);
+    position: relative;
+}
+
+.cap-score svg {
+    display: block;
+}
+
+.cap-score-inner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    align-items: baseline;
+    gap: 1px;
+}
+
+/* When there's a label below, adjust for the label space */
+.cap-score--lg .cap-score-inner {
+    top: calc(50% - 10px);
+}
+
+.cap-score-number {
+    font-weight: var(--weight-bold);
+    letter-spacing: var(--tracking-tight);
+    line-height: 1;
+}
+
+.cap-score--sm .cap-score-number {
+    font-size: var(--text-sm);
+}
+
+.cap-score--md .cap-score-number {
+    font-size: var(--text-lg);
+}
+
+.cap-score--lg .cap-score-number {
+    font-size: var(--text-2xl);
+}
+
+.cap-score-pct {
+    font-size: var(--text-xs);
+    font-weight: var(--weight-medium);
+    opacity: 0.7;
+}
+
+.cap-score-label {
+    font-size: var(--text-xs);
+    font-weight: var(--weight-medium);
+    color: var(--color-ink-400);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
+    text-align: center;
+}

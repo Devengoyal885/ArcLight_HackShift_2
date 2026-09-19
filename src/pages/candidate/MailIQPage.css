@@ -1,0 +1,319 @@
+.mailiq-page {
+    min-height: 100vh;
+    background: #f8fafc;
+    position: relative;
+}
+
+.mailiq-main {
+    position: relative;
+    z-index: 1;
+    padding: calc(var(--navbar-height) + var(--space-12)) var(--space-8) var(--space-16);
+    max-width: var(--container-xl);
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
+}
+
+.mailiq-header {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    max-width: 600px;
+}
+
+.mailiq-eyebrow {
+    font-size: var(--text-xs);
+    font-weight: var(--weight-bold);
+    letter-spacing: var(--tracking-widest);
+    color: var(--color-violet);
+    text-transform: uppercase;
+}
+
+.mailiq-title {
+    font-size: var(--text-4xl);
+    font-weight: var(--weight-black);
+    color: #111827;
+    letter-spacing: var(--tracking-tight);
+}
+
+.mailiq-sub {
+    font-size: var(--text-md);
+    color: var(--color-ink-400);
+}
+
+/* ─── Layout ─── */
+.mailiq-layout {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: var(--space-6);
+    align-items: start;
+}
+
+/* ─── Sidebar ─── */
+.mailiq-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.mailiq-categories {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: var(--space-3);
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: var(--radius-xl);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+.mailiq-cat-btn {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-3);
+    border-radius: var(--radius-lg);
+    font-size: var(--text-sm);
+    font-weight: var(--weight-medium);
+    color: #6b7280;
+    cursor: pointer;
+    background: none;
+    border: none;
+    text-align: left;
+    width: 100%;
+    transition: all var(--duration-fast);
+}
+
+.mailiq-cat-btn:hover {
+    background: #f0f4ff;
+    color: #111827;
+}
+
+.mailiq-cat-btn--active {
+    background: #eff6ff;
+    color: #2563eb;
+    font-weight: var(--weight-semibold);
+}
+
+.mailiq-cat-count {
+    margin-left: auto;
+    background: var(--color-violet-dim);
+    color: var(--color-violet);
+    padding: 2px 7px;
+    border-radius: var(--radius-pill);
+    font-size: 10px;
+    font-weight: var(--weight-bold);
+}
+
+.mailiq-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    padding: var(--space-3);
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: var(--radius-xl);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+.mailiq-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3);
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    transition: background var(--duration-fast);
+}
+
+.mailiq-item:hover {
+    background: #f0f4ff;
+}
+
+.mailiq-item--selected {
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+}
+
+.mailiq-item--unread .mailiq-item-subject {
+    color: #111827;
+    font-weight: var(--weight-semibold);
+}
+
+.mailiq-item-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.mailiq-item-body {
+    flex: 1;
+    min-width: 0;
+}
+
+.mailiq-item-subject {
+    font-size: var(--text-sm);
+    color: #374151;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.mailiq-item-org {
+    font-size: var(--text-xs);
+    color: var(--color-ink-500);
+    margin-top: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.mailiq-item-cat-badge {
+    font-size: 9px;
+    font-weight: var(--weight-bold);
+    color: #6b7280;
+    padding: 2px 6px;
+    background: #f3f4f6;
+    border-radius: var(--radius-pill);
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+/* ─── Detail ─── */
+.mailiq-detail {
+    padding: var(--space-8);
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: var(--radius-xl);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+.mailiq-detail-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+}
+
+.mailiq-detail-priority {
+    padding: 3px 10px;
+    border-radius: var(--radius-pill);
+    font-size: var(--text-xs);
+    font-weight: var(--weight-bold);
+    letter-spacing: var(--tracking-wider);
+    text-transform: uppercase;
+}
+
+.mailiq-detail-category {
+    font-size: var(--text-xs);
+    color: #6b7280;
+    padding: 3px 10px;
+    border-radius: var(--radius-pill);
+    background: #f3f4f6;
+}
+
+.mailiq-detail-subject {
+    font-size: var(--text-3xl);
+    font-weight: var(--weight-black);
+    color: #111827;
+    letter-spacing: var(--tracking-tight);
+}
+
+.mailiq-detail-org {
+    font-size: var(--text-md);
+    color: var(--color-ink-400);
+}
+
+.mailiq-detail-deadline {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-sm);
+    color: var(--color-coral);
+    font-weight: var(--weight-medium);
+}
+
+.mailiq-detail-actions {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+.mailiq-actions-label {
+    font-size: var(--text-xs);
+    font-weight: var(--weight-semibold);
+    color: var(--color-ink-400);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
+}
+
+.mailiq-action-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+}
+
+.mailiq-action-btn {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-4);
+    background: #f3f4f6;
+    border: 1px solid #e5e7eb;
+    border-radius: var(--radius-pill);
+    font-size: var(--text-sm);
+    color: #374151;
+    cursor: pointer;
+    transition: all var(--duration-fast);
+}
+
+.mailiq-action-btn:hover {
+    background: #e5e7eb;
+    color: #111827;
+}
+
+.mailiq-action-btn--primary {
+    background: var(--color-electric);
+    border-color: transparent;
+    color: white;
+}
+
+.mailiq-action-btn--primary:hover {
+    background: var(--color-electric-light);
+}
+
+.mailiq-ai-insight {
+    padding: var(--space-4);
+    background: var(--color-electric-dim);
+    border: 1px solid rgba(37, 99, 235, 0.18);
+    border-radius: var(--radius-lg);
+}
+
+.mailiq-ai-label {
+    font-size: var(--text-xs);
+    font-weight: var(--weight-bold);
+    color: var(--color-electric-light);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
+    margin-bottom: var(--space-2);
+}
+
+.mailiq-ai-text {
+    font-size: var(--text-sm);
+    color: #374151;
+    line-height: var(--leading-relaxed);
+}
+
+.mailiq-ai-text strong {
+    color: #111827;
+}
+
+@media (max-width: 900px) {
+    .mailiq-layout {
+        grid-template-columns: 1fr;
+    }
+}

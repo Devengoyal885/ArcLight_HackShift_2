@@ -1,0 +1,41 @@
+﻿src/data/seedData.ts(7,5): error TS6133: 'trialRepository' is declared but its value is never read.
+src/data/seedData.ts(8,5): error TS6133: 'assessmentRepository' is declared but its value is never read.
+src/data/seedData.ts(11,5): error TS1484: 'Candidate' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/data/seedData.ts(12,5): error TS1484: 'Project' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/data/seedData.ts(13,5): error TS1484: 'Evidence' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/data/seedData.ts(14,5): error TS1484: 'ActivityEvent' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/data/seedData.ts(15,5): error TS1484: 'LearningActivity' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/data/seedData.ts(17,30): error TS2307: Cannot find module 'uuid' or its corresponding type declarations.
+src/engines/capabilityEngine.ts(1,10): error TS1484: 'Capability' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/engines/capabilityEngine.ts(1,22): error TS1484: 'Evidence' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/engines/profileEngine.ts(8,5): error TS6133: 'assessmentRepository' is declared but its value is never read.
+src/engines/profileEngine.ts(12,10): error TS1484: 'CandidateProfileState' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/engines/profileEngine.ts(54,9): error TS2741: Property 'capabilityHistory' is missing in type '{ activeDays: number; currentStreak: number; longestStreak: number; heatmap: { date: string; active: boolean; intensity: number; }[]; }' but required in type 'GrowthMetrics'.
+src/engines/skillGapEngine.ts(1,10): error TS1484: 'Candidate' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/engines/skillGapEngine.ts(1,21): error TS1484: 'Capability' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/engines/skillGapEngine.ts(1,33): error TS1484: 'SkillGap' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/engines/streakEngine.ts(1,10): error TS1484: 'ActivityEvent' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/pages/candidate/CodolioProfilePage.tsx(6,10): error TS1484: 'CandidateProfileState' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/pages/candidate/CodolioProfilePage.tsx(7,46): error TS2305: Module '"lucide-react"' has no exported member 'Github'.
+src/pages/candidate/CodolioProfilePage.tsx(7,46): error TS6133: 'Github' is declared but its value is never read.
+src/pages/candidate/CodolioProfilePage.tsx(7,54): error TS2305: Module '"lucide-react"' has no exported member 'Linkedin'.
+src/pages/candidate/CodolioProfilePage.tsx(7,54): error TS6133: 'Linkedin' is declared but its value is never read.
+src/pages/candidate/CodolioProfilePage.tsx(7,64): error TS6133: 'ExternalLink' is declared but its value is never read.
+src/pages/candidate/CodolioProfilePage.tsx(7,94): error TS6133: 'BookOpen' is declared but its value is never read.
+src/pages/employer/RolesPage.tsx(4,1): error TS6133: 'SkillGapIndicator' is declared but its value is never read.
+src/repositories/index.ts(3,5): error TS1484: 'Candidate' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/repositories/index.ts(4,5): error TS1484: 'Project' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/repositories/index.ts(5,5): error TS1484: 'Evidence' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/repositories/index.ts(6,5): error TS1484: 'ActivityEvent' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/repositories/index.ts(7,5): error TS1484: 'LearningActivity' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/repositories/index.ts(8,5): error TS1484: 'Assessment' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/repositories/index.ts(9,5): error TS1484: 'Opportunity' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/repositories/index.ts(10,5): error TS1484: 'Application' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/repositories/index.ts(11,5): error TS1484: 'PracticalTrial' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/repositories/index.ts(12,5): error TS1484: 'Capability' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/services/EcosystemOrchestrator.ts(1,10): error TS1484: 'Project' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/services/EcosystemOrchestrator.ts(1,19): error TS1484: 'ActivityEvent' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/services/EcosystemOrchestrator.ts(1,34): error TS1484: 'Evidence' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/services/EcosystemOrchestrator.ts(6,5): error TS6133: 'capabilityRepository' is declared but its value is never read.
+src/services/EcosystemOrchestrator.ts(8,30): error TS2307: Cannot find module 'uuid' or its corresponding type declarations.
+src/services/EcosystemOrchestrator.ts(23,13): error TS2820: Type '"project_completed"' is not assignable to type 'EventType'. Did you mean '"project_created"'?

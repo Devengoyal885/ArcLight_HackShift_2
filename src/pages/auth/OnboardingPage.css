@@ -1,0 +1,319 @@
+/* ─── Onboarding Page ─────────────────────────────────────────────────── */
+
+.ob-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #f0f4ff 0%, #fafbff 60%, #eef2ff 100%);
+    padding: 24px;
+}
+
+.ob-card {
+    background: #ffffff;
+    border-radius: 24px;
+    padding: 40px 44px 44px;
+    width: 100%;
+    max-width: 520px;
+    box-shadow: 0 20px 60px rgba(37, 99, 235, 0.08), 0 4px 16px rgba(0, 0, 0, 0.04);
+    border: 1px solid #e8edf8;
+}
+
+/* ─── Header ────────────────────────────────────────────────────────────── */
+.ob-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 32px;
+}
+
+.ob-logo {
+    height: 36px;
+    object-fit: contain;
+}
+
+.ob-progress {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.ob-progress-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #e2e8f0;
+    transition: background 0.3s, transform 0.3s;
+}
+
+.ob-progress-dot--active {
+    background: #2563eb;
+    transform: scale(1.2);
+}
+
+.ob-progress-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: #94a3b8;
+    margin-left: 6px;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+}
+
+/* ─── Error ─────────────────────────────────────────────────────────────── */
+.ob-error {
+    background: #fef2f2;
+    border: 1px solid #fca5a5;
+    color: #dc2626;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    margin-bottom: 16px;
+}
+
+/* ─── Step ──────────────────────────────────────────────────────────────── */
+.ob-step {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.ob-step-header h2 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 20px;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 6px;
+}
+
+.ob-step-header p {
+    font-size: 13px;
+    color: #64748b;
+}
+
+.ob-step-icon {
+    flex-shrink: 0;
+}
+
+.ob-step-icon--blue {
+    color: #2563eb;
+}
+
+.ob-step-icon--purple {
+    color: #7c3aed;
+}
+
+/* ─── Avatar ─────────────────────────────────────────────────────────────── */
+.ob-avatar-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.ob-avatar-circle {
+    position: relative;
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    background: #f1f5f9;
+    border: 2.5px dashed #cbd5e1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    overflow: hidden;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.ob-avatar-circle:hover {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+}
+
+.ob-avatar-circle img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.ob-avatar-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    color: #94a3b8;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+}
+
+.ob-avatar-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(37, 99, 235, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    opacity: 0;
+    transition: opacity 0.2s;
+    border-radius: 50%;
+}
+
+.ob-avatar-circle:hover .ob-avatar-overlay {
+    opacity: 1;
+}
+
+.ob-avatar-hint {
+    font-size: 11.5px;
+    color: #64748b;
+    text-align: center;
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* ─── Fields ─────────────────────────────────────────────────────────────── */
+.ob-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.ob-field label {
+    display: block;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: #334155;
+    margin-bottom: 8px;
+    letter-spacing: 0.1px;
+}
+
+.ob-input-wrap {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 10px;
+    overflow: hidden;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    background: #fff;
+}
+
+.ob-input-wrap:focus-within {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.ob-input-wrap svg {
+    flex-shrink: 0;
+    color: #94a3b8;
+    margin: 0 12px;
+}
+
+.ob-input-wrap input {
+    flex: 1;
+    padding: 12px 14px 12px 0;
+    border: none;
+    outline: none;
+    font-size: 14px;
+    color: #0f172a;
+    background: transparent;
+    width: 100%;
+}
+
+/* chips */
+.ob-chip-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.ob-chip {
+    padding: 7px 13px;
+    border-radius: 20px;
+    border: 1.5px solid #e2e8f0;
+    font-size: 12.5px;
+    font-weight: 500;
+    color: #475569;
+    background: #f8fafc;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.ob-chip:hover {
+    border-color: #93c5fd;
+    background: #eff6ff;
+    color: #2563eb;
+}
+
+.ob-chip--active {
+    background: #2563eb;
+    color: #fff;
+    border-color: #2563eb;
+    font-weight: 600;
+}
+
+/* ─── Buttons ─────────────────────────────────────────────────────────────── */
+.ob-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 13px 20px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.18s;
+}
+
+.ob-btn--primary {
+    background: #2563eb;
+    color: white;
+    border: none;
+    width: 100%;
+}
+
+.ob-btn--primary:hover:not(:disabled) {
+    background: #1d4ed8;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(37, 99, 235, 0.35);
+}
+
+.ob-btn--primary:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.ob-btn--ghost {
+    background: transparent;
+    color: #64748b;
+    border: 1.5px solid #e2e8f0;
+}
+
+.ob-btn--ghost:hover {
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+    color: #334155;
+}
+
+.ob-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.ob-actions .ob-btn--ghost {
+    flex: 0 0 auto;
+    width: auto;
+    padding: 13px 18px;
+}
+
+.ob-actions .ob-btn--primary {
+    flex: 1;
+}

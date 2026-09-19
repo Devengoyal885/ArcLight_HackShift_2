@@ -1,0 +1,295 @@
+.learn-page {
+    min-height: 100vh;
+    background: #f8fafc;
+    position: relative;
+}
+
+.learn-bg {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(ellipse 800px 600px at 20% 60%, rgba(37, 99, 235, 0.05) 0%, transparent 70%),
+        radial-gradient(ellipse 600px 400px at 80% 10%, rgba(37, 99, 235, 0.03) 0%, transparent 70%);
+}
+
+.learn-main {
+    position: relative;
+    z-index: 1;
+    padding: calc(var(--navbar-height) + var(--space-16)) var(--space-8) var(--space-16);
+    max-width: var(--container-xl);
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-12);
+}
+
+.learn-header {
+    max-width: 640px;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+.learn-eyebrow {
+    font-size: var(--text-xs);
+    font-weight: var(--weight-bold);
+    letter-spacing: var(--tracking-widest);
+    color: var(--color-cyan);
+    text-transform: uppercase;
+}
+
+.learn-title {
+    font-size: var(--text-5xl);
+    font-weight: var(--weight-black);
+    color: #111827;
+    letter-spacing: var(--tracking-tight);
+    line-height: var(--leading-tight);
+}
+
+.learn-title em {
+    font-style: normal;
+    color: var(--color-cyan);
+}
+
+.learn-sub {
+    font-size: var(--text-lg);
+    color: var(--color-ink-400);
+    line-height: var(--leading-relaxed);
+}
+
+/* ─── Goal Strip ─── */
+.learn-goal-strip {
+    display: flex;
+    gap: var(--space-6);
+    padding: var(--space-5);
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: var(--radius-xl);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+.learn-goal-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.learn-goal-labels {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.learn-goal-name {
+    font-size: var(--text-sm);
+    font-weight: var(--weight-semibold);
+    color: #111827;
+}
+
+.learn-goal-delta {
+    font-size: var(--text-sm);
+    font-weight: var(--weight-bold);
+}
+
+.learn-goal-track {
+    position: relative;
+    height: 6px;
+    background: #e5e7eb;
+    border-radius: var(--radius-pill);
+    overflow: hidden;
+}
+
+.learn-goal-current,
+.learn-goal-target,
+.learn-goal-now {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    border-radius: var(--radius-pill);
+    transition: width 0.8s var(--ease-smooth);
+}
+
+.learn-goal-target {
+    opacity: 0.3;
+}
+
+
+
+/* ─── Weekly Cards ─── */
+.learn-weeks {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.learn-week-card {
+    display: grid;
+    grid-template-columns: 80px 1fr auto auto auto;
+    align-items: center;
+    gap: var(--space-5);
+    padding: var(--space-5);
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: var(--radius-xl);
+    transition: background var(--duration-fast), border-color var(--duration-fast);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.learn-week-card:hover {
+    background: #f0f4ff;
+    border-color: #bfdbfe;
+}
+
+.learn-week-num {
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-lg);
+    font-size: var(--text-xs);
+    font-weight: var(--weight-bold);
+    letter-spacing: var(--tracking-wide);
+    text-align: center;
+}
+
+.learn-week-body {
+    min-width: 0;
+}
+
+.learn-week-title {
+    font-size: var(--text-lg);
+    font-weight: var(--weight-bold);
+    color: #111827;
+}
+
+.learn-week-exercise {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-sm);
+    color: var(--color-ink-400);
+    margin-top: var(--space-1);
+}
+
+.learn-week-gain {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+}
+
+.learn-gain-arrow {
+    font-size: var(--text-xl);
+    font-weight: var(--weight-black);
+    line-height: 1;
+}
+
+.learn-gain-value {
+    font-size: var(--text-lg);
+    font-weight: var(--weight-black);
+    line-height: 1;
+}
+
+.learn-gain-cap {
+    font-size: var(--text-xs);
+    color: var(--color-ink-400);
+}
+
+.learn-week-connector {
+    color: var(--color-electric);
+    font-size: var(--text-lg);
+    font-weight: var(--weight-bold);
+}
+
+.learn-verified-pill {
+    padding: 4px 10px;
+    background: var(--color-green-dim);
+    color: var(--color-green);
+    border-radius: var(--radius-pill);
+    font-size: 9px;
+    font-weight: var(--weight-bold);
+    letter-spacing: var(--tracking-wider);
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+/* ─── CTA ─── */
+.learn-cta-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-6);
+    flex-wrap: wrap;
+}
+
+.learn-cta-btn {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-4) var(--space-6);
+    border-radius: var(--radius-pill);
+    background: var(--color-electric);
+    color: white;
+    font-size: var(--text-md);
+    font-weight: var(--weight-bold);
+    text-decoration: none;
+    transition: all var(--duration-normal);
+}
+
+.learn-cta-btn:hover {
+    background: var(--color-electric-light);
+    transform: translateY(-2px);
+}
+
+.learn-cta-secondary {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    font-size: var(--text-sm);
+    color: var(--color-ink-300);
+    text-decoration: none;
+    transition: color var(--duration-fast);
+}
+
+.learn-cta-secondary:hover {
+    color: white;
+}
+
+/* ─── Loop ─── */
+.learn-product-loop {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    align-items: center;
+    padding: var(--space-4);
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: var(--radius-lg);
+}
+
+.learn-loop-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-xs);
+    font-weight: var(--weight-bold);
+    letter-spacing: var(--tracking-widest);
+    color: var(--color-ink-400);
+    text-transform: uppercase;
+}
+
+.learn-loop-arr {
+    color: var(--color-cyan);
+}
+
+@media (max-width: 900px) {
+    .learn-week-card {
+        grid-template-columns: 1fr;
+    }
+
+    .learn-week-connector {
+        display: none;
+    }
+
+    .learn-goal-strip {
+        flex-direction: column;
+    }
+}

@@ -1,0 +1,33 @@
+.vbadge {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 10px;
+    border-radius: var(--radius-pill);
+    font-weight: var(--weight-semibold);
+    letter-spacing: var(--tracking-wider);
+    text-transform: uppercase;
+}
+
+.vbadge--sm {
+    font-size: 9px;
+    padding: 2px 8px;
+}
+
+.vbadge--md {
+    font-size: var(--text-xs);
+}
+
+.vbadge--verified {
+    background: var(--color-green-dim);
+    color: var(--color-green);
+}
+
+.vbadge--practised {
+    background: var(--color-cyan-dim);
+    color: var(--color-cyan);
+}
+
+.vbadge--predicted {
+    background: var(--color-amber-dim);
+    color: var(--color-amber);
+}

@@ -1,0 +1,45 @@
+.confidence {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    padding: 2px var(--space-2);
+    border-radius: var(--radius-pill);
+    font-size: var(--text-xs);
+    font-weight: var(--weight-semibold);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+}
+
+.confidence-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.confidence--high {
+    background: var(--color-green-dim);
+    color: var(--color-green);
+}
+
+.confidence--high .confidence-dot {
+    background: var(--color-green);
+}
+
+.confidence--medium {
+    background: var(--color-amber-dim);
+    color: var(--color-amber);
+}
+
+.confidence--medium .confidence-dot {
+    background: var(--color-amber);
+}
+
+.confidence--low {
+    background: var(--color-coral-dim);
+    color: var(--color-coral);
+}
+
+.confidence--low .confidence-dot {
+    background: var(--color-coral);
+}
