@@ -560,33 +560,15 @@ export const APTITUDE_QUESTIONS: AptitudeQuestion[] = [
     },
 ];
 
+import extraQuestionsData from './aptitudeDataExtra.json';
+const extraQuestions = extraQuestionsData as AptitudeQuestion[];
+
 /** Return a shuffled subset of aptitude questions per category */
 export function getAptitudeQuizQuestions(
     categories: AptitudeCategory[],
     perCategory = 5,
 ): AptitudeQuestion[] {
-    // Lazily merge extra questions (avoids circular imports at module load)
-    let fullPool = APTITUDE_QUESTIONS;
-    try {
-        // eslint-disable-next-line @typescript-eslint/no-var-requires
-        const extra = require('./aptitudeDataExtra');
-        if (Array.isArray(extra?.APTITUDE_QUESTIONS_EXTRA)) {
-            fullPool = [...fullPool, ...extra.APTITUDE_QUESTIONS_EXTRA];
-        }
-    } catch { /* extra file not found — use base pool */ }
-    try {
-        // eslint-disable-next-line @typescript-eslint/no-var-requires
-        const bank2 = require('./aptitudeDataBank2');
-        if (Array.isArray(bank2?.APTITUDE_QUESTIONS_BANK2)) {
-            fullPool = [...fullPool, ...bank2.APTITUDE_QUESTIONS_BANK2];
-        }
-    } catch { /* bank2 not found */ }
-    try {
-        const bank3 = require('./aptitudeDataBank3');
-        if (Array.isArray(bank3?.aptitudeDataBank3)) {
-            fullPool = [...fullPool, ...bank3.aptitudeDataBank3];
-        }
-    } catch { /* bank3 not found */ }
+    const fullPool = [...APTITUDE_QUESTIONS, ...extraQuestions];
 
     const result: AptitudeQuestion[] = [];
     for (const cat of categories) {
@@ -599,27 +581,5 @@ export function getAptitudeQuizQuestions(
 
 /** Full combined question bank (base + extra + bank2) */
 export function getAllAptitudeQuestions(): AptitudeQuestion[] {
-    let pool = [...APTITUDE_QUESTIONS];
-    try {
-        // eslint-disable-next-line @typescript-eslint/no-var-requires
-        const extra = require('./aptitudeDataExtra');
-        if (Array.isArray(extra?.APTITUDE_QUESTIONS_EXTRA)) {
-            pool = [...pool, ...extra.APTITUDE_QUESTIONS_EXTRA];
-        }
-    } catch { /* */ }
-    try {
-        // eslint-disable-next-line @typescript-eslint/no-var-requires
-        const bank2 = require('./aptitudeDataBank2');
-        if (Array.isArray(bank2?.APTITUDE_QUESTIONS_BANK2)) {
-            pool = [...pool, ...bank2.APTITUDE_QUESTIONS_BANK2];
-        }
-    } catch { /* */ }
-    try {
-        // eslint-disable-next-line @typescript-eslint/no-var-requires
-        const bank3 = require('./aptitudeDataBank3');
-        if (Array.isArray(bank3?.aptitudeDataBank3)) {
-            pool = [...pool, ...bank3.aptitudeDataBank3];
-        }
-    } catch { /* */ }
-    return pool;
+    return [...APTITUDE_QUESTIONS, ...extraQuestions];
 }

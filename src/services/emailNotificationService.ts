@@ -24,15 +24,25 @@ export interface EmailPayload {
 // ── Core queue helper ─────────────────────────────────────────────────────────
 
 export async function queueEmail(payload: EmailPayload): Promise<void> {
-    await addDoc(collection(db, 'mail'), {
-        to: Array.isArray(payload.to) ? payload.to : [payload.to],
-        message: {
-            subject: payload.subject,
-            html: payload.html,
-            text: payload.text || payload.html.replace(/<[^>]+>/g, ''),
-        },
-        sentAt: serverTimestamp(),
-    });
+    const serverUrl = import.meta.env.VITE_SERVER_URL || 'http://localhost:5000';
+    try {
+        const res = await fetch(`${serverUrl}/api/mail`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                to: Array.isArray(payload.to) ? payload.to.join(',') : payload.to,
+                subject: payload.subject,
+                html: payload.html,
+                text: payload.text || payload.html.replace(/<[^>]+>/g, ''),
+            }),
+        });
+        
+        if (!res.ok) {
+            console.error('[EmailService] Failed to send email via backend:', await res.text());
+        }
+    } catch (e) {
+        console.error('[EmailService] Network error sending email:', e);
+    }
 }
 
 // ── Branded email wrapper ─────────────────────────────────────────────────────
