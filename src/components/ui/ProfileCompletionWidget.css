@@ -1,0 +1,119 @@
+/* ProfileCompletionWidget.css */
+
+.pcw-widget {
+    background: #fff;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 18px;
+}
+
+/* Score row */
+.pcw-score-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 12px;
+}
+
+.pcw-ring-wrap {
+    position: relative;
+    width: 72px;
+    height: 72px;
+    flex-shrink: 0;
+}
+.pcw-ring-center {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.pcw-pct {
+    font-size: 1rem;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.pcw-score-info { flex: 1; }
+.pcw-score-label { font-size: 0.9rem; font-weight: 800; }
+.pcw-score-sub { font-size: 0.75rem; color: #64748b; }
+.pcw-score-pts { font-size: 0.72rem; color: #94a3b8; margin-top: 2px; }
+
+/* Progress bar */
+.pcw-bar-wrap {
+    height: 6px;
+    background: #f1f5f9;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 12px;
+}
+.pcw-bar {
+    height: 100%;
+    border-radius: 10px;
+    min-width: 4px;
+}
+
+/* Nudge */
+.pcw-nudge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #fffbeb;
+    border: 1.5px solid #fef3c7;
+    border-radius: 10px;
+    padding: 8px 12px;
+    font-size: 0.78rem;
+    color: #374151;
+    text-decoration: none;
+    margin-bottom: 14px;
+    transition: all 0.15s;
+}
+.pcw-nudge:hover { background: #fef3c7; }
+.pcw-nudge span { flex: 1; }
+.pcw-nudge strong { color: #0f172a; }
+.pcw-nudge-pts {
+    background: #f59e0b;
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.68rem;
+    padding: 2px 6px;
+    border-radius: 20px;
+}
+
+/* Checklist */
+.pcw-checklist { display: flex; flex-direction: column; gap: 6px; }
+.pcw-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 0;
+    border-bottom: 1px solid #f8fafc;
+}
+.pcw-item:last-child { border-bottom: none; }
+.pcw-item.done .pcw-item-label { text-decoration: line-through; color: #94a3b8; }
+.pcw-item-label {
+    flex: 1;
+    font-size: 0.78rem;
+    color: #374151;
+    font-weight: 500;
+}
+.pcw-item-pts {
+    font-size: 0.68rem;
+    color: #94a3b8;
+    font-weight: 600;
+    min-width: 28px;
+    text-align: right;
+}
+.pcw-item-link {
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: #2563eb;
+    text-decoration: none;
+    padding: 2px 8px;
+    border: 1px solid #bfdbfe;
+    border-radius: 6px;
+    background: #eff6ff;
+    white-space: nowrap;
+    transition: all 0.15s;
+}
+.pcw-item-link:hover { background: #2563eb; color: #fff; border-color: #2563eb; }

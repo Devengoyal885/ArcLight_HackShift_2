@@ -1,13 +1,100 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
-import { Briefcase, Mail, Lock, CheckSquare, User } from 'lucide-react';
+import { Briefcase, Mail, Lock, CheckSquare, User, GraduationCap, Building2, Sparkles } from 'lucide-react';
 import logo from '../../assets/sihlogo.png';
-import { auth, googleProvider, signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword } from '../../lib/firebase';
+import {
+    auth, googleProvider, signInWithPopup,
+    signInWithEmailAndPassword, createUserWithEmailAndPassword
+} from '../../lib/firebase';
 import { getAdditionalUserInfo } from 'firebase/auth';
+import { getProfile } from '../../services/profileService';
 import './LoginPage.css';
 
-type AuthStep = 'select' | 'candidate-login' | 'employer-login' | 'candidate-signup' | 'employer-signup';
+// All possible auth steps for 4 roles
+type RoleType = 'candidate' | 'employer' | 'academician' | 'institution';
+type AuthStep =
+    | 'select'
+    | 'candidate-login'   | 'candidate-signup'
+    | 'employer-login'    | 'employer-signup'
+    | 'academician-login' | 'academician-signup'
+    | 'institution-login' | 'institution-signup';
+
+interface RolePanel {
+    role: RoleType;
+    badge: string;
+    title: string;
+    titleEm: string;
+    desc: string;
+    icon: React.ReactNode;
+    color: string;
+    signupLabel: string;
+}
+
+const PANELS: RolePanel[] = [
+    {
+        role: 'employer',
+        badge: 'BUSINESS',
+        title: 'For ',
+        titleEm: 'Companies',
+        desc: 'Post opportunities, discover talent verified by real capability evidence, and build your workforce intelligence.',
+        icon: <Briefcase size={22} />,
+        color: '#2563eb',
+        signupLabel: 'Register your company',
+    },
+    {
+        role: 'institution',
+        badge: 'INSTITUTION',
+        title: 'For ',
+        titleEm: 'Admins',
+        desc: 'Monitor student placements, manage industry engagement, and track institution-wide capability growth.',
+        icon: <Building2 size={22} />,
+        color: '#7c3aed',
+        signupLabel: 'Register your institution',
+    },
+    {
+        role: 'candidate',
+        badge: 'STUDENT',
+        title: 'For ',
+        titleEm: 'Candidates',
+        desc: 'Build your capability profile, prove your skills with evidence, and get hired on merit — not just a resume.',
+        icon: <User size={22} />,
+        color: '#10b981',
+        signupLabel: 'Create free account',
+    },
+    {
+        role: 'academician',
+        badge: 'FACULTY',
+        title: 'For ',
+        titleEm: 'Faculty',
+        desc: 'Explore FDPs, faculty internships, and research collaborations. Monitor your students\' progress in one place.',
+        icon: <GraduationCap size={22} />,
+        color: '#f59e0b',
+        signupLabel: 'Join as faculty',
+    },
+];
+
+function getHeroText(role: RoleType, isLogin: boolean): { title: string; sub: string } {
+    const map: Record<RoleType, { title: string; sub: string }> = {
+        candidate: {
+            title: 'CapAble Community',
+            sub: isLogin ? 'Ready to build your capability twin?' : 'Be part of evidence-based hiring.',
+        },
+        employer: {
+            title: 'CapAble for Business',
+            sub: isLogin ? 'Ready to discover real talent?' : 'Find candidates who prove their skills.',
+        },
+        academician: {
+            title: 'CapAble for Faculty',
+            sub: isLogin ? 'Welcome back, educator.' : 'Grow professionally with industry.',
+        },
+        institution: {
+            title: 'CapAble Admin',
+            sub: isLogin ? 'Manage your institution\'s ecosystem.' : 'Join the capability-first network.',
+        },
+    };
+    return map[role];
+}
 
 export default function LoginPage() {
     const [step, setStep] = useState<AuthStep>('select');
@@ -15,42 +102,119 @@ export default function LoginPage() {
     const [password, setPassword] = useState('');
     const [name, setName] = useState('');
     const [error, setError] = useState('');
+    const [infoMsg, setInfoMsg] = useState('');
     const navigate = useNavigate();
 
-    const handleEmailAuth = async (e: React.FormEvent, type: 'candidate' | 'employer', isLogin: boolean) => {
+    const currentRole: RoleType = step === 'select'
+        ? 'candidate'
+        : (step.split('-')[0] as RoleType);
+    const isLogin = step.endsWith('-login');
+
+    const goToStep = (s: AuthStep) => {
+        setError('');
+        setInfoMsg('');
+        setStep(s);
+    };
+
+    const dashboardFor = (role: RoleType) => {
+        const map: Record<RoleType, string> = {
+            candidate: '/candidate',
+            employer: '/employer',
+            academician: '/faculty',
+            institution: '/institution',
+        };
+        return map[role];
+    };
+
+    // ─── Smart Email Auth ──────────────────────────────────────────────────────
+    const handleEmailAuth = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
+        setInfoMsg('');
+        const role = currentRole;
+
         try {
-            localStorage.setItem('userRole', type);
+            localStorage.setItem('userRole', role);
+
             if (isLogin) {
                 await signInWithEmailAndPassword(auth, email, password);
-                navigate(`/${type}`);
+                navigate(dashboardFor(role));
             } else {
                 await createUserWithEmailAndPassword(auth, email, password);
                 navigate('/onboarding');
             }
         } catch (err: any) {
-            setError(err.message);
+            const code: string = err?.code || '';
+
+            // ── Silently ignored errors ──────────────────────────────────────
+            const silentCodes = [
+                'auth/popup-closed-by-user',
+                'auth/cancelled-popup-request',
+                'auth/user-cancelled',
+            ];
+            if (silentCodes.includes(code)) return;
+
+            if (isLogin) {
+                if (code === 'auth/user-not-found') {
+                    // Genuine: no account with this email
+                    setInfoMsg('No account found with this email. Let\'s create one!');
+                    goToStep(`${role}-signup` as AuthStep);
+                } else if (code === 'auth/invalid-credential' || code === 'auth/wrong-password') {
+                    // Wrong password entered
+                    setError('Incorrect password. Please try again.');
+                } else if (code === 'auth/invalid-email') {
+                    setError('Please enter a valid email address.');
+                } else if (code === 'auth/too-many-requests') {
+                    setError('Too many attempts. Please wait a moment and try again.');
+                } else {
+                    setError('Sign in failed. Please check your credentials.');
+                }
+            } else {
+                // Signup branch
+                if (code === 'auth/email-already-in-use') {
+                    setInfoMsg('You already have an account! Please log in.');
+                    goToStep(`${role}-login` as AuthStep);
+                } else if (code === 'auth/weak-password') {
+                    setError('Password must be at least 6 characters.');
+                } else if (code === 'auth/invalid-email') {
+                    setError('Please enter a valid email address.');
+                } else {
+                    setError('Could not create account. Please try again.');
+                }
+            }
         }
     };
 
-    const handleGoogleAuth = async (type: 'candidate' | 'employer') => {
+    // ─── Google Auth ──────────────────────────────────────────────────────
+    const handleGoogleAuth = async () => {
         setError('');
+        const role = currentRole;
         try {
-            localStorage.setItem('userRole', type);
+            localStorage.setItem('userRole', role);
             const res = await signInWithPopup(auth, googleProvider);
             const additionalInfo = getAdditionalUserInfo(res);
-
             if (additionalInfo?.isNewUser) {
                 navigate('/onboarding');
             } else {
-                navigate(`/${type}`);
+                navigate(dashboardFor(role));
             }
         } catch (err: any) {
-            setError(err.message);
+            const code: string = err?.code || '';
+            // Silently ignore user closing the Google popup
+            if (
+                code === 'auth/popup-closed-by-user' ||
+                code === 'auth/cancelled-popup-request' ||
+                code === 'auth/user-cancelled'
+            ) return;
+            // Only show errors that are actionable
+            if (code === 'auth/account-exists-with-different-credential') {
+                setError('An account with this email already exists. Please use email/password to sign in.');
+            }
+            // All other Google errors are swallowed silently
         }
     };
 
+    // ─── Selection Screen ─────────────────────────────────────────────────────
     const renderSelection = () => (
         <motion.div
             key="select"
@@ -59,84 +223,93 @@ export default function LoginPage() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
         >
+            {/* Ambient Background Elements */}
+            <div className="login-select-bg">
+                <div className="login-ambient-orb orb-1" />
+                <div className="login-ambient-orb orb-2" />
+                <div className="login-ambient-orb orb-3" />
+                <div className="login-select-grid-bg" />
+            </div>
+
             <header className="login-select-header">
                 <Link to="/" className="login-logo login-logo--dark">
                     <img src={logo} className="capable-logo" alt="CapAble Logo" />
                 </Link>
+                <div className="login-select-header-actions">
+                    <a href="https://github.com" target="_blank" rel="noreferrer" className="login-header-link">Help</a>
+                </div>
             </header>
 
             <div className="login-select-body">
-                <div className="login-select-split">
-                    {/* Companies */}
-                    <div className="login-select-half">
-                        <span className="login-badge login-badge--dark">BUSINESS</span>
-                        <h2 className="login-select-title">For <em>Companies</em></h2>
-                        <p className="login-select-desc">
-                            Thousands of companies have embraced the new way to hire and upskill developers using verified capability intelligence.
-                        </p>
-                        <button className="login-btn-primary" onClick={() => setStep('employer-login')}>
-                            Login
-                        </button>
-                        <p className="login-select-footer">
-                            Don't have an account?<br />
-                            <button className="login-text-link" onClick={() => setStep('employer-signup')}>Contact sales</button> or <button className="login-text-link" onClick={() => setStep('employer-signup')}>Get free trial</button>
-                        </p>
-                    </div>
+                <div className="login-select-intro">
+                    <span className="login-select-eyebrow">Welcome to CapAble</span>
+                    <h1 className="login-select-main-title">Who are you?</h1>
+                    <p className="login-select-main-sub">Select your role to join the capability-first career ecosystem.</p>
+                </div>
 
-                    <div className="login-select-divider" />
-
-                    {/* Candidates */}
-                    <div className="login-select-half">
-                        <h2 className="login-select-title">For <em>Candidates</em></h2>
-                        <p className="login-select-desc">
-                            Join the capability-first network. Prove your skills, prepare for transitions, and get hired on evidence, not resumes.
-                        </p>
-                        <button className="login-btn-primary" onClick={() => setStep('candidate-login')}>
-                            Login
-                        </button>
-                        <p className="login-select-footer">
-                            Don't have an account?<br />
-                            <button className="login-text-link login-text-link--green" onClick={() => setStep('candidate-signup')}>Sign up.</button>
-                        </p>
-                    </div>
+                <div className="login-select-grid">
+                    {PANELS.map((panel) => (
+                        <div key={panel.role} className="login-role-card">
+                            <div className="login-role-card-top">
+                                <span
+                                    className="login-badge"
+                                    style={{ background: panel.color, color: '#fff' }}
+                                >
+                                    {panel.badge}
+                                </span>
+                                <div className="login-role-icon" style={{ color: panel.color }}>
+                                    {panel.icon}
+                                </div>
+                            </div>
+                            <h2 className="login-select-title">
+                                {panel.title}<em>{panel.titleEm}</em>
+                            </h2>
+                            <p className="login-select-desc">{panel.desc}</p>
+                            <button
+                                className="login-btn-primary"
+                                style={{ background: panel.color }}
+                                onClick={() => goToStep(`${panel.role}-login` as AuthStep)}
+                            >
+                                Login
+                            </button>
+                            <p className="login-select-footer">
+                                Don't have an account?{' '}
+                                <button
+                                    className="login-text-link"
+                                    style={{ color: panel.color }}
+                                    onClick={() => goToStep(`${panel.role}-signup` as AuthStep)}
+                                >
+                                    {panel.signupLabel}
+                                </button>
+                            </p>
+                        </div>
+                    ))}
                 </div>
             </div>
         </motion.div>
     );
 
-    const getFormDetails = () => {
-        const isCandidate = step.startsWith('candidate');
-        const isLogin = step.endsWith('login');
-        const type = isCandidate ? 'candidate' : 'employer';
-
-        return {
-            isCandidate,
-            isLogin,
-            type,
-            heading: isLogin ? 'Welcome back! Login to your account' : `Join us Create a CapAble? account`,
-            subheading: isLogin ? (isCandidate ? "Ready to build your capability twin?" : "Ready to discover talent?") : "Be part of the evidence-based hiring revolution"
-        };
-    };
-
+    // ─── Auth Form ────────────────────────────────────────────────────────────
     const renderForm = () => {
-        const { isCandidate, isLogin, type, subheading } = getFormDetails();
+        const panel = PANELS.find(p => p.role === currentRole)!;
+        const hero = getHeroText(currentRole, isLogin);
 
         return (
             <motion.div
-                key="form"
+                key={step}
                 className="login-form-view"
                 initial={{ opacity: 0, scale: 0.98 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0 }}
             >
-                {/* Left Dark Side */}
+                {/* Left Dark Hero */}
                 <div className="login-form-hero">
                     <div className="login-hero-bg">
-                        <div className="login-hero-glow" />
+                        <div className="login-hero-glow" style={{ background: `radial-gradient(circle, ${panel.color}22, transparent 70%)` }} />
                         <div className="login-hero-dots" />
                     </div>
 
-                    <button className="login-back-btn" onClick={() => setStep('select')}>
+                    <button className="login-back-btn" onClick={() => goToStep('select')}>
                         ← Back
                     </button>
 
@@ -145,15 +318,20 @@ export default function LoginPage() {
                             <img src={logo} className="capable-logo capable-logo--light" alt="CapAble Logo" />
                         </Link>
 
+                        {/* Role badge on hero */}
+                        <div className="login-hero-role-badge" style={{ background: `${panel.color}22`, borderColor: `${panel.color}44` }}>
+                            <span style={{ color: panel.color }}>{panel.icon}</span>
+                            <span style={{ color: panel.color, fontWeight: 700, fontSize: 13 }}>{panel.badge}</span>
+                        </div>
+
                         <div className="login-hero-graphic">
-                            {/* ID Card Graphic */}
-                            <div className="id-lanyard" />
+                            <div className="id-lanyard" style={{ background: `linear-gradient(to bottom, ${panel.color}, ${panel.color}88)` }} />
                             <div className="id-card">
                                 <div className="id-card-top">
                                     <div className="id-card-punch" />
                                 </div>
                                 <div className="id-card-body">
-                                    <div className="id-card-photo" />
+                                    <div className="id-card-photo" style={{ background: `${panel.color}33`, borderColor: `${panel.color}55` }} />
                                     <div className="id-card-lines">
                                         <div className="id-card-line id-card-line--1" />
                                         <div className="id-card-line id-card-line--2" />
@@ -165,45 +343,73 @@ export default function LoginPage() {
 
                         <div className="login-hero-text">
                             <p className="login-hero-sub">Welcome to</p>
-                            <h2 className="login-hero-title">CapAble Community</h2>
-                            <p className="login-hero-motto">
-                                Capability Intelligence for {isCandidate ? 'visionary talent' : 'modern teams'}
-                                <br /><a href="#">Know more</a>
-                            </p>
+                            <h2 className="login-hero-title">{hero.title}</h2>
+                            <p className="login-hero-motto">{hero.sub}</p>
                         </div>
                     </div>
                 </div>
 
-                {/* Right Light Side */}
+                {/* Right Form Panel */}
                 <div className="login-form-panel">
                     <div className="login-form-container">
                         <h2 className="login-form-title">
                             {isLogin ? (
                                 <>Welcome back!<br />Login to your account</>
                             ) : (
-                                <>Join us<br />Create a CapAble? account</>
+                                <>Join CapAble<br />Create your account</>
                             )}
                         </h2>
-                        <p className="login-form-sub">{subheading}</p>
+                        <p className="login-form-sub">
+                            {isLogin
+                                ? `Signing in as ${panel.badge.toLowerCase()}`
+                                : `Registering as ${panel.badge.toLowerCase()}`}
+                        </p>
 
-                        <form className="login-form" onSubmit={(e) => handleEmailAuth(e, type as 'candidate' | 'employer', isLogin)}>
-                            {error && <div className="login-error" style={{ color: '#ef4444', backgroundColor: '#fef2f2', padding: '12px', borderRadius: '6px', fontSize: '13px', marginBottom: '16px', border: '1px solid #fca5a5' }}>{error}</div>}
+                        {/* Info message (auto-redirect feedback) */}
+                        {infoMsg && (
+                            <div className="login-info-banner">
+                                <Sparkles size={14} /> {infoMsg}
+                            </div>
+                        )}
+
+                        <form className="login-form" onSubmit={handleEmailAuth}>
+                            {error && (
+                                <div className="login-error-banner">{error}</div>
+                            )}
 
                             {!isLogin && (
                                 <div className="login-input-group">
                                     <User size={16} className="login-input-icon" />
-                                    <input type="text" placeholder="Full Name" value={name} onChange={(e) => setName(e.target.value)} required />
+                                    <input
+                                        type="text"
+                                        placeholder="Full Name"
+                                        value={name}
+                                        onChange={e => setName(e.target.value)}
+                                        required
+                                    />
                                 </div>
                             )}
 
                             <div className="login-input-group">
                                 <Mail size={16} className="login-input-icon" />
-                                <input type="email" placeholder="Your username or email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+                                <input
+                                    type="email"
+                                    placeholder="Your email address"
+                                    value={email}
+                                    onChange={e => setEmail(e.target.value)}
+                                    required
+                                />
                             </div>
 
                             <div className="login-input-group">
                                 <Lock size={16} className="login-input-icon" />
-                                <input type="password" placeholder="Your password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+                                <input
+                                    type="password"
+                                    placeholder="Your password"
+                                    value={password}
+                                    onChange={e => setPassword(e.target.value)}
+                                    required
+                                />
                             </div>
 
                             {isLogin ? (
@@ -220,39 +426,45 @@ export default function LoginPage() {
                                     <label className="login-checkbox">
                                         <input type="checkbox" required />
                                         <span className="login-box"><CheckSquare size={14} /></span>
-                                        I agree to CapAble's Terms of Service and Privacy Policy.
+                                        I agree to CapAble's Terms &amp; Privacy Policy.
                                     </label>
                                 </div>
                             )}
 
-                            <button type="submit" className="login-submit-btn">
-                                {isLogin ? 'Log In' : 'Sign up'}
+                            <button
+                                type="submit"
+                                className="login-submit-btn"
+                                style={{ background: panel.color, color: '#fff', opacity: 1 }}
+                            >
+                                {isLogin ? 'Log In' : 'Create Account'}
                             </button>
                         </form>
 
-                        <div className="login-divider">
-                            <span>or</span>
-                        </div>
+                        <div className="login-divider"><span>or continue with</span></div>
 
                         <div className="login-socials">
-                            <button type="button" className="login-social-btn login-social-btn--google" onClick={() => handleGoogleAuth(type as 'candidate' | 'employer')}>
+                            <button
+                                type="button"
+                                className="login-social-btn login-social-btn--google"
+                                onClick={handleGoogleAuth}
+                            >
                                 <i>G</i> Continue with Google
                             </button>
-                            <div className="login-socials-row">
-                                <button type="button" className="login-social-btn" onClick={() => navigate(`/${type}`)}>
-                                    <Briefcase size={16} /> LinkedIn
-                                </button>
-                                <button type="button" className="login-social-btn" onClick={() => navigate(`/${type}`)}>
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" /></svg> GitHub
-                                </button>
-                            </div>
                         </div>
 
                         <p className="login-form-footer">
                             {isLogin ? (
-                                <>Don't have an account? <button onClick={() => setStep(`${type}-signup` as any)}>Sign up</button></>
+                                <>Don't have an account?{' '}
+                                    <button onClick={() => goToStep(`${currentRole}-signup` as AuthStep)}>
+                                        Sign up
+                                    </button>
+                                </>
                             ) : (
-                                <>Already have an account? <button onClick={() => setStep(`${type}-login` as any)}>Log in</button></>
+                                <>Already have an account?{' '}
+                                    <button onClick={() => goToStep(`${currentRole}-login` as AuthStep)}>
+                                        Log in
+                                    </button>
+                                </>
                             )}
                         </p>
                     </div>

@@ -1,5 +1,5 @@
-import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
-import { useEffect, useRef } from 'react';
+import { motion } from 'framer-motion';
+import { useEffect, useState } from 'react';
 import logo from '../../assets/sihlogo.png';
 import './IdentityCard3D.css';
 
@@ -13,126 +13,126 @@ interface IdentityCard3DProps {
 }
 
 export function IdentityCard3D({ name, role, initials, capabilityConfidence, verifiedEvidence, projectCount }: IdentityCard3DProps) {
-    const cardRef = useRef<HTMLDivElement>(null);
-    const rotateX = useMotionValue(0);
-    const rotateY = useMotionValue(0);
-    const springX = useSpring(rotateX, { stiffness: 120, damping: 20 });
-    const springY = useSpring(rotateY, { stiffness: 120, damping: 20 });
+    const [animatedScore, setAnimatedScore] = useState(0);
 
-    const glareX = useTransform(springY, [-15, 15], ['0%', '100%']);
-    const glareY = useTransform(springX, [-15, 15], ['0%', '100%']);
-
+    // Initial animation for the capability percentage
     useEffect(() => {
-        const card = cardRef.current;
-        if (!card) return;
+        let start = 0;
+        const end = capabilityConfidence;
+        if (start === end) return;
+        const duration = 1200; // ms
+        const incrementTime = 20;
+        const totalSteps = Math.ceil(duration / incrementTime);
+        const stepValue = end / totalSteps;
+        let current = 0;
+        
+        const timer = setInterval(() => {
+            start += stepValue;
+            current++;
+            if (current >= totalSteps) {
+                setAnimatedScore(end);
+                clearInterval(timer);
+            } else {
+                setAnimatedScore(Math.round(start));
+            }
+        }, incrementTime);
+        
+        return () => clearInterval(timer);
+    }, [capabilityConfidence]);
 
-        const handleMouseMove = (e: MouseEvent) => {
-            const rect = card.getBoundingClientRect();
-            const cx = rect.left + rect.width / 2;
-            const cy = rect.top + rect.height / 2;
-            const dx = (e.clientX - cx) / (rect.width / 2);
-            const dy = (e.clientY - cy) / (rect.height / 2);
-            rotateY.set(dx * 15);
-            rotateX.set(-dy * 12);
-        };
-
-        const handleMouseLeave = () => {
-            rotateX.set(0);
-            rotateY.set(0);
-        };
-
-        card.addEventListener('mousemove', handleMouseMove);
-        card.addEventListener('mouseleave', handleMouseLeave);
-        return () => {
-            card.removeEventListener('mousemove', handleMouseMove);
-            card.removeEventListener('mouseleave', handleMouseLeave);
-        };
-    }, [rotateX, rotateY]);
-
-    const circumference = 2 * Math.PI * 38;
+    // Circumference logic for progress ring (radius = 42)
+    const radius = 42;
+    const circumference = 2 * Math.PI * radius;
     const offset = circumference - (capabilityConfidence / 100) * circumference;
 
     return (
-        <div className="id-card-scene" ref={cardRef}>
+        <div className="id-card-wrapper">
             <motion.div
-                className="id-card"
-                style={{ rotateX: springX, rotateY: springY }}
-                animate={{ y: [0, -10, 0] }}
-                transition={{ repeat: Infinity, duration: 4, ease: 'easeInOut' }}
+                className="id-card-premium"
+                whileHover={{ y: -2 }}
+                transition={{ type: "spring", stiffness: 300, damping: 20 }}
             >
-                {/* Glare overlay */}
-                <motion.div
-                    className="id-card-glare"
-                    style={{
-                        background: `radial-gradient(circle at ${glareX} ${glareY}, rgba(255,255,255,0.12) 0%, transparent 60%)`,
-                    }}
-                />
+                {/* Subtle Radial Light */}
+                <div className="id-card-light" />
 
-                {/* Card content */}
                 <div className="id-card-inner">
-                    {/* Header band */}
+                    {/* Header */}
                     <div className="id-card-header">
-                        <img src={logo} className="id-card-logo id-card-logo-img" alt="CapAble Logo" />
-                        <div className="id-card-type">CAPABILITY TWIN</div>
+                        <img src={logo} className="id-card-logo" alt="CapAble Logo" />
+                        <div className="id-card-label">RESUME BUILDER</div>
                     </div>
 
-                    {/* Avatar + Score row */}
+                    {/* Ring + Avatar */}
                     <div className="id-card-hero">
-                        <div className="id-card-avatar-wrap">
-                            <div className="id-card-avatar">{initials}</div>
-                            <div className="id-card-avatar-ring" />
-                        </div>
-
-                        {/* Circular score */}
-                        <div className="id-card-score-wrap">
-                            <svg width={90} height={90} style={{ transform: 'rotate(-90deg)' }}>
-                                <circle cx={45} cy={45} r={38} fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth={4} />
-                                <circle
-                                    cx={45} cy={45} r={38}
+                        <div className="id-card-ring-container">
+                            <svg width="120" height="120" className="id-card-svg-ring">
+                                {/* Outer faint ring */}
+                                <circle cx="60" cy="60" r={radius} fill="none" stroke="rgba(100,125,160,0.12)" strokeWidth="3" />
+                                {/* Progress ring */}
+                                <motion.circle
+                                    cx="60" cy="60" r={radius}
                                     fill="none"
-                                    stroke="#2563eb"
-                                    strokeWidth={4}
+                                    stroke="#3B82F6"
+                                    strokeWidth="3.5"
                                     strokeLinecap="round"
                                     strokeDasharray={circumference}
-                                    strokeDashoffset={offset}
-                                    style={{ filter: 'drop-shadow(0 0 6px rgba(37,99,235,0.7))' }}
+                                    initial={{ strokeDashoffset: circumference }}
+                                    animate={{ strokeDashoffset: offset }}
+                                    transition={{ duration: 1.2, ease: "easeOut" }}
+                                    className="id-card-ring-progress"
                                 />
+                                {/* Tiny tick marks decorative */}
+                                {[...Array(8)].map((_, i) => (
+                                    <line
+                                        key={i}
+                                        x1="60" y1="12" x2="60" y2="16"
+                                        stroke="rgba(100,130,200,0.25)"
+                                        strokeWidth="1.5"
+                                        transform={`rotate(${i * 45} 60 60)`}
+                                    />
+                                ))}
                             </svg>
-                            <div className="id-card-score-text">
-                                <span className="id-card-score-number">{capabilityConfidence}</span>
-                                <span className="id-card-score-pct">%</span>
+                            
+                            <div className="id-card-avatar-container">
+                                <div className="id-card-avatar">{initials}</div>
                             </div>
-                            <p className="id-card-score-label">Capability</p>
+                        </div>
+
+                        {/* Capability Score */}
+                        <div className="id-card-score-container">
+                            <div className="id-card-score-value">
+                                {animatedScore}<span className="id-card-score-percent">%</span>
+                            </div>
+                            <div className="id-card-score-label">CAPABILITY</div>
                         </div>
                     </div>
 
-                    {/* Name & Role */}
+                    {/* Identity Details */}
                     <div className="id-card-identity">
                         <h2 className="id-card-name">{name}</h2>
-                        <p className="id-card-role">{role}</p>
+                        <p className="id-card-subtitle">{role}</p>
                     </div>
 
-                    {/* Stats strip */}
-                    <div className="id-card-stats">
+                    {/* Statistics Capsule */}
+                    <div className="id-card-stats-capsule">
                         <div className="id-card-stat">
-                            <span className="id-card-stat-value">{verifiedEvidence}</span>
-                            <span className="id-card-stat-label">Verified Evidence</span>
+                            <span className="id-card-stat-val">{verifiedEvidence}</span>
+                            <span className="id-card-stat-lbl">VERIFIED<br/>EVIDENCE</span>
                         </div>
                         <div className="id-card-stat-divider" />
                         <div className="id-card-stat">
-                            <span className="id-card-stat-value">{projectCount}</span>
-                            <span className="id-card-stat-label">Projects</span>
+                            <span className="id-card-stat-val">{projectCount}</span>
+                            <span className="id-card-stat-lbl">PROJECTS<br/>&nbsp;</span>
                         </div>
                         <div className="id-card-stat-divider" />
                         <div className="id-card-stat">
-                            <span className="id-card-stat-value" style={{ color: '#10b981' }}>✓</span>
-                            <span className="id-card-stat-label">Verified</span>
+                            <div className="id-card-verified-pill">✓</div>
+                            <span className="id-card-stat-lbl">VERIFIED<br/>&nbsp;</span>
                         </div>
                     </div>
 
-                    {/* Edge highlight */}
-                    <div className="id-card-edge-top" />
-                    <div className="id-card-edge-left" />
+                    {/* Edge Highlights */}
+                    <div className="id-card-edge-highlight" />
                 </div>
             </motion.div>
         </div>

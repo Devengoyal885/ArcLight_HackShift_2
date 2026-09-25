@@ -1,0 +1,179 @@
+/* ─── Institution Dashboard — Light Theme ───────────────────────────────────── */
+
+.inst-dashboard {
+    min-height: 100vh;
+    background: #f8fafc;
+    color: #0f172a;
+    padding-top: 80px;
+}
+
+.inst-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+}
+
+/* Header */
+.inst-header {
+    margin-bottom: 2rem;
+}
+
+.inst-greeting-label {
+    font-size: 0.7rem;
+    letter-spacing: 3px;
+    color: #64748b;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.inst-greeting-name {
+    font-size: 2rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #2563eb, #7c3aed);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin: 0.2rem 0;
+}
+
+.inst-greeting-sub {
+    font-size: 0.85rem;
+    color: #64748b;
+    margin: 0;
+}
+
+/* Tabs */
+.inst-tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 5px;
+    width: fit-content;
+}
+
+.inst-tab {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.55rem 1.2rem;
+    border-radius: 8px;
+    border: none;
+    background: none;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #64748b;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.inst-tab:hover { color: #0f172a; background: #f1f5f9; }
+
+.inst-tab.active {
+    background: linear-gradient(135deg, #2563eb, #7c3aed);
+    color: white;
+}
+
+/* KPI strip */
+.inst-kpi-strip {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.inst-kpi-card {
+    background: white;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    transition: all 0.2s;
+}
+
+.inst-kpi-card:hover {
+    border-color: #c7d2fe;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    transform: translateY(-1px);
+}
+
+.inst-kpi-icon { opacity: 0.85; }
+.inst-kpi-value { font-size: 1.8rem; font-weight: 800; color: #0f172a; }
+.inst-kpi-label { font-size: 0.72rem; color: #94a3b8; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+
+/* Loading */
+.inst-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    padding: 4rem 0;
+    color: #64748b;
+}
+.inst-loading .spin,
+.inst-loading .acad-spin { animation: inst-spin 1s linear infinite; }
+@keyframes inst-spin { to { transform: rotate(360deg); } }
+
+/* Empty */
+.inst-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    padding: 4rem;
+    text-align: center;
+    color: #64748b;
+    background: white;
+    border: 1.5px dashed #e2e8f0;
+    border-radius: 16px;
+}
+.inst-empty h3 { font-size: 1.1rem; color: #475569; margin: 0; }
+.inst-empty p { max-width: 420px; font-size: 0.85rem; line-height: 1.6; margin: 0; }
+
+/* Section titles */
+.inst-section-title {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #64748b;
+    margin-bottom: 1rem;
+}
+
+/* Quick-action module cards */
+.inst-modules-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.inst-module-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: white;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 1.25rem 1.5rem;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.2s;
+}
+.inst-module-card:hover {
+    border-color: #c7d2fe;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    transform: translateY(-2px);
+}
+.inst-module-icon { flex-shrink: 0; }
+.inst-module-label { font-weight: 700; color: #0f172a; font-size: 0.9rem; }
+.inst-module-desc { font-size: 0.75rem; color: #64748b; margin-top: 2px; }
+
+/* Stat Cards (legacy compat) */
+.inst-stat-card { background: white; border: 1.5px solid #e2e8f0; border-radius: 14px; padding: 1.25rem; display: flex; flex-direction: column; align-items: center; gap: 0.5rem; }
+.inst-stat-value { font-size: 1.8rem; font-weight: 800; color: #0f172a; }
+.inst-stat-label { font-size: 0.72rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600; }
+.inst-stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; margin-bottom: 2rem; }

@@ -1,0 +1,113 @@
+/* ToastNotifications.css */
+
+.tn-container {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 10px;
+    pointer-events: none;
+}
+
+.tn-toast {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    width: 340px;
+    background: white;
+    border-radius: 14px;
+    padding: 14px 14px 18px;
+    box-shadow:
+        0 4px 6px rgba(0,0,0,0.05),
+        0 10px 40px rgba(0,0,0,0.12),
+        0 0 0 1px rgba(0,0,0,0.06);
+    cursor: pointer;
+    pointer-events: all;
+    overflow: hidden;
+}
+
+.tn-toast:hover {
+    box-shadow:
+        0 8px 16px rgba(0,0,0,0.08),
+        0 16px 48px rgba(0,0,0,0.15),
+        0 0 0 1px rgba(0,0,0,0.06);
+    transform: translateY(-2px);
+}
+
+.tn-toast-accent {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: var(--accent);
+    border-radius: 14px 0 0 14px;
+}
+
+.tn-toast-emoji {
+    font-size: 22px;
+    flex-shrink: 0;
+    line-height: 1;
+    margin-top: 1px;
+}
+
+.tn-toast-body {
+    flex: 1;
+    min-width: 0;
+}
+
+.tn-toast-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0 0 3px;
+    line-height: 1.3;
+}
+
+.tn-toast-msg {
+    font-size: 12px;
+    color: #64748b;
+    margin: 0;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.tn-toast-close {
+    flex-shrink: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #94a3b8;
+    padding: 2px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    transition: color 0.15s, background 0.15s;
+}
+
+.tn-toast-close:hover {
+    color: #334155;
+    background: #f1f5f9;
+}
+
+.tn-toast-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--accent);
+    border-radius: 0 0 14px 14px;
+    opacity: 0.5;
+}
+
+@media (max-width: 480px) {
+    .tn-container { left: 12px; right: 12px; bottom: 16px; }
+    .tn-toast { width: 100%; }
+}

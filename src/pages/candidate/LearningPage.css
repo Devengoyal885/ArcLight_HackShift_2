@@ -293,3 +293,251 @@
         flex-direction: column;
     }
 }
+
+/* ─── Real Data Additions ─── */
+.inline-icon { display: inline-block; vertical-align: middle; margin-right: 4px; }
+.text-blue { color: #2563eb; }
+.text-gray { color: #94a3b8; }
+.spin { animation: learn-spin 1s linear infinite; }
+@keyframes learn-spin { to { transform: rotate(360deg); } }
+
+.learn-state-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 64px 24px;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 20px;
+    text-align: center;
+    gap: 12px;
+}
+.learn-state-container h3 { margin: 0; font-size: 1.25rem; font-weight: 800; color: #1e293b; }
+.learn-state-container p { margin: 0; font-size: 0.95rem; color: #64748b; max-width: 400px; line-height: 1.5; }
+
+.learn-generate-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    background: linear-gradient(135deg, #2563eb, #7c3aed);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 16px;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.learn-generate-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2); }
+
+.learn-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.learn-card {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    transition: box-shadow 0.2s;
+}
+.learn-card:hover { box-shadow: 0 8px 24px rgba(0,0,0,0.04); }
+
+.learn-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.learn-provider {
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #64748b;
+}
+
+.learn-meta-pills {
+    display: flex;
+    gap: 6px;
+}
+
+.learn-pill {
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.65rem;
+    font-weight: 700;
+    border: 1px solid #e2e8f0;
+}
+.learn-pill.time { color: #64748b; background: #f8fafc; }
+
+.learn-card-title {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: #0f172a;
+    line-height: 1.4;
+    margin: 0;
+}
+
+.learn-card-skill {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.85rem;
+    color: #4b5563;
+    background: #f1f5f9;
+    padding: 8px 12px;
+    border-radius: 8px;
+}
+.learn-card-skill strong { color: #0f172a; }
+
+.learn-card-actions {
+    margin-top: auto;
+    padding-top: 8px;
+}
+
+.learn-action-btn.primary {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 10px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    color: #2563eb;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.2s;
+}
+.learn-action-btn.primary:hover { background: #2563eb; color: #fff; border-color: #2563eb; }
+
+/* ── Gamified Soft Skills Arena ── */
+.learn-softskills-arena {
+    background: linear-gradient(135deg, rgba(244, 63, 94, 0.05) 0%, rgba(251, 146, 60, 0.05) 100%);
+    border: 1px solid rgba(244, 63, 94, 0.2);
+    border-radius: 20px;
+    padding: 32px;
+    margin-bottom: 40px;
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 10px 30px -10px rgba(244, 63, 94, 0.1);
+}
+
+.learn-softskills-arena::before {
+    content: '';
+    position: absolute;
+    top: 0; right: 0; bottom: 0; left: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23f43f5e' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+}
+
+.lsa-icon-bg {
+    width: 96px;
+    height: 96px;
+    background: linear-gradient(135deg, #fff, #ffe4e6);
+    border-radius: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 8px 16px -4px rgba(244, 63, 94, 0.15), inset 0 2px 4px rgba(255, 255, 255, 0.8);
+    position: relative;
+    z-index: 1;
+}
+
+.lsa-content {
+    flex: 1;
+    position: relative;
+    z-index: 1;
+}
+
+.lsa-badge {
+    display: inline-block;
+    background: #f43f5e;
+    color: white;
+    font-size: 0.7rem;
+    font-weight: 800;
+    padding: 4px 10px;
+    border-radius: 99px;
+    letter-spacing: 0.05em;
+    margin-bottom: 12px;
+}
+
+.lsa-content h2 {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0 0 8px 0;
+    letter-spacing: -0.02em;
+}
+
+.lsa-content p {
+    font-size: 1.05rem;
+    color: #475569;
+    margin: 0 0 16px 0;
+    line-height: 1.5;
+    max-width: 600px;
+}
+
+.lsa-stats {
+    display: flex;
+    gap: 16px;
+}
+
+.lsa-stat {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #334155;
+    background: white;
+    padding: 6px 12px;
+    border-radius: 99px;
+    border: 1px solid rgba(244, 63, 94, 0.1);
+}
+
+.lsa-action {
+    position: relative;
+    z-index: 1;
+}
+
+.lsa-btn {
+    display: inline-block;
+    background: #f43f5e;
+    color: white;
+    font-weight: 700;
+    padding: 16px 32px;
+    border-radius: 99px;
+    font-size: 1.05rem;
+    text-decoration: none;
+    box-shadow: 0 8px 20px -6px rgba(244, 63, 94, 0.5), inset 0 -3px 0 rgba(0, 0, 0, 0.1);
+    transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    cursor: pointer;
+}
+
+.lsa-btn:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 12px 24px -8px rgba(244, 63, 94, 0.6), inset 0 -3px 0 rgba(0, 0, 0, 0.1);
+    color: white;
+}
+
+.lsa-btn:active {
+    transform: translateY(1px);
+    box-shadow: 0 4px 10px -4px rgba(244, 63, 94, 0.5), inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+}

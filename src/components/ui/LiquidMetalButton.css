@@ -1,0 +1,212 @@
+/*
+ * LiquidMetalButton.css
+ * ─────────────────────
+ * Styles for the unified CapAble button design system.
+ * No Tailwind required — pure CSS, scoped to .lmb-* classes.
+ */
+
+/* ─── Base ─────────────────────────────────────────────────────────────────── */
+.lmb {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    cursor: pointer;
+    outline: none;
+    font-family: inherit;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    text-decoration: none;
+    user-select: none;
+    -webkit-font-smoothing: antialiased;
+    overflow: hidden;
+    transform-style: preserve-3d;
+}
+
+.lmb:focus-visible {
+    outline: 2px solid #3b82f6;
+    outline-offset: 3px;
+}
+
+.lmb:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* ─── Sizes ─────────────────────────────────────────────────────────────────── */
+.lmb--sm {
+    height: 32px;
+    padding: 0 14px;
+    border-radius: 99px;
+    font-size: 0.78rem;
+    gap: 5px;
+}
+
+.lmb--md {
+    height: 38px;
+    padding: 0 20px;
+    border-radius: 99px;
+    font-size: 0.83rem;
+    gap: 6px;
+}
+
+.lmb--lg {
+    height: 46px;
+    padding: 0 28px;
+    border-radius: 99px;
+    font-size: 0.92rem;
+    gap: 7px;
+}
+
+/* ─── Content Layer ─────────────────────────────────────────────────────────── */
+.lmb-content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+}
+
+.lmb-label {
+    display: flex;
+    align-items: center;
+}
+
+/* ─── PRIMARY — Liquid Metal ─────────────────────────────────────────────────── */
+.lmb-primary {
+    background: #0f172a;
+    color: #ffffff;
+    box-shadow:
+        0 1px 2px rgba(0, 0, 0, 0.4),
+        0 4px 16px rgba(0, 0, 0, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+/* Shader fills the whole button */
+.lmb-shader {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    border-radius: inherit;
+    overflow: hidden;
+    opacity: 0.92;
+    transition: opacity 0.2s;
+}
+
+.lmb-primary:hover .lmb-shader {
+    opacity: 1;
+}
+
+/* Gloss reflection overlay */
+.lmb-gloss {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    border-radius: inherit;
+    background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.18) 0%,
+        rgba(255, 255, 255, 0.05) 40%,
+        transparent 60%
+    );
+    pointer-events: none;
+    transition: opacity 0.2s;
+}
+
+.lmb-primary:hover .lmb-gloss {
+    background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.24) 0%,
+        rgba(255, 255, 255, 0.08) 40%,
+        transparent 60%
+    );
+}
+
+/* ─── SECONDARY — Glass ──────────────────────────────────────────────────────── */
+.lmb-secondary {
+    background: rgba(255, 255, 255, 0.48);
+    color: #0f172a;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.65);
+    box-shadow:
+        0 1px 3px rgba(0, 0, 0, 0.08),
+        inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    transition: background 0.2s, box-shadow 0.2s, border-color 0.2s;
+}
+
+.lmb-secondary:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.72);
+    border-color: rgba(255, 255, 255, 0.85);
+    box-shadow:
+        0 2px 8px rgba(0, 0, 0, 0.12),
+        inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+/* Dark-background variant for secondary inside dark sections */
+.dark-section .lmb-secondary,
+.lmb-secondary.dark {
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.25);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.dark-section .lmb-secondary:hover,
+.lmb-secondary.dark:hover {
+    background: rgba(255, 255, 255, 0.18);
+    border-color: rgba(255, 255, 255, 0.4);
+}
+
+/* ─── TERTIARY — Text ────────────────────────────────────────────────────────── */
+.lmb-tertiary {
+    background: transparent;
+    color: #475569;
+    border: none;
+    padding-left: 4px;
+    padding-right: 4px;
+    font-weight: 500;
+    transition: color 0.15s;
+}
+
+.lmb-tertiary:hover:not(:disabled) {
+    color: #0f172a;
+}
+
+/* ─── Spinner ────────────────────────────────────────────────────────────────── */
+.lmb-spinner {
+    width: 14px;
+    height: 14px;
+    animation: lmb-spin 0.7s linear infinite;
+    flex-shrink: 0;
+}
+
+@keyframes lmb-spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ─── Reduced motion ─────────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+    .lmb,
+    .lmb-shader,
+    .lmb-gloss {
+        animation: none !important;
+        transition: none !important;
+    }
+    .lmb-spinner {
+        animation: none !important;
+    }
+}
+
+/* ─── Responsive ─────────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+    .lmb--lg {
+        height: 44px;
+        padding: 0 22px;
+        font-size: 0.88rem;
+    }
+}

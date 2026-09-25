@@ -1,0 +1,138 @@
+/* InterviewSchedulerPage.css */
+
+.sched-page { min-height: 100vh; background: #f8fafc; padding-top: 80px; }
+.sched-content { max-width: 1100px; margin: 0 auto; padding: 28px 20px 80px; }
+
+.sched-header {
+    display: flex; align-items: center; gap: 14px; margin-bottom: 20px;
+}
+.sched-header h1 { font-size: 22px; font-weight: 800; color: #0f172a; margin: 0; }
+.sched-header p  { font-size: 13px; color: #64748b; margin: 2px 0 0; }
+
+.sched-add-btn {
+    margin-left: auto;
+    display: flex; align-items: center; gap: 6px;
+    background: #2563eb; color: white; border: none;
+    border-radius: 10px; padding: 10px 18px;
+    font-size: 13px; font-weight: 700; cursor: pointer;
+    transition: filter 0.2s;
+}
+.sched-add-btn:hover { filter: brightness(1.1); }
+
+/* Role tabs */
+.sched-role-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+.sched-role-tab {
+    display: flex; align-items: center; gap: 6px;
+    padding: 8px 16px; border-radius: 100px;
+    border: 1.5px solid #e2e8f0; background: white;
+    font-size: 13px; font-weight: 600; color: #64748b;
+    cursor: pointer; transition: all 0.2s;
+}
+.sched-role-tab:hover { border-color: #2563eb; color: #2563eb; }
+.sched-role-tab.active { background: #2563eb; border-color: #2563eb; color: white; }
+
+/* Empty */
+.sched-empty {
+    display: flex; flex-direction: column; align-items: center;
+    gap: 12px; padding: 80px; color: #94a3b8; text-align: center;
+}
+
+/* Calendar */
+.sched-calendar { display: flex; flex-direction: column; gap: 20px; }
+
+.sched-day-label {
+    font-size: 14px; font-weight: 700; color: #334155;
+    padding: 8px 14px;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+
+.sched-day-slots { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; }
+
+.sched-slot {
+    background: white;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+}
+.sched-slot--available { border-left: 4px solid #10b981; }
+.sched-slot--booked    { border-left: 4px solid #2563eb; }
+.sched-slot--cancelled { border-left: 4px solid #ef4444; opacity: 0.6; }
+
+.sched-slot-time {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 15px; font-weight: 700; color: #0f172a;
+}
+.sched-slot-dur { font-size: 12px; color: #94a3b8; font-weight: 400; }
+
+.sched-slot-mode {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 13px; color: #64748b;
+}
+.sched-slot-link { color: #6366f1; margin-left: 4px; }
+
+.sched-slot-status { font-size: 12px; font-weight: 600; }
+
+.sched-slot-actions { display: flex; gap: 6px; margin-top: 4px; }
+.sched-slot-btn {
+    display: flex; align-items: center; gap: 4px;
+    padding: 6px 12px; border-radius: 7px;
+    font-size: 12px; font-weight: 600; cursor: pointer; border: none;
+    transition: all 0.15s;
+}
+.sched-slot-btn--book { background: #eff6ff; color: #2563eb; }
+.sched-slot-btn--book:hover { background: #dbeafe; }
+.sched-slot-btn--del  { background: #fef2f2; color: #dc2626; }
+.sched-slot-btn--del:hover { background: #fee2e2; }
+
+/* Modal */
+.sched-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.5);
+    backdrop-filter: blur(4px);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 1000; padding: 20px;
+}
+.sched-modal {
+    background: white; border-radius: 20px;
+    padding: 28px; width: 100%; max-width: 480px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+}
+.sched-modal-header {
+    display: flex; align-items: center; gap: 10px; margin-bottom: 20px;
+}
+.sched-modal-header h3 { font-size: 17px; font-weight: 700; color: #0f172a; flex: 1; margin: 0; }
+.sched-modal-header button { background: none; border: none; cursor: pointer; color: #94a3b8; }
+.sched-modal-sub { font-size: 13px; color: #64748b; margin: -8px 0 16px; }
+
+.sched-modal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+
+.sched-field { display: flex; flex-direction: column; gap: 4px; }
+.sched-field--full { grid-column: 1 / -1; }
+.sched-field label { font-size: 11px; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; }
+.sched-field input, .sched-field select {
+    padding: 9px 12px; border: 1.5px solid #e2e8f0;
+    border-radius: 8px; font-size: 13px; color: #0f172a;
+    outline: none; transition: border-color 0.15s;
+    background: white;
+}
+.sched-field input:focus, .sched-field select:focus { border-color: #2563eb; }
+
+.sched-modal-submit {
+    width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;
+    background: linear-gradient(135deg, #2563eb, #4f46e5);
+    color: white; border: none; border-radius: 10px; padding: 13px;
+    font-size: 14px; font-weight: 700; cursor: pointer; transition: filter 0.2s;
+}
+.sched-modal-submit:hover:not(:disabled) { filter: brightness(1.08); }
+.sched-modal-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+.sched-modal-submit--green { background: linear-gradient(135deg, #10b981, #059669); }
+
+.spin { animation: spin 1s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }

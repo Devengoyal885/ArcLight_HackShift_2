@@ -1,13 +1,145 @@
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { FloatingNavbar } from '../../components/navigation/FloatingNavbar';
-import { learningPath, candidateCapabilities } from '../../data/candidate';
 import { Link } from 'react-router-dom';
-import { ArrowRight, FlaskConical } from 'lucide-react';
+import { ArrowRight, BookOpen, ExternalLink, Loader2, Sparkles, AlertCircle, CheckCircle2, MessageSquare, Target } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
+import { getCapabilities, type LearningResource } from '../../services/profileService';
+import { generateLearningPath } from '../../services/learningService';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '../../lib/firebase';
+import type { UserCapability } from '../../services/profileService';
 import './LearningPage.css';
 
 export default function LearningPage() {
-    const mlCap = candidateCapabilities.find(c => c.id === 'ml')!;
-    const cloudCap = candidateCapabilities.find(c => c.id === 'cloud')!;
+    const { user, dbUid, profile } = useAuth();
+    const [capabilities, setCapabilities] = useState<UserCapability[]>([]);
+    const [resources, setResources] = useState<LearningResource[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [generating, setGenerating] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const [careerTargetRole, setCareerTargetRole] = useState<string>('');
+    const [careerMissingSkills, setCareerMissingSkills] = useState<string[]>([]);
+
+    useEffect(() => {
+        if (!user || !dbUid) return;
+        getCapabilities(dbUid).then(caps => {
+            setCapabilities(caps);
+            setLoading(false);
+        }).catch(err => {
+            console.error(err);
+            setLoading(false);
+        });
+    }, [user]);
+
+    // Load career target from Firestore to get real missing skills
+    useEffect(() => {
+        if (!user || !dbUid) return;
+        const CACHE_KEY = `career_roles_${dbUid}`;
+        
+        // Try local storage first for speed
+        const cached = localStorage.getItem(CACHE_KEY);
+        if (cached) {
+            try {
+                const data = JSON.parse(cached);
+                const roles = data.roles;
+                if (roles?.length > 0) {
+                    setCareerTargetRole(roles[0].role);
+                    // Missing skills = skills required by target role that user doesn't have at 60+
+                    const missing = roles[0].requirements
+                        ?.filter((req: any) => {
+                            const userCap = (data.caps || []).find((c: any) => 
+                                c.skill?.toLowerCase().includes(req.skill?.toLowerCase())
+                            );
+                            return !userCap || userCap.score < 60;
+                        })
+                        .map((r: any) => r.skill) || [];
+                    setCareerMissingSkills(missing);
+                    return;
+                }
+            } catch { /* noop */ }
+        }
+        
+        // Fallback: Firestore
+        getDoc(doc(db, 'users', dbUid, 'careerTarget'))
+            .then(snap => {
+                if (snap.exists()) {
+                    const data = snap.data();
+                    const roles = data.roles;
+                    if (roles?.length > 0) {
+                        setCareerTargetRole(roles[0].role);
+                        setCareerMissingSkills(roles[0].requirements?.map((r: any) => r.skill) || []);
+                    }
+                }
+            })
+            .catch(console.error);
+    }, [user, dbUid]);
+
+    const handleGenerate = async (forceRegenerate: boolean = false) => {
+        if (!user) return;
+        setGenerating(true);
+        setError(null);
+        try {
+            const CACHE_KEY = `learning_path_${dbUid!}`;
+            const currentCapsHash = capabilities.map(c => `${c.skill}:${c.score}`).sort().join('|');
+
+            if (!forceRegenerate) {
+                const cachedDataStr = localStorage.getItem(CACHE_KEY);
+                if (cachedDataStr) {
+                    try {
+                        const cachedData = JSON.parse(cachedDataStr);
+                        const isCapsChanged = cachedData.capsHash !== currentCapsHash;
+                        if (!isCapsChanged && cachedData.resources && cachedData.resources.length > 0) {
+                            setResources(cachedData.resources);
+                            setGenerating(false);
+                            return;
+                        }
+                    } catch (e) {
+                        console.error("Failed to parse cache", e);
+                    }
+                }
+            }
+
+            // Use career target role and real missing skills if available
+            const targetRole = careerTargetRole || profile?.headline || 'Software Engineer';
+            const path = await generateLearningPath(targetRole, capabilities, careerMissingSkills);
+            setResources(path);
+            
+            localStorage.setItem(CACHE_KEY, JSON.stringify({
+                resources: path,
+                timestamp: Date.now(),
+                capsHash: currentCapsHash
+            }));
+        } catch (err: any) {
+            console.error('Failed to generate learning path', err);
+            setError(err.message || 'Failed to generate path. Please try again.');
+        } finally {
+            setGenerating(false);
+        }
+    };
+
+    // If capabilities just loaded and no resources exist, auto-generate
+    useEffect(() => {
+        if (!loading && resources.length === 0 && !generating) {
+            handleGenerate();
+        }
+    }, [loading]);
+
+    const formatMinutes = (mins: number) => {
+        if (mins < 60) return `${mins}m`;
+        const h = Math.floor(mins / 60);
+        const m = mins % 60;
+        return m > 0 ? `${h}h ${m}m` : `${h}h`;
+    };
+
+    const getDifficultyColor = (diff: string) => {
+        switch (diff.toLowerCase()) {
+            case 'beginner': return '#10b981'; // Green
+            case 'advanced': return '#ef4444'; // Red
+            case 'intermediate':
+            default: return '#f59e0b'; // Amber
+        }
+    };
 
     return (
         <div className="learn-page">
@@ -15,90 +147,135 @@ export default function LearningPage() {
             <div className="learn-bg" />
 
             <main className="learn-main">
-                <motion.div className="learn-header" initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
-                    <p className="learn-eyebrow">PERSONALIZED LEARNING</p>
+                {/* ── Gamified Soft Skills Arena Banner ── */}
+                <motion.div 
+                    className="learn-softskills-arena"
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.1 }}
+                >
+                    <div className="lsa-icon-bg">
+                        <MessageSquare size={48} color="#f43f5e" strokeWidth={1.5} />
+                    </div>
+                    <div className="lsa-content">
+                        <div className="lsa-badge">NEW MODULE</div>
+                        <h2>Soft Skills & Communication</h2>
+                        <p>Master conflict resolution, empathy, and client communication through interactive, scenario-based challenges.</p>
+                        <div className="lsa-stats">
+                            <div className="lsa-stat"><Target size={14} color="#f43f5e" /> 15 Scenarios</div>
+                            <div className="lsa-stat"><Sparkles size={14} color="#f59e0b" /> AI Graded</div>
+                        </div>
+                    </div>
+                    <div className="lsa-action">
+                        <Link to="/candidate/preparation?tab=assessments" className="lsa-btn">
+                            Enter the Arena
+                        </Link>
+                    </div>
+                </motion.div>
+
+                <motion.div className="learn-header" initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
+                    <p className="learn-eyebrow">
+                        <Sparkles size={14} className="inline-icon" /> AI-GENERATED LEARNING
+                    </p>
                     <h1 className="learn-title">Close the gap.<br />Don't restart<br /><em>your journey.</em></h1>
                     <p className="learn-sub">
-                        Every learning step connects directly to a measurable capability gain.
-                        No generic courses. No restarting from zero.
+                        Real courses tailored exactly to your verified skill gaps. No generic content. Focus on what gets you hired.
                     </p>
-                </motion.div>
-
-                {/* Goal bar */}
-                <motion.div className="learn-goal-strip" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}>
-                    {[
-                        { cap: mlCap, from: 64, to: 78, label: 'Machine Learning' },
-                        { cap: cloudCap, from: 45, to: 65, label: 'Cloud' },
-                    ].map((g) => (
-                        <div key={g.label} className="learn-goal-item">
-                            <div className="learn-goal-labels">
-                                <span className="learn-goal-name">{g.label}</span>
-                                <span className="learn-goal-delta" style={{ color: g.cap.color }}>
-                                    {g.from}% → {g.to}%
+                    {careerTargetRole && (
+                        <div style={{
+                            display: 'inline-flex', alignItems: 'center', gap: '8px',
+                            background: 'rgba(99,102,241,0.1)', border: '1px solid rgba(99,102,241,0.25)',
+                            borderRadius: '100px', padding: '6px 14px', marginTop: '12px',
+                            fontSize: '13px', color: '#6366f1', fontWeight: 600,
+                        }}>
+                            <Target size={13} /> Targeting: {careerTargetRole}
+                            {careerMissingSkills.length > 0 && (
+                                <span style={{ color: '#94a3b8', fontWeight: 400 }}>
+                                    · {careerMissingSkills.length} skill gap{careerMissingSkills.length !== 1 ? 's' : ''} to close
                                 </span>
-                            </div>
-                            <div className="learn-goal-track">
-                                <div className="learn-goal-current" style={{ width: `${g.from}%`, background: 'rgba(255,255,255,0.1)' }} />
-                                <div className="learn-goal-target" style={{ width: `${g.to}%`, background: g.cap.color, opacity: 0.3 }} />
-                                <div className="learn-goal-now" style={{ width: `${g.from}%`, background: g.cap.color }} />
-                            </div>
+                            )}
                         </div>
-                    ))}
+                    )}
                 </motion.div>
 
-                {/* Weekly pathway */}
-                <div className="learn-weeks">
-                    {learningPath.map((week, i) => {
-                        const cap = candidateCapabilities.find(c => c.id === week.capability)!;
-                        return (
-                            <motion.div
-                                key={week.week}
-                                className="learn-week-card"
-                                initial={{ opacity: 0, x: -20 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                transition={{ delay: 0.2 + i * 0.1 }}
-                            >
-                                <div className="learn-week-num" style={{ background: cap.color + '22', color: cap.color }}>
-                                    WEEK {String(week.week).padStart(2, '0')}
-                                </div>
-
-                                <div className="learn-week-body">
-                                    <h3 className="learn-week-title">{week.label}</h3>
-                                    <div className="learn-week-exercise">
-                                        <FlaskConical size={13} />
-                                        {week.exercise}
+                {/* Loading / Empty States */}
+                {loading || generating ? (
+                    <div className="learn-state-container">
+                        <Loader2 size={32} className="spin text-blue" />
+                        <h3>{generating ? 'Analyzing profile & finding resources...' : 'Loading capabilities...'}</h3>
+                    </div>
+                ) : error ? (
+                    <div className="learn-state-container">
+                        <AlertCircle size={32} className="text-red-500" />
+                        <h3 className="text-red-600">Generation Failed</h3>
+                        <p className="text-red-500">Network Error. Please try again later.</p>
+                        <button className="learn-generate-btn mt-4" onClick={() => handleGenerate(true)}>
+                            Try Again <Sparkles size={14} />
+                        </button>
+                    </div>
+                ) : resources.length === 0 ? (
+                    <div className="learn-state-container">
+                        <AlertCircle size={32} className="text-gray" />
+                        <h3>Ready to map your path</h3>
+                        <p>We'll analyze your current capability scores and generate a tailored list of real resources.</p>
+                        <button className="learn-generate-btn" onClick={() => handleGenerate(true)}>
+                            Generate Path <Sparkles size={14} />
+                        </button>
+                    </div>
+                ) : (
+                    <>
+                        <div className="flex justify-end mb-4 pr-4">
+                             <button onClick={() => handleGenerate(true)} className="text-sm font-semibold text-blue-600 hover:text-blue-800 flex items-center gap-1">
+                                <Sparkles size={14} /> Regenerate Path
+                            </button>
+                        </div>
+                        <div className="learn-list">
+                            {resources.map((res, i) => (
+                                <motion.div
+                                    key={res.resourceTitle + i}
+                                    className="learn-card"
+                                    initial={{ opacity: 0, x: -20 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    transition={{ delay: i * 0.08 }}
+                                >
+                                    <div className="learn-card-top">
+                                        <div className="learn-provider">{res.provider}</div>
+                                        <div className="learn-meta-pills">
+                                            <span className="learn-pill difficulty" style={{ color: getDifficultyColor(res.difficulty), borderColor: getDifficultyColor(res.difficulty) + '40', background: getDifficultyColor(res.difficulty) + '10' }}>
+                                                {res.difficulty}
+                                            </span>
+                                            <span className="learn-pill time">⏱ {formatMinutes(res.estimatedMinutes)}</span>
+                                        </div>
                                     </div>
-                                </div>
 
-                                <div className="learn-week-gain">
-                                    <div className="learn-gain-arrow" style={{ color: cap.color }}>↑</div>
-                                    <span className="learn-gain-value" style={{ color: cap.color }}>
-                                        +{week.toScore - week.fromScore}%
-                                    </span>
-                                    <span className="learn-gain-cap">{cap.label}</span>
-                                </div>
+                                    <h3 className="learn-card-title">{res.resourceTitle}</h3>
+                                    
+                                    <div className="learn-card-skill">
+                                        <BookOpen size={14} /> Focus: <strong>{res.skill}</strong>
+                                    </div>
 
-                                <div className="learn-week-connector">→</div>
-                                <div className="learn-week-verified">
-                                    <div className="learn-verified-pill">CAPABILITY GROWTH</div>
-                                </div>
-                            </motion.div>
-                        );
-                    })}
-                </div>
-
-                {/* CTA */}
-                <div className="learn-cta-row">
-                    <Link to="/candidate/career" className="learn-cta-btn">
-                        View Career Transition Path <ArrowRight size={16} />
-                    </Link>
-                    <Link to="/candidate/opportunities" className="learn-cta-secondary">
-                        Check Opportunity Radar <ArrowRight size={14} />
-                    </Link>
-                </div>
+                                    <div className="learn-card-actions">
+                                        <a href={res.url} target="_blank" rel="noopener noreferrer" className="learn-action-btn primary">
+                                            Start Learning <ExternalLink size={14} />
+                                        </a>
+                                    </div>
+                                </motion.div>
+                            ))}
+                        </div>
+                        
+                        <div className="learn-cta-row">
+                            <button className="learn-cta-secondary" onClick={() => handleGenerate(true)}>
+                                <Sparkles size={14} /> Regenerate Path
+                            </button>
+                            <Link to="/candidate/opportunities" className="learn-cta-btn">
+                                Check Opportunity Radar <ArrowRight size={14} />
+                            </Link>
+                        </div>
+                    </>
+                )}
 
                 <div className="learn-product-loop">
-                    {['LEARNING', 'CAPABILITY GROWTH', 'EVIDENCE', 'OPPORTUNITY'].map((s, i, arr) => (
+                    {['ASSESSMENTS', 'AI ANALYSIS', 'VERIFIED GAP', 'REAL RESOURCES'].map((s, i, arr) => (
                         <span key={s} className="learn-loop-item">
                             <span>{s}</span>
                             {i < arr.length - 1 && <span className="learn-loop-arr">→</span>}

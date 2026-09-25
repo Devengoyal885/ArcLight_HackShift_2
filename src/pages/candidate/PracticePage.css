@@ -1,0 +1,250 @@
+.prac-page {
+    padding: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: #1e293b;
+}
+
+.prac-header {
+    margin-bottom: 24px;
+}
+
+.prac-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 28px;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0 0 8px 0;
+}
+
+.prac-subtitle {
+    color: #64748b;
+    font-size: 15px;
+    margin: 0;
+}
+
+.prac-filters {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+}
+
+.prac-search-box {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 0 16px;
+    flex: 1;
+    min-width: 250px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+}
+
+.prac-search-input {
+    border: none;
+    outline: none;
+    padding: 12px 0;
+    font-size: 14px;
+    width: 100%;
+    color: #334155;
+    background: transparent;
+}
+
+.prac-select {
+    padding: 0 16px;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    background: #ffffff;
+    color: #334155;
+    font-size: 14px;
+    outline: none;
+    cursor: pointer;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+    min-width: 160px;
+}
+
+.prac-table-container {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02), 0 2px 4px -2px rgba(0,0,0,0.02);
+}
+
+.prac-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.prac-table th {
+    background: #f8fafc;
+    padding: 14px 20px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #475569;
+    border-bottom: 1px solid #e2e8f0;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.prac-row {
+    border-bottom: 1px solid #f1f5f9;
+    transition: background 0.15s;
+}
+
+.prac-row:hover {
+    background: #f8fafc;
+}
+
+.prac-row td {
+    padding: 16px 20px;
+    vertical-align: middle;
+}
+
+.prac-col-status {
+    width: 50px;
+    text-align: center;
+}
+
+.prac-status-dash {
+    width: 12px;
+    height: 2px;
+    background: #cbd5e1;
+    margin: 0 auto;
+    border-radius: 2px;
+}
+
+.prac-col-title {
+    font-weight: 600;
+    color: #1e293b;
+    font-size: 15px;
+    width: 40%;
+}
+
+.prac-diff-badge {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 6px;
+    text-transform: capitalize;
+}
+
+.prac-diff-easy { color: #16a34a; background: #dcfce7; }
+.prac-diff-medium { color: #d97706; background: #fef3c7; }
+.prac-diff-hard { color: #dc2626; background: #fee2e2; }
+
+.prac-tags-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.prac-tag {
+    font-size: 11px;
+    font-weight: 500;
+    color: #64748b;
+    background: #f1f5f9;
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+
+.prac-col-action {
+    text-align: right;
+}
+
+.prac-solve-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #eff6ff;
+    color: #2563eb;
+    font-weight: 600;
+    font-size: 13px;
+    padding: 8px 16px;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: all 0.2s;
+    border: 1px solid #bfdbfe;
+}
+
+.prac-solve-btn:hover {
+    background: #dbeafe;
+    text-decoration: none;
+}
+
+.prac-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 0;
+    margin-top: 10px;
+}
+
+.prac-page-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    color: #334155;
+    transition: all 0.2s;
+}
+
+.prac-page-btn:hover:not(:disabled) {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+}
+
+.prac-page-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.prac-page-info {
+    font-size: 14px;
+    font-weight: 500;
+    color: #64748b;
+}
+
+.prac-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 100px 0;
+    color: #64748b;
+    font-size: 15px;
+    font-weight: 500;
+}
+
+.prac-spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid #e2e8f0;
+    border-top-color: #2563eb;
+    border-radius: 50%;
+    animation: prac-spin 1s linear infinite;
+    margin-bottom: 16px;
+}
+
+@keyframes prac-spin {
+    to { transform: rotate(360deg); }
+}
+
+.prac-empty {
+    padding: 60px 0;
+    text-align: center;
+    color: #64748b;
+    font-size: 15px;
+}

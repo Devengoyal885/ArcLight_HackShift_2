@@ -3,6 +3,211 @@
  * These types dictate strictly how data is represented across the CapAble ecosystem.
  */
 
+// ─── 0. Assessment System ────────────────────────────────────────────────────
+
+export type QuestionDifficulty = 'easy' | 'medium' | 'hard';
+
+export type AssessmentDomain =
+    | 'dsa'
+    | 'development'
+    | 'aptitude'
+    | 'devops'
+    | 'computer_networks'
+    | 'system_design'
+    | 'dbms'
+    | 'soft_skills';
+
+export interface AssessmentQuestion {
+    id: string;
+    domain: AssessmentDomain;
+    topic: string;              // sub-topic within the domain
+    difficulty: QuestionDifficulty;
+    question: string;
+    options: [string, string, string, string];
+    correctIndex: 0 | 1 | 2 | 3;
+    explanation: string;
+    roles: string[];            // role slugs this question is relevant for
+    timeSeconds: number;        // expected time to answer
+}
+
+export interface QuestionAnswer {
+    questionId: string;
+    selectedIndex: number | null; // null = skipped
+    timeTakenSeconds: number;
+}
+
+export type SupportedLanguage =
+    | 'python'
+    | 'javascript'
+    | 'typescript'
+    | 'java'
+    | 'cpp'
+    | 'c'
+    | 'go'
+    | 'rust'
+    | 'kotlin'
+    | 'csharp'
+    | 'ruby'
+    | 'php';
+
+export interface TestCase {
+    id: string;
+    description?: string;
+    stdin: string;          // raw stdin string fed to the program
+    expectedOutput: string; // trimmed stdout the program must produce
+    isHidden: boolean;      // hidden test cases not shown to candidate
+}
+
+export interface CodingExample {
+    input: string;
+    output: string;
+    explanation?: string;
+}
+
+export interface CodingProblem {
+    id: string;
+    domain: AssessmentDomain;
+    topic: string;
+    difficulty: QuestionDifficulty;
+    title: string;
+    description: string;           // markdown-like problem statement
+    constraints: string[];
+    examples: CodingExample[];
+    starterCode: Partial<Record<SupportedLanguage, string>>;
+    testCases: TestCase[];
+    roles: string[];
+    timeSeconds: number;           // recommended solve time
+}
+
+export interface TestResult {
+    testCaseId: string;
+    passed: boolean;
+    input: string;
+    expectedOutput: string;
+    actualOutput: string;
+    isHidden: boolean;
+    executionTimeMs?: number;
+    error?: string;
+}
+
+export interface CodeSubmission {
+    problemId: string;
+    problemTitle?: string;
+    domain?: AssessmentDomain;
+    topic?: string;
+    difficulty?: QuestionDifficulty;
+    language: SupportedLanguage;
+    code: string;
+    testResults: TestResult[];
+    passedCount: number;
+    totalCount: number;
+    score: number;              // 0–100 based on test cases passed
+    timeTakenSeconds: number;
+    submittedAt?: string;
+    memoryUsedKb?: number;
+}
+
+// ─── Learning Pattern & Coding Stats ─────────────────────────────────────────
+
+export interface MistakePattern {
+    topic: string;
+    domain: AssessmentDomain;
+    errorType: 'wrong_answer' | 'time_limit' | 'runtime_error' | 'compile_error';
+    count: number;
+    lastSeen: string;
+}
+
+export interface LearningPattern {
+    uid: string;
+    totalSolved: number;
+    totalAttempted: number;
+    byDifficulty: { easy: number; medium: number; hard: number };
+    byDomain: Partial<Record<AssessmentDomain, number>>;
+    byLanguage: Partial<Record<SupportedLanguage, number>>;
+    mistakePatterns: MistakePattern[];
+    weakTopics: string[];
+    strongTopics: string[];
+    averageSolveTimeSeconds: number;
+    streakDays: number;
+    lastActive: string;
+    updatedAt: string;
+}
+
+export interface CodingStats {
+    totalSolved: number;
+    totalAttempted: number;
+    easySolved: number;
+    mediumSolved: number;
+    hardSolved: number;
+    byDomain: Partial<Record<AssessmentDomain, number>>;
+    acceptanceRate: number;
+    favoriteLanguage: SupportedLanguage | null;
+    currentStreak: number;
+    longestStreak: number;
+    lastActive: string | null;
+    recentSubmissions: CodeSubmission[];
+    activityHeatmap: Record<string, number>; // date → submissions count
+}
+
+export interface AssessmentSession {
+    id: string;
+    uid?: string;               // candidate uid — used for proctoring snapshot paths
+    domain: AssessmentDomain;
+    role: string;
+    questions: AssessmentQuestion[];
+    codingProblems: CodingProblem[];    // NEW — coding problems in this session
+    answers: QuestionAnswer[];
+    codeSubmissions: CodeSubmission[];  // NEW — one per coding problem
+    startedAt: string;
+    status: 'in_progress' | 'submitted' | 'abandoned';
+}
+
+export interface TopicResult {
+    topic: string;
+    correct: number;
+    total: number;
+    percentage: number;
+}
+
+export interface AssessmentResult {
+    sessionId: string;
+    domain: AssessmentDomain;
+    role: string;
+    score: number;              // 0–100
+    correctCount: number;
+    totalCount: number;
+    timeTakenSeconds: number;
+    topicBreakdown: TopicResult[];
+    percentile: number;         // simulated percentile vs other users
+    completedAt: string;        // ISO timestamp
+    capabilityDelta: number;    // how much the capability score moved
+    practiceRecommendations: PracticeRecommendation[];
+}
+
+export interface PracticeRecommendation {
+    domain: AssessmentDomain;
+    topic: string;
+    reason: string;             // e.g. "Only 40% correct in Graph Traversal"
+    resourceTitle: string;
+    resourceType: 'article' | 'video' | 'practice_set' | 'mini_project';
+    estimatedMinutes: number;
+    priority: 'critical' | 'high' | 'medium' | 'low';
+}
+
+export interface DomainProfile {
+    domain: AssessmentDomain;
+    label: string;
+    description: string;
+    icon: string;               // lucide icon name
+    color: string;
+    topics: string[];
+    currentScore: number;       // derived from assessments + capability engine
+    lastAssessed: string | null; // ISO timestamp or null
+    assessmentCount: number;
+    status: 'unassessed' | 'assessed' | 'gap' | 'proficient';
+    requiredByRoles: string[];
+}
+
 // ─── 1. Identity (User Editable) ──────────────────────────────────────────
 
 export interface Candidate {

@@ -1,20 +1,148 @@
-import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { FloatingNavbar } from '../../components/navigation/FloatingNavbar';
-import { roleCapabilityModel } from '../../data/employer';
-import { ArrowRight, Search } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
+import {
+    generateCapabilityModel, postRole, getPostedRoles,
+    deletePostedRole, updatePostedRole,
+    type PostedRole, type CapabilityModel, type PostingType,
+} from '../../services/employerService';
+import {
+    ArrowRight, Search, Loader2, Plus, Briefcase, BookOpen,
+    GraduationCap, FlaskConical, CheckCircle2, Trash2,
+    Globe, Calendar, DollarSign, Users, AlertCircle,
+} from 'lucide-react';
 import './RolesPage.css';
 
-export default function RolesPage() {
-    const [roleQuery, setRoleQuery] = useState('AI Engineer');
-    const [analyzing, setAnalyzing] = useState(false);
-    const [analyzed, setAnalyzed] = useState(true);
+const TYPE_LABELS: Record<PostingType, string> = {
+    placement: '💼 Placement',
+    internship: '🎓 Internship',
+    training: '📚 Training Program',
+    fdp: '🏫 FDP (Faculty Dev.)',
+    research: '🔬 Research Project',
+    apprenticeship: '🔧 Apprenticeship',
+};
 
-    const handleAnalyze = () => {
+const TYPE_COLORS: Record<PostingType, string> = {
+    placement: '#2563eb',
+    internship: '#10b981',
+    training: '#7c3aed',
+    fdp: '#f59e0b',
+    research: '#0ea5e9',
+    apprenticeship: '#f4845f',
+};
+
+export default function RolesPage() {
+    const { user, dbUid } = useAuth();
+    const [roleQuery, setRoleQuery] = useState('');
+    const [analyzing, setAnalyzing] = useState(false);
+    const [model, setModel] = useState<CapabilityModel | null>(null);
+    const [error, setError] = useState<string | null>(null);
+
+    // Post role form
+    const [showPostForm, setShowPostForm] = useState(false);
+    const [posting, setPosting] = useState(false);
+    const [postSuccess, setPostSuccess] = useState(false);
+    const [formData, setFormData] = useState({
+        location: 'India',
+        remote: false,
+        salary: '',
+        stipend: '',
+        duration: '',
+        deadline: '',
+        description: '',
+    });
+
+    // My posted roles
+    const [myRoles, setMyRoles] = useState<PostedRole[]>([]);
+    const [loadingRoles, setLoadingRoles] = useState(false);
+    const [activeTab, setActiveTab] = useState<'generate' | 'my-roles'>('generate');
+
+    const storedProfile = (() => {
+        try { return JSON.parse(localStorage.getItem('employerProfile') || '{}'); } catch { return {}; }
+    })();
+    const companyName = user?.displayName || storedProfile.companyName || 'Your Company';
+
+    useEffect(() => {
+        if (!user || activeTab !== 'my-roles') return;
+        setLoadingRoles(true);
+        getPostedRoles(dbUid!)
+            .then(setMyRoles)
+            .catch(console.error)
+            .finally(() => setLoadingRoles(false));
+    }, [user, activeTab]);
+
+    const handleAnalyze = async () => {
+        if (!roleQuery.trim()) return;
         setAnalyzing(true);
-        setAnalyzed(false);
-        setTimeout(() => { setAnalyzing(false); setAnalyzed(true); }, 1400);
+        setError(null);
+        setModel(null);
+        setShowPostForm(false);
+        try {
+            const result = await generateCapabilityModel(roleQuery, formData.description || undefined);
+            if (!result) throw new Error('AI did not return a valid capability model.');
+            setModel(result);
+            setShowPostForm(true);
+        } catch (e: unknown) {
+            setError(e instanceof Error ? e.message : 'Failed to generate capability model.');
+        } finally {
+            setAnalyzing(false);
+        }
+    };
+
+    const handlePost = async () => {
+        if (!user || !model) return;
+        setPosting(true);
+        setPostSuccess(false);
+        
+        const rolePayload: any = {
+            employerUid: dbUid!,
+            companyName,
+            title: model.role,
+            type: model.type,
+            location: formData.location || 'India',
+            remote: !!formData.remote,
+            description: formData.description || model.summary || '',
+            requiredSkills: model.suggestedSkills || [],
+            requiredCapabilities: (model.capabilities || []).map(c => ({ skill: c.label || 'Skill', required: c.required || 0 })),
+            tags: model.suggestedSkills || [],
+            status: 'active',
+        };
+        if (formData.salary) rolePayload.salary = formData.salary;
+        if (formData.stipend) rolePayload.stipend = formData.stipend;
+        if (formData.duration || model.suggestedDuration) rolePayload.duration = formData.duration || model.suggestedDuration;
+        if (formData.deadline) rolePayload.deadline = formData.deadline;
+
+        try {
+            await postRole(dbUid!, rolePayload);
+            setPostSuccess(true);
+            setTimeout(() => {
+                setPostSuccess(false);
+                setShowPostForm(false);
+                setModel(null);
+                setRoleQuery('');
+                setActiveTab('my-roles');
+            }, 2000);
+        } catch (e: any) {
+            console.error("Error posting role:", e);
+            setError(e?.message || 'Failed to post role. Please try again.');
+        } finally {
+            setPosting(false);
+        }
+    };
+
+    const handleDelete = async (role: PostedRole) => {
+        if (!user || !role.id) return;
+        if (!confirm(`Delete "${role.title}"? This cannot be undone.`)) return;
+        await deletePostedRole(dbUid!, role.id);
+        setMyRoles(prev => prev.filter(r => r.id !== role.id));
+    };
+
+    const handleToggleStatus = async (role: PostedRole) => {
+        if (!user || !role.id) return;
+        const newStatus = role.status === 'active' ? 'closed' : 'active';
+        await updatePostedRole(dbUid!, role.id, { status: newStatus });
+        setMyRoles(prev => prev.map(r => r.id === role.id ? { ...r, status: newStatus } : r));
     };
 
     return (
@@ -23,93 +151,291 @@ export default function RolesPage() {
             <main className="roles-main">
                 <motion.div className="roles-header" initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
                     <p className="roles-eyebrow">ROLE INTELLIGENCE</p>
-                    <h1 className="roles-title">From job description<br /><em>to capability model.</em></h1>
-                    <p className="roles-sub">Enter a role title and CapAble? extracts the required capability model instantly.</p>
+                    <h1 className="roles-title">From description<br /><em>to live opportunity.</em></h1>
+                    <p className="roles-sub">
+                        Enter any role, internship, FDP, or research project — CapAble? extracts the capability model and posts it live to student feeds.
+                    </p>
                 </motion.div>
 
-                {/* Search input */}
-                <div className="roles-search-row">
-                    <div className="roles-search-wrap">
-                        <Search size={16} className="roles-search-icon" />
-                        <input
-                            className="roles-search-input"
-                            value={roleQuery}
-                            onChange={e => setRoleQuery(e.target.value)}
-                            placeholder="e.g. AI Engineer, Data Scientist, Cloud Architect"
-                        />
-                    </div>
-                    <button className="roles-analyze-btn" onClick={handleAnalyze} disabled={analyzing}>
-                        {analyzing ? 'Analyzing...' : 'Generate Capability Model'} <ArrowRight size={15} />
+                {/* Tabs */}
+                <div className="roles-tabs">
+                    <button
+                        className={`roles-tab ${activeTab === 'generate' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('generate')}
+                    >
+                        <Plus size={15} /> Post New Opportunity
+                    </button>
+                    <button
+                        className={`roles-tab ${activeTab === 'my-roles' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('my-roles')}
+                    >
+                        <Briefcase size={15} /> My Posted Roles {myRoles.length > 0 && <span className="roles-tab-badge">{myRoles.length}</span>}
                     </button>
                 </div>
 
-                {analyzing && (
-                    <div className="roles-analyzing">
-                        <div className="roles-analyzing-spinner" />
-                        <p>Extracting capability model from role intelligence…</p>
-                    </div>
-                )}
-
-                {analyzed && !analyzing && (
-                    <motion.div className="roles-result" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}>
-                        {/* Pipeline steps */}
-                        <div className="roles-pipeline">
-                            {['JOB DESCRIPTION', 'SKILL EXTRACTION', 'CAPABILITY MODEL', 'CANDIDATE DISCOVERY'].map((step, i) => (
-                                <span key={step} className="roles-pipeline-step">
-                                    <motion.span
-                                        className="roles-pipeline-label"
-                                        initial={{ opacity: 0 }}
-                                        animate={{ opacity: 1 }}
-                                        transition={{ delay: i * 0.15 }}
-                                    >{step}</motion.span>
-                                    {i < 3 && <ArrowRight size={13} className="roles-pipeline-arrow" />}
-                                </span>
-                            ))}
-                        </div>
-
-                        <div className="roles-result-layout">
-                            {/* Capability model */}
-                            <div className="roles-capability-model">
-                                <p className="roles-result-label">REQUIRED CAPABILITIES — {roleCapabilityModel.role}</p>
-                                <div className="roles-caps">
-                                    {roleCapabilityModel.capabilities.map((cap, i) => (
-                                        <motion.div
-                                            key={cap.label}
-                                            className="roles-cap-item"
-                                            initial={{ opacity: 0, x: -10 }}
-                                            animate={{ opacity: 1, x: 0 }}
-                                            transition={{ delay: i * 0.08 }}
-                                        >
-                                            <div className="roles-cap-header">
-                                                <span className="roles-cap-name">{cap.label}</span>
-                                                <span className="roles-cap-weight">{Math.round(cap.weight * 100)}% weight</span>
-                                            </div>
-                                            <div className="roles-cap-track">
-                                                <div className="roles-cap-fill" style={{ width: `${cap.required}%` }} />
-                                            </div>
-                                            <span className="roles-cap-req">Required: {cap.required}%</span>
-                                        </motion.div>
-                                    ))}
+                {/* ── Generate Tab ── */}
+                <AnimatePresence mode="wait">
+                    {activeTab === 'generate' && (
+                        <motion.div key="gen" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
+                            {/* Search input */}
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: 16, marginBottom: 24 }}>
+                                <div className="roles-search-row" style={{ marginBottom: 0 }}>
+                                    <div className="roles-search-wrap">
+                                        <Search size={16} className="roles-search-icon" />
+                                        <input
+                                            className="roles-search-input"
+                                            value={roleQuery}
+                                            onChange={e => setRoleQuery(e.target.value)}
+                                            onKeyDown={e => e.key === 'Enter' && handleAnalyze()}
+                                            placeholder="Job Title (e.g. Frontend Engineer, ML Internship…)"
+                                        />
+                                    </div>
+                                    <button className="roles-analyze-btn" onClick={handleAnalyze} disabled={analyzing || !roleQuery.trim()}>
+                                        {analyzing
+                                            ? <><Loader2 size={15} className="spin" /> Analysing…</>
+                                            : <>Extract Capability Model <ArrowRight size={15} /></>
+                                        }
+                                    </button>
                                 </div>
+                                <textarea
+                                    className="roles-search-input"
+                                    style={{ width: '100%', minHeight: 120, padding: 16, borderRadius: 12, resize: 'vertical' }}
+                                    placeholder="Paste full Job Description here to extract skills and capabilities accurately..."
+                                    value={formData.description}
+                                    onChange={e => setFormData(f => ({ ...f, description: e.target.value }))}
+                                />
                             </div>
 
-                            {/* CTA */}
-                            <div className="roles-cta-panel">
-                                <div className="roles-cta-stat">
-                                    <span className="roles-cta-num">4</span>
-                                    <span className="roles-cta-label">Candidates above 90% match</span>
+                            {error && (
+                                <div className="roles-error">
+                                    <AlertCircle size={16} /> {error}
                                 </div>
-                                <div className="roles-cta-stat">
-                                    <span className="roles-cta-num">11</span>
-                                    <span className="roles-cta-label">Internal transition candidates</span>
+                            )}
+
+                            {analyzing && (
+                                <div className="roles-analyzing">
+                                    <div className="roles-analyzing-spinner" />
+                                    <p>Extracting capability model using AI…</p>
                                 </div>
-                                <Link to="/employer/talent" className="roles-discover-btn">
-                                    Discover Talent <ArrowRight size={15} />
-                                </Link>
+                            )}
+
+                            {/* Capability Model Result */}
+                            {model && !analyzing && (
+                                <motion.div className="roles-result" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}>
+                                    {/* Pipeline steps */}
+                                    <div className="roles-pipeline">
+                                        {['DESCRIPTION', 'SKILL EXTRACTION', 'CAPABILITY MODEL', 'LIVE POSTING'].map((step, i) => (
+                                            <span key={step} className="roles-pipeline-step">
+                                                <motion.span
+                                                    className="roles-pipeline-label"
+                                                    initial={{ opacity: 0 }}
+                                                    animate={{ opacity: 1 }}
+                                                    transition={{ delay: i * 0.15 }}
+                                                >{step}</motion.span>
+                                                {i < 3 && <ArrowRight size={13} className="roles-pipeline-arrow" />}
+                                            </span>
+                                        ))}
+                                    </div>
+
+                                    <div className="roles-result-layout">
+                                        {/* Capability model */}
+                                        <div className="roles-capability-model">
+                                            <div className="roles-model-header">
+                                                <p className="roles-result-label">REQUIRED CAPABILITIES — {model.role}</p>
+                                                <span
+                                                    className="roles-type-badge"
+                                                    style={{ background: TYPE_COLORS[model.type] + '15', color: TYPE_COLORS[model.type] }}
+                                                >
+                                                    {TYPE_LABELS[model.type]}
+                                                </span>
+                                            </div>
+                                            <p className="roles-model-summary">{model.summary}</p>
+                                            <div className="roles-caps">
+                                                {model.capabilities.map((cap, i) => (
+                                                    <motion.div
+                                                        key={cap.label}
+                                                        className="roles-cap-item"
+                                                        initial={{ opacity: 0, x: -10 }}
+                                                        animate={{ opacity: 1, x: 0 }}
+                                                        transition={{ delay: i * 0.08 }}
+                                                    >
+                                                        <div className="roles-cap-header">
+                                                            <span className="roles-cap-name">{cap.label}</span>
+                                                            <span className="roles-cap-weight">{Math.round(cap.weight * 100)}% weight</span>
+                                                        </div>
+                                                        <div className="roles-cap-track">
+                                                            <div className="roles-cap-fill" style={{ width: `${cap.required}%` }} />
+                                                        </div>
+                                                        <span className="roles-cap-req">Required: {cap.required}%</span>
+                                                    </motion.div>
+                                                ))}
+                                            </div>
+                                            <div className="roles-skill-tags">
+                                                {model.suggestedSkills.map(s => (
+                                                    <span key={s} className="roles-skill-tag">{s}</span>
+                                                ))}
+                                            </div>
+                                        </div>
+
+                                        {/* Post form */}
+                                        <div className="roles-post-form">
+                                            <p className="roles-result-label">POST THIS OPPORTUNITY</p>
+
+                                            <div className="roles-form-group">
+                                                <label>Location</label>
+                                                <input
+                                                    type="text"
+                                                    value={formData.location}
+                                                    onChange={e => setFormData(f => ({ ...f, location: e.target.value }))}
+                                                    placeholder="e.g. Mumbai, India"
+                                                />
+                                            </div>
+                                            <div className="roles-form-group">
+                                                <label>
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={formData.remote}
+                                                        onChange={e => setFormData(f => ({ ...f, remote: e.target.checked }))}
+                                                    />{' '}
+                                                    Remote / Work from Home
+                                                </label>
+                                            </div>
+                                            {(model.type === 'placement') && (
+                                                <div className="roles-form-group">
+                                                    <label>Salary / CTC (optional)</label>
+                                                    <input
+                                                        type="text"
+                                                        value={formData.salary}
+                                                        onChange={e => setFormData(f => ({ ...f, salary: e.target.value }))}
+                                                        placeholder="e.g. ₹8-12 LPA"
+                                                    />
+                                                </div>
+                                            )}
+                                            {(model.type === 'internship' || model.type === 'fdp' || model.type === 'apprenticeship') && (
+                                                <div className="roles-form-group">
+                                                    <label>Stipend (optional)</label>
+                                                    <input
+                                                        type="text"
+                                                        value={formData.stipend}
+                                                        onChange={e => setFormData(f => ({ ...f, stipend: e.target.value }))}
+                                                        placeholder="e.g. ₹15,000/month"
+                                                    />
+                                                </div>
+                                            )}
+                                            <div className="roles-form-group">
+                                                <label>Duration (optional)</label>
+                                                <input
+                                                    type="text"
+                                                    value={formData.duration}
+                                                    onChange={e => setFormData(f => ({ ...f, duration: e.target.value }))}
+                                                    placeholder={model.suggestedDuration || 'e.g. 6 months'}
+                                                />
+                                            </div>
+                                            <div className="roles-form-group">
+                                                <label>Application Deadline (optional)</label>
+                                                <input
+                                                    type="date"
+                                                    value={formData.deadline}
+                                                    onChange={e => setFormData(f => ({ ...f, deadline: e.target.value }))}
+                                                />
+                                            </div>
+                                            <div className="roles-form-group">
+                                                <label>Description (optional — AI summary will be used if blank)</label>
+                                                <textarea
+                                                    value={formData.description}
+                                                    onChange={e => setFormData(f => ({ ...f, description: e.target.value }))}
+                                                    rows={3}
+                                                    placeholder={model.summary}
+                                                />
+                                            </div>
+
+                                            {postSuccess && (
+                                                <div className="roles-success">
+                                                    <CheckCircle2 size={16} /> Role posted successfully! Visible to students now.
+                                                </div>
+                                            )}
+
+                                            <button
+                                                className="roles-post-btn"
+                                                onClick={handlePost}
+                                                disabled={posting || postSuccess}
+                                            >
+                                                {posting
+                                                    ? <><Loader2 size={15} className="spin" /> Posting…</>
+                                                    : postSuccess
+                                                    ? <><CheckCircle2 size={15} /> Posted!</>
+                                                    : <>Post Live to Student Feed <ArrowRight size={15} /></>
+                                                }
+                                            </button>
+                                        </div>
+                                    </div>
+                                </motion.div>
+                            )}
+                        </motion.div>
+                    )}
+
+                    {/* ── My Roles Tab ── */}
+                    {activeTab === 'my-roles' && (
+                        <motion.div key="my" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
+                            {loadingRoles && (
+                                <div className="roles-loading">
+                                    <Loader2 size={24} className="spin" /> Loading your posted roles…
+                                </div>
+                            )}
+                            {!loadingRoles && myRoles.length === 0 && (
+                                <div className="roles-empty">
+                                    <Briefcase size={32} color="#94a3b8" />
+                                    <p>No roles posted yet.</p>
+                                    <p className="roles-empty-sub">Use the "Post New Opportunity" tab to publish your first role to students.</p>
+                                </div>
+                            )}
+                            <div className="roles-my-list">
+                                {myRoles.map((role, i) => (
+                                    <motion.div
+                                        key={role.id}
+                                        className={`roles-my-card ${role.status === 'closed' ? 'closed' : ''}`}
+                                        initial={{ opacity: 0, y: 10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ delay: i * 0.06 }}
+                                    >
+                                        <div className="roles-my-card-header">
+                                            <div>
+                                                <h3 className="roles-my-title">{role.title}</h3>
+                                                <span
+                                                    className="roles-type-badge"
+                                                    style={{ background: TYPE_COLORS[role.type] + '15', color: TYPE_COLORS[role.type] }}
+                                                >
+                                                    {TYPE_LABELS[role.type]}
+                                                </span>
+                                            </div>
+                                            <div className="roles-my-actions">
+                                                <button
+                                                    className={`roles-status-btn ${role.status === 'active' ? 'active' : 'closed'}`}
+                                                    onClick={() => handleToggleStatus(role)}
+                                                >
+                                                    {role.status === 'active' ? 'Active' : 'Closed'}
+                                                </button>
+                                                <button className="roles-delete-btn" onClick={() => handleDelete(role)} title="Delete">
+                                                    <Trash2 size={14} />
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div className="roles-my-meta">
+                                            <span><Globe size={13} /> {role.location}{role.remote ? ' · Remote' : ''}</span>
+                                            {role.salary && <span><DollarSign size={13} /> {role.salary}</span>}
+                                            {role.stipend && <span><DollarSign size={13} /> {role.stipend}</span>}
+                                            {role.duration && <span><Calendar size={13} /> {role.duration}</span>}
+                                            <span><Users size={13} /> {role.applicantCount ?? 0} applicants</span>
+                                        </div>
+                                        <div className="roles-skill-tags">
+                                            {role.tags.slice(0, 5).map(t => <span key={t} className="roles-skill-tag">{t}</span>)}
+                                        </div>
+                                    </motion.div>
+                                ))}
                             </div>
-                        </div>
-                    </motion.div>
-                )}
+                        </motion.div>
+                    )}
+                </AnimatePresence>
             </main>
         </div>
     );

@@ -1,30 +1,30 @@
 import { initializeApp } from 'firebase/app';
-import { getAnalytics } from "firebase/analytics";
 import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from 'firebase/auth';
+import { getFirestore } from 'firebase/firestore';
+import { getStorage } from 'firebase/storage';
 
-// Your web app's Firebase configuration
 const firebaseConfig = {
-    apiKey: "AIzaSyCE8AUFYJwsgS6HDr8vcDfawu157VaFInk",
-    authDomain: "capable-cf9ef.firebaseapp.com",
-    projectId: "capable-cf9ef",
-    storageBucket: "capable-cf9ef.firebasestorage.app",
-    messagingSenderId: "694272947770",
-    appId: "1:694272947770:web:eb8e542708795a7633a703",
-    measurementId: "G-L1JCGQQP1S"
+    apiKey: "AIzaSyD6ZYSMF-uhdDdpxlJm-wBL3Szho4LvMu4",
+    authDomain: "wardrobe-app-adf6e.firebaseapp.com",
+    projectId: "wardrobe-app-adf6e",
+    storageBucket: "wardrobe-app-adf6e.firebasestorage.app",
+    messagingSenderId: "920220901330",
+    appId: "1:920220901330:web:2367f33012d657e43e320b"
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = typeof window !== 'undefined' ? getAnalytics(app) : null;
 const auth = getAuth(app);
+const db = getFirestore(app);
+const storage = getStorage(app);
 const googleProvider = new GoogleAuthProvider();
 
 export {
     auth,
+    db,
+    storage,
     googleProvider,
     signInWithPopup,
     signInWithEmailAndPassword,
     createUserWithEmailAndPassword,
     signOut,
-    analytics
 };

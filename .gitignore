@@ -22,3 +22,10 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+serviceAccountKey.json
+
+# Secrets - NEVER commit these
+.env
+.env.local
+.env.production

@@ -4,10 +4,29 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>sihvijeta2026</title>
+    <meta name="theme-color" content="#2563eb" />
+    <meta name="description" content="CapAble — AI-powered campus placement and career readiness platform for students, institutions, and employers across India." />
+    <meta name="keywords" content="campus placement, job portal, career, skill assessment, NAAC, placement drive" />
+    <meta property="og:title" content="CapAble — Campus Placement Intelligence" />
+    <meta property="og:description" content="AI-powered campus placement platform for students, institutions, and employers." />
+    <meta property="og:type" content="website" />
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="apple-touch-icon" href="/favicon.svg" />
+    <title>CapAble — Campus Placement Intelligence</title>
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    <script>
+      // Clean up rogue service workers from dev mode
+      if ('serviceWorker' in navigator && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
+        navigator.serviceWorker.getRegistrations().then(function(registrations) {
+          for(let registration of registrations) {
+            registration.unregister();
+            console.log('[SW] Unregistered rogue dev service worker');
+          }
+        });
+      }
+    </script>
   </body>
 </html>

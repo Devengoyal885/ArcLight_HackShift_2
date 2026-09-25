@@ -1,0 +1,363 @@
+/* ─── Shared Institution Sub-Page Styles — Light Theme ──────────────────────── */
+
+.inst-subpage {
+    min-height: 100vh;
+    background: #f8fafc;
+    color: #0f172a;
+    padding-top: 80px;
+}
+
+.inst-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+}
+
+/* Header */
+.inst-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.inst-header-icon { color: #2563eb; flex-shrink: 0; margin-top: 4px; }
+.inst-header h1 { font-size: 1.6rem; font-weight: 800; margin: 0; color: #0f172a; }
+.inst-header p { font-size: 0.85rem; color: #64748b; margin: 0.25rem 0 0; }
+
+/* Toolbar */
+.inst-toolbar {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.inst-search-bar {
+    flex: 1;
+    min-width: 240px;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 0.65rem 1rem;
+    color: #64748b;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+}
+.inst-search-bar input {
+    flex: 1;
+    background: none;
+    border: none;
+    outline: none;
+    color: #0f172a;
+    font-size: 0.85rem;
+}
+.inst-search-bar input::placeholder { color: #94a3b8; }
+
+/* Sub-tabs */
+.inst-subtabs {
+    display: flex;
+    gap: 0.4rem;
+    margin-bottom: 1.5rem;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 4px;
+    width: fit-content;
+}
+.inst-subtab {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem 1rem;
+    border-radius: 7px;
+    border: none;
+    background: none;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #64748b;
+    cursor: pointer;
+    transition: all 0.18s;
+}
+.inst-subtab:hover { color: #0f172a; background: #f1f5f9; }
+.inst-subtab.active { background: #2563eb; color: white; }
+
+/* Table */
+.inst-table-container {
+    background: white;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+}
+
+.inst-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+}
+
+.inst-table th {
+    text-align: left;
+    padding: 0.9rem 1.25rem;
+    color: #64748b;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 700;
+    border-bottom: 1px solid #e2e8f0;
+    background: #f8fafc;
+}
+
+.inst-table td {
+    padding: 0.9rem 1.25rem;
+    border-bottom: 1px solid #f1f5f9;
+    color: #1e293b;
+    vertical-align: middle;
+}
+
+.inst-table tbody tr:hover { background: #f8fafc; }
+.inst-table tbody tr:last-child td { border-bottom: none; }
+
+/* People cells */
+.inst-student-cell {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+.inst-avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #2563eb, #7c3aed);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.75rem;
+    flex-shrink: 0;
+}
+.inst-name { font-weight: 600; color: #0f172a; font-size: 0.88rem; }
+.inst-email { font-size: 0.75rem; color: #64748b; }
+
+/* Progress bar */
+.inst-progress-bar {
+    height: 5px;
+    border-radius: 99px;
+    background: #e2e8f0;
+    width: 120px;
+    overflow: hidden;
+    margin-top: 4px;
+}
+.inst-progress-fill { height: 100%; border-radius: 99px; background: linear-gradient(90deg, #2563eb, #7c3aed); }
+
+/* Skill tags */
+.inst-skill-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+.inst-skill-tag {
+    font-size: 0.65rem;
+    padding: 2px 8px;
+    border-radius: 99px;
+    background: #eff6ff;
+    color: #2563eb;
+    font-weight: 600;
+}
+
+/* Action button */
+.inst-view-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 0.3rem 0.75rem;
+    border-radius: 6px;
+    border: 1px solid #e2e8f0;
+    background: white;
+    color: #475569;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-decoration: none;
+}
+.inst-view-btn:hover { border-color: #2563eb; color: #2563eb; background: #eff6ff; }
+
+/* Status Badges */
+.inst-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.22rem 0.6rem;
+    border-radius: 6px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.inst-badge--Placed,
+.inst-badge--Offer { color: #059669; background: #d1fae5; }
+.inst-badge--Interview,
+.inst-badge--Interview\ Scheduled { color: #d97706; background: #fef3c7; }
+.inst-badge--Screening { color: #2563eb; background: #dbeafe; }
+.inst-badge--Applied { color: #7c3aed; background: #ede9fe; }
+.inst-badge--Rejected { color: #dc2626; background: #fee2e2; }
+.inst-badge--online { color: #2563eb; background: #dbeafe; }
+.inst-badge--offline { color: #059669; background: #d1fae5; }
+.inst-badge--hybrid { color: #7c3aed; background: #ede9fe; }
+.inst-badge--workshop { color: #d97706; background: #fef3c7; }
+.inst-badge--guest_lecture { color: #0369a1; background: #e0f2fe; }
+.inst-badge--live_project { color: #059669; background: #d1fae5; }
+.inst-badge--placement_drive { color: #7c3aed; background: #ede9fe; }
+.inst-badge--complete { color: #059669; background: #d1fae5; }
+.inst-badge--onboarding { color: #64748b; background: #f1f5f9; }
+
+/* Funnel */
+.inst-funnel {
+    display: flex;
+    align-items: flex-end;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+}
+.inst-funnel-step {
+    flex: 1;
+    min-width: 100px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+.inst-funnel-bar {
+    width: 100%;
+    border-radius: 8px 8px 0 0;
+    min-height: 24px;
+    transition: height 0.4s ease;
+}
+.inst-funnel-label { font-size: 0.7rem; color: #64748b; font-weight: 600; text-align: center; }
+.inst-funnel-count { font-size: 1.2rem; font-weight: 800; color: #0f172a; }
+
+/* Event cards */
+.inst-event-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.25rem;
+}
+.inst-event-card {
+    background: white;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    transition: all 0.2s;
+}
+.inst-event-card:hover { border-color: #c7d2fe; box-shadow: 0 4px 16px rgba(0,0,0,0.06); transform: translateY(-2px); }
+.inst-event-card-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 0.5rem; }
+.inst-event-title { font-size: 1rem; font-weight: 700; color: #0f172a; margin: 0; }
+.inst-event-meta { font-size: 0.78rem; color: #64748b; display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center; }
+.inst-event-meta span { display: flex; align-items: center; gap: 4px; }
+.inst-event-desc { font-size: 0.8rem; color: #475569; line-height: 1.55; }
+.inst-event-delete {
+    background: none;
+    border: none;
+    color: #94a3b8;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 6px;
+    transition: all 0.15s;
+    flex-shrink: 0;
+}
+.inst-event-delete:hover { color: #dc2626; background: #fee2e2; }
+
+/* Create event form */
+.inst-create-form {
+    background: white;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+}
+.inst-create-form h3 { font-size: 1rem; font-weight: 700; color: #0f172a; margin: 0 0 1.25rem; display: flex; align-items: center; gap: 0.5rem; }
+.inst-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.inst-form-group { display: flex; flex-direction: column; gap: 0.4rem; }
+.inst-form-group.full { grid-column: 1 / -1; }
+.inst-form-label { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #64748b; }
+.inst-form-input {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 0.65rem 0.9rem;
+    color: #0f172a;
+    font-size: 0.85rem;
+    outline: none;
+    transition: border-color 0.15s;
+}
+.inst-form-input:focus { border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,0.08); }
+.inst-form-actions { display: flex; gap: 0.75rem; justify-content: flex-end; margin-top: 1rem; grid-column: 1/-1; }
+.inst-btn-primary {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    padding: 0.65rem 1.4rem;
+    background: linear-gradient(135deg, #2563eb, #7c3aed);
+    color: white; border: none; border-radius: 8px;
+    font-size: 0.85rem; font-weight: 600; cursor: pointer;
+    transition: opacity 0.2s;
+}
+.inst-btn-primary:hover { opacity: 0.9; }
+.inst-btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+.inst-btn-secondary {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    padding: 0.65rem 1.2rem;
+    background: white; color: #475569;
+    border: 1px solid #e2e8f0; border-radius: 8px;
+    font-size: 0.85rem; font-weight: 600; cursor: pointer;
+    transition: all 0.15s;
+}
+.inst-btn-secondary:hover { border-color: #2563eb; color: #2563eb; }
+
+/* Company cards */
+.inst-company-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+}
+.inst-company-card {
+    background: white;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: all 0.2s;
+    position: relative;
+}
+.inst-company-card:hover { border-color: #c7d2fe; box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
+.inst-company-logo {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 1rem;
+    flex-shrink: 0;
+}
+.inst-company-info { flex: 1; min-width: 0; }
+.inst-company-name { font-weight: 700; color: #0f172a; font-size: 0.92rem; }
+.inst-company-email { font-size: 0.75rem; color: #64748b; }
+.inst-company-remove {
+    background: none; border: none; color: #94a3b8;
+    cursor: pointer; padding: 4px; border-radius: 6px; transition: all 0.15s;
+}
+.inst-company-remove:hover { color: #dc2626; background: #fee2e2; }
+
+/* Loading & Empty */
+.inst-loading { display: flex; flex-direction: column; align-items: center; gap: 1rem; padding: 4rem; color: #64748b; }
+.inst-loading .spin { animation: inst-sub-spin 1s linear infinite; }
+@keyframes inst-sub-spin { to { transform: rotate(360deg); } }

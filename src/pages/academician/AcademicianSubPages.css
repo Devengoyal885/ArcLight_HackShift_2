@@ -1,0 +1,244 @@
+﻿/* ─── Shared Academician Sub-Page Styles — LIGHT THEME ─────────────────────── */
+
+.acad-subpage {
+    min-height: 100vh;
+    background: #f8fafc;
+    color: #0f172a;
+    padding-top: 80px;
+}
+
+.acad-content {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+}
+
+/* Header */
+.acad-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.acad-header-icon { color: #7c3aed; flex-shrink: 0; margin-top: 4px; }
+.acad-header h1 { font-size: 1.6rem; font-weight: 800; margin: 0; color: #0f172a; }
+.acad-header p { font-size: 0.85rem; color: #64748b; margin: 0.25rem 0 0; }
+
+/* Search */
+.acad-search-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 0.75rem 1rem;
+    margin-bottom: 2rem;
+    color: #64748b;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+.acad-search-bar input {
+    flex: 1;
+    background: none;
+    border: none;
+    outline: none;
+    color: #0f172a;
+    font-size: 0.85rem;
+}
+.acad-search-bar input::placeholder { color: #94a3b8; }
+
+/* Sections */
+.acad-section { margin-bottom: 2.5rem; }
+.acad-section-title {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #64748b;
+    margin-bottom: 1rem;
+}
+
+/* Registration List */
+.acad-reg-list { display: flex; flex-direction: column; gap: 0.5rem; }
+.acad-reg-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+}
+.acad-reg-info { display: flex; flex-direction: column; }
+.acad-reg-title { font-weight: 600; font-size: 0.85rem; color: #0f172a; }
+.acad-reg-provider { font-size: 0.75rem; color: #64748b; }
+.acad-status {
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 0.3rem 0.6rem;
+    border-radius: 6px;
+}
+.acad-status--registered { color: #2563eb; background: #dbeafe; }
+.acad-status--attending { color: #d97706; background: #fef3c7; }
+.acad-status--completed { color: #059669; background: #d1fae5; }
+.acad-status--withdrawn { color: #dc2626; background: #fee2e2; }
+.acad-status--interested { color: #0369a1; background: #e0f2fe; }
+.acad-status--applied { color: #2563eb; background: #dbeafe; }
+.acad-status--collaborating { color: #7c3aed; background: #ede9fe; }
+.acad-status--proposed { color: #d97706; background: #fef3c7; }
+.acad-status--accepted { color: #059669; background: #d1fae5; }
+.acad-status--in_progress { color: #7c3aed; background: #ede9fe; }
+.acad-status--rejected { color: #dc2626; background: #fee2e2; }
+
+/* Cards Grid */
+.acad-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.25rem;
+}
+
+.acad-opp-card {
+    background: white;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+.acad-opp-card:hover {
+    border-color: #c7d2fe;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.07);
+    transform: translateY(-2px);
+}
+
+.acad-opp-header h3 { font-size: 1rem; font-weight: 700; margin: 0; color: #0f172a; }
+.acad-opp-company { font-size: 0.78rem; color: #64748b; }
+.acad-opp-desc { font-size: 0.8rem; color: #475569; line-height: 1.5; }
+
+.acad-opp-meta {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.75rem;
+    color: #64748b;
+}
+.acad-opp-meta span { display: flex; align-items: center; gap: 0.3rem; }
+
+.acad-opp-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.acad-tag {
+    font-size: 0.68rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    background: #eff6ff;
+    color: #2563eb;
+}
+
+.acad-opp-actions { margin-top: auto; }
+
+.acad-btn-register {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #2563eb, #7c3aed);
+    color: #fff;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.acad-btn-register:hover { opacity: 0.9; transform: scale(1.02); }
+.acad-btn-register:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.acad-btn-registered {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #059669;
+}
+
+.acad-btn-express {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.5rem 1rem;
+    border: 1px solid #ddd6fe;
+    border-radius: 8px;
+    background: #f5f3ff;
+    color: #7c3aed;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.acad-btn-express:hover { background: #ede9fe; }
+.acad-btn-express:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* Loading & Empty */
+.acad-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    padding: 3rem;
+    color: #64748b;
+}
+.acad-loading .spin { animation: acad-spin 1s linear infinite; }
+@keyframes acad-spin { to { transform: rotate(360deg); } }
+
+.acad-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 3rem;
+    text-align: center;
+    color: #64748b;
+    background: white;
+    border: 1.5px dashed #e2e8f0;
+    border-radius: 16px;
+}
+.acad-empty h3 { color: #475569; font-size: 1.1rem; margin: 0; }
+.acad-empty p { max-width: 400px; font-size: 0.85rem; line-height: 1.6; margin: 0; }
+
+/* Form styles */
+.acad-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+.acad-form-group label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #475569;
+}
+.acad-form-group textarea,
+.acad-form-group input {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 0.75rem;
+    color: #0f172a;
+    font-size: 0.85rem;
+    outline: none;
+    resize: vertical;
+    transition: border-color 0.15s;
+}
+.acad-form-group textarea:focus,
+.acad-form-group input:focus {
+    border-color: #7c3aed;
+    box-shadow: 0 0 0 3px rgba(124,58,237,0.08);
+}

@@ -44,8 +44,8 @@ export const roleCapabilityModel = {
 
 export const candidates = [
     {
-        id: 'alex-morgan',
-        name: 'Alex Morgan',
+        id: 'deven',
+        name: 'Deven',
         headline: 'Software Engineer → AI Engineer',
         capabilityAlignment: 94,
         evidenceConfidence: 'HIGH' as const,

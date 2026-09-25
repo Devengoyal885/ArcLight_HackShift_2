@@ -1,11 +1,11 @@
 // ─── Candidate Mock Data ─────────────────────────────────────────────────────
 
 export const candidateProfile = {
-  id: 'alex-morgan',
-  name: 'Alex Morgan',
+  id: 'deven',
+  name: 'Deven',
   role: 'Software Engineer',
   avatar: null,
-  initials: 'AM',
+  initials: 'D',
   capabilityConfidence: 82,
   verifiedEvidence: 12,
   projectCount: 4,
@@ -59,68 +59,151 @@ export interface EvidenceItem {
   verified: boolean;
 }
 
-export const opportunities = [
+export interface JobOpportunity {
+  id: string;
+  title: string;
+  company: string;
+  match: number;
+  logo: string;
+  type: 'Placement' | 'Internship';
+  state: 'READY NOW' | 'NEAR MATCH' | 'SKILL-BUILDING';
+  location: string;
+  salary?: string;
+  stipend?: string;
+  tags: string[];
+}
+
+export const placements: JobOpportunity[] = [
   {
-    id: 'ai-engineer-intern',
-    title: 'AI Engineer Intern',
-    company: 'TechVentures India',
-    match: 96,
-    capabilityMatch: 98,
-    evidenceMatch: 94,
-    experienceMatch: 91,
-    learningAlignment: 96,
-    deadline: '24 SEP',
-    state: 'READY NOW' as const,
+    id: 'google-swe',
+    title: 'Software Engineer',
+    company: 'Google',
+    match: 94,
+    logo: 'https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg',
+    type: 'Placement',
+    state: 'READY NOW',
+    location: 'Bangalore / Remote',
+    salary: '₹30L - ₹45L',
+    tags: ['DSA', 'System Design', 'Python'],
   },
   {
-    id: 'research-assistant',
+    id: 'amazon-sde',
+    title: 'SDE-1 (Backend)',
+    company: 'Amazon',
+    match: 88,
+    logo: 'https://upload.wikimedia.org/wikipedia/commons/4/4a/Amazon_icon.svg',
+    type: 'Placement',
+    state: 'NEAR MATCH',
+    location: 'Hyderabad',
+    salary: '₹28L - ₹40L',
+    tags: ['Java', 'AWS', 'DSA'],
+  },
+  {
+    id: 'microsoft-ai',
+    title: 'AI Engineer',
+    company: 'Microsoft',
+    match: 96,
+    logo: 'https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg',
+    type: 'Placement',
+    state: 'READY NOW',
+    location: 'Bangalore',
+    salary: '₹35L - ₹50L',
+    tags: ['Machine Learning', 'Research', 'Python'],
+  },
+];
+
+export const internships: JobOpportunity[] = [
+  {
+    id: 'techventures-ai',
+    title: 'AI Research Intern',
+    company: 'TechVentures India',
+    match: 98,
+    logo: 'https://ui-avatars.com/api/?name=TV&background=0D8ABC&color=fff',
+    type: 'Internship',
+    state: 'READY NOW',
+    location: 'Remote',
+    stipend: '₹50,000 / mo',
+    tags: ['Research', 'Python', 'ML'],
+  },
+  {
+    id: 'iitd-research',
     title: 'Research Assistant',
     company: 'IIT Delhi AI Lab',
     match: 94,
-    capabilityMatch: 96,
-    evidenceMatch: 97,
-    experienceMatch: 88,
-    learningAlignment: 92,
-    deadline: '01 OCT',
-    state: 'READY NOW' as const,
+    logo: 'https://ui-avatars.com/api/?name=IIT&background=b91d47&color=fff',
+    type: 'Internship',
+    state: 'READY NOW',
+    location: 'Delhi',
+    stipend: '₹35,000 / mo',
+    tags: ['Research', 'Publication'],
   },
   {
-    id: 'ml-hackathon',
-    title: 'ML Hackathon — National Finals',
-    company: 'SIH 2026',
-    match: 97,
-    capabilityMatch: 94,
-    evidenceMatch: 98,
-    experienceMatch: 96,
-    learningAlignment: 99,
-    deadline: '20 SEP',
-    state: 'READY NOW' as const,
-  },
-  {
-    id: 'backend-engineer',
-    title: 'Backend Engineer',
-    company: 'Startup Studio',
-    match: 78,
-    capabilityMatch: 82,
-    evidenceMatch: 74,
-    experienceMatch: 70,
-    learningAlignment: 80,
-    deadline: '15 OCT',
-    state: 'NEAR MATCH' as const,
-  },
-  {
-    id: 'data-analyst',
-    title: 'Data Analyst',
-    company: 'Analytics Co.',
-    match: 62,
-    capabilityMatch: 65,
-    evidenceMatch: 60,
-    experienceMatch: 58,
-    learningAlignment: 70,
-    deadline: '30 OCT',
-    state: 'SKILL-BUILDING' as const,
+    id: 'stripe-frontend',
+    title: 'Frontend Intern',
+    company: 'Stripe',
+    match: 75,
+    logo: 'https://upload.wikimedia.org/wikipedia/commons/b/ba/Stripe_Logo%2C_revised_2016.svg',
+    type: 'Internship',
+    state: 'SKILL-BUILDING',
+    location: 'Remote',
+    stipend: '₹80,000 / mo',
+    tags: ['React', 'TypeScript'],
   },
 ];
+
+export interface TrendingRole {
+  id: string;
+  title: string;
+  demand: 'Very High' | 'High';
+  targetCompany: string;
+  requiredSkills: { name: string; targetScore: number; currentScore?: number }[];
+}
+
+export const trendingRoles: TrendingRole[] = [
+  {
+    id: 'prompt-engineer',
+    title: 'Prompt Engineer',
+    demand: 'Very High',
+    targetCompany: 'OpenAI',
+    requiredSkills: [
+      { name: 'Machine Learning', targetScore: 85, currentScore: 64 },
+      { name: 'Research', targetScore: 90, currentScore: 91 },
+      { name: 'Prompting', targetScore: 80, currentScore: 0 },
+    ],
+  },
+  {
+    id: 'cloud-architect',
+    title: 'Cloud Architect',
+    demand: 'High',
+    targetCompany: 'AWS',
+    requiredSkills: [
+      { name: 'Cloud', targetScore: 85, currentScore: 45 },
+      { name: 'System Design', targetScore: 80, currentScore: 0 },
+    ],
+  },
+];
+
+export interface RoadmapStep {
+  id: string;
+  title: string;
+  description: string;
+  action: 'Take Assessment' | 'Coding Practice' | 'Build Project';
+  domain: string;
+  completed: boolean;
+}
+
+export const skillRoadmaps: Record<string, RoadmapStep[]> = {
+  'prompt-engineer': [
+    { id: '1', title: 'Master NLP Fundamentals', description: 'Take the Machine Learning assessment to prove fundamental NLP knowledge.', action: 'Take Assessment', domain: 'Machine Learning', completed: false },
+    { id: '2', title: 'Prompting Techniques', description: 'Complete the Prompt Engineering specialized quiz covering zero-shot, few-shot, and chain-of-thought.', action: 'Take Assessment', domain: 'Prompting', completed: false },
+    { id: '3', title: 'OpenAI API Integration', description: 'Complete a coding challenge to integrate and stream OpenAI responses in Python.', action: 'Coding Practice', domain: 'Python', completed: false },
+  ],
+  'cloud-architect': [
+    { id: '1', title: 'Cloud Fundamentals', description: 'Pass the core Cloud capabilities assessment.', action: 'Take Assessment', domain: 'Cloud', completed: false },
+    { id: '2', title: 'Distributed Systems', description: 'Take the System Design theoretical quiz.', action: 'Take Assessment', domain: 'System Design', completed: false },
+    { id: '3', title: 'Infrastructure as Code', description: 'Write a Terraform script in a coding challenge.', action: 'Coding Practice', domain: 'Cloud', completed: false },
+  ],
+};
 
 export const careerTarget = {
   role: 'AI Engineer',
@@ -223,3 +306,28 @@ export const growthTimeline = [
   { year: '2026', label: 'Machine Learning', level: 'Developing', color: '#f59e0b' },
   { year: '2026', label: 'Practical Verification', level: 'Active', color: '#f4845f' },
 ];
+
+/**
+ * Historic assessment summary — read by CareerPage, LearningPage and Dashboard.
+ * Kept in sync with assessmentStore via the store's seed data.
+ * New results land in assessmentStore first; this is the pre-seeded snapshot.
+ */
+export const candidateAssessmentHistory = [
+  {
+    domain: 'dsa' as const,
+    label: 'DSA',
+    score: 88,
+    color: '#2563eb',
+    date: 'Jan 2026',
+    percentile: 91,
+  },
+  {
+    domain: 'development' as const,
+    label: 'Software Development',
+    score: 74,
+    color: '#7c3aed',
+    date: 'Feb 2026',
+    percentile: 72,
+  },
+];
+

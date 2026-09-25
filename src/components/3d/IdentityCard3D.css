@@ -1,235 +1,241 @@
-.id-card-scene {
-    perspective: 1000px;
-    display: inline-flex;
-    align-items: center;
+/* =========================================================
+   CAPABLE IDENTITY CARD (God-Mode UI)
+   ========================================================= */
+
+.id-card-wrapper {
+    display: flex;
     justify-content: center;
-    cursor: pointer;
+    align-items: center;
+    width: 100%;
 }
 
-.id-card {
+.id-card-premium {
     width: 280px;
-    height: 380px;
-    border-radius: 20px;
+    height: auto;
+    border-radius: 28px;
     position: relative;
-    transform-style: preserve-3d;
-    box-shadow:
-        0 30px 80px rgba(0, 0, 0, 0.5),
-        0 8px 20px rgba(0, 0, 0, 0.3),
-        0 0 0 1px rgba(255, 255, 255, 0.08),
-        inset 0 1px 0 rgba(255, 255, 255, 0.12);
-    background: linear-gradient(145deg,
-            #1a1d24 0%,
-            #111318 40%,
-            #0d1117 100%);
+    background: linear-gradient(145deg, rgba(255,255,255,0.94), rgba(246,249,255,0.82));
+    border: 1px solid rgba(110,135,170,0.14);
+    box-shadow: 0 20px 55px rgba(30,55,100,0.08), inset 0 1px 0 rgba(255,255,255,0.95);
     overflow: hidden;
-    will-change: transform;
-}
-
-.id-card-glare {
-    position: absolute;
-    inset: 0;
-    border-radius: 20px;
-    pointer-events: none;
-    z-index: 10;
-}
-
-.id-card-inner {
-    position: relative;
-    height: 100%;
+    padding: 24px 20px;
     display: flex;
     flex-direction: column;
-    padding: var(--space-5);
-    gap: var(--space-4);
+    align-items: center;
+    gap: 20px;
     z-index: 1;
 }
 
-/* ─── Header ─── */
-.id-card-header {
+/* Atmospheric light */
+.id-card-light {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 82% 18%, rgba(55,115,255,0.10), transparent 45%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.id-card-inner {
+    width: 100%;
     display: flex;
+    flex-direction: column;
     align-items: center;
+    z-index: 1;
+}
+
+/* Header */
+.id-card-header {
+    width: 100%;
+    display: flex;
     justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
 }
 
 .id-card-logo {
-    font-size: var(--text-sm);
-    font-weight: var(--weight-black);
-    color: var(--color-electric);
-    letter-spacing: -0.02em;
-    background: rgba(37, 99, 235, 0.15);
-    padding: 4px 8px;
-    border-radius: var(--radius-md);
-}
-
-.id-card-logo-img {
     height: 18px;
     width: auto;
-    padding: 0;
-    background: transparent;
-    border-radius: 0;
 }
 
-.id-card-type {
+.id-card-label {
     font-size: 8px;
-    font-weight: var(--weight-bold);
-    letter-spacing: 0.2em;
+    font-weight: 800;
+    letter-spacing: 0.15em;
+    color: #64748B;
     text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.3);
+    border-bottom: 1px solid rgba(100,116,139,0.2);
+    padding-bottom: 2px;
 }
 
-/* ─── Hero Row ─── */
+/* Ring & Avatar Container */
 .id-card-hero {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: space-between;
-    gap: var(--space-3);
+    margin: 10px 0;
+    position: relative;
 }
 
-.id-card-avatar-wrap {
+.id-card-ring-container {
     position: relative;
-    width: 68px;
-    height: 68px;
-    flex-shrink: 0;
+    width: 120px;
+    height: 120px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.id-card-svg-ring {
+    position: absolute;
+    transform: rotate(-90deg);
+}
+
+.id-card-ring-progress {
+    filter: drop-shadow(0 0 6px rgba(59, 130, 246, 0.4));
+}
+
+.id-card-avatar-container {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #F8FAFC 0%, #E2E8F0 100%);
+    border: 2px solid white;
+    box-shadow: 0 4px 15px rgba(30,55,100,0.1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2;
 }
 
 .id-card-avatar {
-    width: 68px;
-    height: 68px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #2563eb, #7c3aed);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: var(--text-xl);
-    font-weight: var(--weight-bold);
-    color: white;
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #1E293B;
     letter-spacing: -0.03em;
 }
 
-.id-card-avatar-ring {
-    position: absolute;
-    inset: -4px;
-    border-radius: 50%;
-    border: 1px solid rgba(37, 99, 235, 0.4);
-    animation: pulse-ring 2.5s ease-out infinite;
-}
-
-/* ─── Score ─── */
-.id-card-score-wrap {
+/* Capability Score */
+.id-card-score-container {
+    margin-top: -12px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 2px;
-    position: relative;
+    z-index: 3;
+    background: rgba(255,255,255,0.9);
+    padding: 4px 16px;
+    border-radius: 20px;
+    border: 1px solid rgba(110,135,170,0.1);
+    box-shadow: 0 4px 12px rgba(30,55,100,0.06);
 }
 
-.id-card-score-text {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -58%);
-    display: flex;
-    align-items: baseline;
-    gap: 1px;
-}
-
-.id-card-score-number {
-    font-size: var(--text-2xl);
-    font-weight: var(--weight-black);
-    color: white;
-    letter-spacing: var(--tracking-tight);
+.id-card-score-value {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: #0F172A;
     line-height: 1;
+    letter-spacing: -0.02em;
 }
 
-.id-card-score-pct {
-    font-size: var(--text-xs);
-    color: rgba(255, 255, 255, 0.5);
+.id-card-score-percent {
+    font-size: 0.8rem;
+    color: #64748B;
 }
 
 .id-card-score-label {
-    font-size: 9px;
-    color: rgba(255, 255, 255, 0.35);
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    text-align: center;
+    font-size: 0.55rem;
+    font-weight: 800;
+    letter-spacing: 0.15em;
+    color: #3B82F6;
     margin-top: 2px;
 }
 
-/* ─── Identity ─── */
+/* Identity Name */
 .id-card-identity {
-    flex: 1;
+    margin-top: 16px;
+    text-align: center;
     display: flex;
     flex-direction: column;
-    gap: var(--space-1);
+    gap: 4px;
 }
 
 .id-card-name {
-    font-size: var(--text-xl);
-    font-weight: var(--weight-bold);
-    color: white;
-    letter-spacing: var(--tracking-tight);
+    font-size: 24px;
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    color: #0F172A;
+    line-height: 1.1;
 }
 
-.id-card-role {
-    font-size: var(--text-sm);
-    color: rgba(255, 255, 255, 0.45);
+.id-card-subtitle {
+    font-size: 11px;
+    font-weight: 600;
+    color: #64748B;
 }
 
-/* ─── Stats ─── */
-.id-card-stats {
+/* Stats Capsule */
+.id-card-stats-capsule {
+    margin-top: 24px;
+    width: 100%;
     display: flex;
     align-items: center;
-    gap: var(--space-3);
-    padding: var(--space-3);
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    border-radius: var(--radius-lg);
+    justify-content: space-between;
+    background: rgba(255,255,255,0.62);
+    border: 1px solid rgba(100,125,165,0.12);
+    border-radius: 18px;
+    padding: 12px 16px;
+    box-shadow: inset 0 2px 4px rgba(255,255,255,0.8);
 }
 
 .id-card-stat {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 2px;
+    gap: 4px;
     flex: 1;
 }
 
-.id-card-stat-value {
-    font-size: var(--text-xl);
-    font-weight: var(--weight-bold);
-    color: white;
+.id-card-stat-val {
+    font-size: 18px;
+    font-weight: 800;
+    color: #0F172A;
     line-height: 1;
 }
 
-.id-card-stat-label {
+.id-card-stat-lbl {
     font-size: 8px;
-    color: rgba(255, 255, 255, 0.35);
+    font-weight: 700;
+    color: #64748B;
+    letter-spacing: 0.1em;
     text-align: center;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
+    line-height: 1.2;
 }
 
 .id-card-stat-divider {
     width: 1px;
     height: 28px;
-    background: rgba(255, 255, 255, 0.08);
-    flex-shrink: 0;
+    background: rgba(100,125,165,0.15);
 }
 
-/* ─── Edge Highlights ─── */
-.id-card-edge-top {
-    position: absolute;
-    top: 0;
-    left: 12px;
-    right: 12px;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+.id-card-verified-pill {
+    width: 22px;
+    height: 22px;
+    background: rgba(16, 185, 129, 0.1);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #10B981;
+    font-size: 12px;
+    font-weight: 900;
+    margin-bottom: 2px;
 }
 
-.id-card-edge-left {
+/* Edge Highlight for depth */
+.id-card-edge-highlight {
     position: absolute;
-    top: 12px;
-    left: 0;
-    bottom: 12px;
-    width: 1px;
-    background: linear-gradient(180deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    inset: 0;
+    border-radius: 28px;
+    border: 1px solid rgba(255,255,255,0.7);
+    pointer-events: none;
 }

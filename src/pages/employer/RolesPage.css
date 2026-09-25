@@ -3,6 +3,8 @@
     background: #f8fafc;
 }
 
+/* ─── Keep all existing styles + append new ones ─── */
+
 .roles-main {
     padding: calc(var(--navbar-height) + var(--space-16)) var(--space-8) var(--space-16);
     max-width: 900px;
@@ -285,3 +287,276 @@
         grid-template-columns: 1fr;
     }
 }
+
+/* ─── Tabs ─── */
+.roles-tabs {
+    display: flex;
+    gap: var(--space-2);
+    border-bottom: 1px solid var(--color-ink-100);
+    padding-bottom: var(--space-1);
+}
+
+.roles-tab {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-4);
+    background: none;
+    border: none;
+    border-radius: var(--radius-pill);
+    font-size: var(--text-sm);
+    font-weight: var(--weight-medium);
+    color: var(--color-ink-500);
+    cursor: pointer;
+    transition: all var(--duration-fast);
+}
+
+.roles-tab.active {
+    background: var(--color-electric);
+    color: white;
+}
+
+.roles-tab-badge {
+    background: rgba(255,255,255,0.25);
+    border-radius: 999px;
+    padding: 0 6px;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+/* ─── Error / Success ─── */
+.roles-error {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-4);
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: var(--radius-xl);
+    color: #b91c1c;
+    font-size: var(--text-sm);
+}
+
+.roles-success {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-4);
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-radius: var(--radius-xl);
+    color: #15803d;
+    font-size: var(--text-sm);
+}
+
+/* ─── Model Header & Summary ─── */
+.roles-model-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--space-2);
+}
+
+.roles-model-summary {
+    font-size: var(--text-sm);
+    color: var(--color-ink-500);
+    margin-bottom: var(--space-4);
+    line-height: var(--leading-relaxed);
+}
+
+.roles-type-badge {
+    font-size: var(--text-xs);
+    font-weight: var(--weight-bold);
+    padding: 3px 10px;
+    border-radius: var(--radius-pill);
+}
+
+/* ─── Skill Tags ─── */
+.roles-skill-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-top: var(--space-4);
+}
+
+.roles-skill-tag {
+    font-size: var(--text-xs);
+    padding: 3px 10px;
+    background: #eff6ff;
+    color: var(--color-electric);
+    border-radius: var(--radius-pill);
+    font-weight: var(--weight-medium);
+}
+
+/* ─── Post Form ─── */
+.roles-post-form {
+    padding: var(--space-6);
+    background: white;
+    border: 1px solid var(--color-ink-100);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-xs);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.roles-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+}
+
+.roles-form-group label {
+    font-size: var(--text-xs);
+    font-weight: var(--weight-semibold);
+    color: var(--color-ink-500);
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.roles-form-group input[type="text"],
+.roles-form-group input[type="date"],
+.roles-form-group textarea {
+    padding: var(--space-3);
+    border: 1px solid var(--color-ink-200);
+    border-radius: var(--radius-lg);
+    font-size: var(--text-sm);
+    color: var(--color-ink-900);
+    background: white;
+    outline: none;
+    transition: border-color var(--duration-fast);
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.roles-form-group input:focus,
+.roles-form-group textarea:focus {
+    border-color: var(--color-electric);
+}
+
+.roles-post-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    padding: var(--space-4);
+    background: #111827;
+    color: white;
+    border: none;
+    border-radius: var(--radius-xl);
+    font-size: var(--text-sm);
+    font-weight: var(--weight-bold);
+    cursor: pointer;
+    transition: all var(--duration-fast);
+    width: 100%;
+}
+
+.roles-post-btn:hover { background: #1f2937; }
+.roles-post-btn:disabled { opacity: 0.7; cursor: not-allowed; }
+
+/* ─── My Roles ─── */
+.roles-loading,
+.roles-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-16);
+    color: var(--color-ink-400);
+    text-align: center;
+}
+
+.roles-empty-sub {
+    font-size: var(--text-sm);
+    color: var(--color-ink-300);
+}
+
+.roles-my-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.roles-my-card {
+    padding: var(--space-5);
+    background: white;
+    border: 1px solid var(--color-ink-100);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-xs);
+    transition: opacity var(--duration-fast);
+}
+
+.roles-my-card.closed {
+    opacity: 0.6;
+}
+
+.roles-my-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--space-3);
+    margin-bottom: var(--space-3);
+}
+
+.roles-my-title {
+    font-size: var(--text-lg);
+    font-weight: var(--weight-bold);
+    color: var(--color-ink-900);
+    margin-bottom: var(--space-1);
+}
+
+.roles-my-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    flex-shrink: 0;
+}
+
+.roles-status-btn {
+    padding: 4px 12px;
+    border-radius: var(--radius-pill);
+    font-size: var(--text-xs);
+    font-weight: var(--weight-bold);
+    border: none;
+    cursor: pointer;
+}
+
+.roles-status-btn.active { background: #d1fae5; color: #065f46; }
+.roles-status-btn.closed { background: #f3f4f6; color: #6b7280; }
+
+.roles-delete-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #ef4444;
+    padding: var(--space-1);
+    border-radius: var(--radius-sm);
+}
+
+.roles-my-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    font-size: var(--text-sm);
+    color: var(--color-ink-500);
+    margin-bottom: var(--space-3);
+}
+
+.roles-my-meta span {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.spin {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin-slow {
+    to { transform: rotate(360deg); }
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}

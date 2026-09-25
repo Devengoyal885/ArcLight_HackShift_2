@@ -5,26 +5,47 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "server": "tsx server/index.ts",
+    "dev:all": "concurrently \"npm run server\" \"npm run dev\"",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "cron:fetch-jobs": "tsx scripts/fetchJobsCron.ts"
   },
   "dependencies": {
+    "@monaco-editor/react": "^4.7.0",
+    "@paper-design/shaders-react": "^0.0.81",
+    "@types/qrcode": "^1.5.6",
     "@types/recharts": "^1.8.29",
+    "@vapi-ai/web": "^2.7.1",
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
     "firebase": "^12.19.0",
     "framer-motion": "^13.4.0",
+    "html2canvas": "^1.4.1",
+    "html2pdf.js": "^0.14.0",
     "lucide-react": "^1.47.0",
+    "nodemailer": "^10.0.10",
+    "pdfjs-dist": "^6.3.289",
+    "qrcode": "^1.5.4",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "react-router-dom": "^7.18.4",
-    "recharts": "^3.10.1"
+    "recharts": "^3.10.1",
+    "zustand": "^5.0.15"
   },
   "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
     "@types/node": "^24.13.3",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.7",
     "@vitejs/plugin-react": "^6.1.1",
+    "concurrently": "^10.0.5",
+    "dotenv": "^18.0.1",
+    "firebase-admin": "^14.4.0",
     "oxlint": "^1.81.0",
+    "tsx": "^4.23.13",
     "typescript": "~6.0.2",
     "vite": "^8.3.0"
   }

@@ -1,0 +1,127 @@
+/* PlacementDrivesPage.css */
+.pd-page { min-height: 100vh; background: #f8fafc; padding-top: 80px; }
+.pd-content { max-width: 900px; margin: 0 auto; padding: 28px 20px 80px; }
+
+.pd-header {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    margin-bottom: 24px; flex-wrap: wrap; gap: 12px;
+}
+.pd-header h1 { font-size: 24px; font-weight: 800; color: #0f172a; margin: 0 0 4px; }
+.pd-header p  { font-size: 13px; color: #64748b; margin: 0; }
+
+.pd-stats-row { display: flex; gap: 10px; }
+.pd-stat {
+    display: flex; align-items: center; gap: 6px;
+    padding: 6px 14px; border-radius: 100px;
+    font-size: 13px; font-weight: 700;
+}
+.pd-stat--green { background: #dcfce7; color: #059669; }
+.pd-stat--red   { background: #fee2e2; color: #dc2626; }
+
+.pd-loading { display: flex; justify-content: center; padding: 80px; color: #94a3b8; }
+.pd-empty {
+    display: flex; flex-direction: column; align-items: center;
+    gap: 12px; padding: 80px; color: #94a3b8; text-align: center;
+}
+.pd-empty h3 { font-size: 18px; font-weight: 700; color: #334155; margin: 0; }
+.pd-empty p  { font-size: 14px; color: #64748b; max-width: 360px; }
+
+.pd-list { display: flex; flex-direction: column; gap: 14px; }
+
+.pd-card {
+    background: white;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    transition: box-shadow 0.2s;
+}
+.pd-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
+.pd-card--eligible  { border-left: 4px solid #10b981; }
+.pd-card--ineligible { border-left: 4px solid #ef4444; opacity: 0.85; }
+
+.pd-card-top {
+    display: flex; gap: 8px; padding: 12px 16px 0;
+}
+.pd-card-badge {
+    display: flex; align-items: center; gap: 5px;
+    font-size: 11px; font-weight: 700;
+    padding: 3px 10px; border-radius: 100px;
+}
+
+.pd-card-body {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 16px 16px; gap: 12px; flex-wrap: wrap;
+}
+.pd-card-left { display: flex; gap: 14px; align-items: flex-start; flex: 1; }
+
+.pd-company-logo {
+    width: 44px; height: 44px; border-radius: 10px;
+    background: linear-gradient(135deg, #2563eb, #6366f1);
+    color: white; font-size: 20px; font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+}
+
+.pd-role-title { font-size: 16px; font-weight: 700; color: #0f172a; margin: 0 0 2px; }
+.pd-company    { font-size: 13px; color: #64748b; margin: 0 0 6px; }
+.pd-meta {
+    display: flex; gap: 12px; flex-wrap: wrap;
+    font-size: 12px; color: #64748b;
+}
+.pd-meta span { display: flex; align-items: center; gap: 4px; }
+
+.pd-card-actions { display: flex; flex-direction: column; gap: 8px; align-items: flex-end; flex-shrink: 0; }
+
+.pd-expand-btn {
+    display: flex; align-items: center; gap: 4px;
+    background: none; border: 1px solid #e2e8f0;
+    border-radius: 8px; padding: 7px 14px;
+    font-size: 12px; font-weight: 600; color: #64748b; cursor: pointer;
+    transition: all 0.15s;
+}
+.pd-expand-btn:hover { border-color: #2563eb; color: #2563eb; }
+.pd-expand-btn .rotated { transform: rotate(90deg); transition: transform 0.2s; }
+
+.pd-apply-btn {
+    display: flex; align-items: center; gap: 6px;
+    background: #2563eb; color: white;
+    border: none; border-radius: 8px; padding: 9px 20px;
+    font-size: 13px; font-weight: 700; cursor: pointer;
+    transition: filter 0.2s;
+}
+.pd-apply-btn:hover:not(:disabled) { filter: brightness(1.1); }
+.pd-apply-btn:disabled { opacity: 0.7; cursor: not-allowed; }
+.pd-apply-btn.applied { background: #10b981; }
+
+/* Criteria Panel */
+.pd-criteria-panel {
+    overflow: hidden;
+    border-top: 1px solid #f1f5f9;
+    padding: 16px;
+    background: #fafafa;
+}
+
+.pd-criteria-grid { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
+.pd-check {
+    display: flex; align-items: flex-start; gap: 8px;
+    font-size: 13px; padding: 6px 10px; border-radius: 8px;
+}
+.pd-check--pass { background: #f0fdf4; color: #065f46; }
+.pd-check--fail { background: #fef2f2; color: #991b1b; }
+
+.pd-drive-desc {
+    font-size: 13px; color: #334155; line-height: 1.6; margin: 0 0 12px;
+}
+
+.pd-criteria-raw {
+    display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+    font-size: 12px; color: #64748b;
+}
+.pd-criteria-raw strong { color: #334155; }
+.pd-criteria-raw span {
+    background: #f1f5f9; border-radius: 6px; padding: 3px 10px; color: #475569;
+}
+
+.spin { animation: spin 1s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }

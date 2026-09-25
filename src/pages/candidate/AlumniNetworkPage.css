@@ -1,0 +1,119 @@
+/* AlumniNetworkPage.css */
+.alum-page { min-height: 100vh; background: #f8fafc; padding-top: 80px; }
+.alum-content { max-width: 1100px; margin: 0 auto; padding: 28px 20px 80px; }
+
+.alum-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; flex-wrap: wrap; gap: 12px; }
+.alum-header h1 { font-size: 24px; font-weight: 800; color: #0f172a; margin: 0 0 4px; }
+.alum-header p  { font-size: 13px; color: #64748b; margin: 0; }
+.alum-stat {
+    display: flex; align-items: center; gap: 6px;
+    background: white; border: 1px solid #e2e8f0; border-radius: 100px;
+    padding: 6px 16px; font-size: 13px; font-weight: 600; color: #334155;
+}
+
+.alum-controls {
+    display: flex; justify-content: space-between; align-items: center;
+    gap: 12px; margin-bottom: 20px; flex-wrap: wrap;
+}
+.alum-tabs { display: flex; gap: 4px; }
+.alum-tab {
+    display: flex; align-items: center; gap: 6px;
+    padding: 8px 16px; border-radius: 100px;
+    border: 1.5px solid #e2e8f0; background: white;
+    font-size: 13px; font-weight: 600; color: #64748b;
+    cursor: pointer; transition: all 0.15s;
+}
+.alum-tab:hover { border-color: #2563eb; color: #2563eb; }
+.alum-tab.active { background: #2563eb; border-color: #2563eb; color: white; }
+
+.alum-filters { display: flex; gap: 8px; flex-wrap: wrap; }
+.alum-search {
+    display: flex; align-items: center; gap: 8px;
+    background: white; border: 1px solid #e2e8f0; border-radius: 10px;
+    padding: 8px 14px; font-size: 13px; color: #64748b;
+}
+.alum-search input {
+    border: none; outline: none; font-size: 13px; color: #334155;
+    background: transparent; width: 200px;
+}
+.alum-branch-filter {
+    padding: 8px 12px; border: 1px solid #e2e8f0; border-radius: 10px;
+    font-size: 13px; color: #334155; background: white; outline: none;
+}
+
+.alum-loading { display: flex; justify-content: center; padding: 80px; color: #94a3b8; }
+.alum-empty { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 80px; color: #94a3b8; text-align: center; }
+.alum-empty p { font-size: 14px; color: #64748b; max-width: 360px; }
+
+.alum-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 16px;
+}
+
+.alum-card {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    position: relative;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    transition: box-shadow 0.2s, transform 0.2s;
+}
+.alum-card:hover { box-shadow: 0 8px 24px rgba(0,0,0,0.1); transform: translateY(-2px); }
+
+.alum-mentor-badge {
+    position: absolute; top: 12px; right: 12px;
+    display: flex; align-items: center; gap: 4px;
+    background: #fef3c7; color: #d97706;
+    font-size: 10px; font-weight: 700;
+    padding: 3px 9px; border-radius: 100px;
+}
+
+.alum-avatar {
+    width: 60px; height: 60px; border-radius: 50%;
+    background: linear-gradient(135deg, #2563eb, #6366f1);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; font-weight: 800; color: white;
+    margin-bottom: 12px; overflow: hidden;
+    border: 3px solid #eff6ff;
+}
+.alum-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+.alum-name { font-size: 15px; font-weight: 700; color: #0f172a; margin: 0 0 4px; }
+.alum-position {
+    display: flex; align-items: center; gap: 4px; justify-content: center;
+    font-size: 12px; color: #64748b; margin: 0 0 8px;
+}
+
+.alum-meta {
+    display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;
+    font-size: 11px; color: #94a3b8; margin-bottom: 10px;
+}
+.alum-meta span { display: flex; align-items: center; gap: 3px; }
+
+.alum-skills { display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; margin-bottom: 14px; }
+.alum-skill {
+    font-size: 10px; font-weight: 600; background: #eff6ff;
+    color: #2563eb; border-radius: 4px; padding: 2px 8px;
+}
+
+.alum-actions { display: flex; flex-direction: column; gap: 6px; width: 100%; }
+.alum-btn {
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    padding: 8px; border-radius: 8px; font-size: 12px; font-weight: 700;
+    cursor: pointer; border: none; transition: all 0.15s; text-decoration: none;
+}
+.alum-btn--linkedin { background: #dbeafe; color: #1e40af; }
+.alum-btn--linkedin:hover { background: #bfdbfe; }
+.alum-btn--mentor { background: #2563eb; color: white; }
+.alum-btn--mentor:hover:not(:disabled) { filter: brightness(1.1); }
+.alum-btn--mentor:disabled { opacity: 0.6; cursor: not-allowed; }
+.alum-btn--mentor.sent { background: #10b981; }
+
+.spin { animation: spin 1s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }

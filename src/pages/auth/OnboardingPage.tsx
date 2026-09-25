@@ -1,360 +1,788 @@
-import { useState, useRef } from 'react';
+/**
+ * OnboardingPage.tsx
+ * ──────────────────
+ * Multi-step onboarding for new CapAble users.
+ * 
+ * Step 1: Role selection (Candidate / Employer)
+ * Step 2: Paste or upload resume → Gemini parses it → creates real profile
+ * Step 3: Confirm profile details + optionally add GitHub username
+ * Step 4: Done → navigate to dashboard
+ */
+
+import { useState, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { updateProfile } from 'firebase/auth';
+import { motion, AnimatePresence } from 'framer-motion';
 import { auth } from '../../lib/firebase';
-import { Camera, ArrowRight, ArrowLeft, User as UserIcon, Briefcase, CheckCircle } from 'lucide-react';
+import { updateProfile as updateFirebaseProfile } from 'firebase/auth';
+import {
+    ArrowRight, ArrowLeft, User as UserIcon, Briefcase,
+    CheckCircle, Upload, FileText, Loader2, GitBranch,
+    Sparkles, AlertCircle, X
+} from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
+import {
+    createProfile, updateProfile, saveProjects, saveCapabilities
+} from '../../services/profileService';
+import { saveEmployerProfile } from '../../services/employerService';
+import {
+    parseResume, inferCapabilitiesFromResume,
+    parsedToProjects, inferencedToCapabilities
+} from '../../services/resumeParserService';
+import type { ParsedResume } from '../../services/resumeParserService';
+import { extractTextFromPDF } from '../../utils/pdfParser';
+import { GraduationCap } from 'lucide-react';
 import logo from '../../assets/sihlogo.png';
 import './OnboardingPage.css';
 
-type Role = 'candidate' | 'employer';
-
-interface CandidateData {
-    name: string;
-    employmentStatus: string;
-    age: string;
-    gender: string;
-    hearAboutUs: string;
-}
-
-interface CompanyData {
-    companyName: string;
-    industry: string;
-    companySize: string;
-    location: string;
-    hearAboutUs: string;
-}
+type Role = 'candidate' | 'employer' | 'academician' | 'institution';
 
 export default function OnboardingPage() {
-    const role = (localStorage.getItem('userRole') || 'candidate') as Role;
-    const user = auth.currentUser;
+    const { user, refreshProfile } = useAuth();
     const navigate = useNavigate();
 
-    const [step, setStep] = useState(1);
-    const [photoPreview, setPhotoPreview] = useState<string | null>(null);
-    const [photoFile, setPhotoFile] = useState<File | null>(null);
+    // Pre-read role from localStorage (set during login panel selection)
+    const preselectedRole = (localStorage.getItem('userRole') as Role | null) || null;
+    // If role was pre-selected on the login page, skip Step 1 (role picker)
+    const [step, setStep] = useState(preselectedRole ? 2 : 1);
+    const [role, setRole] = useState<Role>(preselectedRole || 'candidate');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+
+    // Resume step state
+    const [resumeText, setResumeText] = useState('');
+    const [parsedResume, setParsedResume] = useState<ParsedResume | null>(null);
+    const [parsing, setParsing] = useState(false);
+    const [parseError, setParseError] = useState('');
+    const [resumeFile, setResumeFile] = useState<File | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
-    // Candidate fields - pre-populate name from Firebase auth (Google)
-    const [candidateData, setCandidateData] = useState<CandidateData>({
-        name: user?.displayName || '',
-        employmentStatus: '',
-        age: '',
-        gender: '',
-        hearAboutUs: '',
-    });
+    // Profile confirmation step
+    const [githubUsername, setGithubUsername] = useState('');
+    const [headline, setHeadline] = useState('');
+    const [location, setLocation] = useState('');
 
-    // Company fields - pre-populate company name from Firebase auth
-    const [companyData, setCompanyData] = useState<CompanyData>({
-        companyName: user?.displayName || '',
-        industry: '',
-        companySize: '',
-        location: '',
-        hearAboutUs: '',
-    });
+    // Employer profile step state
+    const [companyName, setCompanyName] = useState('');
+    const [industry, setIndustry] = useState('');
+    const [website, setWebsite] = useState('');
+    const [companySize, setCompanySize] = useState('');
 
-    const handlePhotoClick = () => fileInputRef.current?.click();
+    // Faculty / Institution
+    const [institutionCode, setInstitutionCode] = useState('');
+    const [department, setDepartment] = useState('');
 
-    const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const totalSteps = role === 'candidate' ? 4 : role === 'employer' ? 2 : 1;
+
+    // ─── Step 2: Parse Resume ────────────────────────────────────────────────
+
+    const handleFileUpload = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file) return;
-        setPhotoFile(file);
-        const reader = new FileReader();
-        reader.onload = () => setPhotoPreview(reader.result as string);
-        reader.readAsDataURL(file);
+
+        setResumeFile(file);
+        setParseError('');
+        
+        if (file.name.endsWith('.pdf') || file.type === 'application/pdf') {
+            try {
+                const text = await extractTextFromPDF(file);
+                setResumeText(text);
+            } catch (err) {
+                const msg = err instanceof Error ? err.message : 'Failed to parse PDF.';
+                setParseError(msg);
+            }
+        } else if (file.name.endsWith('.txt') || file.type === 'text/plain') {
+            const reader = new FileReader();
+            reader.onload = () => setResumeText(reader.result as string);
+            reader.readAsText(file);
+        } else {
+            setParseError('Unsupported file type. Please upload a .pdf or .txt file.');
+        }
+    }, []);
+
+    const handleParseResume = async () => {
+        if (!resumeText.trim() || resumeText.trim().length < 50) {
+            setParseError('Please paste more resume content (at least 50 characters).');
+            return;
+        }
+        setParsing(true);
+        setParseError('');
+        try {
+            const parsed = await parseResume(resumeText);
+            if (!parsed) {
+                setParseError('Could not parse resume. Please check your resume content and try again.');
+                return;
+            }
+            setParsedResume(parsed);
+            // Pre-fill confirmation fields
+            if (parsed.profile.githubUsername) setGithubUsername(parsed.profile.githubUsername);
+            if (parsed.profile.headline) setHeadline(parsed.profile.headline);
+            if (parsed.profile.location) setLocation(parsed.profile.location);
+            setStep(3);
+        } catch (err) {
+            setParseError('Network Error. Please try again later.');
+            console.error('[parseResume]', err);
+        } finally {
+            setParsing(false);
+        }
     };
 
-    const handleCandidateChange = (field: keyof CandidateData, value: string) => {
-        setCandidateData(prev => ({ ...prev, [field]: value }));
+    const skipResume = () => {
+        setStep(3);
     };
 
-    const handleCompanyChange = (field: keyof CompanyData, value: string) => {
-        setCompanyData(prev => ({ ...prev, [field]: value }));
-    };
+    // ─── Step 4: Finish Onboarding ───────────────────────────────────────────
 
     const handleFinish = async () => {
+        // Employer / Academician: no profile creation needed — just set role and navigate
+        if (role === 'employer') {
+            setLoading(true);
+            try {
+                if (user) {
+                    const profileId = `${user.uid}_employer`;
+                    await saveEmployerProfile(profileId, {
+                        uid: profileId,
+                        companyName: companyName || user.displayName || 'My Company',
+                        industry: industry || 'Technology',
+                        website: website || undefined,
+                        size: companySize || undefined,
+                    });
+                    // Persist role to Firestore user profile
+                    await updateProfile(profileId, { role: 'employer', profileComplete: true });
+                }
+            } catch (e) {
+                console.warn('[onboarding] saveEmployerProfile failed (non-critical):', e);
+            } finally {
+                setLoading(false);
+            }
+            localStorage.setItem('userRole', 'employer');
+            await refreshProfile();
+            navigate('/employer');
+            return;
+        }
+        if (role === 'academician') {
+            setLoading(true);
+            try {
+                if (user) {
+                    const profileId = `${user.uid}_academician`;
+                    await updateProfile(profileId, {
+                        role: 'academician',
+                        name: user.displayName || '',
+                        email: user.email || '',
+                        avatar: user.photoURL || undefined,
+                        profileComplete: true,
+                        institutionCode: institutionCode.trim().toUpperCase() || undefined,
+                        department: department.trim() || undefined,
+                    } as any);
+                }
+            } catch (e) {
+                console.warn('[onboarding] academician profile save failed (non-critical):', e);
+            } finally {
+                setLoading(false);
+            }
+            localStorage.setItem('userRole', 'academician');
+            await refreshProfile();
+            navigate('/faculty');
+            return;
+        }
+        if (role === 'institution') {
+            setLoading(true);
+            try {
+                if (user) {
+                    const profileId = `${user.uid}_institution`;
+                    await updateProfile(profileId, {
+                        role: 'institution',
+                        name: user.displayName || '',
+                        email: user.email || '',
+                        avatar: user.photoURL || undefined,
+                        profileComplete: true,
+                        institutionCode: institutionCode.trim().toUpperCase() || undefined,
+                    } as any);
+                }
+            } catch (e) {
+                console.warn('[onboarding] institution profile save failed (non-critical):', e);
+            } finally {
+                setLoading(false);
+            }
+            localStorage.setItem('userRole', 'institution');
+            await refreshProfile();
+            navigate('/institution');
+            return;
+        }
+
+        // Candidate: requires user object for Firestore profile creation
+        if (!user) return;
         setLoading(true);
         setError('');
+
         try {
-            if (user) {
-                const displayName = role === 'candidate' ? candidateData.name : companyData.companyName;
-                let photoURL = user.photoURL || '';
 
-                // If user uploaded a photo, convert to data URL for profile
-                if (photoPreview) {
-                    photoURL = photoPreview;
+            localStorage.setItem('userRole', 'candidate');
+            // Role will be persisted to Firestore below in profileData
+
+            // ── 1. Update Firebase Auth display name ─────────────────────────
+            const name = parsedResume?.profile.name || user.displayName || '';
+            if (name && name !== user.displayName) {
+                try {
+                    await updateFirebaseProfile(user, { displayName: name });
+                } catch (e) {
+                    console.warn('[onboarding] Firebase displayName update failed (non-critical):', e);
                 }
-
-                await updateProfile(user, { displayName, photoURL });
-
-                // Store extended profile data in localStorage
-                const profileKey = role === 'candidate' ? 'candidateProfile' : 'employerProfile';
-                const profileData = role === 'candidate' ? candidateData : companyData;
-                localStorage.setItem(profileKey, JSON.stringify({ ...profileData, photoURL }));
             }
-            navigate(`/${role}`);
-        } catch (err: any) {
-            setError(err.message || 'Something went wrong.');
+
+            // ── 2. Upload resume to Cloudinary (non-critical) ─────────────────
+            let uploadedResumeUrl: string | undefined;
+            if (resumeFile) {
+                try {
+                    const formData = new FormData();
+                    formData.append('file', resumeFile);
+                    formData.append('upload_preset', import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET || 'wardrobe_app');
+                    const res = await fetch(
+                        `https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME || 'dq6idzmu6'}/auto/upload`,
+                        { method: 'POST', body: formData }
+                    );
+                    const data = await res.json();
+                    if (data.secure_url) uploadedResumeUrl = data.secure_url;
+                } catch (e) {
+                    console.warn('[onboarding] Cloudinary upload failed (non-critical):', e);
+                }
+            }
+
+            // ── 3. Save profile to Firestore (CRITICAL) ───────────────────────
+            const profileId = `${user.uid}_candidate`;
+            const profileData = {
+                uid: profileId,
+                name,
+                email: user.email || parsedResume?.profile.email || '',
+                role: 'candidate' as const,
+                avatar: user.photoURL || undefined,
+                headline: headline || parsedResume?.profile.headline || undefined,
+                bio: parsedResume?.profile.bio || undefined,
+                location: location || parsedResume?.profile.location || undefined,
+                githubUsername: githubUsername || parsedResume?.profile.githubUsername || undefined,
+                linkedinUrl: parsedResume?.profile.linkedinUrl || undefined,
+                portfolioUrl: parsedResume?.profile.portfolioUrl || undefined,
+                resumeText: resumeText || undefined,
+                resumeUrl: uploadedResumeUrl,
+                profileComplete: true,
+                // Link candidate to their institution so faculty/admin can discover them
+                institutionCode: institutionCode.trim().toUpperCase() || undefined,
+            };
+
+            console.log('[onboarding] Saving profile for uid:', profileId);
+            await updateProfile(profileId, profileData);
+            console.log('[onboarding] Profile saved ✓');
+
+            // ── 4. Save projects (non-critical) ───────────────────────────────
+            if (parsedResume?.projects?.length) {
+                try {
+                    const projects = parsedToProjects(parsedResume);
+                    await saveProjects(profileId, projects);
+                    console.log('[onboarding] Projects saved ✓');
+                } catch (e) {
+                    console.warn('[onboarding] saveProjects failed (non-critical):', e);
+                }
+            }
+
+            // ── 5. Infer & save capabilities (non-critical) ───────────────────
+            if (parsedResume) {
+                try {
+                    const inferred = await inferCapabilitiesFromResume(parsedResume);
+                    if (inferred.length > 0) {
+                        const caps = inferencedToCapabilities(inferred);
+                        await saveCapabilities(profileId, caps);
+                        console.log('[onboarding] Capabilities saved ✓', caps.length);
+                    }
+                } catch (e) {
+                    console.warn('[onboarding] inferCapabilities failed (non-critical):', e);
+                }
+            }
+
+            // ── 6. Refresh context & navigate ─────────────────────────────────
+            try {
+                await refreshProfile();
+            } catch (e) {
+                console.warn('[onboarding] refreshProfile failed (non-critical):', e);
+            }
+
+            navigate('/candidate');
+
+        } catch (err) {
+            // Only the critical profile save reaches here
+            console.error('[onboarding] CRITICAL error saving profile:', err);
+            const msg = err instanceof Error ? err.message : 'Failed to save profile. Please try again.';
+            setError(msg);
         } finally {
             setLoading(false);
         }
     };
 
-    const totalSteps = 2;
-
-    // ─── Step 1: Photo + Name ─────────────────────────────────────────────────
-    const renderStep1 = () => (
-        <div className="ob-step">
-            <div className="ob-step-header">
-                <h2>
-                    {role === 'candidate' ? (
-                        <><UserIcon size={22} className="ob-step-icon ob-step-icon--blue" /> Your Profile</>
-                    ) : (
-                        <><Briefcase size={22} className="ob-step-icon ob-step-icon--purple" /> Company Profile</>
-                    )}
-                </h2>
-                <p>{role === 'candidate' ? "Let's set up your professional identity." : 'Tell us about your organisation.'}</p>
-            </div>
-
-            {/* Avatar Upload */}
-            <div className="ob-avatar-section">
-                <div className="ob-avatar-circle" onClick={handlePhotoClick} title="Click to upload photo">
-                    {photoPreview ? (
-                        <img src={photoPreview} alt="Profile Preview" />
-                    ) : (
-                        <div className="ob-avatar-placeholder">
-                            <Camera size={28} />
-                            <span>Upload Photo</span>
-                        </div>
-                    )}
-                    <div className="ob-avatar-overlay"><Camera size={16} /></div>
-                </div>
-                <input
-                    type="file"
-                    accept="image/*"
-                    ref={fileInputRef}
-                    style={{ display: 'none' }}
-                    onChange={handlePhotoChange}
-                />
-                <p className="ob-avatar-hint">
-                    {photoFile ? photoFile.name : 'Click the circle to upload from device'}
-                </p>
-            </div>
-
-            {/* Name Field */}
-            {role === 'candidate' ? (
-                <div className="ob-field">
-                    <label htmlFor="ob-name">Full Name</label>
-                    <div className="ob-input-wrap">
-                        <UserIcon size={15} />
-                        <input
-                            id="ob-name"
-                            type="text"
-                            required
-                            placeholder="e.g. Priya Sharma"
-                            value={candidateData.name}
-                            onChange={(e) => handleCandidateChange('name', e.target.value)}
-                        />
-                    </div>
-                </div>
-            ) : (
-                <div className="ob-field">
-                    <label htmlFor="ob-company">Company Name</label>
-                    <div className="ob-input-wrap">
-                        <Briefcase size={15} />
-                        <input
-                            id="ob-company"
-                            type="text"
-                            required
-                            placeholder="e.g. Acme Technologies"
-                            value={companyData.companyName}
-                            onChange={(e) => handleCompanyChange('companyName', e.target.value)}
-                        />
-                    </div>
-                </div>
-            )}
-
-            <button
-                className="ob-btn ob-btn--primary"
-                onClick={() => {
-                    const nameVal = role === 'candidate' ? candidateData.name : companyData.companyName;
-                    if (!nameVal.trim()) { setError('Please enter your name.'); return; }
-                    setError('');
-                    setStep(2);
-                }}
-            >
-                Next <ArrowRight size={15} />
-            </button>
-        </div>
-    );
-
-    // ─── Step 2: Profile Details ──────────────────────────────────────────────
-    const renderStep2 = () => (
-        <div className="ob-step">
-            <div className="ob-step-header">
-                <h2>A little more about you</h2>
-                <p>Help us personalise your experience.</p>
-            </div>
-
-            {role === 'candidate' ? (
-                <div className="ob-fields">
-                    {/* Employment Status */}
-                    <div className="ob-field">
-                        <label>I am currently a...</label>
-                        <div className="ob-chip-group">
-                            {['Student', 'Fresher', 'Working Professional', 'Self-Employed', 'Freelancer', 'Other'].map(s => (
-                                <button
-                                    key={s}
-                                    type="button"
-                                    className={`ob-chip ${candidateData.employmentStatus === s ? 'ob-chip--active' : ''}`}
-                                    onClick={() => handleCandidateChange('employmentStatus', s)}
-                                >{s}</button>
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* Age */}
-                    <div className="ob-field">
-                        <label htmlFor="ob-age">Age</label>
-                        <div className="ob-input-wrap">
-                            <input
-                                id="ob-age"
-                                type="number"
-                                min="16"
-                                max="80"
-                                placeholder="e.g. 22"
-                                value={candidateData.age}
-                                onChange={(e) => handleCandidateChange('age', e.target.value)}
-                            />
-                        </div>
-                    </div>
-
-                    {/* Gender */}
-                    <div className="ob-field">
-                        <label>Gender</label>
-                        <div className="ob-chip-group">
-                            {['Male', 'Female', 'Non-Binary', 'Prefer not to say'].map(g => (
-                                <button
-                                    key={g}
-                                    type="button"
-                                    className={`ob-chip ${candidateData.gender === g ? 'ob-chip--active' : ''}`}
-                                    onClick={() => handleCandidateChange('gender', g)}
-                                >{g}</button>
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* How did they hear */}
-                    <div className="ob-field">
-                        <label>How did you hear about CapAble?</label>
-                        <div className="ob-chip-group">
-                            {['Social Media', 'College / University', 'Friend / Referral', 'LinkedIn', 'Google Search', 'News / Blog', 'Other'].map(h => (
-                                <button
-                                    key={h}
-                                    type="button"
-                                    className={`ob-chip ${candidateData.hearAboutUs === h ? 'ob-chip--active' : ''}`}
-                                    onClick={() => handleCandidateChange('hearAboutUs', h)}
-                                >{h}</button>
-                            ))}
-                        </div>
-                    </div>
-                </div>
-            ) : (
-                <div className="ob-fields">
-                    {/* Industry */}
-                    <div className="ob-field">
-                        <label>Industry</label>
-                        <div className="ob-chip-group">
-                            {['Technology', 'Finance & Banking', 'Healthcare', 'E-Commerce', 'Education', 'Manufacturing', 'Consulting', 'Other'].map(i => (
-                                <button
-                                    key={i}
-                                    type="button"
-                                    className={`ob-chip ${companyData.industry === i ? 'ob-chip--active' : ''}`}
-                                    onClick={() => handleCompanyChange('industry', i)}
-                                >{i}</button>
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* Company Size */}
-                    <div className="ob-field">
-                        <label>Company Size</label>
-                        <div className="ob-chip-group">
-                            {['1–10', '11–50', '51–200', '201–500', '501–1000', '1000+'].map(sz => (
-                                <button
-                                    key={sz}
-                                    type="button"
-                                    className={`ob-chip ${companyData.companySize === sz ? 'ob-chip--active' : ''}`}
-                                    onClick={() => handleCompanyChange('companySize', sz)}
-                                >{sz} employees</button>
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* Location */}
-                    <div className="ob-field">
-                        <label htmlFor="ob-location">Headquarters Location</label>
-                        <div className="ob-input-wrap">
-                            <input
-                                id="ob-location"
-                                type="text"
-                                placeholder="e.g. Bengaluru, India"
-                                value={companyData.location}
-                                onChange={(e) => handleCompanyChange('location', e.target.value)}
-                            />
-                        </div>
-                    </div>
-
-                    {/* How did they hear */}
-                    <div className="ob-field">
-                        <label>How did you hear about CapAble?</label>
-                        <div className="ob-chip-group">
-                            {['LinkedIn', 'Google Search', 'Partner / Referral', 'Conference / Event', 'News / Press', 'Other'].map(h => (
-                                <button
-                                    key={h}
-                                    type="button"
-                                    className={`ob-chip ${companyData.hearAboutUs === h ? 'ob-chip--active' : ''}`}
-                                    onClick={() => handleCompanyChange('hearAboutUs', h)}
-                                >{h}</button>
-                            ))}
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            <div className="ob-actions">
-                <button className="ob-btn ob-btn--ghost" onClick={() => { setError(''); setStep(1); }}>
-                    <ArrowLeft size={15} /> Back
-                </button>
-                <button className="ob-btn ob-btn--primary" onClick={handleFinish} disabled={loading}>
-                    {loading ? 'Setting up...' : <><CheckCircle size={15} /> Launch Dashboard</>}
-                </button>
-            </div>
-        </div>
-    );
+    // ─── Render ───────────────────────────────────────────────────────────────
 
     return (
-        <div className="ob-container">
-            <div className="ob-card">
-                {/* Header */}
-                <div className="ob-header">
-                    <img src={logo} alt="CapAble" className="ob-logo" />
-                    <div className="ob-progress">
-                        {Array.from({ length: totalSteps }, (_, i) => (
-                            <div
-                                key={i}
-                                className={`ob-progress-dot ${i + 1 <= step ? 'ob-progress-dot--active' : ''}`}
-                            />
-                        ))}
-                        <span className="ob-progress-label">Step {step} of {totalSteps}</span>
-                    </div>
+        <div className="onb-root">
+            <div className="onb-bg">
+                <div className="onb-orb onb-orb--1" />
+                <div className="onb-orb onb-orb--2" />
+            </div>
+
+            <div className="onb-container">
+                {/* Logo */}
+                <div className="onb-logo">
+                    <img src={logo} alt="CapAble" className="onb-logo-img" />
+                    <span className="onb-logo-text">CapAble</span>
                 </div>
 
-                {error && <div className="ob-error">{error}</div>}
+                {/* Progress */}
+                {role === 'candidate' && (
+                    <div className="onb-progress">
+                        {[1, 2, 3, 4].map(s => (
+                            <div key={s} className={`onb-progress-dot ${step >= s ? 'active' : ''}`} />
+                        ))}
+                    </div>
+                )}
 
-                {step === 1 && renderStep1()}
-                {step === 2 && renderStep2()}
+                <AnimatePresence mode="wait">
+                    {/* ── Step 1: Role ── */}
+                    {step === 1 && (
+                        <motion.div
+                            key="step1"
+                            className="onb-card"
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -20 }}
+                        >
+                            <h1 className="onb-title">Welcome to CapAble</h1>
+                            <p className="onb-sub">Tell us how you'll use CapAble.</p>
+
+                            <div className="onb-role-grid">
+                                <button
+                                    className={`onb-role-card ${role === 'candidate' ? 'active' : ''}`}
+                                    onClick={() => setRole('candidate')}
+                                >
+                                    <UserIcon size={32} />
+                                    <span>I'm a Candidate</span>
+                                    <small>Build my evidence-driven profile and find opportunities</small>
+                                </button>
+                                <button
+                                    className={`onb-role-card ${role === 'employer' ? 'active' : ''}`}
+                                    onClick={() => setRole('employer')}
+                                >
+                                    <Briefcase size={32} />
+                                    <span>I'm an Employer / Industry</span>
+                                    <small>Post roles, find candidates verified by real capability evidence</small>
+                                </button>
+                                <button
+                                    className={`onb-role-card ${role === 'academician' ? 'active' : ''}`}
+                                    onClick={() => setRole('academician')}
+                                >
+                                    <GraduationCap size={32} />
+                                    <span>I'm an Academician / Faculty</span>
+                                    <small>Explore FDPs, faculty internships, research & industry collaboration</small>
+                                </button>
+                                <button
+                                    className={`onb-role-card ${role === 'institution' ? 'active' : ''}`}
+                                    onClick={() => setRole('institution')}
+                                >
+                                    <Sparkles size={32} />
+                                    <span>I'm an Institution Admin</span>
+                                    <small>Monitor students, track placements, manage industry engagement</small>
+                                </button>
+                            </div>
+
+                            <button
+                                className="onb-btn-primary"
+                                onClick={() => {
+                                    if (role === 'candidate') {
+                                        setStep(2);
+                                    } else if (role === 'employer') {
+                                        setStep(2); // goes to company profile form
+                                    } else {
+                                        // Academician / Institution: no extra step needed
+                                        handleFinish();
+                                    }
+                                }}
+                                disabled={loading}
+                            >
+                                {loading
+                                    ? <><Loader2 size={16} className="spin" /> Setting up…</>
+                                    : <>Continue <ArrowRight size={16} /></>
+                                }
+                            </button>
+                        </motion.div>
+                    )}
+
+                    {/* ── Step 2: Academician / Institution Profile ── */}
+                    {step === 2 && (role === 'academician' || role === 'institution') && (
+                        <motion.div
+                            key={`step2-${role}`}
+                            className="onb-card"
+                            initial={{ opacity: 0, x: 40 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: -40 }}
+                        >
+                            {!preselectedRole && (
+                                <button className="onb-back" onClick={() => setStep(1)}>
+                                    <ArrowLeft size={16} /> Back
+                                </button>
+                            )}
+
+                            <div className="onb-resume-header">
+                                {role === 'academician'
+                                    ? <GraduationCap size={28} className="onb-sparkle" />
+                                    : <Sparkles size={28} className="onb-sparkle" />
+                                }
+                                <h2 className="onb-title">
+                                    {role === 'academician' ? 'Set up your faculty profile' : 'Set up your institution'}
+                                </h2>
+                                <p className="onb-sub">This links you to your institution and your students.</p>
+                            </div>
+
+                            <div className="onb-confirm-fields">
+                                <div className="onb-field">
+                                    <label className="onb-label">Institution Code *</label>
+                                    <input
+                                        className="onb-input"
+                                        placeholder="e.g. VJTI, IITB, MIT-WPU (short unique code)"
+                                        value={institutionCode}
+                                        onChange={e => setInstitutionCode(e.target.value)}
+                                    />
+                                    <small style={{ color: '#94a3b8', fontSize: 12 }}>
+                                        Students must use this code to be linked to your institution.
+                                    </small>
+                                </div>
+                                {role === 'academician' && (
+                                    <div className="onb-field">
+                                        <label className="onb-label">Department</label>
+                                        <input
+                                            className="onb-input"
+                                            placeholder="e.g. Computer Engineering, Electronics"
+                                            value={department}
+                                            onChange={e => setDepartment(e.target.value)}
+                                        />
+                                    </div>
+                                )}
+                            </div>
+
+                            <button
+                                className="onb-btn-primary"
+                                onClick={handleFinish}
+                                disabled={loading || !institutionCode.trim()}
+                            >
+                                {loading
+                                    ? <><Loader2 size={16} className="spin" /> Setting up…</>
+                                    : <>Launch Dashboard <ArrowRight size={16} /></>
+                                }
+                            </button>
+                            <p style={{ fontSize: 12, color: '#94a3b8', marginTop: 8 }}>You can update these later from your profile.</p>
+                        </motion.div>
+                    )}
+
+                    {/* ── Step 2: Company Profile (Employers only) ── */}
+                    {step === 2 && role === 'employer' && (
+                        <motion.div
+                            key="step2-employer"
+                            className="onb-card"
+                            initial={{ opacity: 0, x: 40 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: -40 }}
+                        >
+                            <button className="onb-back" onClick={() => setStep(1)}>
+                                <ArrowLeft size={16} /> Back
+                            </button>
+
+                            <div className="onb-resume-header">
+                                <Briefcase size={28} className="onb-sparkle" />
+                                <h2 className="onb-title">Set up your company profile</h2>
+                                <p className="onb-sub">This helps students and academicians discover your opportunities.</p>
+                            </div>
+
+                            <div className="onb-confirm-fields">
+                                <div className="onb-field">
+                                    <label className="onb-label">Company / Organisation Name *</label>
+                                    <input
+                                        className="onb-input"
+                                        placeholder="e.g. TechCorp Pvt. Ltd."
+                                        value={companyName}
+                                        onChange={e => setCompanyName(e.target.value)}
+                                    />
+                                </div>
+                                <div className="onb-field">
+                                    <label className="onb-label">Industry / Sector</label>
+                                    <input
+                                        className="onb-input"
+                                        placeholder="e.g. Software, Manufacturing, Healthcare"
+                                        value={industry}
+                                        onChange={e => setIndustry(e.target.value)}
+                                    />
+                                </div>
+                                <div className="onb-field">
+                                    <label className="onb-label">Company Website</label>
+                                    <input
+                                        className="onb-input"
+                                        placeholder="https://yourcompany.com"
+                                        value={website}
+                                        onChange={e => setWebsite(e.target.value)}
+                                    />
+                                </div>
+                                <div className="onb-field">
+                                    <label className="onb-label">Company Size</label>
+                                    <select
+                                        className="onb-input"
+                                        value={companySize}
+                                        onChange={e => setCompanySize(e.target.value)}
+                                    >
+                                        <option value="">Select size</option>
+                                        <option value="1-10">1–10 employees (Startup)</option>
+                                        <option value="11-50">11–50 employees (Small)</option>
+                                        <option value="51-200">51–200 employees (Mid-size)</option>
+                                        <option value="201-1000">201–1000 employees (Large)</option>
+                                        <option value="1000+">1000+ employees (Enterprise)</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <button
+                                className="onb-btn-primary"
+                                onClick={handleFinish}
+                                disabled={loading || !companyName.trim()}
+                            >
+                                {loading
+                                    ? <><Loader2 size={16} className="spin" /> Creating account…</>
+                                    : <>Launch Dashboard <ArrowRight size={16} /></>
+                                }
+                            </button>
+                            <p style={{ fontSize: 12, color: '#94a3b8', marginTop: 8 }}>You can update these details from your employer dashboard.</p>
+                        </motion.div>
+                    )}
+
+                    {/* ── Step 2: Resume Upload (Candidates only) ── */}
+                    {step === 2 && role === 'candidate' && (
+                        <motion.div
+                            key="step2"
+                            className="onb-card onb-card--wide"
+                            initial={{ opacity: 0, x: 40 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: -40 }}
+                        >
+                            <button className="onb-back" onClick={() => setStep(1)}>
+                                <ArrowLeft size={16} /> Back
+                            </button>
+
+                            <div className="onb-resume-header">
+                                <Sparkles size={28} className="onb-sparkle" />
+                                <h2 className="onb-title">Build your profile instantly</h2>
+                                <p className="onb-sub">
+                                    Paste your resume below. Our AI will extract your skills, projects, and education to build your CapAble profile — no manual entry required.
+                                </p>
+                            </div>
+
+                            <div className="onb-resume-area">
+                                <textarea
+                                    className="onb-resume-textarea"
+                                    placeholder="Paste your resume text here...&#10;&#10;Include your skills, experience, projects, and education.&#10;The more detail, the better your capability profile will be."
+                                    value={resumeText}
+                                    onChange={e => setResumeText(e.target.value)}
+                                    rows={14}
+                                />
+
+                                <div className="onb-resume-or">
+                                    <span>or</span>
+                                </div>
+
+                                <button
+                                    className="onb-upload-btn"
+                                    onClick={() => fileInputRef.current?.click()}
+                                >
+                                    <Upload size={16} />
+                                    Upload Resume (.pdf, .txt)
+                                </button>
+                                <input
+                                    ref={fileInputRef}
+                                    type="file"
+                                    accept=".txt,.pdf"
+                                    style={{ display: 'none' }}
+                                    onChange={handleFileUpload}
+                                />
+                            </div>
+
+                            {resumeText.length > 0 && (
+                                <p className="onb-char-count">
+                                    <FileText size={12} /> {resumeText.length} characters
+                                </p>
+                            )}
+
+                            {parseError && (
+                                <div className="onb-error">
+                                    <AlertCircle size={14} /> {parseError}
+                                </div>
+                            )}
+
+                            <div className="onb-resume-actions">
+                                <button
+                                    className="onb-btn-primary"
+                                    onClick={handleParseResume}
+                                    disabled={parsing || resumeText.trim().length < 50}
+                                >
+                                    {parsing ? (
+                                        <><Loader2 size={16} className="spin" /> Analysing resume...</>
+                                    ) : (
+                                        <><Sparkles size={16} /> Build Profile from Resume</>
+                                    )}
+                                </button>
+
+                                <button className="onb-btn-ghost" onClick={skipResume}>
+                                    Skip — I'll fill it in later
+                                </button>
+                            </div>
+                        </motion.div>
+                    )}
+
+                    {/* ── Step 3: Confirm & Add Details ── */}
+                    {step === 3 && (
+                        <motion.div
+                            key="step3"
+                            className="onb-card onb-card--wide"
+                            initial={{ opacity: 0, x: 40 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: -40 }}
+                        >
+                            <button className="onb-back" onClick={() => setStep(2)}>
+                                <ArrowLeft size={16} /> Back
+                            </button>
+
+                            <h2 className="onb-title">
+                                {parsedResume ? (
+                                    <><CheckCircle size={22} className="text-green" /> Profile extracted successfully</>
+                                ) : 'Complete your profile'}
+                            </h2>
+
+                            {parsedResume && (
+                                <div className="onb-parsed-summary">
+                                    <div className="onb-parsed-chips">
+                                        {parsedResume.skills.slice(0, 8).map(s => (
+                                            <span key={s} className="onb-chip">{s}</span>
+                                        ))}
+                                        {parsedResume.skills.length > 8 && (
+                                            <span className="onb-chip onb-chip--more">+{parsedResume.skills.length - 8} more</span>
+                                        )}
+                                    </div>
+                                    <p className="onb-parsed-info">
+                                        Found {parsedResume.projects.length} projects, {parsedResume.experience.length} experience entries, {parsedResume.education.length} education records.
+                                    </p>
+                                </div>
+                            )}
+
+                            <div className="onb-field-group">
+                                <label className="onb-label">
+                                    <GitBranch size={14} /> GitHub Username (optional)
+                                </label>
+                                <input
+                                    type="text"
+                                    className="onb-input"
+                                    placeholder="e.g. johndoe (without @)"
+                                    value={githubUsername}
+                                    onChange={e => setGithubUsername(e.target.value.replace('@', ''))}
+                                />
+                                <small className="onb-hint">We'll sync your real repositories to build your capability profile.</small>
+                            </div>
+
+                            <div className="onb-field-group">
+                                <label className="onb-label">Professional Headline</label>
+                                <input
+                                    type="text"
+                                    className="onb-input"
+                                    placeholder="e.g. Final-year CS student | React & Python"
+                                    value={headline}
+                                    onChange={e => setHeadline(e.target.value)}
+                                />
+                            </div>
+
+                            <div className="onb-field-group">
+                                <label className="onb-label">Location</label>
+                                <input
+                                    type="text"
+                                    className="onb-input"
+                                    placeholder="e.g. Mumbai, India"
+                                    value={location}
+                                    onChange={e => setLocation(e.target.value)}
+                                />
+                            </div>
+
+                            <div className="onb-field-group">
+                                <label className="onb-label">
+                                    <GraduationCap size={14} /> Institution Code (optional)
+                                </label>
+                                <input
+                                    type="text"
+                                    className="onb-input"
+                                    placeholder="e.g. CU, VJTI, IITB — ask your faculty"
+                                    value={institutionCode}
+                                    onChange={e => setInstitutionCode(e.target.value.toUpperCase())}
+                                />
+                                <small className="onb-hint">Enter the code given by your college / faculty so they can track your progress.</small>
+                            </div>
+
+                            {error && <div className="onb-error"><AlertCircle size={14} /> {error}</div>}
+
+                            <button
+                                className="onb-btn-primary"
+                                onClick={() => setStep(4)}
+                            >
+                                Continue <ArrowRight size={16} />
+                            </button>
+                        </motion.div>
+                    )}
+
+                    {/* ── Step 4: Done ── */}
+                    {step === 4 && (
+                        <motion.div
+                            key="step4"
+                            className="onb-card onb-card--center"
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0 }}
+                        >
+                            <div className="onb-done-icon">
+                                <CheckCircle size={48} />
+                            </div>
+                            <h2 className="onb-title">You're all set!</h2>
+                            <p className="onb-sub">
+                                Your capability profile is being built from your resume. Head to your dashboard to explore real opportunities matched to your skills.
+                            </p>
+
+                            {parsedResume && (
+                                <div className="onb-done-stats">
+                                    <div className="onb-done-stat">
+                                        <span className="onb-done-val">{parsedResume.skills.length}</span>
+                                        <span className="onb-done-lbl">Skills detected</span>
+                                    </div>
+                                    <div className="onb-done-stat">
+                                        <span className="onb-done-val">{parsedResume.projects.length}</span>
+                                        <span className="onb-done-lbl">Projects found</span>
+                                    </div>
+                                    <div className="onb-done-stat">
+                                        <span className="onb-done-val">{parsedResume.experience.length}</span>
+                                        <span className="onb-done-lbl">Experience entries</span>
+                                    </div>
+                                </div>
+                            )}
+
+                            {error && <div className="onb-error"><AlertCircle size={14} /> {error}</div>}
+
+                            <button
+                                className="onb-btn-primary"
+                                onClick={handleFinish}
+                                disabled={loading}
+                            >
+                                {loading ? (
+                                    <><Loader2 size={16} className="spin" /> Saving profile...</>
+                                ) : (
+                                    <>Go to Dashboard <ArrowRight size={16} /></>
+                                )}
+                            </button>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
             </div>
         </div>
     );
