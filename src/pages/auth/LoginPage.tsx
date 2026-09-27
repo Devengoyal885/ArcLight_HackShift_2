@@ -105,16 +105,17 @@ export default function LoginPage() {
     const [error, setError] = useState('');
     const [infoMsg, setInfoMsg] = useState('');
     const navigate = useNavigate();
-    const { user, profile, loading } = useAuth();
+    const { user, loading } = useAuth();
 
-    // Already logged in — redirect to dashboard immediately
+    // If user is already authenticated, get them off the login page.
+    // ProtectedRoute will handle onboarding redirect if profile is incomplete.
     useEffect(() => {
-        if (!loading && user && profile?.profileComplete) {
+        if (!loading && user) {
             const savedRole = (localStorage.getItem('userRole') as RoleType) || 'candidate';
             navigate(dashboardFor(savedRole), { replace: true });
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [user, profile, loading]);
+    }, [user, loading]);
 
     const currentRole: RoleType = step === 'select'
         ? 'candidate'

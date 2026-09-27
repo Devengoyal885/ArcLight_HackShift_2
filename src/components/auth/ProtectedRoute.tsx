@@ -35,10 +35,8 @@ export default function ProtectedRoute({ children, allowedRoles }: ProtectedRout
         return <Navigate to="/login" replace />;
     }
 
-    // Profile not completed — send to onboarding
-    if (!profile?.profileComplete) {
-        return <Navigate to="/onboarding" replace />;
-    }
+    // Note: profileComplete redirect is handled at login time, not here,
+    // to avoid redirect loops for users who skipped or have incomplete profiles.
 
     // Role-based check (if specified)
     if (allowedRoles && allowedRoles.length > 0 && role) {
