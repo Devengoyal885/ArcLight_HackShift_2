@@ -1,5 +1,20 @@
 import React from 'react';
 
+// Detect stale chunk errors that happen after a new Vercel deployment
+// when the browser has cached old JS chunk hashes that no longer exist.
+function isChunkLoadError(error: Error): boolean {
+    const msg = error?.message || '';
+    const name = error?.name || '';
+    return (
+        msg.includes('Failed to fetch dynamically imported module') ||
+        msg.includes('Importing a module script failed') ||
+        msg.includes('Unable to preload CSS') ||
+        name === 'ChunkLoadError' ||
+        msg.includes('Loading chunk') ||
+        msg.includes('Loading CSS chunk')
+    );
+}
+
 export class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { hasError: boolean, error: Error | null }> {
     constructor(props: { children: React.ReactNode }) {
         super(props);
@@ -7,6 +22,15 @@ export class ErrorBoundary extends React.Component<{ children: React.ReactNode }
     }
 
     static getDerivedStateFromError(error: Error) {
+        // If it's a stale chunk error, auto-reload once instead of showing crash screen
+        if (isChunkLoadError(error)) {
+            const reloaded = sessionStorage.getItem('chunk-reload-attempted');
+            if (!reloaded) {
+                sessionStorage.setItem('chunk-reload-attempted', '1');
+                window.location.reload();
+                return { hasError: false, error: null }; // Don't show error screen yet
+            }
+        }
         return { hasError: true, error };
     }
 
@@ -48,7 +72,10 @@ export class ErrorBoundary extends React.Component<{ children: React.ReactNode }
                         )}
 
                         <button 
-                            onClick={() => window.location.reload()}
+                            onClick={() => {
+                                sessionStorage.removeItem('chunk-reload-attempted');
+                                window.location.reload();
+                            }}
                             style={{
                                 padding: '10px 24px',
                                 borderRadius: '8px',
