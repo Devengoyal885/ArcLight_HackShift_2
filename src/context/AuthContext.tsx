@@ -33,7 +33,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const [loading, setLoading] = useState(true);
     const [profileLoading, setProfileLoading] = useState(false);
 
-    // Derive role from localStorage fallback primarily, as profile.role might not be set for new scoped profiles yet
+    // Derive role from localStorage primarily, then profile
     const role: UserRole | null = (localStorage.getItem('userRole') as UserRole | null) || profile?.role || null;
     const dbUid = user && role ? `${user.uid}_${role}` : (user ? `${user.uid}_candidate` : null);
 
@@ -42,7 +42,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         try {
             let p = await getProfile(currentDbUid);
             if (!p) {
-                // First sign-in — create skeleton profile
                 try {
                     await createProfile(currentDbUid, {
                         uid: currentDbUid,
@@ -52,9 +51,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                         profileComplete: false,
                     });
                     p = await getProfile(currentDbUid);
-                } catch (createErr) {
-                    // Firestore may be offline — create a local-only profile from Firebase Auth
-                    console.warn('Firestore unavailable, using Firebase Auth data as profile fallback');
+                } catch {
                     p = {
                         uid: currentDbUid,
                         name: u.displayName || '',
@@ -65,9 +62,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 }
             }
             setProfile(p);
-        } catch (err) {
-            // Firestore offline — fall back to Firebase Auth data
-            console.warn('Profile load failed, using Firebase Auth fallback:', err);
+        } catch {
             setProfile({
                 uid: currentDbUid,
                 name: u.displayName || '',
@@ -86,6 +81,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+            console.log('[AuthContext] onAuthStateChanged fired, user:', currentUser?.uid ?? 'null');
             setUser(currentUser);
             if (currentUser) {
                 const activeRole = (localStorage.getItem('userRole') as UserRole | null) || 'candidate';

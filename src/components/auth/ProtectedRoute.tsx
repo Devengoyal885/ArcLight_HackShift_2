@@ -5,43 +5,42 @@ import { Loader2 } from 'lucide-react';
 
 interface ProtectedRouteProps {
     children: React.ReactNode;
-    /** Roles allowed to access this route. If empty/undefined, any authenticated user can access. */
     allowedRoles?: UserRole[];
 }
 
-/**
- * Route guard that:
- * 1. Redirects unauthenticated users to /login
- * 2. Redirects users without a completed profile to /onboarding
- * 3. Checks role-based access if allowedRoles is specified
- */
-export default function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) {
-    const { user, profile, role, loading, profileLoading } = useAuth();
+const Spinner = () => (
+    <div style={{
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        height: '100vh', background: '#0a0a0f',
+    }}>
+        <Loader2 size={32} style={{ color: '#2563eb', animation: 'spin 1s linear infinite' }} />
+    </div>
+);
 
-    // Still loading auth state — show spinner
-    if (loading || profileLoading) {
-        return (
-            <div style={{
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                height: '100vh', background: '#0a0a0f',
-            }}>
-                <Loader2 size={32} style={{ color: '#2563eb', animation: 'spin 1s linear infinite' }} />
-            </div>
-        );
+export default function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) {
+    const { user, role, loading, profileLoading } = useAuth();
+
+    // Always wait for Firebase auth to finish initializing.
+    // loading=true means onAuthStateChanged hasn't fired yet — NEVER redirect during this time.
+    if (loading) {
+        console.log('[ProtectedRoute] Auth still loading, showing spinner');
+        return <Spinner />;
     }
 
-    // Not authenticated
+    // Profile is loading — show spinner
+    if (profileLoading) {
+        return <Spinner />;
+    }
+
+    // Auth finished loading, user is not signed in — redirect to login
     if (!user) {
+        console.log('[ProtectedRoute] No user after loading finished, redirecting to /login');
         return <Navigate to="/login" replace />;
     }
 
-    // Note: profileComplete redirect is handled at login time, not here,
-    // to avoid redirect loops for users who skipped or have incomplete profiles.
-
-    // Role-based check (if specified)
+    // Role-based check
     if (allowedRoles && allowedRoles.length > 0 && role) {
         if (!allowedRoles.includes(role)) {
-            // Redirect to their own dashboard
             const dashboardMap: Record<UserRole, string> = {
                 candidate: '/candidate',
                 employer: '/employer',

@@ -10,7 +10,7 @@ import { getStorage } from 'firebase/storage';
 
 const firebaseConfig = {
     apiKey: "AIzaSyD6ZYSMF-uhdDdpxlJm-wBL3Szho4LvMu4",
-    authDomain: "capable-alpha.vercel.app",
+    authDomain: "wardrobe-app-adf6e.firebaseapp.com",
     projectId: "wardrobe-app-adf6e",
     storageBucket: "wardrobe-app-adf6e.appspot.com",
     messagingSenderId: "920220901330",
