@@ -3,7 +3,11 @@
   "outputDirectory": "dist",
   "rewrites": [
     {
-      "source": "/((?!assets|favicon|manifest|service-worker|icons|public).*)",
+      "source": "/__/auth/:path*",
+      "destination": "https://wardrobe-app-adf6e.firebaseapp.com/__/auth/:path*"
+    },
+    {
+      "source": "/((?!assets|favicon|manifest|service-worker|icons|public|__|\\.well-known).*)",
       "destination": "/index.html"
     }
   ]
