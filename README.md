@@ -1,23 +1,24 @@
 <div align="center">
-  <img src="public/hero-glass-art.jpg" alt="CapAble Hero/Banner" width="100%" />
+  <img src="public/capable-hero.jpg" alt="CapAble Hero/Banner" width="100%" style="border-radius: 12px; margin-bottom: 20px;" />
 
   # 🎓 CapAble — Campus Placement Intelligence
 
-  **Next-Generation AI-Powered Career Readiness & Recruitment Ecosystem**
+  **The Next-Generation AI-Powered Career Readiness & Recruitment Ecosystem**
 
   [![React](https://img.shields.io/badge/React-18-blue.svg?style=for-the-badge&logo=react)](https://reactjs.org/)
   [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue.svg?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
   [![Vite](https://img.shields.io/badge/Vite-5.0-purple.svg?style=for-the-badge&logo=vite)](https://vitejs.dev/)
   [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4-38B2AC.svg?style=for-the-badge&logo=tailwind-css)](https://tailwindcss.com/)
   [![Firebase](https://img.shields.io/badge/Firebase-Auth/Firestore-F6820D.svg?style=for-the-badge&logo=firebase)](https://firebase.google.com/)
-  [![Node.js](https://img.shields.io/badge/Node.js-Backend-43853D.svg?style=for-the-badge&logo=node.js)](https://nodejs.org/)
+  [![Gemini AI](https://img.shields.io/badge/Gemini_AI-Enabled-4285F4.svg?style=for-the-badge&logo=google)](https://ai.google.dev/)
 
   <p align="center">
     <a href="#-about-the-project">About</a> •
+    <a href="#-platform-preview">Preview</a> •
     <a href="#-key-features">Features</a> •
-    <a href="#-tech-stack">Tech Stack</a> •
-    <a href="#-getting-started">Getting Started</a> •
-    <a href="#-deployment">Deployment</a>
+    <a href="#%EF%B8%8F-tech-stack">Tech Stack</a> •
+    <a href="#-architecture">Architecture</a> •
+    <a href="#-getting-started">Deployment</a>
   </p>
 </div>
 
@@ -31,100 +32,117 @@ Through data-driven profiles, an interactive onboarding wizard, and a dynamic AI
 
 ---
 
+## 🎨 Platform Preview
+
+<div align="center">
+  <img src="public/capable-dashboard.jpg" alt="CapAble Dashboard Mockup" width="100%" style="border-radius: 12px; box-shadow: 0px 10px 30px rgba(0,0,0,0.5);" />
+  <p><i>Our premium, glassmorphism-inspired dark mode dashboard.</i></p>
+</div>
+
+---
+
 ## ✨ Key Features
 
-### 👨‍🎓 For Candidates (The Talent)
-- 🌌 **Dynamic Dashboards**: A time-sensitive, fully immersive glassmorphism dashboard that reacts to the user.
-- 🪪 **Capability Twin (3D)**: Interactive 3D identity cards built with Framer Motion—tilts and reflects dynamically as your mouse moves.
-- 📊 **Codolio-Inspired Metrics**: Visualize your coding journey automatically. Generate rating trajectory charts, difficulty distributions, and capability bars linked directly to LeetCode and HackerRank.
-- 💻 **Integrated AI Coding IDE**: Practice, assess, and debug skills in a native, in-browser compiler environment.
-- ⚡ **Device-Native Onboarding**: A frictionless, multi-step interactive setup wizard built for speed and premium UX.
-
-### 🏢 For Employers (The Recruiters)
-- 🎯 **Opportunity Radar**: An AI-powered matchmaking engine that structurally maps the exact gap between job requirements and verified candidate capabilities.
-- 📈 **Automated Sync**: Watch candidates' metrics evolve over time via live APIs instead of static resume updates.
-
----
-
-## 🛠 Tech Stack
-
-### Frontend (Client)
-- **Framework**: React 18 (TypeScript) + Vite
-- **Styling**: Tailwind CSS + Custom CSS Tokens (Glassmorphism design system)
-- **Animations**: Framer Motion
-- **Data Visualization**: Recharts
-- **Icons**: Lucide React / Inline optimized SVGs
-
-### Backend (Server/APIs)
-- **Runtime**: Node.js & Express
-- **Database & Auth**: Firebase (Firestore DB, Authentication)
-- **AI Pipelines**: Google Gemini API & Groq
+<table>
+  <tr>
+    <td width="50%">
+      <h3>👨‍🎓 For Candidates (The Talent)</h3>
+      <ul>
+        <li>🌌 <b>Dynamic Dashboards:</b> Time-sensitive, fully immersive glassmorphism dashboard that reacts to you.</li>
+        <li>🪪 <b>Capability Twin (3D):</b> Interactive 3D identity cards built with Framer Motion that tilt and reflect dynamically as your mouse moves.</li>
+        <li>📊 <b>Codolio-Inspired Metrics:</b> Visualize your coding journey with automatically generated rating trajectory charts and difficulty distributions.</li>
+        <li>💻 <b>Integrated AI Coding IDE:</b> Practice, assess, and debug skills in a native, in-browser compiler environment.</li>
+        <li>⚡ <b>Device-Native Onboarding:</b> A frictionless, multi-step interactive setup wizard built for speed and premium UX.</li>
+      </ul>
+    </td>
+    <td width="50%">
+      <h3>🏢 For Employers (The Recruiters)</h3>
+      <ul>
+        <li>🎯 <b>Opportunity Radar:</b> AI-powered matchmaking engine that structurally maps the exact gap between job requirements and verified candidate capabilities.</li>
+        <li>📈 <b>Automated Sync:</b> Watch candidates' metrics evolve over time via live APIs instead of static resume updates.</li>
+        <li>🤖 <b>Smart Shortlisting:</b> Let Gemini AI parse unstructured data to find the hidden gems in the talent pool.</li>
+        <li>🎨 <b>Premium Brand Experience:</b> Engage with talent on a platform that feels like a high-end tech product, not a dusty portal.</li>
+      </ul>
+    </td>
+  </tr>
+</table>
 
 ---
 
-## 🚀 Getting Started
+## 🏗️ Tech Stack
+
+We utilize a modern, scalable, and highly optimized tech stack to deliver a seamless 60fps experience.
+
+| Domain | Technologies |
+| :--- | :--- |
+| **Frontend Framework** | React 18, TypeScript, Vite |
+| **Styling & UI** | Tailwind CSS, CSS Modules (Glassmorphism), Radix UI |
+| **Animations** | Framer Motion (3D Tilting, Layout Transitions) |
+| **Data Visualization**| Recharts (Dynamic capability graphs) |
+| **Backend API** | Node.js, Express.js |
+| **Database & Auth** | Firebase Authentication, Cloud Firestore |
+| **AI Integration** | Google Gemini API, Groq |
+
+---
+
+## 📐 Architecture Diagram
+
+```mermaid
+graph TD
+    Client[Client Browser (Vite/React)] -->|Auth & DB Read/Write| Firebase[(Firebase Firestore / Auth)]
+    Client -->|API Requests| Backend[Node.js / Express Backend]
+    
+    Backend -->|LLM Queries| Gemini[Google Gemini AI]
+    Backend -->|Code Execution| Judge0[Judge0 API (IDE)]
+    Backend -->|Web Scrape| Codolio[LeetCode/HackerRank APIs]
+
+    subgraph Frontend Features
+    UI[Glassmorphism UI]
+    Charts[Recharts Visualization]
+    3D[Framer Motion 3D Cards]
+    end
+
+    Client --- UI
+    Client --- Charts
+    Client --- 3D
+```
+
+---
+
+## 🚀 Getting Started & Local Development
 
 Follow these instructions to set up the project locally on your machine.
 
-### 1. Clone the Repository
 ```bash
+# 1. Clone the Repository
 git clone https://github.com/rishabhv16/CapAble.git
 cd CapAble
-```
 
-### 2. Install Dependencies
-```bash
-# We recommend using npm to match the lockfiles
+# 2. Install Dependencies
 npm install
-```
 
-### 3. Environment Configuration
-Create a `.env` file in the root directory. You can use the provided `.env.example` as a template.
-```bash
+# 3. Setup Environment Variables
 cp .env.example .env
-```
-> **Critical:** Ensure `VITE_SERVER_URL` is pointing to your locally running backend server (e.g., `http://localhost:5000`) or your live Railway URL.
+# Important: Set VITE_SERVER_URL to your local backend (http://localhost:5000) or Railway URL.
 
-### 4. Fire It Up 🔥
-Start the Vite development server:
-```bash
+# 4. Start the Development Server
 npm run dev
 ```
-The application will spin up at `http://localhost:5173`. 
 
 ---
 
-## ☁️ Deployment
+## ☁️ Vercel Deployment Guide
 
-CapAble is production-ready and optimized for deployment on **Vercel** (Frontend) and **Railway/Render** (Backend).
+CapAble is highly optimized for deployment on **Vercel** (Frontend) and **Railway/Render** (Backend).
 
-### Deploying the Frontend to Vercel
 1. Log in to [Vercel](https://vercel.com) and click **Add New Project**.
-2. Connect this GitHub repository.
-3. The framework will auto-detect as **Vite**.
-4. Navigate to the **Environment Variables** tab in Vercel before deploying.
-5. Add your `.env` variables. **Crucially, set `VITE_SERVER_URL` to your production backend URL (e.g., your live Railway domain).**
-6. Hit **Deploy**. 
+2. Connect your GitHub repository. Vercel will auto-detect the framework as **Vite**.
+3. Go to the **Environment Variables** tab.
+4. Add all required variables from your `.env` file. 
+5. **CRITICAL:** Set `VITE_SERVER_URL` to your production backend URL (e.g., your live Railway domain) so the frontend can securely communicate with the backend without disturbing it.
+6. Hit **Deploy**.
 
 *Your backend remains untouched and secure on Railway, while Vercel serves the hyper-fast React frontend!*
-
----
-
-## 📂 Project Structure
-
-```text
-CapAble/
-├── public/                 # Static assets (images, manifest, favicon)
-├── src/
-│   ├── components/         # Reusable UI components (3D, Navigation, Buttons)
-│   ├── lib/                # Config files (Firebase, Gemini init)
-│   ├── pages/              # App Pages (Dashboard, IDE, Landing, Auth)
-│   ├── styles/             # Global CSS, Design Tokens, Utilities
-│   └── main.tsx            # React Mount Point
-├── server/                 # Node.js Express Backend
-├── firestore.rules         # Firebase Security Rules
-└── vite.config.ts          # Vite Bundler Config
-```
 
 ---
 
