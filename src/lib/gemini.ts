@@ -13,7 +13,8 @@
  *   callGeminiStream(prompt, systemInstruction?, model?) -> AsyncGenerator<string>
  */
 
-const SERVER_URL = import.meta.env.VITE_SERVER_URL || 'http://localhost:5000';
+let SERVER_URL = import.meta.env.VITE_SERVER_URL || 'http://localhost:5000';
+if (SERVER_URL.includes('up.railway.app')) SERVER_URL = SERVER_URL.replace('http://', 'https://');
 
 // Internal proxy helper
 async function proxyGenerate(

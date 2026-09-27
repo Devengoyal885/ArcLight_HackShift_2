@@ -15,7 +15,8 @@
  *        TWILIO_SMS_FROM=+1xxxxxxxxxx                  (if using SMS)
  */
 
-const SERVER_URL = import.meta.env.VITE_SERVER_URL || 'http://localhost:5000';
+let SERVER_URL = import.meta.env.VITE_SERVER_URL || 'http://localhost:5000';
+if (SERVER_URL.includes('up.railway.app')) SERVER_URL = SERVER_URL.replace('http://', 'https://');
 
 // ── Core send helpers ─────────────────────────────────────────────────────────
 
