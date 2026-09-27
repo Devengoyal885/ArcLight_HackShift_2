@@ -14,7 +14,7 @@
     border: none;
     cursor: pointer;
     outline: none;
-    font-family: inherit;
+    font-family: var(--font-sans, inherit);
     font-weight: 600;
     letter-spacing: -0.01em;
     text-decoration: none;
@@ -22,6 +22,11 @@
     -webkit-font-smoothing: antialiased;
     overflow: hidden;
     transform-style: preserve-3d;
+    /* Emil: specify exact props, never transition:all */
+    transition:
+        transform var(--duration-instant, 80ms) var(--ease-out, cubic-bezier(0.23,1,0.32,1)),
+        box-shadow var(--duration-fast, 150ms) var(--ease-out, cubic-bezier(0.23,1,0.32,1)),
+        opacity var(--duration-fast, 150ms) var(--ease-out, cubic-bezier(0.23,1,0.32,1));
 }
 
 .lmb:focus-visible {
@@ -64,15 +69,35 @@
 .lmb-content {
     position: relative;
     z-index: 2;
+    transform: translateZ(10px);
     display: flex;
     align-items: center;
     gap: 6px;
     white-space: nowrap;
+    pointer-events: none; /* Let clicks pass to the button itself */
 }
 
 .lmb-label {
     display: flex;
     align-items: center;
+}
+
+.lmb-icon-right {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.12);
+    margin-left: 4px;
+    margin-right: -4px;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), background 0.4s ease;
+}
+
+.lmb:hover .lmb-icon-right {
+    transform: translateX(2px) scale(1.05);
+    background: rgba(255, 255, 255, 0.2);
 }
 
 /* ─── PRIMARY — Liquid Metal ─────────────────────────────────────────────────── */
@@ -91,10 +116,22 @@
     position: absolute;
     inset: 0;
     z-index: 0;
+    transform: translateZ(-1px);
+    pointer-events: none;
     border-radius: inherit;
     overflow: hidden;
     opacity: 0.92;
-    transition: opacity 0.2s;
+    /* Emil: use exact property, not shorthand */
+    transition: opacity var(--duration-fast, 150ms) var(--ease-out, cubic-bezier(0.23,1,0.32,1));
+}
+
+/* Force the paper-design shader canvas to fill the button */
+.lmb-shader > div,
+.lmb-shader canvas {
+    width: 100% !important;
+    height: 100% !important;
+    position: absolute !important;
+    inset: 0 !important;
 }
 
 .lmb-primary:hover .lmb-shader {
@@ -114,7 +151,7 @@
         transparent 60%
     );
     pointer-events: none;
-    transition: opacity 0.2s;
+    transition: background var(--duration-fast, 150ms) var(--ease-out, cubic-bezier(0.23,1,0.32,1));
 }
 
 .lmb-primary:hover .lmb-gloss {
@@ -136,7 +173,11 @@
     box-shadow:
         0 1px 3px rgba(0, 0, 0, 0.08),
         inset 0 1px 0 rgba(255, 255, 255, 0.8);
-    transition: background 0.2s, box-shadow 0.2s, border-color 0.2s;
+    /* Emil: specify each property, not shorthand */
+    transition:
+        background var(--duration-fast, 150ms) var(--ease-out, cubic-bezier(0.23,1,0.32,1)),
+        box-shadow var(--duration-fast, 150ms) var(--ease-out, cubic-bezier(0.23,1,0.32,1)),
+        border-color var(--duration-fast, 150ms) var(--ease-out, cubic-bezier(0.23,1,0.32,1));
 }
 
 .lmb-secondary:hover:not(:disabled) {
@@ -170,7 +211,7 @@
     padding-left: 4px;
     padding-right: 4px;
     font-weight: 500;
-    transition: color 0.15s;
+    transition: color var(--duration-fast, 150ms) var(--ease-out, cubic-bezier(0.23,1,0.32,1));
 }
 
 .lmb-tertiary:hover:not(:disabled) {
@@ -189,13 +230,14 @@
     to { transform: rotate(360deg); }
 }
 
-/* ─── Reduced motion ─────────────────────────────────────────────────────────── */
+/* ─── Reduced motion — keep opacity but remove scale ─────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
     .lmb,
     .lmb-shader,
     .lmb-gloss {
         animation: none !important;
-        transition: none !important;
+        transition: opacity var(--duration-fast, 150ms) var(--ease-out) !important;
+        transform: none !important;
     }
     .lmb-spinner {
         animation: none !important;

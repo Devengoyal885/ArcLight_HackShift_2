@@ -73,6 +73,9 @@ export default function CodolioProfilePage() {
     
     // Resume Upload State
     const [uploadingResume, setUploadingResume] = useState(false);
+    
+    // Avatar Upload State
+    const [uploadingAvatar, setUploadingAvatar] = useState(false);
 
     // Share / Username State
     const [usernameInput, setUsernameInput] = useState('');
@@ -300,6 +303,63 @@ export default function CodolioProfilePage() {
         }
     };
 
+    const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file || !user || !dbUid) return;
+        setUploadingAvatar(true);
+        try {
+            // Compress image using canvas
+            const bitmap = await createImageBitmap(file);
+            const canvas = document.createElement('canvas');
+            const MAX_SIZE = 512;
+            let width = bitmap.width;
+            let height = bitmap.height;
+            if (width > height) {
+                if (width > MAX_SIZE) {
+                    height *= MAX_SIZE / width;
+                    width = MAX_SIZE;
+                }
+            } else {
+                if (height > MAX_SIZE) {
+                    width *= MAX_SIZE / height;
+                    height = MAX_SIZE;
+                }
+            }
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx?.drawImage(bitmap, 0, 0, width, height);
+            
+            const blob = await new Promise<Blob>((resolve) => canvas.toBlob(b => resolve(b!), 'image/jpeg', 0.8));
+            
+            // Upload to Cloudinary
+            const formData = new FormData();
+            formData.append('file', blob, `profile_${Date.now()}.jpg`);
+            formData.append('upload_preset', import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET || 'wardrobe_app');
+            
+            const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME || 'dq6idzmu6';
+            const uploadRes = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+                method: 'POST',
+                body: formData
+            });
+
+            if (!uploadRes.ok) {
+                throw new Error('Cloudinary upload failed');
+            }
+
+            const uploadData = await uploadRes.json();
+            const url = uploadData.secure_url;
+
+            await updateProfile(dbUid, { avatar: url });
+            window.location.reload();
+        } catch (err) {
+            console.error("Failed to upload avatar:", err);
+            alert("Failed to upload photo. Please try again.");
+        } finally {
+            setUploadingAvatar(false);
+        }
+    };
+
     if (loading) {
         return (
             <div className="cp-page flex-center h-screen items-center justify-center">
@@ -327,13 +387,21 @@ export default function CodolioProfilePage() {
                 {/* ─── SIDEBAR: Read-Only Identity ─── */}
                 <aside className="cp-sidebar">
                     <div className="cp-card cp-profile-card">
-                        <div className="cp-avatar-wrap">
+                        <div className="cp-avatar-wrap" style={{ position: 'relative' }}>
                             {profile?.avatar ? (
-                                <img src={profile.avatar} alt={profile.name} className="cp-avatar-img" />
+                                <img src={profile.avatar} alt={profile.name} className="cp-avatar-img" style={{ opacity: uploadingAvatar ? 0.5 : 1 }} />
                             ) : (
-                                <div className="cp-avatar-placeholder">
+                                <div className="cp-avatar-placeholder" style={{ opacity: uploadingAvatar ? 0.5 : 1 }}>
                                     {initials}
                                 </div>
+                            )}
+                            {!isReadOnly && (
+                                <label style={{ position: 'absolute', inset: 0, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.5)', color: '#fff', opacity: uploadingAvatar ? 1 : 0, borderRadius: '50%', transition: 'opacity 0.2s', width: '100%', height: '100%' }}
+                                       onMouseEnter={(e) => { if (!uploadingAvatar) e.currentTarget.style.opacity = '1'; }}
+                                       onMouseLeave={(e) => { if (!uploadingAvatar) e.currentTarget.style.opacity = '0'; }}>
+                                    {uploadingAvatar ? <Loader2 className="spin" size={24} /> : <Upload size={24} />}
+                                    <input type="file" accept="image/*" style={{ display: 'none' }} onChange={handleAvatarUpload} disabled={uploadingAvatar} />
+                                </label>
                             )}
                         </div>
                         <h1 className="cp-profile-name">{profile?.name || 'Candidate'}</h1>

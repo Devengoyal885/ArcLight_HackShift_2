@@ -140,6 +140,128 @@ async function groqFallback(
     }
 }
 
+async function omniRouteFallback(
+    contents: any[],
+    generationConfig: any,
+    systemInstruction: any,
+    stream: boolean = false
+): Promise<any> {
+    const messages: { role: string; content: string }[] = [];
+    const sysText = systemInstruction?.parts?.[0]?.text;
+    if (sysText) messages.push({ role: 'system', content: sysText });
+    const userText = contents?.[0]?.parts?.[0]?.text || '';
+    messages.push({ role: 'user', content: userText });
+
+    const isJson = generationConfig?.responseMimeType === 'application/json';
+    const body: Record<string, unknown> = {
+        model: 'auto',
+        messages,
+        temperature: generationConfig?.temperature ?? 0.3,
+        stream,
+    };
+    if (isJson && !stream) body.response_format = { type: 'json_object' };
+
+    try {
+        const r = await fetch('http://localhost:20128/v1/chat/completions', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body),
+        });
+        if (!r.ok) return null;
+        if (stream) return r; // Return raw fetch Response to stream directly
+
+        const d = await r.json() as any;
+        const text = d.choices?.[0]?.message?.content ?? '';
+        return { candidates: [{ content: { parts: [{ text }] } }] };
+    } catch {
+        return null; // Gateway probably offline
+    }
+}
+
+async function freeLlmApiFallback(
+    contents: any[],
+    generationConfig: any,
+    systemInstruction: any,
+    stream: boolean = false
+): Promise<any> {
+    const messages: { role: string; content: string }[] = [];
+    const sysText = systemInstruction?.parts?.[0]?.text;
+    if (sysText) messages.push({ role: 'system', content: sysText });
+    const userText = contents?.[0]?.parts?.[0]?.text || '';
+    messages.push({ role: 'user', content: userText });
+
+    const isJson = generationConfig?.responseMimeType === 'application/json';
+    const body: Record<string, unknown> = {
+        model: 'auto',
+        messages,
+        temperature: generationConfig?.temperature ?? 0.3,
+        stream,
+    };
+    if (isJson && !stream) body.response_format = { type: 'json_object' };
+
+    try {
+        const apiKey = process.env.FREELLMAPI_KEY || 'freellmapi-your-unified-key';
+        const r = await fetch('http://localhost:3001/v1/chat/completions', {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`
+            },
+            body: JSON.stringify(body),
+        });
+        if (!r.ok) return null;
+        if (stream) return r; // Return raw fetch Response to stream directly
+
+        const d = await r.json() as any;
+        const text = d.choices?.[0]?.message?.content ?? '';
+        return { candidates: [{ content: { parts: [{ text }] } }] };
+    } catch {
+        return null; // Gateway probably offline
+    }
+}
+
+async function geminiWeb2ApiFallback(
+    contents: any[],
+    generationConfig: any,
+    systemInstruction: any,
+    stream: boolean = false
+): Promise<any> {
+    const messages: { role: string; content: string }[] = [];
+    const sysText = systemInstruction?.parts?.[0]?.text;
+    if (sysText) messages.push({ role: 'system', content: sysText });
+    const userText = contents?.[0]?.parts?.[0]?.text || '';
+    messages.push({ role: 'user', content: userText });
+
+    const isJson = generationConfig?.responseMimeType === 'application/json';
+    const body: Record<string, unknown> = {
+        model: 'gemini-3.6-flash',
+        messages,
+        temperature: generationConfig?.temperature ?? 0.3,
+        stream,
+    };
+    if (isJson && !stream) body.response_format = { type: 'json_object' };
+
+    try {
+        const apiKey = process.env.GEMINI_WEB2API_KEY || 'sk-your-key';
+        const r = await fetch('http://localhost:8081/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`
+            },
+            body: JSON.stringify(body),
+        });
+        if (!r.ok) return null;
+        if (stream) return r;
+
+        const d = await r.json() as any;
+        const text = d.choices?.[0]?.message?.content ?? '';
+        return { candidates: [{ content: { parts: [{ text }] } }] };
+    } catch {
+        return null; // Gateway probably offline
+    }
+}
+
 function checkRateLimit(ip: string): boolean {
     const now = Date.now();
     const entry = rateMap.get(ip);
@@ -161,7 +283,19 @@ app.post('/api/gemini', async (req, res) => {
     const { model = 'gemini-2.5-flash', contents, generationConfig, systemInstruction } = req.body;
     if (!contents) return res.status(400).json({ error: 'Missing `contents` in request body.' });
 
-    // Try Gemini first
+    // 1. Try OmniRoute Gateway First (Free & Unlimited if running)
+    const omniRes = await omniRouteFallback(contents, generationConfig, systemInstruction, false);
+    if (omniRes) return res.status(200).json(omniRes);
+
+    // 2. Try FreeLLMAPI Gateway Second
+    const freeLlmRes = await freeLlmApiFallback(contents, generationConfig, systemInstruction, false);
+    if (freeLlmRes) return res.status(200).json(freeLlmRes);
+
+    // 3. Try Gemini Web2API (Local Web Proxy)
+    const web2ApiRes = await geminiWeb2ApiFallback(contents, generationConfig, systemInstruction, false);
+    if (web2ApiRes) return res.status(200).json(web2ApiRes);
+
+    // 4. Try Gemini Official API
     const apiKey = getGeminiKey();
     if (apiKey) {
         try {
@@ -194,21 +328,79 @@ app.post('/api/gemini', async (req, res) => {
 
 // ── Gemini Streaming Proxy ─────────────────────────────────────────────────────
 app.post('/api/gemini/stream', async (req, res) => {
-    const apiKey = getApiKey();
-    if (!apiKey) return res.status(500).json({ error: 'Gemini API key not configured.' });
-
     const { model = 'gemini-2.0-flash', contents, generationConfig, systemInstruction } = req.body;
     if (!contents) return res.status(400).json({ error: 'Missing contents.' });
-
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:streamGenerateContent?alt=sse&key=${apiKey}`;
-    const payload: Record<string, unknown> = { contents };
-    if (generationConfig) payload.generationConfig = generationConfig;
-    if (systemInstruction) payload.systemInstruction = systemInstruction;
 
     res.setHeader('Content-Type', 'text/event-stream');
     res.setHeader('Cache-Control', 'no-cache');
     res.setHeader('Connection', 'keep-alive');
     res.flushHeaders?.();
+
+    // 1. Try OmniRoute Gateway First (Free & Unlimited if running)
+    try {
+        const omniStreamRes = await omniRouteFallback(contents, generationConfig, systemInstruction, true) as Response | null;
+        if (omniStreamRes && omniStreamRes.ok && omniStreamRes.body) {
+            const reader = omniStreamRes.body.getReader();
+            const decoder = new TextDecoder();
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+                res.write(decoder.decode(value, { stream: true }));
+            }
+            res.end();
+            return;
+        }
+    } catch (err) {
+        console.warn('[OmniRoute Stream] Failed to connect', err);
+    }
+
+    // 2. Try FreeLLMAPI Gateway Second
+    try {
+        const freeLlmStreamRes = await freeLlmApiFallback(contents, generationConfig, systemInstruction, true) as Response | null;
+        if (freeLlmStreamRes && freeLlmStreamRes.ok && freeLlmStreamRes.body) {
+            const reader = freeLlmStreamRes.body.getReader();
+            const decoder = new TextDecoder();
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+                res.write(decoder.decode(value, { stream: true }));
+            }
+            res.end();
+            return;
+        }
+    } catch (err) {
+        console.warn('[FreeLLMAPI Stream] Failed to connect', err);
+    }
+
+    // 3. Try Gemini Web2API
+    try {
+        const web2ApiStreamRes = await geminiWeb2ApiFallback(contents, generationConfig, systemInstruction, true) as Response | null;
+        if (web2ApiStreamRes && web2ApiStreamRes.ok && web2ApiStreamRes.body) {
+            const reader = web2ApiStreamRes.body.getReader();
+            const decoder = new TextDecoder();
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+                res.write(decoder.decode(value, { stream: true }));
+            }
+            res.end();
+            return;
+        }
+    } catch (err) {
+        console.warn('[Gemini Web2API Stream] Failed to connect, falling back to Official Gemini API', err);
+    }
+
+    const apiKey = getGeminiKey();
+    if (!apiKey) {
+        res.write(`data: ${JSON.stringify({ error: 'All AI backends unavailable. Check server .env keys.' })}\n\n`);
+        res.end();
+        return;
+    }
+
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:streamGenerateContent?alt=sse&key=${apiKey}`;
+    const payload: Record<string, unknown> = { contents };
+    if (generationConfig) payload.generationConfig = generationConfig;
+    if (systemInstruction) payload.systemInstruction = systemInstruction;
 
     try {
         const upstream = await fetch(url, {

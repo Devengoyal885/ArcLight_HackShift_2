@@ -105,7 +105,7 @@ function PrimaryButton({
                     softness={0}
                     shiftRed={0.2}
                     shiftBlue={-0.2}
-                    style={{ width: '100%', height: '100%' }}
+                    style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}
                 />
             </span>
 
@@ -116,7 +116,7 @@ function PrimaryButton({
             <span className="lmb-content">
                 {loading ? <Spinner /> : leftIcon}
                 <span className="lmb-label">{children}</span>
-                {!loading && rightIcon}
+                {!loading && rightIcon && <span className="lmb-icon-right">{rightIcon}</span>}
             </span>
         </motion.button>
     );
@@ -141,7 +141,7 @@ function SecondaryButton({
             <span className="lmb-content">
                 {loading ? <Spinner /> : leftIcon}
                 <span className="lmb-label">{children}</span>
-                {!loading && rightIcon}
+                {!loading && rightIcon && <span className="lmb-icon-right">{rightIcon}</span>}
             </span>
         </motion.button>
     );
@@ -166,7 +166,7 @@ function TertiaryButton({
             <span className="lmb-content">
                 {loading ? <Spinner /> : leftIcon}
                 <span className="lmb-label">{children}</span>
-                {!loading && rightIcon}
+                {!loading && rightIcon && <span className="lmb-icon-right">{rightIcon}</span>}
             </span>
         </motion.button>
     );

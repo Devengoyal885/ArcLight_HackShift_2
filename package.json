@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "vite",
     "server": "tsx server/index.ts",
+    "gateway": "omniroute",
     "dev:all": "concurrently \"npm run server\" \"npm run dev\"",
+    "dev:gateway": "concurrently \"npm run gateway\" \"npm run server\" \"npm run dev\"",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "preview": "vite preview",
@@ -15,6 +17,7 @@
   "dependencies": {
     "@monaco-editor/react": "^4.7.0",
     "@paper-design/shaders-react": "^0.0.81",
+    "@phosphor-icons/react": "^2.1.10",
     "@types/qrcode": "^1.5.6",
     "@types/recharts": "^1.8.29",
     "@vapi-ai/web": "^2.7.1",
@@ -44,6 +47,7 @@
     "concurrently": "^10.0.5",
     "dotenv": "^18.0.1",
     "firebase-admin": "^14.4.0",
+    "omniroute": "^3.8.50",
     "oxlint": "^1.81.0",
     "tsx": "^4.23.13",
     "typescript": "~6.0.2",

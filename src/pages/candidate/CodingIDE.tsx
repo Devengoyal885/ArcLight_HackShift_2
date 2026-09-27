@@ -253,9 +253,16 @@ export default function CodingIDE({ problem, problemIndex, totalProblems, onSubm
 
     const handleCodeChange = useCallback((val: string | undefined) => {
         const v = val ?? '';
+        
+        // AI Authorship Detection (Cadence Monitoring)
+        if (!practiceMode && Math.abs(v.length - code.length) > 15) {
+            setProctorWarnings(w => w + 1);
+            alert('AI Authorship Warning: Suspicious rapid code insertion detected. Typing cadence logged.');
+        }
+
         setCode(v);
         codeMap.current[lang] = v;
-    }, [lang]);
+    }, [lang, code, practiceMode]);
 
     // Request AI hint for a specific test case
     const handleAskAI = async (testCase: any, result: any) => {

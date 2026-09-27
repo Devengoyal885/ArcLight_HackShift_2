@@ -7,7 +7,7 @@ const firebaseConfig = {
     apiKey: "AIzaSyD6ZYSMF-uhdDdpxlJm-wBL3Szho4LvMu4",
     authDomain: "wardrobe-app-adf6e.firebaseapp.com",
     projectId: "wardrobe-app-adf6e",
-    storageBucket: "wardrobe-app-adf6e.firebasestorage.app",
+    storageBucket: "wardrobe-app-adf6e.appspot.com",
     messagingSenderId: "920220901330",
     appId: "1:920220901330:web:2367f33012d657e43e320b"
 };

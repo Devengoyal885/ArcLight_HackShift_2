@@ -1,4 +1,4 @@
-﻿/**
+/**
  * gemini.ts - CapAble AI Client
  * -------------------------------------------------------------------------
  * SECURITY: Zero API keys in this file. All calls go through the CapAble
@@ -135,7 +135,7 @@ export async function* callGeminiStream(
 
             try {
                 const data = JSON.parse(dataStr);
-                const chunk = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+                const chunk = data?.candidates?.[0]?.content?.parts?.[0]?.text || data?.choices?.[0]?.delta?.content;
                 if (chunk) yield chunk;
             } catch {
                 // Malformed SSE chunk - skip silently

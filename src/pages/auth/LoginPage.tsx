@@ -38,8 +38,8 @@ const PANELS: RolePanel[] = [
         title: 'For ',
         titleEm: 'Companies',
         desc: 'Post opportunities, discover talent verified by real capability evidence, and build your workforce intelligence.',
-        icon: <Briefcase size={22} />,
-        color: '#2563eb',
+        icon: <Briefcase size={20} />,
+        color: '#6B6A68',
         signupLabel: 'Register your company',
     },
     {
@@ -48,8 +48,8 @@ const PANELS: RolePanel[] = [
         title: 'For ',
         titleEm: 'Admins',
         desc: 'Monitor student placements, manage industry engagement, and track institution-wide capability growth.',
-        icon: <Building2 size={22} />,
-        color: '#7c3aed',
+        icon: <Building2 size={20} />,
+        color: '#6B6A68',
         signupLabel: 'Register your institution',
     },
     {
@@ -58,8 +58,8 @@ const PANELS: RolePanel[] = [
         title: 'For ',
         titleEm: 'Candidates',
         desc: 'Build your capability profile, prove your skills with evidence, and get hired on merit — not just a resume.',
-        icon: <User size={22} />,
-        color: '#10b981',
+        icon: <User size={20} />,
+        color: '#6B6A68',
         signupLabel: 'Create free account',
     },
     {
@@ -68,8 +68,8 @@ const PANELS: RolePanel[] = [
         title: 'For ',
         titleEm: 'Faculty',
         desc: 'Explore FDPs, faculty internships, and research collaborations. Monitor your students\' progress in one place.',
-        icon: <GraduationCap size={22} />,
-        color: '#f59e0b',
+        icon: <GraduationCap size={20} />,
+        color: '#6B6A68',
         signupLabel: 'Join as faculty',
     },
 ];
@@ -249,39 +249,39 @@ export default function LoginPage() {
 
                 <div className="login-select-grid">
                     {PANELS.map((panel) => (
-                        <div key={panel.role} className="login-role-card">
-                            <div className="login-role-card-top">
-                                <span
-                                    className="login-badge"
-                                    style={{ background: panel.color, color: '#fff' }}
-                                >
-                                    {panel.badge}
-                                </span>
-                                <div className="login-role-icon" style={{ color: panel.color }}>
-                                    {panel.icon}
+                        <div
+                            key={panel.role}
+                            className="login-role-card"
+                        >
+                            <div className="login-role-card-inner">
+                                <div className="login-role-card-top">
+                                    <span className="login-badge">
+                                        {panel.badge}
+                                    </span>
+                                    <div className="login-role-icon">
+                                        {panel.icon}
+                                    </div>
                                 </div>
-                            </div>
-                            <h2 className="login-select-title">
-                                {panel.title}<em>{panel.titleEm}</em>
-                            </h2>
-                            <p className="login-select-desc">{panel.desc}</p>
-                            <button
-                                className="login-btn-primary"
-                                style={{ background: panel.color }}
-                                onClick={() => goToStep(`${panel.role}-login` as AuthStep)}
-                            >
-                                Login
-                            </button>
-                            <p className="login-select-footer">
-                                Don't have an account?{' '}
+                                <h2 className="login-select-title">
+                                    {panel.title}<em>{panel.titleEm}</em>
+                                </h2>
+                                <p className="login-select-desc">{panel.desc}</p>
                                 <button
-                                    className="login-text-link"
-                                    style={{ color: panel.color }}
-                                    onClick={() => goToStep(`${panel.role}-signup` as AuthStep)}
+                                    className="login-btn-primary"
+                                    onClick={() => goToStep(`${panel.role}-login` as AuthStep)}
                                 >
-                                    {panel.signupLabel}
+                                    Login
                                 </button>
-                            </p>
+                                <p className="login-select-footer">
+                                    Don't have an account?{' '}
+                                    <button
+                                        className="login-text-link"
+                                        onClick={() => goToStep(`${panel.role}-signup` as AuthStep)}
+                                    >
+                                        {panel.signupLabel}
+                                    </button>
+                                </p>
+                            </div>
                         </div>
                     ))}
                 </div>
@@ -290,6 +290,43 @@ export default function LoginPage() {
     );
 
     // ─── Auth Form ────────────────────────────────────────────────────────────
+    const renderHeroGraphic = (role: RoleType, color: string) => {
+        const getPhotoShape = () => {
+            if (role === 'candidate') return 'circle';
+            if (role === 'institution') return 'rect-tall';
+            return 'rect';
+        };
+
+        return (
+            <>
+                <div className="id-lanyard" style={{ background: `linear-gradient(to bottom, ${color}, ${color}88)` }} />
+                <div className="id-card">
+                    <div className="id-card-top">
+                        <div className="id-card-punch" />
+                    </div>
+                    <div className="id-card-body">
+                        <div className="id-card-role-label">{role}</div>
+                        <div 
+                            className={`id-card-photo ${getPhotoShape()}`} 
+                            style={{ 
+                                background: `${color}22`, 
+                                borderColor: `${color}44`,
+                                borderRadius: role === 'candidate' ? '50%' : '6px',
+                                width: role === 'candidate' ? '100px' : '100%'
+                            }} 
+                        />
+                        <div className="id-card-lines">
+                            <div className="id-card-line id-card-line--1" />
+                            <div className="id-card-line id-card-line--2" />
+                            {role === 'candidate' && <div className="id-card-line id-card-line--3" />}
+                        </div>
+                        {role !== 'institution' && <div className="id-card-barcode" />}
+                    </div>
+                </div>
+            </>
+        );
+    };
+
     const renderForm = () => {
         const panel = PANELS.find(p => p.role === currentRole)!;
         const hero = getHeroText(currentRole, isLogin);
@@ -325,20 +362,7 @@ export default function LoginPage() {
                         </div>
 
                         <div className="login-hero-graphic">
-                            <div className="id-lanyard" style={{ background: `linear-gradient(to bottom, ${panel.color}, ${panel.color}88)` }} />
-                            <div className="id-card">
-                                <div className="id-card-top">
-                                    <div className="id-card-punch" />
-                                </div>
-                                <div className="id-card-body">
-                                    <div className="id-card-photo" style={{ background: `${panel.color}33`, borderColor: `${panel.color}55` }} />
-                                    <div className="id-card-lines">
-                                        <div className="id-card-line id-card-line--1" />
-                                        <div className="id-card-line id-card-line--2" />
-                                    </div>
-                                    <div className="id-card-barcode" />
-                                </div>
-                            </div>
+                            {renderHeroGraphic(currentRole, panel.color)}
                         </div>
 
                         <div className="login-hero-text">
@@ -434,7 +458,6 @@ export default function LoginPage() {
                             <button
                                 type="submit"
                                 className="login-submit-btn"
-                                style={{ background: panel.color, color: '#fff', opacity: 1 }}
                             >
                                 {isLogin ? 'Log In' : 'Create Account'}
                             </button>

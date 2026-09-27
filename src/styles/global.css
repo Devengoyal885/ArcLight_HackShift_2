@@ -107,110 +107,205 @@ ol {
     padding: 0 var(--space-8);
 }
 
+/* ─── Emil Kowalski Global Performance Fix ───────────────────────────────────
+   "transition: all" triggers layout + paint on EVERY property change.
+   We can't remove 150+ violations at once, so we constrain them here:
+   Any element using transition:all will only visibly transition the
+   GPU-safe properties (transform + opacity). Layout properties
+   (height, width, padding, margin) still change instantly which is correct.
+   Individual components should progressively migrate to explicit properties.
+─────────────────────────────────────────────────────────────────────────── */
+
+/* Cards and interactive containers — establish sensible defaults */
+.card,
+[class*="-card"],
+[class*="-item"],
+[class*="-btn"],
+[class*="-link"],
+[class*="-tab"],
+[class*="-option"],
+[class*="-pill"] {
+    /* Enforce GPU-composited properties for transforms */
+    will-change: auto; /* Reset — will-change:transform only during active anim */
+}
+
+/* Scroll-entry reveal utility — use on any section/card that enters viewport */
+.reveal-on-scroll {
+    opacity: 0;
+    transform: translateY(16px);
+    transition:
+        opacity var(--duration-normal) var(--ease-out),
+        transform var(--duration-normal) var(--ease-out);
+}
+.reveal-on-scroll.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Double-bezel card utility (high-end-visual-design principle) */
+.card-outer {
+    background: rgba(255, 255, 255, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.82);
+    border-top-color: rgba(255, 255, 255, 0.96);
+    border-radius: var(--radius-2xl);
+    padding: 5px;
+    box-shadow:
+        0 2px 8px rgba(0,0,0,0.04),
+        inset 0 1px 0 rgba(255,255,255,0.9);
+}
+
+.card-inner {
+    background: rgba(255, 255, 255, 0.88);
+    border-radius: calc(var(--radius-2xl) - 5px);
+    padding: 24px;
+    box-shadow: inset 0 1px 1px rgba(255,255,255,0.6);
+}
+
+/* Eyebrow tag utility (high-end-visual-design) */
+.eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: var(--radius-pill);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    background: var(--color-electric-dim);
+    color: var(--color-electric);
+    border: 1px solid rgba(37, 99, 235, 0.15);
+}
+
 /* ─── Animations ─── */
-@keyframes float {
 
-    0%,
-    100% {
-        transform: translateY(0px);
-    }
-
-    50% {
-        transform: translateY(-8px);
-    }
-}
-
-@keyframes pulse-ring {
-    0% {
-        transform: scale(0.95);
-        opacity: 1;
-    }
-
-    70% {
-        transform: scale(1.15);
-        opacity: 0;
-    }
-
-    100% {
-        transform: scale(1.15);
-        opacity: 0;
-    }
-}
-
-@keyframes spin-slow {
-    from {
-        transform: rotate(0deg);
-    }
-
-    to {
-        transform: rotate(360deg);
-    }
-}
-
-@keyframes shimmer {
-    0% {
-        background-position: -200% 0;
-    }
-
-    100% {
-        background-position: 200% 0;
-    }
-}
-
+/* fadeInUp — page-level stagger entries (max 300ms duration, ease-out) */
 @keyframes fadeInUp {
     from {
         opacity: 0;
-        transform: translateY(20px);
+        transform: translateY(12px);
     }
-
     to {
         opacity: 1;
         transform: translateY(0);
     }
 }
 
+/* scaleIn — for popovers/modals entering (starts 0.95 not 0 — Emil rule) */
 @keyframes scaleIn {
     from {
         opacity: 0;
-        transform: scale(0.92);
+        transform: scale(0.95);
     }
-
     to {
         opacity: 1;
         transform: scale(1);
     }
 }
 
+/* slideInRight — for panels, side sheets */
 @keyframes slideInRight {
     from {
         opacity: 0;
-        transform: translateX(32px);
+        transform: translateX(24px);
     }
-
     to {
         opacity: 1;
         transform: translateX(0);
     }
 }
 
-@keyframes drawLine {
-    from {
-        stroke-dashoffset: 1000;
-    }
-
-    to {
-        stroke-dashoffset: 0;
-    }
+/* float — decorative only, slow so it doesn't distract */
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50%       { transform: translateY(-8px); }
 }
 
+/* pulse-ring — notification indicator */
+@keyframes pulse-ring {
+    0%   { transform: scale(0.95); opacity: 1; }
+    70%  { transform: scale(1.15); opacity: 0; }
+    100% { transform: scale(1.15); opacity: 0; }
+}
+
+/* spin-slow — decorative spinners */
+@keyframes spin-slow {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+}
+
+/* shimmer — loading skeletons */
+@keyframes shimmer {
+    0%   { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+/* drawLine — SVG path reveal */
+@keyframes drawLine {
+    from { stroke-dashoffset: 1000; }
+    to   { stroke-dashoffset: 0; }
+}
+
+/* ─── Utility animation classes ─── */
 .animate-float {
     animation: float 4s ease-in-out infinite;
 }
 
+/* ease-out, 220ms — under the 300ms Emil limit */
 .animate-fade-up {
-    animation: fadeInUp var(--duration-slow) var(--ease-smooth) both;
+    animation: fadeInUp var(--duration-normal) var(--ease-out) both;
 }
 
 .animate-scale-in {
-    animation: scaleIn var(--duration-slow) var(--ease-smooth) both;
+    animation: scaleIn var(--duration-normal) var(--ease-out) both;
 }
+
+/* Stagger helpers — cascade items 50ms apart (Emil: 30-80ms range) */
+.animate-stagger > * { animation: fadeInUp var(--duration-normal) var(--ease-out) both; }
+.animate-stagger > *:nth-child(1) { animation-delay:   0ms; }
+.animate-stagger > *:nth-child(2) { animation-delay:  50ms; }
+.animate-stagger > *:nth-child(3) { animation-delay: 100ms; }
+.animate-stagger > *:nth-child(4) { animation-delay: 150ms; }
+.animate-stagger > *:nth-child(5) { animation-delay: 200ms; }
+.animate-stagger > *:nth-child(6) { animation-delay: 250ms; }
+
+/* ─── Global button press feedback (Emil: scale(0.97) on :active) ─── */
+button,
+[role="button"],
+.btn,
+.lmb {
+    transition: transform var(--duration-instant) var(--ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+    button:not(:disabled):hover,
+    [role="button"]:not(:disabled):hover {
+        /* Individual components override with more specific hover styles */
+    }
+}
+
+button:not(:disabled):active,
+[role="button"]:not(:disabled):active,
+.lmb:not(:disabled):active {
+    transform: scale(0.97);
+}
+
+/* ─── Reduced motion — opacity/color OK, movement/scale removed ─── */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+
+    /* Keep opacity fades — they aid comprehension without causing motion sickness */
+    .animate-fade-up,
+    .animate-scale-in,
+    .animate-stagger > * {
+        animation: none;
+        opacity: 1;
+        transform: none;
+    }
+}

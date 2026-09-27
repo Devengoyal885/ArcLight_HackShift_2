@@ -1,5 +1,5 @@
 /* =========================================================
-   CAPABLE IDENTITY CARD (God-Mode UI)
+   CAPABLE IDENTITY CARD (Premium Glassmorphism / Apple-Design)
    ========================================================= */
 
 .id-card-wrapper {
@@ -7,32 +7,39 @@
     justify-content: center;
     align-items: center;
     width: 100%;
+    perspective: 1000px;
 }
 
 .id-card-premium {
-    width: 280px;
+    width: 290px;
     height: auto;
-    border-radius: 28px;
+    border-radius: 24px;
     position: relative;
-    background: linear-gradient(145deg, rgba(255,255,255,0.94), rgba(246,249,255,0.82));
-    border: 1px solid rgba(110,135,170,0.14);
-    box-shadow: 0 20px 55px rgba(30,55,100,0.08), inset 0 1px 0 rgba(255,255,255,0.95);
-    overflow: hidden;
-    padding: 24px 20px;
+    background: #FFFFFF;
+    border: 1px solid rgba(15, 23, 42, 0.06);
+    padding: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 20px;
     z-index: 1;
+    box-shadow: 
+        0 4px 12px -2px rgba(0,0,0,0.03),
+        0 24px 48px -12px rgba(0,0,0,0.08);
+    transition: transform 400ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 400ms;
+    overflow: hidden;
 }
 
-/* Atmospheric light */
-.id-card-light {
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(circle at 82% 18%, rgba(55,115,255,0.10), transparent 45%);
-    pointer-events: none;
-    z-index: 0;
+/* Subtle diagonal shimmer removed for pristine look */
+.id-card-premium::before {
+    display: none;
+}
+
+.id-card-premium:hover {
+    transform: translateY(-4px) scale(1.02);
+    border-radius: 12px;
+    box-shadow: 
+        0 8px 24px -4px rgba(0,0,0,0.04),
+        0 32px 64px -16px rgba(0,0,0,0.12);
 }
 
 .id-card-inner {
@@ -41,6 +48,79 @@
     flex-direction: column;
     align-items: center;
     z-index: 1;
+    padding: 32px 24px;
+    opacity: 0;
+    transform: scale(0.95);
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.id-card-premium:hover .id-card-inner {
+    opacity: 1;
+    transform: scale(1);
+}
+
+/* Animated Border based on reference */
+.id-card-animated-border {
+    position: absolute;
+    inset: 0px;
+    border: 2px solid #059669;
+    opacity: 0;
+    transform: rotate(10deg);
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 8px;
+    z-index: 5;
+    pointer-events: none;
+}
+
+.id-card-premium:hover .id-card-animated-border {
+    inset: 12px;
+    opacity: 1;
+    transform: rotate(0);
+}
+
+/* Front Image Cover */
+.id-card-image-cover {
+    position: absolute;
+    inset: 0;
+    z-index: 20;
+    background: #0F172A;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+}
+
+.id-card-image-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.id-card-image-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(15, 23, 42, 0.9) 0%, rgba(15, 23, 42, 0.2) 50%, rgba(15, 23, 42, 0) 100%);
+    pointer-events: none;
+}
+
+.id-card-image-name {
+    position: absolute;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: var(--font-sans);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #FFFFFF;
+    letter-spacing: -0.02em;
+    width: 100%;
+    text-align: center;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.id-card-premium:hover .id-card-image-cover {
+    opacity: 0;
+    visibility: hidden;
+    transform: scale(1.1);
 }
 
 /* Header */
@@ -49,22 +129,21 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 8px;
+    margin-bottom: 12px;
 }
 
 .id-card-logo {
-    height: 18px;
+    height: 20px;
     width: auto;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
 }
 
 .id-card-label {
-    font-size: 8px;
-    font-weight: 800;
-    letter-spacing: 0.15em;
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
     color: #64748B;
     text-transform: uppercase;
-    border-bottom: 1px solid rgba(100,116,139,0.2);
-    padding-bottom: 2px;
 }
 
 /* Ring & Avatar Container */
@@ -72,118 +151,129 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin: 10px 0;
+    margin: 16px 0;
     position: relative;
 }
 
 .id-card-ring-container {
     position: relative;
-    width: 120px;
-    height: 120px;
+    width: 130px;
+    height: 130px;
     display: flex;
     justify-content: center;
     align-items: center;
+    border-radius: 50%;
 }
 
 .id-card-svg-ring {
     position: absolute;
     transform: rotate(-90deg);
+    filter: drop-shadow(0 4px 8px rgba(59, 130, 246, 0.2));
 }
 
+/* Vibrant blue-purple stroke for the hero ring */
 .id-card-ring-progress {
-    filter: drop-shadow(0 0 6px rgba(59, 130, 246, 0.4));
+    stroke: url(#match-gradient); /* Uses same gradient as job cards if defined */
+    stroke: #3B82F6; /* Fallback */
+    stroke-linecap: round;
 }
 
 .id-card-avatar-container {
-    width: 64px;
-    height: 64px;
+    width: 72px;
+    height: 72px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #F8FAFC 0%, #E2E8F0 100%);
-    border: 2px solid white;
-    box-shadow: 0 4px 15px rgba(30,55,100,0.1);
+    background: #FFFFFF;
+    border: 2px solid rgba(255,255,255,0.9);
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 2;
+    box-shadow: 
+        0 4px 12px rgba(0,0,0,0.08),
+        inset 0 2px 4px rgba(0,0,0,0.04);
 }
 
 .id-card-avatar {
-    font-size: 1.5rem;
-    font-weight: 800;
-    color: #1E293B;
-    letter-spacing: -0.03em;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #0F172A;
+    letter-spacing: -0.02em;
+    background: linear-gradient(135deg, #0F172A, #334155);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 /* Capability Score */
 .id-card-score-container {
-    margin-top: -12px;
+    margin-top: -16px;
     display: flex;
     flex-direction: column;
     align-items: center;
     z-index: 3;
-    background: rgba(255,255,255,0.9);
-    padding: 4px 16px;
-    border-radius: 20px;
-    border: 1px solid rgba(110,135,170,0.1);
-    box-shadow: 0 4px 12px rgba(30,55,100,0.06);
+    background: #FFFFFF;
+    padding: 6px 20px;
+    border-radius: 24px;
+    border: 1px solid rgba(15,23,42,0.06);
+    box-shadow: 0 4px 16px -4px rgba(0,0,0,0.05);
 }
 
 .id-card-score-value {
-    font-size: 1.4rem;
-    font-weight: 800;
+    font-family: var(--font-sans);
+    font-size: 1.8rem;
+    font-weight: 700;
     color: #0F172A;
     line-height: 1;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.04em;
 }
 
 .id-card-score-percent {
     font-size: 0.8rem;
     color: #64748B;
+    font-family: var(--font-sans);
 }
 
 .id-card-score-label {
     font-size: 0.55rem;
-    font-weight: 800;
+    font-weight: 700;
     letter-spacing: 0.15em;
-    color: #3B82F6;
-    margin-top: 2px;
+    color: #475569;
+    margin-top: 4px;
 }
 
 /* Identity Name */
 .id-card-identity {
-    margin-top: 16px;
+    margin-top: 24px;
     text-align: center;
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 6px;
 }
 
 .id-card-name {
-    font-size: 24px;
-    font-weight: 800;
-    letter-spacing: -0.025em;
+    font-family: var(--font-sans);
+    font-size: 2.2rem;
+    font-weight: 700;
+    letter-spacing: -0.05em;
     color: #0F172A;
     line-height: 1.1;
+    margin: 0;
 }
 
 .id-card-subtitle {
-    font-size: 11px;
+    font-size: 0.8rem;
     font-weight: 600;
     color: #64748B;
 }
 
-/* Stats Capsule */
 .id-card-stats-capsule {
-    margin-top: 24px;
+    margin-top: 32px;
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background: rgba(255,255,255,0.62);
-    border: 1px solid rgba(100,125,165,0.12);
-    border-radius: 18px;
-    padding: 12px 16px;
-    box-shadow: inset 0 2px 4px rgba(255,255,255,0.8);
+    background: #F8FAFC;
+    border-radius: 16px;
+    padding: 16px;
 }
 
 .id-card-stat {
@@ -195,14 +285,16 @@
 }
 
 .id-card-stat-val {
-    font-size: 18px;
-    font-weight: 800;
+    font-family: var(--font-sans);
+    font-size: 1.4rem;
+    font-weight: 700;
     color: #0F172A;
     line-height: 1;
+    letter-spacing: -0.04em;
 }
 
 .id-card-stat-lbl {
-    font-size: 8px;
+    font-size: 0.55rem;
     font-weight: 700;
     color: #64748B;
     letter-spacing: 0.1em;
@@ -212,30 +304,23 @@
 
 .id-card-stat-divider {
     width: 1px;
-    height: 28px;
-    background: rgba(100,125,165,0.15);
+    height: 32px;
+    background: rgba(15, 23, 42, 0.08);
 }
 
 .id-card-verified-pill {
-    width: 22px;
-    height: 22px;
-    background: rgba(16, 185, 129, 0.1);
-    border: 1px solid rgba(16, 185, 129, 0.3);
+    width: 20px;
+    height: 20px;
+    background: linear-gradient(135deg, #0F172A, #1E293B);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #10B981;
-    font-size: 12px;
-    font-weight: 900;
-    margin-bottom: 2px;
+    color: #FFFFFF;
+    font-size: 10px;
+    font-weight: 800;
+    margin-bottom: 4px;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.2);
 }
 
-/* Edge Highlight for depth */
-.id-card-edge-highlight {
-    position: absolute;
-    inset: 0;
-    border-radius: 28px;
-    border: 1px solid rgba(255,255,255,0.7);
-    pointer-events: none;
-}
+.id-card-light, .id-card-edge-highlight { display: none; }

@@ -17,26 +17,16 @@ service cloud.firestore {
          scopedUid.matches(request.auth.uid + '_.+'));
     }
 
-    // Safe role lookup — reads profile/data (not /main).
-    // Returns '' if the profile doc doesn't exist yet (during onboarding).
-    function getRole() {
-      // Try the candidate scoped uid first
-      let candidateRef = /databases/$(database)/documents/users/$(request.auth.uid + '_candidate')/profile/data;
-      let employerRef  = /databases/$(database)/documents/users/$(request.auth.uid + '_employer')/profile/data;
-      let facultyRef   = /databases/$(database)/documents/users/$(request.auth.uid + '_academician')/profile/data;
-      let instRef      = /databases/$(database)/documents/users/$(request.auth.uid + '_institution')/profile/data;
-
-      return exists(candidateRef)  ? get(candidateRef).data.get('role', '')  :
-             exists(employerRef)   ? get(employerRef).data.get('role', '')   :
-             exists(facultyRef)    ? get(facultyRef).data.get('role', '')    :
-             exists(instRef)       ? get(instRef).data.get('role', '')       :
-             '';
+    // Safe role lookup — checks if the specific role profile exists
+    function hasRole(role) {
+      let roleRef = /databases/$(database)/documents/users/$(request.auth.uid + '_' + role)/profile/data;
+      return exists(roleRef) && get(roleRef).data.get('role', '') == role;
     }
 
-    function isCandidate()       { return getRole() == 'candidate'; }
-    function isFaculty()         { return getRole() == 'academician'; }
-    function isEmployer()        { return getRole() == 'employer'; }
-    function isInstitutionAdmin(){ return getRole() == 'institution'; }
+    function isCandidate()       { return hasRole('candidate'); }
+    function isFaculty()         { return hasRole('academician'); }
+    function isEmployer()        { return hasRole('employer'); }
+    function isInstitutionAdmin(){ return hasRole('institution'); }
 
     function sameInstitution(institutionCode) {
       let candidateRef = /databases/$(database)/documents/users/$(request.auth.uid + '_candidate')/profile/data;
@@ -63,7 +53,7 @@ service cloud.firestore {
 
       // Capabilities
       match /capabilities/{capId} {
-        allow read:  if isSignedIn() && (isOwner(scopedUid) || isFaculty() || isInstitutionAdmin() || isEmployer());
+        allow read:  if isSignedIn();
         allow write: if isSignedIn() && isOwner(scopedUid);
       }
 
@@ -100,7 +90,7 @@ service cloud.firestore {
       // Applications (candidate-side copy)
       match /applications/{appId} {
         allow read:  if isSignedIn() && (isOwner(scopedUid) || isEmployer() || isInstitutionAdmin());
-        allow write: if isSignedIn() && isOwner(scopedUid);
+        allow write: if isSignedIn() && (isOwner(scopedUid) || isEmployer());
       }
 
       // Per-user notification inbox
@@ -117,6 +107,17 @@ service cloud.firestore {
       }
     }
 
+
+    // ── Collection Groups ──────────────────────────────────────────────────────
+    match /{path=**}/profile/{docId} {
+      allow read: if isSignedIn();
+    }
+    match /{path=**}/linkedCompanies/{docId} {
+      allow read: if isSignedIn();
+    }
+    match /{path=**}/applications/{docId} {
+      allow read: if isSignedIn();
+    }
 
     // ── Global Notifications (legacy + new path) ───────────────────────────────
     match /notifications/{uid} {
@@ -157,6 +158,11 @@ service cloud.firestore {
         allow create: if isSignedIn() && isOwner(employerScopedUid);
         allow update: if isSignedIn() && (isOwner(employerScopedUid) || isCandidate());
         allow delete: if isSignedIn() && isOwner(employerScopedUid);
+      }
+      
+      // Catch-all for employer subcollections (postedRoles, shortlist, notes, etc.)
+      match /{subcollection}/{docId} {
+        allow read, write: if isSignedIn() && isOwner(employerScopedUid);
       }
     }
 

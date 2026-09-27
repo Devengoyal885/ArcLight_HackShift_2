@@ -25,10 +25,10 @@ function getGreeting(): string {
     return 'GOOD EVENING';
 }
 
-const stateColors = {
-    'READY NOW': '#10b981',
-    'NEAR MATCH': '#2563eb',
-    'SKILL-BUILDING': '#f59e0b'
+const stateColors: Record<string, { text: string, bg: string }> = {
+    'READY NOW': { text: '#059669', bg: '#ECFDF5' },
+    'NEAR MATCH': { text: '#1D4ED8', bg: '#EFF6FF' },
+    'SKILL-BUILDING': { text: '#D97706', bg: '#FFFBEB' }
 };
 
 export default function CandidateDashboard() {
@@ -149,9 +149,9 @@ export default function CandidateDashboard() {
         <motion.div
             key={job.id}
             className="c-job-card-premium"
-            initial={{ opacity: 0, y: 10 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.05 }}
+            transition={{ type: 'spring', stiffness: 200, damping: 20, delay: i * 0.05 }}
         >
             <div className="c-job-header-premium">
                 <div className="c-job-logo-wrapper">
@@ -185,56 +185,26 @@ export default function CandidateDashboard() {
                     </span>
                 )}
             </div>
-
-            {/* WHY YOU MATCH - God Mode UI */}
-            <div className="c-job-why-match">
-                <div className="c-job-why-match-header">
-                    ✦ WHY YOU MATCH
-                </div>
-                
-                <div className="c-job-why-match-content">
-                    {/* Ring Container */}
-                    <div className="c-job-why-match-ring-container">
-                        <svg className="c-job-match-ring" viewBox="0 0 36 36">
-                            <path className="c-job-match-ring-bg"
-                                d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                            />
-                            <path className="c-job-match-ring-fill"
-                                strokeDasharray={`${job.match || 0}, 100`}
-                                d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                            />
-                        </svg>
-                        <div className="c-job-match-ring-text">
-                            <span className="c-job-match-ring-value">{job.match}%</span>
-                            <span className="c-job-match-ring-label">MATCH</span>
-                        </div>
-                    </div>
-
-                    {/* Connector lines visual */}
-                    <div className="c-job-why-match-connector"></div>
-
-                    {/* Evidence Signals */}
-                    <div className="c-job-why-match-signals">
-                        <div className="c-job-why-match-signals-label">EXISTING SKILL SIGNALS</div>
-                        <div className="c-job-why-match-signals-list">
-                            {job.tags.slice(0, 4).map(t => {
-                                const isVerified = job.matchingSkills?.some(ms => ms.toLowerCase() === t.toLowerCase());
-                                return (
-                                    <span key={t} className={`c-job-signal-chip ${isVerified ? 'verified' : ''}`}>
-                                        {t} {isVerified && <span className="c-job-signal-check">✓</span>}
-                                    </span>
-                                );
-                            })}
-                        </div>
-                    </div>
-                </div>
+            {/* Skills */}
+            <div className="c-job-skills-premium">
+                {job.tags.slice(0, 6).map(t => {
+                    const isVerified = job.matchingSkills?.some(ms => ms.toLowerCase() === t.toLowerCase());
+                    return (
+                        <span key={t} className={`c-job-signal-chip ${isVerified ? 'verified' : ''}`}>
+                            {t} {isVerified && <span className="c-job-signal-check">✓</span>}
+                        </span>
+                    );
+                })}
             </div>
             
             <div className="c-job-footer-premium">
                 <div className="c-job-match-badge-premium">
                     {job.match !== undefined && (
-                        <span style={{ color: stateColors[job.matchState || 'SKILL-BUILDING'] }}>
-                            <Target size={12} className="inline mr-1" />{job.match}% MATCH
+                        <span style={{ 
+                            color: stateColors[job.matchState || 'SKILL-BUILDING'].text,
+                            background: stateColors[job.matchState || 'SKILL-BUILDING'].bg
+                        }}>
+                            <Target size={14} className="inline mr-1" />{job.match}% MATCH
                         </span>
                     )}
                 </div>
@@ -261,8 +231,17 @@ export default function CandidateDashboard() {
             <FloatingNavbar variant="candidate" />
 
             <div className="c-dash-bg">
+                <svg width="0" height="0" style={{ position: 'absolute' }}>
+                    <defs>
+                        <linearGradient id="match-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stopColor="#3B82F6" />
+                            <stop offset="100%" stopColor="#8B5CF6" />
+                        </linearGradient>
+                    </defs>
+                </svg>
                 <div className="c-dash-orb c-dash-orb--1" />
                 <div className="c-dash-orb c-dash-orb--2" />
+                <div className="c-dash-orb c-dash-orb--3" />
                 <div className="c-dash-grid" />
             </div>
 
@@ -286,6 +265,7 @@ export default function CandidateDashboard() {
                             capabilityConfidence={capabilityConfidence}
                             verifiedEvidence={capabilities.length}
                             projectCount={0}
+                            photoURL={photoURL}
                         />
 
                         {/* Identity Actions & Capabilities */}
@@ -422,34 +402,41 @@ export default function CandidateDashboard() {
                             {/* Company Logo Showcase */}
                             <div className="c-company-showcase">
                                 <div className="c-company-showcase-title">Trusted by top companies</div>
-                                <div className="c-company-logos">
-                                    <div className="c-company-logo-wrapper">
-                                        <img src="/logos/flipkart.svg" alt="Flipkart logo" />
-                                    </div>
-                                    <div className="c-company-logo-wrapper">
-                                        <img src="/logos/amazon.svg" alt="Amazon logo" />
-                                    </div>
-                                    <div className="c-company-logo-wrapper">
-                                        <img src="/logos/google.svg" alt="Google logo" />
-                                    </div>
-                                    <div className="c-company-logo-wrapper">
-                                        <img src="/logos/microsoft.svg" alt="Microsoft logo" />
-                                    </div>
-                                    <div className="c-company-logo-wrapper">
-                                        <img src="/logos/nvidia.svg" alt="NVIDIA logo" />
-                                    </div>
-                                    <div className="c-company-logo-wrapper">
-                                        <img src="/logos/ibm.svg" alt="IBM logo" />
-                                    </div>
-                                    <div className="c-company-logo-wrapper">
-                                        <img src="/logos/adobe.svg" alt="Adobe logo" />
-                                    </div>
-                                    <div className="c-company-logo-wrapper">
-                                        <img src="/logos/infosys.svg" alt="Infosys logo" />
-                                    </div>
-                                    <div className="c-company-logo-wrapper">
-                                        <img src="/logos/tcs.svg" alt="TCS logo" />
-                                    </div>
+                                <div className="c-company-marquee-viewport">
+                                    <div className="c-company-logos-track">
+                                    {/* Duplicated for seamless marquee */}
+                                    {[1, 2].map(key => (
+                                        <div key={key} style={{ display: 'flex', gap: '48px' }}>
+                                            <div className="c-company-logo-wrapper">
+                                                <img src="/logos/flipkart.svg" alt="Flipkart logo" />
+                                            </div>
+                                            <div className="c-company-logo-wrapper">
+                                                <img src="/logos/amazon.svg" alt="Amazon logo" />
+                                            </div>
+                                            <div className="c-company-logo-wrapper">
+                                                <img src="/logos/google.svg" alt="Google logo" />
+                                            </div>
+                                            <div className="c-company-logo-wrapper">
+                                                <img src="/logos/microsoft.svg" alt="Microsoft logo" />
+                                            </div>
+                                            <div className="c-company-logo-wrapper">
+                                                <img src="/logos/nvidia.svg" alt="NVIDIA logo" />
+                                            </div>
+                                            <div className="c-company-logo-wrapper">
+                                                <img src="/logos/ibm.svg" alt="IBM logo" />
+                                            </div>
+                                            <div className="c-company-logo-wrapper">
+                                                <img src="/logos/adobe.svg" alt="Adobe logo" />
+                                            </div>
+                                            <div className="c-company-logo-wrapper">
+                                                <img src="/logos/infosys.svg" alt="Infosys logo" />
+                                            </div>
+                                            <div className="c-company-logo-wrapper">
+                                                <img src="/logos/tcs.svg" alt="TCS logo" />
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
                                 </div>
                             </div>
 
