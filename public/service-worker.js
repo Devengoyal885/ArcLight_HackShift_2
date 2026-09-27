@@ -2,27 +2,32 @@
  * service-worker.js
  * ──────────────────────────────────────────────────────────────
  * CapAble PWA Service Worker
- * Provides offline caching and push notification support.
- * Strategy: Cache First for static assets, Network First for API calls.
+ * Strategy:
+ *   - JS/CSS chunks (/assets/*) → NEVER cached (always network)
+ *     These have hashed names that change on every deploy.
+ *     Caching them causes "Failed to fetch dynamically imported module" crashes.
+ *   - App shell (/, /index.html, /manifest.json) → Network first, cache fallback
+ *   - API calls → Network only
+ *   - Push notifications → Supported
  */
 
-const CACHE_NAME = 'capable-v2';
-const STATIC_ASSETS = [
+const CACHE_NAME = 'capable-v3';
+const SHELL_ASSETS = [
     '/',
     '/index.html',
     '/manifest.json',
     '/favicon.svg',
 ];
 
-// ── Install: cache static shell ────────────────────────────────
+// ── Install: cache only the app shell ─────────────────────────
 self.addEventListener('install', (event) => {
     event.waitUntil(
-        caches.open(CACHE_NAME).then(cache => cache.addAll(STATIC_ASSETS))
+        caches.open(CACHE_NAME).then(cache => cache.addAll(SHELL_ASSETS))
     );
     self.skipWaiting();
 });
 
-// ── Activate: clean old caches ─────────────────────────────────
+// ── Activate: clean ALL old caches immediately ─────────────────
 self.addEventListener('activate', (event) => {
     event.waitUntil(
         caches.keys().then(keys =>
@@ -34,33 +39,46 @@ self.addEventListener('activate', (event) => {
     self.clients.claim();
 });
 
-// ── Fetch: cache strategy ──────────────────────────────────────
+// ── Fetch: smart routing ───────────────────────────────────────
 self.addEventListener('fetch', (event) => {
     const url = new URL(event.request.url);
 
-    // Skip non-GET and cross-origin requests (Firebase, etc.)
+    // Skip non-GET requests
     if (event.request.method !== 'GET') return;
-    if (!url.origin.includes(self.location.origin)) return;
 
-    // Network first for API/Firestore
-    if (url.pathname.startsWith('/api/') || url.host.includes('firestore')) {
-        event.respondWith(
-            fetch(event.request).catch(() => caches.match(event.request))
-        );
+    // Skip cross-origin requests (Firebase, Google APIs, etc.)
+    if (url.origin !== self.location.origin) return;
+
+    // ❌ NEVER cache JS/CSS asset chunks — always fetch from network
+    // These files have hashed names that change on every deploy.
+    // Caching them causes crash screens after new deployments.
+    if (url.pathname.startsWith('/assets/')) {
+        event.respondWith(fetch(event.request));
         return;
     }
 
-    // Cache first for static assets
+    // ❌ Never cache API calls
+    if (url.pathname.startsWith('/api/')) {
+        event.respondWith(fetch(event.request));
+        return;
+    }
+
+    // ✅ App shell: Network first, fall back to cache (handles offline)
     event.respondWith(
-        caches.match(event.request).then(cached => {
-            if (cached) return cached;
-            return fetch(event.request).then(response => {
-                if (!response || response.status !== 200 || response.type === 'opaque') return response;
-                const clone = response.clone();
-                caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
+        fetch(event.request)
+            .then(response => {
+                // Cache successful shell responses
+                if (response && response.status === 200) {
+                    const clone = response.clone();
+                    caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
+                }
                 return response;
-            });
-        }).catch(() => caches.match('/index.html'))
+            })
+            .catch(() => {
+                // Offline fallback: return cached shell or index.html for navigation
+                return caches.match(event.request)
+                    .then(cached => cached || caches.match('/index.html'));
+            })
     );
 });
 
