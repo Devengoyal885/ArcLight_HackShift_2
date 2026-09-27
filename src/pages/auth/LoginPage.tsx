@@ -107,13 +107,26 @@ export default function LoginPage() {
     const navigate = useNavigate();
     const { user, loading } = useAuth();
 
-    // If user is already authenticated, get them off the login page.
-    // ProtectedRoute will handle onboarding redirect if profile is incomplete.
+    // If user is already authenticated, check if they need onboarding or dashboard
     useEffect(() => {
-        if (!loading && user) {
-            const savedRole = (localStorage.getItem('userRole') as RoleType) || 'candidate';
-            navigate(dashboardFor(savedRole), { replace: true });
-        }
+        const checkUserDestination = async () => {
+            if (!loading && user) {
+                const savedRole = (localStorage.getItem('userRole') as RoleType) || 'candidate';
+                try {
+                    const dbUid = `${user.uid}_${savedRole}`;
+                    const p = await getProfile(dbUid);
+                    if (p?.profileComplete) {
+                        navigate(dashboardFor(savedRole), { replace: true });
+                    } else {
+                        navigate('/onboarding', { replace: true });
+                    }
+                } catch (err) {
+                    // Fallback if profile fetch fails
+                    navigate(dashboardFor(savedRole), { replace: true });
+                }
+            }
+        };
+        checkUserDestination();
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user, loading]);
 
@@ -150,10 +163,10 @@ export default function LoginPage() {
 
             if (isLogin) {
                 await signInWithEmailAndPassword(auth, email, password);
-                navigate(dashboardFor(role));
+                // useEffect handles navigation to prevent race condition
             } else {
                 await createUserWithEmailAndPassword(auth, email, password);
-                navigate('/onboarding');
+                // useEffect handles navigation to prevent race condition
             }
         } catch (err: any) {
             const code: string = err?.code || '';
@@ -200,19 +213,10 @@ export default function LoginPage() {
         setError('');
         localStorage.setItem('userRole', currentRole);
         try {
-            const res = await signInWithPopup(auth, googleProvider);
-            const additionalInfo = getAdditionalUserInfo(res);
-            if (additionalInfo?.isNewUser) {
-                navigate('/onboarding', { replace: true });
-            } else {
-                const dbUid = `${res.user.uid}_${currentRole}`;
-                const p = await getProfile(dbUid);
-                if (p?.profileComplete) {
-                    navigate(dashboardFor(currentRole), { replace: true });
-                } else {
-                    navigate('/onboarding', { replace: true });
-                }
-            }
+            await signInWithPopup(auth, googleProvider);
+            // We NO LONGER navigate here manually. 
+            // The useEffect above will trigger once AuthContext updates `user`,
+            // preventing the race condition where ProtectedRoute kicks us back.
         } catch (err: any) {
             console.error('[Google Auth Error]', err);
             if (err?.code === 'auth/popup-blocked') {
