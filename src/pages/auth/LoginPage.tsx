@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Briefcase, Mail, Lock, CheckSquare, User, GraduationCap, Building2, Sparkles } from 'lucide-react';
 import logo from '../../assets/sihlogo.png';
 import {
-    auth, googleProvider, signInWithRedirect, getRedirectResult,
+    auth, googleProvider, signInWithPopup,
     signInWithEmailAndPassword, createUserWithEmailAndPassword
 } from '../../lib/firebase';
 import { getAdditionalUserInfo } from 'firebase/auth';
@@ -195,46 +195,36 @@ export default function LoginPage() {
                 }
             }
         }
-    };
-
-    // ─── Google Auth (redirect-based — works on Edge & popup-blocking browsers) ───
-    useEffect(() => {
-        getRedirectResult(auth).then(async (res) => {
-            if (!res) return; // No pending redirect result
-            const savedRole = (localStorage.getItem('userRole') as RoleType) || 'candidate';
-            const additionalInfo = getAdditionalUserInfo(res);
-            if (additionalInfo?.isNewUser) {
-                // New user — go to onboarding
-                navigate('/onboarding', { replace: true });
-            } else {
-                // Existing user — check if profile is complete before navigating
-                try {
-                    const uid = res.user.uid;
-                    const dbUid = `${uid}_${savedRole}`;
-                    const p = await getProfile(dbUid);
-                    if (p?.profileComplete) {
-                        navigate(dashboardFor(savedRole), { replace: true });
-                    } else {
-                        navigate('/onboarding', { replace: true });
-                    }
-                } catch {
-                    navigate(dashboardFor(savedRole), { replace: true });
-                }
-            }
-        }).catch((err: any) => {
-            const code: string = err?.code || '';
-            if (code === 'auth/account-exists-with-different-credential') {
-                setError('An account with this email already exists. Please use email/password to sign in.');
-            }
-        });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-
+    // ─── Google Auth (Popup-based to avoid cross-site cookie blocking) ───
     const handleGoogleAuth = async () => {
         setError('');
         localStorage.setItem('userRole', currentRole);
-        // Use redirect instead of popup — works in Edge and all browsers without popup permission
-        await signInWithRedirect(auth, googleProvider);
+        try {
+            const res = await signInWithPopup(auth, googleProvider);
+            const additionalInfo = getAdditionalUserInfo(res);
+            if (additionalInfo?.isNewUser) {
+                navigate('/onboarding', { replace: true });
+            } else {
+                const dbUid = `${res.user.uid}_${currentRole}`;
+                const p = await getProfile(dbUid);
+                if (p?.profileComplete) {
+                    navigate(dashboardFor(currentRole), { replace: true });
+                } else {
+                    navigate('/onboarding', { replace: true });
+                }
+            }
+        } catch (err: any) {
+            console.error('[Google Auth Error]', err);
+            if (err?.code === 'auth/popup-blocked') {
+                setError('Popup blocked by browser. Please allow popups for this site in your address bar (top right) to sign in with Google.');
+            } else if (err?.code === 'auth/popup-closed-by-user') {
+                // User closed it, ignore
+            } else if (err?.code === 'auth/account-exists-with-different-credential') {
+                setError('An account with this email already exists. Please use email/password to sign in.');
+            } else {
+                setError('Failed to sign in with Google. Please try again.');
+            }
+        }
     };
 
     // ─── Selection Screen ─────────────────────────────────────────────────────
