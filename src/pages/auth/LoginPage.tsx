@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Briefcase, Mail, Lock, CheckSquare, User, GraduationCap, Building2, Sparkles } from 'lucide-react';
 import logo from '../../assets/sihlogo.png';
 import {
-    auth, googleProvider, signInWithPopup,
+    auth, googleProvider, signInWithRedirect, getRedirectResult,
     signInWithEmailAndPassword, createUserWithEmailAndPassword
 } from '../../lib/firebase';
 import { getAdditionalUserInfo } from 'firebase/auth';
@@ -151,7 +151,7 @@ export default function LoginPage() {
         return map[role];
     };
 
-    // ─── Smart Email Auth ──────────────────────────────────────────────────────
+    // ── Email Auth ────────────────────────────────────────────────────────────
     const handleEmailAuth = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
@@ -160,32 +160,20 @@ export default function LoginPage() {
 
         try {
             localStorage.setItem('userRole', role);
-
             if (isLogin) {
                 await signInWithEmailAndPassword(auth, email, password);
-                // useEffect handles navigation to prevent race condition
+                // useEffect on [user, loading] handles navigation
             } else {
                 await createUserWithEmailAndPassword(auth, email, password);
-                // useEffect handles navigation to prevent race condition
+                // useEffect on [user, loading] handles navigation
             }
         } catch (err: any) {
             const code: string = err?.code || '';
-
-            // ── Silently ignored errors ──────────────────────────────────────
-            const silentCodes = [
-                'auth/popup-closed-by-user',
-                'auth/cancelled-popup-request',
-                'auth/user-cancelled',
-            ];
-            if (silentCodes.includes(code)) return;
-
             if (isLogin) {
                 if (code === 'auth/user-not-found') {
-                    // Genuine: no account with this email
-                    setInfoMsg('No account found with this email. Let\'s create one!');
+                    setInfoMsg("No account found with this email. Let's create one!");
                     goToStep(`${role}-signup` as AuthStep);
                 } else if (code === 'auth/invalid-credential' || code === 'auth/wrong-password') {
-                    // Wrong password entered
                     setError('Incorrect password. Please try again.');
                 } else if (code === 'auth/invalid-email') {
                     setError('Please enter a valid email address.');
@@ -195,7 +183,6 @@ export default function LoginPage() {
                     setError('Sign in failed. Please check your credentials.');
                 }
             } else {
-                // Signup branch
                 if (code === 'auth/email-already-in-use') {
                     setInfoMsg('You already have an account! Please log in.');
                     goToStep(`${role}-login` as AuthStep);
@@ -208,27 +195,44 @@ export default function LoginPage() {
                 }
             }
         }
-    // ─── Google Auth (Popup-based to avoid cross-site cookie blocking) ───
-    const handleGoogleAuth = async () => {
+    };
+
+    // ── Redirect result handler (runs on page load after Google redirect) ──────
+    useEffect(() => {
+        getRedirectResult(auth)
+            .then(async (result) => {
+                if (!result) return; // no pending redirect
+                const savedRole = (localStorage.getItem('userRole') as RoleType) || 'candidate';
+                const additionalInfo = getAdditionalUserInfo(result);
+                if (additionalInfo?.isNewUser) {
+                    navigate('/onboarding', { replace: true });
+                } else {
+                    try {
+                        const dbUid = `${result.user.uid}_${savedRole}`;
+                        const p = await getProfile(dbUid);
+                        navigate(p?.profileComplete ? dashboardFor(savedRole) : '/onboarding', { replace: true });
+                    } catch {
+                        navigate(dashboardFor(savedRole), { replace: true });
+                    }
+                }
+            })
+            .catch((err: any) => {
+                if (err?.code !== 'auth/popup-closed-by-user' && err?.code !== 'auth/cancelled-popup-request') {
+                    console.error('[Redirect result error]', err);
+                }
+            });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    // ── Google sign-in: use redirect (works in ALL browsers without popup blocking) ──
+    const handleGoogleAuth = () => {
         setError('');
         localStorage.setItem('userRole', currentRole);
-        try {
-            await signInWithPopup(auth, googleProvider);
-            // We NO LONGER navigate here manually. 
-            // The useEffect above will trigger once AuthContext updates `user`,
-            // preventing the race condition where ProtectedRoute kicks us back.
-        } catch (err: any) {
-            console.error('[Google Auth Error]', err);
-            if (err?.code === 'auth/popup-blocked') {
-                setError('Popup blocked by browser. Please allow popups for this site in your address bar (top right) to sign in with Google.');
-            } else if (err?.code === 'auth/popup-closed-by-user') {
-                // User closed it, ignore
-            } else if (err?.code === 'auth/account-exists-with-different-credential') {
-                setError('An account with this email already exists. Please use email/password to sign in.');
-            } else {
-                setError('Failed to sign in with Google. Please try again.');
-            }
-        }
+        // signInWithRedirect fully leaves and returns to the page — no popup, no blocking
+        signInWithRedirect(auth, googleProvider).catch((err: any) => {
+            console.error('[Google Redirect Error]', err);
+            setError('Could not initiate Google sign in. Please try again.');
+        });
     };
 
     // ─── Selection Screen ─────────────────────────────────────────────────────
