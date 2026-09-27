@@ -1,10 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
 import { Briefcase, Mail, Lock, CheckSquare, User, GraduationCap, Building2, Sparkles } from 'lucide-react';
 import logo from '../../assets/sihlogo.png';
 import {
-    auth, googleProvider, signInWithPopup,
+    auth, googleProvider, signInWithRedirect, getRedirectResult,
     signInWithEmailAndPassword, createUserWithEmailAndPassword
 } from '../../lib/firebase';
 import { getAdditionalUserInfo } from 'firebase/auth';
@@ -185,33 +185,32 @@ export default function LoginPage() {
         }
     };
 
-    // ─── Google Auth ──────────────────────────────────────────────────────
-    const handleGoogleAuth = async () => {
-        setError('');
-        const role = currentRole;
-        try {
-            localStorage.setItem('userRole', role);
-            const res = await signInWithPopup(auth, googleProvider);
+    // ─── Google Auth (redirect-based — works on Edge & popup-blocking browsers) ───
+    // Handle the result when Google redirects back to our app
+    useEffect(() => {
+        getRedirectResult(auth).then((res) => {
+            if (!res) return; // No pending redirect result
+            const savedRole = (localStorage.getItem('userRole') as RoleType) || 'candidate';
             const additionalInfo = getAdditionalUserInfo(res);
             if (additionalInfo?.isNewUser) {
                 navigate('/onboarding');
             } else {
-                navigate(dashboardFor(role));
+                navigate(dashboardFor(savedRole));
             }
-        } catch (err: any) {
+        }).catch((err: any) => {
             const code: string = err?.code || '';
-            // Silently ignore user closing the Google popup
-            if (
-                code === 'auth/popup-closed-by-user' ||
-                code === 'auth/cancelled-popup-request' ||
-                code === 'auth/user-cancelled'
-            ) return;
-            // Only show errors that are actionable
             if (code === 'auth/account-exists-with-different-credential') {
                 setError('An account with this email already exists. Please use email/password to sign in.');
             }
-            // All other Google errors are swallowed silently
-        }
+        });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    const handleGoogleAuth = async () => {
+        setError('');
+        localStorage.setItem('userRole', currentRole);
+        // Use redirect instead of popup — works in Edge and all browsers without popup permission
+        await signInWithRedirect(auth, googleProvider);
     };
 
     // ─── Selection Screen ─────────────────────────────────────────────────────
