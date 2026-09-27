@@ -394,7 +394,7 @@ export default function LandingPage() {
                                     ))}
                                 </div>
                                 <div className="lp-for-candidate-stats">
-                                    {FOR_WHO[0].stats.map((s: any) => (
+                                    {FOR_WHO[0].stats?.map((s: any) => (
                                         <div key={s.val} className="lp-for-stat">
                                             <span className="lp-for-stat-val">{s.val}</span>
                                             <span className="lp-for-stat-lbl">{s.label}</span>
