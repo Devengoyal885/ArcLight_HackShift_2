@@ -61,7 +61,7 @@ export default function LearningPage() {
         }
         
         // Fallback: Firestore
-        getDoc(doc(db, 'users', dbUid, 'careerTarget'))
+        getDoc(doc(db, 'users', dbUid, 'meta', 'careerTarget'))
             .then(snap => {
                 if (snap.exists()) {
                     const data = snap.data();

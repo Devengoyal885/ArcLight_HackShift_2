@@ -69,7 +69,7 @@ export default function CareerPage() {
                 }
 
                 // 2. Check persistent Firestore database if local storage is cleared
-                const docRef = doc(db, 'users', dbUid, 'careerTarget');
+                const docRef = doc(db, 'users', dbUid, 'meta', 'careerTarget');
                 const snap = await getDoc(docRef);
                 if (snap.exists()) {
                     const data = snap.data();
@@ -104,7 +104,7 @@ export default function CareerPage() {
                 }));
 
                 // Save permanently to Firestore
-                const docRef = doc(db, 'users', dbUid, 'careerTarget');
+                const docRef = doc(db, 'users', dbUid, 'meta', 'careerTarget');
                 await setDoc(docRef, {
                     roles,
                     capsHash: currentCapsHash,
