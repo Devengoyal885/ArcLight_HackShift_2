@@ -119,7 +119,7 @@ export async function parseResume(resumeText: string): Promise<ParsedResume | nu
     }
 
     try {
-        const response = await fetch('http://localhost:5000/api/parse-resume', {
+        const response = await fetch(`${import.meta.env.VITE_SERVER_URL || 'http://localhost:5000'}/api/parse-resume`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ text: resumeText })
