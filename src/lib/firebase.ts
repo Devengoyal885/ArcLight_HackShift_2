@@ -1,9 +1,11 @@
 import { initializeApp } from 'firebase/app';
 import {
     getAuth, GoogleAuthProvider,
-    signInWithRedirect, getRedirectResult,
     signInWithPopup,
-    signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut
+    signInWithEmailAndPassword,
+    createUserWithEmailAndPassword,
+    signOut,
+    getAdditionalUserInfo
 } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
@@ -22,18 +24,41 @@ const auth = getAuth(app);
 
 const db = getFirestore(app);
 const storage = getStorage(app);
+
 const googleProvider = new GoogleAuthProvider();
+googleProvider.addScope('email');
+googleProvider.addScope('profile');
 googleProvider.setCustomParameters({ prompt: 'select_account' });
+
+/**
+ * Clear any stale Firebase redirect state from IndexedDB.
+ * This prevents the "missing initial state" error that occurs when
+ * signInWithRedirect and signInWithPopup are mixed.
+ */
+export async function clearStaleAuthState(): Promise<void> {
+    try {
+        const databases = ['firebaseLocalStorageDb', 'firebase-heartbeat-database'];
+        for (const dbName of databases) {
+            await new Promise<void>((resolve) => {
+                const req = indexedDB.deleteDatabase(dbName);
+                req.onsuccess = () => resolve();
+                req.onerror = () => resolve();
+                req.onblocked = () => resolve();
+            });
+        }
+    } catch {
+        // Ignore — best effort cleanup
+    }
+}
 
 export {
     auth,
     db,
     storage,
     googleProvider,
-    signInWithRedirect,
-    getRedirectResult,
     signInWithPopup,
     signInWithEmailAndPassword,
     createUserWithEmailAndPassword,
     signOut,
+    getAdditionalUserInfo,
 };

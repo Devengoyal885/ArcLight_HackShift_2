@@ -4,10 +4,10 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Briefcase, Mail, Lock, CheckSquare, User, GraduationCap, Building2, Sparkles } from 'lucide-react';
 import logo from '../../assets/sihlogo.png';
 import {
-    auth, googleProvider, signInWithRedirect, getRedirectResult,
-    signInWithEmailAndPassword, createUserWithEmailAndPassword
+    auth, googleProvider, clearStaleAuthState,
+    signInWithPopup, signInWithEmailAndPassword,
+    createUserWithEmailAndPassword, getAdditionalUserInfo,
 } from '../../lib/firebase';
-import { getAdditionalUserInfo } from 'firebase/auth';
 import { getProfile } from '../../services/profileService';
 import { useAuth } from '../../context/AuthContext';
 import './LoginPage.css';
@@ -197,42 +197,45 @@ export default function LoginPage() {
         }
     };
 
-    // ── Redirect result handler (runs on page load after Google redirect) ──────
+    // ── On mount: clear stale Firebase redirect state that causes auth failures ─
     useEffect(() => {
-        getRedirectResult(auth)
-            .then(async (result) => {
-                if (!result) return; // no pending redirect
-                const savedRole = (localStorage.getItem('userRole') as RoleType) || 'candidate';
-                const additionalInfo = getAdditionalUserInfo(result);
-                if (additionalInfo?.isNewUser) {
-                    navigate('/onboarding', { replace: true });
-                } else {
-                    try {
-                        const dbUid = `${result.user.uid}_${savedRole}`;
-                        const p = await getProfile(dbUid);
-                        navigate(p?.profileComplete ? dashboardFor(savedRole) : '/onboarding', { replace: true });
-                    } catch {
-                        navigate(dashboardFor(savedRole), { replace: true });
-                    }
-                }
-            })
-            .catch((err: any) => {
-                if (err?.code !== 'auth/popup-closed-by-user' && err?.code !== 'auth/cancelled-popup-request') {
-                    console.error('[Redirect result error]', err);
-                }
-            });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // Wipe any stale state left by previous signInWithRedirect calls.
+        // This prevents the "missing initial state" error in Firefox/Edge.
+        clearStaleAuthState();
     }, []);
 
-    // ── Google sign-in: use redirect (works in ALL browsers without popup blocking) ──
-    const handleGoogleAuth = () => {
+    // ── Google sign-in via popup (most reliable cross-browser method) ────────
+    const handleGoogleAuth = async () => {
         setError('');
         localStorage.setItem('userRole', currentRole);
-        // signInWithRedirect fully leaves and returns to the page — no popup, no blocking
-        signInWithRedirect(auth, googleProvider).catch((err: any) => {
-            console.error('[Google Redirect Error]', err);
-            setError('Could not initiate Google sign in. Please try again.');
-        });
+        try {
+            const result = await signInWithPopup(auth, googleProvider);
+            const additionalInfo = getAdditionalUserInfo(result);
+            const savedRole = currentRole;
+            if (additionalInfo?.isNewUser) {
+                navigate('/onboarding', { replace: true });
+            } else {
+                try {
+                    const dbUid = `${result.user.uid}_${savedRole}`;
+                    const p = await getProfile(dbUid);
+                    navigate(p?.profileComplete ? dashboardFor(savedRole) : '/onboarding', { replace: true });
+                } catch {
+                    navigate(dashboardFor(savedRole), { replace: true });
+                }
+            }
+        } catch (err: any) {
+            const code: string = err?.code || '';
+            if (code === 'auth/popup-blocked') {
+                setError('Popup blocked! Please click the address bar icon to allow popups for this site, then try again.');
+            } else if (code === 'auth/popup-closed-by-user' || code === 'auth/cancelled-popup-request') {
+                // User closed it — do nothing
+            } else if (code === 'auth/account-exists-with-different-credential') {
+                setError('An account already exists with this email. Please use email/password to sign in.');
+            } else {
+                console.error('[Google Auth Error]', err);
+                setError(`Sign in failed (${code || 'unknown error'}). Please try again.`);
+            }
+        }
     };
 
     // ─── Selection Screen ─────────────────────────────────────────────────────
