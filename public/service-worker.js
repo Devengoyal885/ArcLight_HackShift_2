@@ -6,7 +6,7 @@
  * Strategy: Cache First for static assets, Network First for API calls.
  */
 
-const CACHE_NAME = 'capable-v1';
+const CACHE_NAME = 'capable-v2';
 const STATIC_ASSETS = [
     '/',
     '/index.html',
