@@ -9,6 +9,7 @@ import {
 } from '../../lib/firebase';
 import { getAdditionalUserInfo } from 'firebase/auth';
 import { getProfile } from '../../services/profileService';
+import { useAuth } from '../../context/AuthContext';
 import './LoginPage.css';
 
 // All possible auth steps for 4 roles
@@ -104,6 +105,16 @@ export default function LoginPage() {
     const [error, setError] = useState('');
     const [infoMsg, setInfoMsg] = useState('');
     const navigate = useNavigate();
+    const { user, profile, loading } = useAuth();
+
+    // Already logged in — redirect to dashboard immediately
+    useEffect(() => {
+        if (!loading && user && profile?.profileComplete) {
+            const savedRole = (localStorage.getItem('userRole') as RoleType) || 'candidate';
+            navigate(dashboardFor(savedRole), { replace: true });
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [user, profile, loading]);
 
     const currentRole: RoleType = step === 'select'
         ? 'candidate'
@@ -186,16 +197,28 @@ export default function LoginPage() {
     };
 
     // ─── Google Auth (redirect-based — works on Edge & popup-blocking browsers) ───
-    // Handle the result when Google redirects back to our app
     useEffect(() => {
-        getRedirectResult(auth).then((res) => {
+        getRedirectResult(auth).then(async (res) => {
             if (!res) return; // No pending redirect result
             const savedRole = (localStorage.getItem('userRole') as RoleType) || 'candidate';
             const additionalInfo = getAdditionalUserInfo(res);
             if (additionalInfo?.isNewUser) {
-                navigate('/onboarding');
+                // New user — go to onboarding
+                navigate('/onboarding', { replace: true });
             } else {
-                navigate(dashboardFor(savedRole));
+                // Existing user — check if profile is complete before navigating
+                try {
+                    const uid = res.user.uid;
+                    const dbUid = `${uid}_${savedRole}`;
+                    const p = await getProfile(dbUid);
+                    if (p?.profileComplete) {
+                        navigate(dashboardFor(savedRole), { replace: true });
+                    } else {
+                        navigate('/onboarding', { replace: true });
+                    }
+                } catch {
+                    navigate(dashboardFor(savedRole), { replace: true });
+                }
             }
         }).catch((err: any) => {
             const code: string = err?.code || '';
