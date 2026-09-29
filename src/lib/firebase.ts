@@ -6,6 +6,8 @@ import {
     getRedirectResult,
     signInWithEmailAndPassword,
     createUserWithEmailAndPassword,
+    sendPasswordResetEmail,
+    sendEmailVerification,
     signOut,
     getAdditionalUserInfo
 } from 'firebase/auth';
@@ -63,6 +65,8 @@ export {
     getRedirectResult,
     signInWithEmailAndPassword,
     createUserWithEmailAndPassword,
+    sendPasswordResetEmail,
+    sendEmailVerification,
     signOut,
     getAdditionalUserInfo,
 };

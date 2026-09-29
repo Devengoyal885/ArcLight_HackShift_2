@@ -8,6 +8,7 @@ import {
     signInWithPopup, signInWithRedirect, getRedirectResult,
     signInWithEmailAndPassword,
     createUserWithEmailAndPassword, getAdditionalUserInfo,
+    sendPasswordResetEmail, sendEmailVerification
 } from '../../lib/firebase';
 import { getProfile } from '../../services/profileService';
 import { useAuth } from '../../context/AuthContext';
@@ -165,7 +166,8 @@ export default function LoginPage() {
                 await signInWithEmailAndPassword(auth, email, password);
                 // useEffect on [user, loading] handles navigation
             } else {
-                await createUserWithEmailAndPassword(auth, email, password);
+                const userCred = await createUserWithEmailAndPassword(auth, email, password);
+                await sendEmailVerification(userCred.user);
                 // useEffect on [user, loading] handles navigation
             }
         } catch (err: any) {
@@ -194,6 +196,29 @@ export default function LoginPage() {
                 } else {
                     setError('Could not create account. Please try again.');
                 }
+            }
+        }
+    };
+
+    const handleForgotPassword = async (e: React.MouseEvent) => {
+        e.preventDefault();
+        setError('');
+        setInfoMsg('');
+        if (!email) {
+            setError('Please enter your email address first.');
+            return;
+        }
+        try {
+            await sendPasswordResetEmail(auth, email);
+            setInfoMsg('Password reset email sent! Please check your inbox.');
+        } catch (err: any) {
+            const code: string = err?.code || '';
+            if (code === 'auth/user-not-found') {
+                setError('No account found with this email.');
+            } else if (code === 'auth/invalid-email') {
+                setError('Please enter a valid email address.');
+            } else {
+                setError('Failed to send reset email. Please try again.');
             }
         }
     };
@@ -509,7 +534,7 @@ export default function LoginPage() {
                                         <span className="login-box"><CheckSquare size={14} /></span>
                                         Remember me
                                     </label>
-                                    <a href="#" className="login-forgot">Forgot password?</a>
+                                    <a href="#" className="login-forgot" onClick={handleForgotPassword}>Forgot password?</a>
                                 </div>
                             ) : (
                                 <div className="login-form-options">

@@ -6,6 +6,7 @@ import { ToastNotifications } from './components/ui/ToastNotifications';
 import CommandPalette from './components/ui/CommandPalette';
 import { ErrorBoundary } from './components/ui/ErrorBoundary';
 import KeyboardShortcutsModal from './components/ui/KeyboardShortcutsModal';
+import CookieBanner from './components/ui/CookieBanner';
 
 // Auth
 const LoginPage = lazy(() => import('./pages/auth/LoginPage'));
@@ -115,6 +116,7 @@ export default function App() {
           <ToastNotifications />
         <CommandPaletteWrapper />
         <KeyboardShortcutsModal />
+        <CookieBanner />
         <ErrorBoundary>
         <Suspense fallback={<LoadingScreen />}>
           <Routes>

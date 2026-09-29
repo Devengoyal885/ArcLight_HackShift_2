@@ -1,0 +1,11 @@
+User-agent: *
+Disallow: /candidate/
+Disallow: /employer/
+Disallow: /academician/
+Disallow: /faculty/
+Disallow: /institution/
+Disallow: /onboarding
+Disallow: /settings
+Allow: /
+
+Sitemap: https://capable.app/sitemap.xml
