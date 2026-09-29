@@ -1,19 +1,47 @@
 import { useNavigate } from 'react-router-dom';
-import { Mail, ArrowRight } from 'lucide-react';
+import { Mail, ArrowRight, RefreshCw } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { auth, sendEmailVerification, signOut } from '../../lib/firebase';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export default function VerifyEmailPage() {
     const { user } = useAuth();
     const navigate = useNavigate();
     const [sent, setSent] = useState(false);
+    const [checking, setChecking] = useState(false);
+
+    // Deep Implementation: Auto-poll every 5 seconds
+    useEffect(() => {
+        const interval = setInterval(async () => {
+            if (auth.currentUser) {
+                await auth.currentUser.reload();
+                if (auth.currentUser.emailVerified) {
+                    navigate(0); // Force reload to trigger auth state and routing
+                }
+            }
+        }, 5000);
+        return () => clearInterval(interval);
+    }, [navigate]);
 
     const handleResend = async () => {
         if (auth.currentUser) {
             await sendEmailVerification(auth.currentUser);
             setSent(true);
+            setTimeout(() => setSent(false), 60000); // Allow resend after 60s
         }
+    };
+
+    const handleCheckVerification = async () => {
+        setChecking(true);
+        if (auth.currentUser) {
+            await auth.currentUser.reload();
+            if (auth.currentUser.emailVerified) {
+                navigate(0);
+            } else {
+                alert("Email not yet verified. Please check your inbox and spam folder.");
+            }
+        }
+        setChecking(false);
     };
 
     const handleSignOut = async () => {
@@ -37,7 +65,15 @@ export default function VerifyEmailPage() {
                     disabled={sent}
                     style={{ background: '#2563eb', color: '#fff', width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: 'none', cursor: sent ? 'not-allowed' : 'pointer', marginBottom: '1rem', fontWeight: 600 }}
                 >
-                    {sent ? 'Email Sent!' : 'Resend Verification Email'}
+                    {sent ? 'Email Sent (Check Inbox)!' : 'Resend Verification Email'}
+                </button>
+                <button 
+                    onClick={handleCheckVerification}
+                    disabled={checking}
+                    style={{ background: '#333', color: '#fff', width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: 'none', cursor: checking ? 'wait' : 'pointer', marginBottom: '2rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}
+                >
+                    <RefreshCw size={16} className={checking ? "spin" : ""} />
+                    {checking ? 'Checking...' : 'I have verified my email'}
                 </button>
                 <button 
                     onClick={handleSignOut}

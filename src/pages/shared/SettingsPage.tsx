@@ -6,8 +6,9 @@ import {
     LogOut, AlertTriangle, QrCode, X
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
-import { auth } from '../../lib/firebase';
+import { auth, db } from '../../lib/firebase';
 import { deleteUser } from 'firebase/auth';
+import { deleteDoc, doc } from 'firebase/firestore';
 import { useTheme } from '../../context/ThemeContext';
 import './SettingsPage.css';
 
@@ -46,9 +47,14 @@ export default function SettingsPage() {
 
     const handleDeleteAccount = async () => {
         if (!auth.currentUser) return;
-        const confirmDelete = window.confirm("Are you sure you want to permanently delete your account? This action cannot be undone.");
+        const confirmDelete = window.confirm("Are you sure you want to permanently delete your account AND all associated data? This action cannot be undone.");
         if (confirmDelete) {
             try {
+                // Deep Implementation: Wipe user's Firestore docs before deleting Auth
+                const uid = auth.currentUser.uid;
+                await deleteDoc(doc(db, 'profiles', uid)).catch(() => console.warn("No profile doc found"));
+                await deleteDoc(doc(db, 'roles', uid)).catch(() => console.warn("No role doc found"));
+                
                 await deleteUser(auth.currentUser);
                 window.location.href = '/login'; // Force reload to clear everything
             } catch (error: any) {
