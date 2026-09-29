@@ -25,6 +25,35 @@ app.get('/api/health', (_req, res) => {
     });
 });
 
+// ── Serper API Proxy (SECURITY: Hide API key from client) ─────────────────────
+app.post('/api/jobs/search', async (req, res) => {
+    const apiKey = process.env.SERPER_API_KEY;
+    if (!apiKey) {
+        return res.status(500).json({ error: 'SERPER_API_KEY not configured on server' });
+    }
+
+    try {
+        const response = await fetch('https://google.serper.dev/search', {
+            method: 'POST',
+            headers: {
+                'X-API-KEY': apiKey,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(req.body)
+        });
+
+        if (!response.ok) {
+            throw new Error(`Serper API error: ${response.status}`);
+        }
+
+        const data = await response.json();
+        res.json(data);
+    } catch (error) {
+        console.error('Serper proxy error:', error);
+        res.status(500).json({ error: 'Failed to fetch jobs from Serper' });
+    }
+});
+
 // ── Mail Trigger (Replaces Firebase Extension) ─────────────────────────────────
 app.post('/api/mail', async (req, res) => {
     const { to, subject, html } = req.body;

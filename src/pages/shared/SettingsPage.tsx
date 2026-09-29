@@ -6,6 +6,8 @@ import {
     LogOut, AlertTriangle, QrCode, X
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { auth } from '../../lib/firebase';
+import { deleteUser } from 'firebase/auth';
 import { useTheme } from '../../context/ThemeContext';
 import './SettingsPage.css';
 
@@ -40,6 +42,23 @@ export default function SettingsPage() {
         downloadAnchorNode.click();
         downloadAnchorNode.remove();
         triggerSave();
+    };
+
+    const handleDeleteAccount = async () => {
+        if (!auth.currentUser) return;
+        const confirmDelete = window.confirm("Are you sure you want to permanently delete your account? This action cannot be undone.");
+        if (confirmDelete) {
+            try {
+                await deleteUser(auth.currentUser);
+                window.location.href = '/login'; // Force reload to clear everything
+            } catch (error: any) {
+                if (error.code === 'auth/requires-recent-login') {
+                    alert("Please log out and log back in before deleting your account for security reasons.");
+                } else {
+                    alert("Failed to delete account. Please try again.");
+                }
+            }
+        }
     };
 
     return (
@@ -208,7 +227,7 @@ export default function SettingsPage() {
                                             <div className="settings-title" style={{ color: '#ef4444' }}>Delete Account</div>
                                             <div className="settings-desc">Permanently delete your account and all associated data.</div>
                                         </div>
-                                        <button className="settings-btn-danger"><Trash2 size={16} /> Delete Account</button>
+                                        <button className="settings-btn-danger" onClick={handleDeleteAccount}><Trash2 size={16} /> Delete Account</button>
                                     </div>
                                 </div>
                             </motion.div>

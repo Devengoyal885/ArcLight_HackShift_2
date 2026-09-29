@@ -38,6 +38,16 @@ export default function ProtectedRoute({ children, allowedRoles }: ProtectedRout
         return <Navigate to="/login" replace />;
     }
 
+    // Email verification check (ignore for Google/OAuth which are verified by default)
+    // and skip for localhost/dev to not break the developer loop if they are using mock accounts
+    if (
+        !user.emailVerified &&
+        user.providerData[0]?.providerId === 'password' &&
+        import.meta.env.PROD
+    ) {
+        return <Navigate to="/verify-email" replace />;
+    }
+
     // Role-based check
     if (allowedRoles && allowedRoles.length > 0 && role) {
         if (!allowedRoles.includes(role)) {

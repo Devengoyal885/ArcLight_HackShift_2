@@ -11,6 +11,7 @@ import CookieBanner from './components/ui/CookieBanner';
 // Auth
 const LoginPage = lazy(() => import('./pages/auth/LoginPage'));
 const OnboardingPage = lazy(() => import('./pages/auth/OnboardingPage'));
+const VerifyEmailPage = lazy(() => import('./pages/auth/VerifyEmailPage'));
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 
@@ -55,6 +56,7 @@ const EmployerBrandingPage = lazy(() => import('./pages/employer/EmployerBrandin
 // Shared / Marketing
 const LandingPage = lazy(() => import('./pages/marketing/LandingPage'));
 const PrivacyPage = lazy(() => import('./pages/shared/PrivacyPage'));
+const TermsPage = lazy(() => import('./pages/shared/TermsPage'));
 const TransparencyPage = lazy(() => import('./pages/shared/TransparencyPage'));
 const CertificatePage = lazy(() => import('./pages/shared/CertificatePage'));
 const PublicProfilePage = lazy(() => import('./pages/shared/PublicProfilePage'));
@@ -126,6 +128,7 @@ export default function App() {
           {/* Auth */}
           <Route path="/login" element={<LoginPage />} />
           <Route path="/onboarding" element={<OnboardingPage />} />
+          <Route path="/verify-email" element={<VerifyEmailPage />} />
 
           {/* ─── Candidate (Student) ───────────────────────────────────────── */}
           <Route path="/candidate" element={<ProtectedRoute allowedRoles={['candidate']}><CandidateDashboard /></ProtectedRoute>} />
@@ -208,6 +211,7 @@ export default function App() {
 
           {/* Shared */}
           <Route path="/privacy" element={<PrivacyPage />} />
+          <Route path="/terms" element={<TermsPage />} />
           <Route path="/transparency" element={<TransparencyPage />} />
           {/* Public certificate verification — no login required */}
           <Route path="/certificate/:certId" element={<CertificatePage />} />

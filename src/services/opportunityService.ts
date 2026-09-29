@@ -11,7 +11,7 @@
 import { collection, collectionGroup, getDocs } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 
-const SERPER_KEY = import.meta.env.VITE_SERPER_API_KEY as string;
+const SERVER_URL = import.meta.env.VITE_SERVER_URL || 'http://localhost:5000';
 
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -115,11 +115,10 @@ interface SerperJobResult {
 
 async function fetchSerperJobs(query: string, location?: string, platform?: string): Promise<OpportunityCard[]> {
     try {
-        // Use Serper's Google Search API for jobs
-        const res = await fetch('https://google.serper.dev/search', {
+        // Use backend proxy for Serper API
+        const res = await fetch(`${SERVER_URL}/api/jobs/search`, {
             method: 'POST',
             headers: {
-                'X-API-KEY': SERPER_KEY,
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
@@ -295,7 +294,6 @@ async function fetchLiveJobs(): Promise<OpportunityCard[]> {
 }
 
 async function fetchPremiumJobs(): Promise<OpportunityCard[]> {
-    if (!SERPER_KEY || SERPER_KEY.trim() === '') return [];
     try {
         const queries = [
             { q: 'software engineer site:naukri.com/job-listings', platform: 'Naukri.com' },
