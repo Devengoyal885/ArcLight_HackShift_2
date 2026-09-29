@@ -198,13 +198,18 @@ export default function LoginPage() {
         }
     };
 
-    // ── On mount: handle redirect result (when user returns after signInWithRedirect) ─
+    // ── On mount: check if user is returning from a Google redirect login ──────
     useEffect(() => {
-        clearStaleAuthState();
-
-        // Check if user was redirected back from Google login
+        // IMPORTANT: Do NOT call clearStaleAuthState() here.
+        // getRedirectResult() reads from the same Firebase IndexedDB that
+        // clearStaleAuthState() deletes — calling both causes the
+        // "INTERNAL ASSERTION FAILED: Pending promise was never set" error.
         getRedirectResult(auth).then((result) => {
-            if (!result) return;
+            if (!result) {
+                // No pending redirect — safe to clear any truly stale state now
+                clearStaleAuthState();
+                return;
+            }
             const additionalInfo = getAdditionalUserInfo(result);
             const savedRole = (localStorage.getItem('userRole') as RoleType) || 'candidate';
             if (additionalInfo?.isNewUser) {
@@ -216,7 +221,8 @@ export default function LoginPage() {
                     .catch(() => navigate(dashboardFor(savedRole), { replace: true }));
             }
         }).catch(() => {
-            // No redirect result or error — that's fine, user is on the login page normally
+            // No redirect result — safe to clear stale state
+            clearStaleAuthState();
         });
     }, []);
 
