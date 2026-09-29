@@ -258,8 +258,10 @@ export default function LandingPage() {
                 {/* Trusted logos */}
                 <div className="lp-trusted-section">
                     <div className="lp-trusted-header">
+                        {/* issue #3: sentence-case, not all-caps (>15 chars should never be uppercase) */}
                         <span className="lp-trusted-eyebrow">The standard for campus hiring</span>
-                        <h3 className="lp-trusted-title">Trusted by top tier institutes and global enterprises</h3>
+                        {/* issue #4: was h3 after h1 — now h2 to avoid skipped level */}
+                        <h2 className="lp-trusted-title">Trusted by top tier institutes and global enterprises</h2>
                     </div>
                     
                     <div className="lp-trusted-marquee-container">
@@ -370,14 +372,15 @@ export default function LandingPage() {
                         >
                             <div className="lp-for-candidate-inner">
                                 <div className="lp-for-candidate-top">
-                                    <span className="lp-for-label">FOR CANDIDATES</span>
+                                    <span className="lp-for-label">For Candidates</span>
                                     <div className="lp-for-candidate-icon">
                                         <GraduationCap size={18} weight="fill" />
                                     </div>
                                 </div>
-                                <h3 className="lp-for-candidate-headline">
+                                {/* issue #14: headline now same size as other cards via lp-for-small-headline class */}
+                                <h3 className="lp-for-small-headline">
                                     Your proof of merit,<br />
-                                    <em>not just a résumé.</em>
+                                    <em style={{ fontStyle: 'italic', color: '#6B6A68' }}>not just a résumé.</em>
                                 </h3>
                                 <p className="lp-for-candidate-sub">
                                     Build a capability profile that speaks louder than a PDF. Get matched to drives, ace interviews, and land roles on merit — not connections.
@@ -401,9 +404,6 @@ export default function LandingPage() {
                                         </div>
                                     ))}
                                 </div>
-                                <Link to="/login" className="lp-for-candidate-cta">
-                                    Start free — no credit card <ArrowRight size={13} />
-                                </Link>
 
                                 {/* Faux-OS window profile mock */}
                                 <div className="lp-for-candidate-visual" aria-hidden>
@@ -441,6 +441,11 @@ export default function LandingPage() {
                                         </div>
                                     </div>
                                 </div>
+
+                                {/* issue #15: CTA at card bottom matching other cards' footer pattern */}
+                                <Link to="/login" className="lp-for-cta">
+                                    Start free — no credit card <ArrowRight size={12} />
+                                </Link>
                             </div>
                         </motion.div>
 
@@ -481,7 +486,8 @@ export default function LandingPage() {
             {/* ── Testimonials ── */}
             <section className="lp-section lp-section--accent" id="testimonials">
                 <div className="lp-section-inner">
-                    <div className="lp-section-header">
+                    {/* issue #16: center-align header to match the centered testimonial card */}
+                    <div className="lp-section-header lp-section-header--center">
                         <div className="lp-section-pill">Reviews</div>
                         <h2>Loved by students,<br /><span>trusted by institutions.</span></h2>
                     </div>
@@ -547,27 +553,28 @@ export default function LandingPage() {
                         <span>CapAble</span>
                         <p>Bridging Capability. Enabling Careers.</p>
                     </div>
+                    {/* issue #5: footer h4s were H2→H4 skip — use h3 */}
                     <div className="lp-footer-links-grid">
                         <div className="lp-footer-col">
-                            <h4>Product</h4>
+                            <h3>Product</h3>
                             <a href="#features">Features</a>
                             <a href="#how-it-works">How it works</a>
                             <a href="#for-who">Pricing</a>
                         </div>
                         <div className="lp-footer-col">
-                            <h4>Platform</h4>
+                            <h3>Platform</h3>
                             <Link to="/login">For Students</Link>
                             <Link to="/login">For Institutions</Link>
                             <Link to="/login">For Employers</Link>
                         </div>
                         <div className="lp-footer-col">
-                            <h4>Company</h4>
+                            <h3>Company</h3>
                             <a href="#">About</a>
                             <a href="#">Blog</a>
                             <a href="mailto:hello@capable.app">Contact</a>
                         </div>
                         <div className="lp-footer-col">
-                            <h4>Legal</h4>
+                            <h3>Legal</h3>
                             <a href="#">Privacy Policy</a>
                             <a href="#">Terms of Service</a>
                             <a href="#">Refund Policy</a>
