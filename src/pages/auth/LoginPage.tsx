@@ -5,7 +5,8 @@ import { Briefcase, Mail, Lock, CheckSquare, User, GraduationCap, Building2, Spa
 import logo from '../../assets/sihlogo.png';
 import {
     auth, googleProvider, clearStaleAuthState,
-    signInWithPopup, signInWithEmailAndPassword,
+    signInWithPopup, signInWithRedirect, getRedirectResult,
+    signInWithEmailAndPassword,
     createUserWithEmailAndPassword, getAdditionalUserInfo,
 } from '../../lib/firebase';
 import { getProfile } from '../../services/profileService';
@@ -197,18 +198,34 @@ export default function LoginPage() {
         }
     };
 
-    // ── On mount: clear stale Firebase redirect state that causes auth failures ─
+    // ── On mount: handle redirect result (when user returns after signInWithRedirect) ─
     useEffect(() => {
-        // Wipe any stale state left by previous signInWithRedirect calls.
-        // This prevents the "missing initial state" error in Firefox/Edge.
         clearStaleAuthState();
+
+        // Check if user was redirected back from Google login
+        getRedirectResult(auth).then((result) => {
+            if (!result) return;
+            const additionalInfo = getAdditionalUserInfo(result);
+            const savedRole = (localStorage.getItem('userRole') as RoleType) || 'candidate';
+            if (additionalInfo?.isNewUser) {
+                navigate('/onboarding', { replace: true });
+            } else {
+                const dbUid = `${result.user.uid}_${savedRole}`;
+                getProfile(dbUid)
+                    .then(p => navigate(p?.profileComplete ? dashboardFor(savedRole) : '/onboarding', { replace: true }))
+                    .catch(() => navigate(dashboardFor(savedRole), { replace: true }));
+            }
+        }).catch(() => {
+            // No redirect result or error — that's fine, user is on the login page normally
+        });
     }, []);
 
-    // ── Google sign-in via popup (most reliable cross-browser method) ────────
+    // ── Google sign-in: try popup first, auto-fall back to redirect if blocked ─
     const handleGoogleAuth = async () => {
         setError('');
         localStorage.setItem('userRole', currentRole);
         try {
+            // Attempt popup (best UX — stays on same tab)
             const result = await signInWithPopup(auth, googleProvider);
             const additionalInfo = getAdditionalUserInfo(result);
             const savedRole = currentRole;
@@ -225,10 +242,13 @@ export default function LoginPage() {
             }
         } catch (err: any) {
             const code: string = err?.code || '';
-            if (code === 'auth/popup-blocked') {
-                setError('Popup blocked! Please click the address bar icon to allow popups for this site, then try again.');
+            if (code === 'auth/popup-blocked' || code === 'auth/popup-closed-by-user' && false) {
+                // Popup blocked — automatically fall back to redirect flow
+                setError('');
+                await signInWithRedirect(auth, googleProvider);
+                // Page will reload — result is handled in the useEffect above
             } else if (code === 'auth/popup-closed-by-user' || code === 'auth/cancelled-popup-request') {
-                // User closed it — do nothing
+                // User manually closed popup — do nothing
             } else if (code === 'auth/account-exists-with-different-credential') {
                 setError('An account already exists with this email. Please use email/password to sign in.');
             } else {
