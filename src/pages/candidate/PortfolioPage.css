@@ -1,4 +1,4 @@
-.portfolio-page {
+﻿.portfolio-page {
     min-height: 100vh;
     background: #f8fafc;
     position: relative;
@@ -23,7 +23,7 @@
     gap: var(--space-12);
 }
 
-/* ─── Hero ─── */
+/* â”€â”€â”€ Hero â”€â”€â”€ */
 .portfolio-hero {
     display: flex;
     align-items: center;
@@ -110,7 +110,7 @@
     text-align: center;
 }
 
-/* ─── Layout ─── */
+/* â”€â”€â”€ Layout â”€â”€â”€ */
 .portfolio-layout {
     display: grid;
     grid-template-columns: 1fr 1.2fr;
@@ -150,7 +150,7 @@
     text-transform: uppercase;
 }
 
-/* ─── Timeline ─── */
+/* â”€â”€â”€ Timeline â”€â”€â”€ */
 .portfolio-timeline {
     display: flex;
     flex-direction: column;
@@ -202,7 +202,7 @@
     border-radius: var(--radius-pill);
 }
 
-/* ─── Projects ─── */
+/* â”€â”€â”€ Projects â”€â”€â”€ */
 .portfolio-projects {
     display: flex;
     flex-direction: column;
@@ -258,7 +258,7 @@
     font-weight: var(--weight-medium);
 }
 
-/* ─── No Social ─── */
+/* â”€â”€â”€ No Social â”€â”€â”€ */
 .portfolio-no-social {
     display: flex;
     align-items: flex-start;

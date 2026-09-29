@@ -1,4 +1,4 @@
-/* ─── Floating Navbar ──────────────────────────────────────────────────────── */
+/* â”€â”€â”€ Floating Navbar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 .floating-navbar {
     position: fixed;
@@ -10,7 +10,7 @@
     max-width: 1120px;
 }
 
-/* ── Premium glass inner container ── */
+/* â”€â”€ Premium glass inner container â”€â”€ */
 .navbar-inner {
     display: flex;
     align-items: center;
@@ -37,12 +37,12 @@
         inset 0 1px 0 rgba(255, 255, 255, 0.96),
         inset 0 -1px 0 rgba(0, 0, 0, 0.04);
 
-    /* Smooth entry — specify exact properties, never 'all' */
+    /* Smooth entry â€” specify exact properties, never 'all' */
     transition: box-shadow var(--duration-normal) var(--ease-out),
                 background var(--duration-normal) var(--ease-out);
 }
 
-/* Subtle hover — lifts a touch more */
+/* Subtle hover â€” lifts a touch more */
 .floating-navbar:hover .navbar-inner {
     background: rgba(255, 255, 255, 0.82);
     box-shadow:
@@ -54,7 +54,7 @@
         inset 0 -1px 0 rgba(0, 0, 0, 0.03);
 }
 
-/* ── Employer & institution variants — slightly warmer glass ── */
+/* â”€â”€ Employer & institution variants â€” slightly warmer glass â”€â”€ */
 .floating-navbar--employer .navbar-inner,
 .floating-navbar--institution .navbar-inner {
     background: rgba(250, 251, 253, 0.76);
@@ -62,12 +62,12 @@
     border-top-color: rgba(255, 255, 255, 0.92);
 }
 
-/* ── Academician / faculty variant ── */
+/* â”€â”€ Academician / faculty variant â”€â”€ */
 .floating-navbar--academician .navbar-inner {
     background: rgba(248, 250, 255, 0.76);
 }
 
-/* ─── Logo ────────────────────────────────────────────────────────────────── */
+/* â”€â”€â”€ Logo â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .navbar-logo {
     display: flex;
     align-items: center;
@@ -108,7 +108,7 @@
     color: var(--color-electric);
 }
 
-/* ─── Nav Links ───────────────────────────────────────────────────────────── */
+/* â”€â”€â”€ Nav Links â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .navbar-links {
     display: flex;
     align-items: center;
@@ -128,7 +128,7 @@
     color: rgba(15, 23, 42, 0.55);
     border-radius: 99px;
     text-decoration: none;
-    /* ease-out: instant feedback on first movement, 150ms — Emil fast range */
+    /* ease-out: instant feedback on first movement, 150ms â€” Emil fast range */
     transition: color var(--duration-fast) var(--ease-out),
                 background var(--duration-fast) var(--ease-out);
     white-space: nowrap;
@@ -143,7 +143,7 @@
     font-weight: 600;
 }
 
-/* ── Moving glass pill behind active link ── */
+/* â”€â”€ Moving glass pill behind active link â”€â”€ */
 .navbar-active-pill {
     position: absolute;
     inset: 0;
@@ -181,12 +181,110 @@
     z-index: 1;
 }
 
-/* ─── Right Action ────────────────────────────────────────────────────────── */
+/* â”€â”€â”€ Dropdown â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+.navbar-item-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.navbar-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%) translateY(8px) scale(0.96);
+    padding-top: 12px;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    /* Explicit props only. ease-out so it snaps open fast */
+    transition:
+        opacity 180ms cubic-bezier(0.23, 1, 0.32, 1),
+        transform 180ms cubic-bezier(0.23, 1, 0.32, 1),
+        visibility 180ms cubic-bezier(0.23, 1, 0.32, 1);
+    /* Origin-aware: scale from the trigger above it */
+    transform-origin: top center;
+    z-index: 100;
+}
+
+.navbar-item-container:hover .navbar-dropdown {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateX(-50%) translateY(0) scale(1);
+}
+
+.navbar-dropdown-inner {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 16px;
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 180px;
+    box-shadow: 
+        0 10px 25px -5px rgba(0, 0, 0, 0.1),
+        0 8px 10px -6px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-dropdown-item {
+    padding: 8px 12px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #475569;
+    text-decoration: none;
+    border-radius: 8px;
+    /* Explicit GPU props â€” never 'all' */
+    transition:
+        background 150ms cubic-bezier(0.23, 1, 0.32, 1),
+        color 150ms cubic-bezier(0.23, 1, 0.32, 1);
+    white-space: nowrap;
+}
+
+.navbar-dropdown-item:hover {
+    background: #f1f5f9;
+    color: #0f172a;
+}
+
+.navbar-dropdown-item.active {
+    background: #eff6ff;
+    color: #2563eb;
+    font-weight: 600;
+}
+
+/* â”€â”€â”€ Right Action â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .navbar-action {
     display: flex;
     align-items: center;
     gap: 8px;
     flex-shrink: 0;
+}
+
+.navbar-search-hint {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(15, 23, 42, 0.04);
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    border-radius: 99px;
+    padding: 6px 12px;
+    color: rgba(15, 23, 42, 0.6);
+    font-size: 0.75rem;
+    font-weight: 500;
+    cursor: pointer;
+    /* Explicit GPU-only transition â€” never 'all' */
+    transition:
+        background 150ms cubic-bezier(0.23, 1, 0.32, 1),
+        color 150ms cubic-bezier(0.23, 1, 0.32, 1),
+        transform 80ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.navbar-search-hint:hover {
+    background: rgba(15, 23, 42, 0.08);
+    color: rgba(15, 23, 42, 0.9);
 }
 
 /* Link wrapper for LiquidMetalButton */
@@ -209,7 +307,7 @@
     font-size: 0.815rem;
     font-weight: 500;
     text-decoration: none;
-    /* scale instead of translateY — GPU composited, no layout trigger */
+    /* scale instead of translateY â€” GPU composited, no layout trigger */
     transition: opacity var(--duration-fast) var(--ease-out),
                 transform var(--duration-fast) var(--ease-out);
     white-space: nowrap;
@@ -224,7 +322,7 @@
     transform: scale(0.97);
 }
 
-/* Legacy — kept for backward compat, now overridden by LiquidMetalButton */
+/* Legacy â€” kept for backward compat, now overridden by LiquidMetalButton */
 .navbar-console-btn {
     background: var(--color-electric, #2563eb);
 }
@@ -243,7 +341,7 @@
     flex-shrink: 0;
 }
 
-/* ─── Responsive ──────────────────────────────────────────────────────────── */
+/* â”€â”€â”€ Responsive â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 @media (max-width: 1024px) {
     .floating-navbar {
         width: calc(100% - 24px);
@@ -267,7 +365,7 @@
     }
 }
 
-/* ─── Reduced motion ──────────────────────────────────────────────────────── */
+/* â”€â”€â”€ Reduced motion â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 @media (prefers-reduced-motion: reduce) {
     .navbar-inner,
     .navbar-active-pill,
@@ -298,7 +396,7 @@
     min-width: 220px;
     opacity: 0;
     visibility: hidden;
-    /* ease-out, 200ms — enters fast so it feels responsive */
+    /* ease-out, 200ms â€” enters fast so it feels responsive */
     transition: opacity var(--duration-fast) var(--ease-out),
                 visibility var(--duration-fast) var(--ease-out),
                 transform var(--duration-fast) var(--ease-out);
@@ -321,7 +419,7 @@
     font-size: 0.9rem;
     font-weight: 500;
     border-radius: 8px;
-    /* Specify exact properties — never 'all' */
+    /* Specify exact properties â€” never 'all' */
     transition: background var(--duration-fast) var(--ease-out),
                 color var(--duration-fast) var(--ease-out);
     white-space: nowrap;
@@ -331,4 +429,53 @@
 .navbar-dropdown-item.active {
     background: rgba(255, 255, 255, 0.1);
     color: white;
+}
+
+/* â”€â”€â”€ Mobile Bottom Navigation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+@media (max-width: 768px) {
+    .floating-navbar {
+        top: auto;
+        bottom: 24px;
+        left: 50%;
+        transform: translateX(-50%) translateY(0) !important;
+        width: calc(100% - 32px);
+    }
+    
+    .navbar-inner {
+        flex-direction: row;
+        justify-content: space-between;
+        padding: 8px 12px;
+        border-radius: 20px;
+    }
+    
+    .navbar-logo {
+        display: none; /* Hide logo on mobile to make room for tabs */
+    }
+
+    .navbar-links {
+        display: flex;
+        justify-content: space-around;
+        width: 100%;
+        gap: 0;
+        flex: 1;
+    }
+
+    .navbar-link {
+        flex-direction: column;
+        font-size: 11px;
+        padding: 6px 10px;
+        gap: 2px;
+    }
+
+    .navbar-link-text {
+        display: block;
+    }
+    
+    .navbar-right-actions {
+        display: none; /* Hide profile/theme actions in bottom nav, they should move to a hamburger menu or profile tab */
+    }
+
+    .mobile-only {
+        display: block !important;
+    }
 }

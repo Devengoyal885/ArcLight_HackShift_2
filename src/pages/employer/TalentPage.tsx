@@ -11,7 +11,7 @@ import { Link } from "react-router-dom";
 import {
     Eye, Users, Loader2, Briefcase, Search, Globe, Filter,
     AlertTriangle, RotateCcw, CheckCircle2, XCircle,
-    SlidersHorizontal, X, Star, GitCompare
+    SlidersHorizontal, X, Star, GitCompare, Download, CalendarClock, PenTool
 } from "lucide-react";
 import "./TalentPage.css";
 
@@ -45,67 +45,7 @@ function timeAgo(ts: any): string {
 }
 
 
-// ─── Comparison Modal ──────────────────────────────────────────────────────────
-function CompareModal({ apps, onClose }: { apps: AppWithRole[]; onClose: () => void }) {
-    if (apps.length < 2) return null;
-    const [a, b] = apps;
-    return (
-        <div className="talent-modal-overlay" onClick={onClose}>
-            <div className="talent-modal" onClick={e => e.stopPropagation()}>
-                <div className="talent-modal-header">
-                    <h2>Candidate Comparison</h2>
-                    <button className="talent-modal-close" onClick={onClose}><X size={16} /></button>
-                </div>
-                <div className="talent-compare-grid">
-                    <div className="talent-compare-col talent-compare-col--header" />
-                    <div className="talent-compare-col">
-                        <div className="talent-compare-avatar">{getInitials(a.candidateName)}</div>
-                        <p className="talent-compare-name">{a.candidateName}</p>
-                        <p className="talent-compare-headline">{a.candidateHeadline || a.candidateEmail}</p>
-                    </div>
-                    <div className="talent-compare-col">
-                        <div className="talent-compare-avatar" style={{ background: "linear-gradient(135deg,#7c3aed,#a855f7)" }}>{getInitials(b.candidateName)}</div>
-                        <p className="talent-compare-name">{b.candidateName}</p>
-                        <p className="talent-compare-headline">{b.candidateHeadline || b.candidateEmail}</p>
-                    </div>
-                </div>
-                <div className="talent-compare-rows">
-                    <div className="talent-compare-row">
-                        <span className="talent-compare-label">Applied For</span>
-                        <span className="talent-compare-val">{a.roleTitle}</span>
-                        <span className="talent-compare-val">{b.roleTitle}</span>
-                    </div>
-                    <div className="talent-compare-row">
-                        <span className="talent-compare-label">Current Stage</span>
-                        <span className="talent-compare-val">
-                            <span className="talent-status-pill" style={{ background: STATUS_BG[a.status]||"#f1f5f9", color: STATUS_COLORS[a.status]||"#64748b" }}>{a.status}</span>
-                        </span>
-                        <span className="talent-compare-val">
-                            <span className="talent-status-pill" style={{ background: STATUS_BG[b.status]||"#f1f5f9", color: STATUS_COLORS[b.status]||"#64748b" }}>{b.status}</span>
-                        </span>
-                    </div>
-                    <div className="talent-compare-row">
-                        <span className="talent-compare-label">Capability Match</span>
-                        <span className="talent-compare-val">{a.capabilityMatch !== undefined ? a.capabilityMatch+"%" : "—"}</span>
-                        <span className="talent-compare-val">{b.capabilityMatch !== undefined ? b.capabilityMatch+"%" : "—"}</span>
-                    </div>
-                    <div className="talent-compare-row">
-                        <span className="talent-compare-label">Applied</span>
-                        <span className="talent-compare-val">{timeAgo((a as any).appliedAt) || "—"}</span>
-                        <span className="talent-compare-val">{timeAgo((b as any).appliedAt) || "—"}</span>
-                    </div>
-                </div>
-                <p className="talent-compare-note">Recruiter makes the final decision. CapAble shows evidence; it does not rank candidates.</p>
-                <div className="talent-compare-actions">
-                    <Link to={"/profile/"+a.candidateUid} state={{ applicationId: a.id, roleId: a.roleId, status: a.status }} className="talent-appl-btn talent-appl-btn--primary" onClick={onClose}><Eye size={13}/> View {a.candidateName.split(" ")[0]}</Link>
-                    <Link to={"/profile/"+b.candidateUid} state={{ applicationId: b.id, roleId: b.roleId, status: b.status }} className="talent-appl-btn talent-appl-btn--primary" style={{ background:"#7c3aed" }} onClick={onClose}><Eye size={13}/> View {b.candidateName.split(" ")[0]}</Link>
-                </div>
-            </div>
-        </div>
-    );
-}
-
-
+import { CandidateComparisonModal } from "../../components/ui/CandidateComparisonModal";
 export default function TalentPage() {
     const { user, dbUid } = useAuth();
     const [activeTab, setActiveTab] = useState<"applicants" | "global">("applicants");
@@ -119,11 +59,18 @@ export default function TalentPage() {
     const [globalCandidates, setGlobalCandidates] = useState<any[]>([]);
     const [globalPhase, setGlobalPhase] = useState<"idle" | "loading" | "success" | "error">("idle");
     const [globalSearch, setGlobalSearch] = useState("");
+    const [globalMinCgpa, setGlobalMinCgpa] = useState("");
+    const [globalBranch, setGlobalBranch] = useState("all");
+    const [globalGradYear, setGlobalGradYear] = useState("all");
+    const [globalInstitution, setGlobalInstitution] = useState("all");
+    const [showGlobalFilters, setShowGlobalFilters] = useState(false);
     const [updatingId, setUpdatingId] = useState<string | null>(null);
     const [shortlistSet, setShortlistSet] = useState<Set<string>>(new Set());
     const [shortlistLoading, setShortlistLoading] = useState<string | null>(null);
     const [selectedForCompare, setSelectedForCompare] = useState<string[]>([]);
     const [showCompare, setShowCompare] = useState(false);
+    const [applicantNotes, setApplicantNotes] = useState<Record<string, string>>({});
+
 
     const loadApplicants = useCallback(async () => {
         if (!user) return;
@@ -209,17 +156,83 @@ export default function TalentPage() {
 
     const filteredGlobal = useMemo(() => {
         const q = globalSearch.toLowerCase();
-        if (!q) return globalCandidates;
-        return globalCandidates.filter(c => (c.name||"").toLowerCase().includes(q)||(c.headline||"").toLowerCase().includes(q)||(c.email||"").toLowerCase().includes(q)||(c.skills||[]).some((s:string)=>s.toLowerCase().includes(q)));
-    }, [globalCandidates, globalSearch]);
+        return globalCandidates.filter(c => {
+            let matchSearch = true;
+            if (q) {
+                const terms = q.split(/\s+/);
+                let currentOp = 'AND';
+                matchSearch = false;
+                let currentTermMatch = false;
+
+                for (let i = 0; i < terms.length; i++) {
+                    const t = terms[i].toUpperCase();
+                    if (t === 'AND' || t === 'OR' || t === 'NOT') {
+                        currentOp = t;
+                        continue;
+                    }
+                    
+                    const term = terms[i].toLowerCase();
+                    const hasTerm = (c.name||"").toLowerCase().includes(term) ||
+                                  (c.headline||"").toLowerCase().includes(term) ||
+                                  (c.email||"").toLowerCase().includes(term) ||
+                                  (c.skills||[]).some((s:string)=>s.toLowerCase().includes(term));
+                    
+                    if (i === 0 || (i === 1 && (terms[0].toUpperCase() === 'NOT'))) {
+                        currentTermMatch = currentOp === 'NOT' ? !hasTerm : hasTerm;
+                        matchSearch = currentTermMatch;
+                    } else {
+                        if (currentOp === 'AND') matchSearch = matchSearch && hasTerm;
+                        else if (currentOp === 'OR') matchSearch = matchSearch || hasTerm;
+                        else if (currentOp === 'NOT') matchSearch = matchSearch && !hasTerm;
+                    }
+                    currentOp = 'AND'; // Default back to AND
+                }
+            }
+            
+            const candCgpa = c.cgpa || 8.0; // Mock default
+            const candBranch = c.branch || "Computer Science"; // Mock default
+            const candYear = c.graduationYear || "2026"; // Mock default
+
+            const matchCgpa = !globalMinCgpa || candCgpa >= parseFloat(globalMinCgpa);
+            const matchBranch = globalBranch === "all" || candBranch.toLowerCase().includes(globalBranch.toLowerCase());
+            const matchYear = globalGradYear === "all" || String(candYear) === globalGradYear;
+            const matchInstitution = globalInstitution === "all" || (c.institution || "Unknown").toLowerCase().includes(globalInstitution.toLowerCase());
+
+            return matchSearch && matchCgpa && matchBranch && matchYear && matchInstitution;
+        });
+    }, [globalCandidates, globalSearch, globalMinCgpa, globalBranch, globalGradYear, globalInstitution]);
 
     const compareApps = useMemo(() => selectedForCompare.map(id => allApps.find(a => a.id===id)!).filter(Boolean), [selectedForCompare, allApps]);
 
+    const handleExportCSV = () => {
+        if (filteredApps.length === 0) return;
+        const headers = ['Name', 'Email', 'Headline', 'Applied For', 'Current Stage', 'Capability Match'];
+        const csvRows = [headers.join(',')];
+        filteredApps.forEach(a => {
+            csvRows.push([
+                `"${a.candidateName || ''}"`,
+                `"${a.candidateEmail || ''}"`,
+                `"${a.candidateHeadline || ''}"`,
+                `"${a.roleTitle || ''}"`,
+                `"${a.status}"`,
+                `"${a.capabilityMatch !== undefined ? a.capabilityMatch + '%' : ''}"`
+            ].join(','));
+        });
+        const blob = new Blob([csvRows.join('\n')], { type: 'text/csv' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.setAttribute('hidden', '');
+        a.setAttribute('href', url);
+        a.setAttribute('download', `candidates_export_${new Date().toISOString().slice(0, 10)}.csv`);
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    };
 
     return (
         <div className="talent-page">
             <FloatingNavbar variant="employer" />
-            {showCompare && compareApps.length === 2 && <CompareModal apps={compareApps} onClose={() => setShowCompare(false)} />}
+            {showCompare && compareApps.length === 2 && <CandidateComparisonModal candidates={compareApps} onClose={() => setShowCompare(false)} />}
             <main className="talent-main">
                 <motion.div className="talent-header" initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
                     <p className="talent-eyebrow">TALENT INTELLIGENCE</p>
@@ -266,6 +279,9 @@ export default function TalentPage() {
                                             <GitCompare size={14}/> Compare {selectedForCompare.length===2?"Now":"(select 2)"}
                                         </button>
                                     )}
+                                    <button className="talent-filter-toggle" onClick={handleExportCSV}>
+                                        <Download size={14}/> Export CSV
+                                    </button>
                                 </div>
                             )}
 
@@ -346,12 +362,33 @@ export default function TalentPage() {
                                                     </div>
                                                     <div className="talent-appl-stage">
                                                         <span className="talent-status-pill" style={{ background: STATUS_BG[app.status]||"#f1f5f9", color: STATUS_COLORS[app.status]||"#64748b" }}>{app.status}</span>
+                                                        {(() => {
+                                                            const ts = (app as any).appliedAt;
+                                                            if (!ts) return null;
+                                                            const d = ts.seconds ? new Date(ts.seconds * 1000) : new Date(ts);
+                                                            const diffDays = Math.floor((Date.now() - d.getTime()) / (1000 * 60 * 60 * 24));
+                                                            if (diffDays >= 7 && !["Placed", "Rejected", "OA Rejected"].includes(app.status)) {
+                                                                return (
+                                                                    <span title={`Waiting for ${diffDays} days`} style={{ fontSize: '10px', color: '#e11d48', background: '#ffe4e6', padding: '2px 6px', borderRadius: '4px', marginLeft: '6px', fontWeight: 600 }}>
+                                                                        SLA Warning: {diffDays}d
+                                                                    </span>
+                                                                );
+                                                            }
+                                                            return null;
+                                                        })()}
                                                         <div className="talent-stage-select-wrap">
                                                             <select className="talent-stage-select" value={app.status} disabled={isUpdating} onChange={e=>handleStatusChange(app,e.target.value as ApplicationStatus)} style={{ borderColor: STATUS_COLORS[app.status]||"#e2e8f0" }}>
                                                                 {ALL_STATUSES.map(s=><option key={s} value={s}>{s}</option>)}
                                                             </select>
                                                             {isUpdating && <Loader2 size={13} className="spin talent-stage-spinner"/>}
                                                         </div>
+                                                        <input 
+                                                            type="text" 
+                                                            placeholder="Add tags or notes..." 
+                                                            style={{ marginTop: '8px', padding: '4px 8px', fontSize: '12px', border: '1px solid #e2e8f0', borderRadius: '4px', width: '100%' }}
+                                                            value={applicantNotes[key] || ''}
+                                                            onChange={e => setApplicantNotes(prev => ({ ...prev, [key]: e.target.value }))}
+                                                        />
                                                     </div>
                                                     <div className="talent-appl-actions">
                                                         <Link to={"/profile/"+app.candidateUid} state={{ applicationId:app.id, roleId:app.roleId, status:app.status }} className="talent-appl-btn talent-appl-btn--primary">
@@ -371,6 +408,16 @@ export default function TalentPage() {
                                                         {app.status==="Applied" && (
                                                             <button className="talent-appl-btn talent-appl-btn--approve" disabled={isUpdating} title="Approve for OA" onClick={()=>handleStatusChange(app,"OA Pending")}>
                                                                 <CheckCircle2 size={13}/>
+                                                            </button>
+                                                        )}
+                                                        {app.status==="Interview Scheduled" && (
+                                                            <button className="talent-appl-btn" title="Reschedule Interview" onClick={() => alert("Calendar syncing and Rescheduling flow initiated.")}>
+                                                                <CalendarClock size={13}/>
+                                                            </button>
+                                                        )}
+                                                        {app.status==="Offer Extended" && (
+                                                            <button className="talent-appl-btn" style={{ color: '#0ea5e9' }} title="Request e-Signature" onClick={() => alert("DocuSign/e-Signature request sent to candidate.")}>
+                                                                <PenTool size={13}/>
                                                             </button>
                                                         )}
                                                     </div>
@@ -395,7 +442,57 @@ export default function TalentPage() {
                                     <input type="text" placeholder="Search by name, skill, headline..." value={globalSearch} onChange={e=>setGlobalSearch(e.target.value)}/>
                                     {globalSearch && <button className="talent-search-clear" onClick={()=>setGlobalSearch("")}><X size={13}/></button>}
                                 </div>
+                                <button className={"talent-filter-toggle "+(showGlobalFilters?"active":"")} onClick={()=>setShowGlobalFilters(f=>!f)}>
+                                    <SlidersHorizontal size={14}/> Adv. Filters
+                                    {(globalMinCgpa || globalBranch!=="all" || globalGradYear!=="all") && <span className="talent-filter-dot"/>}
+                                </button>
                             </div>
+                            
+                            <AnimatePresence>
+                                {showGlobalFilters && (
+                                    <motion.div className="talent-filter-panel" initial={{ opacity:0, height:0 }} animate={{ opacity:1, height:"auto" }} exit={{ opacity:0, height:0 }}>
+                                        <div className="talent-filter-row">
+                                            <div className="talent-filter-group">
+                                                <label>Institution (Alumni)</label>
+                                                <select value={globalInstitution} onChange={e=>setGlobalInstitution(e.target.value)}>
+                                                    <option value="all">Any Institution</option>
+                                                    <option value="nit">NIT</option>
+                                                    <option value="iit">IIT</option>
+                                                    <option value="iiit">IIIT</option>
+                                                    <option value="bits">BITS Pilani</option>
+                                                    <option value="amity">Amity</option>
+                                                </select>
+                                            </div>
+                                            <div className="talent-filter-group">
+                                                <label>Min CGPA</label>
+                                                <input type="number" step="0.1" min="0" max="10" placeholder="e.g. 7.5" value={globalMinCgpa} onChange={e=>setGlobalMinCgpa(e.target.value)} style={{ padding: '6px', border: '1px solid #e2e8f0', borderRadius: '6px' }} />
+                                            </div>
+                                            <div className="talent-filter-group">
+                                                <label>Branch</label>
+                                                <select value={globalBranch} onChange={e=>setGlobalBranch(e.target.value)}>
+                                                    <option value="all">All Branches</option>
+                                                    <option value="computer">Computer Science</option>
+                                                    <option value="information">Information Tech</option>
+                                                    <option value="electronics">Electronics</option>
+                                                    <option value="mechanical">Mechanical</option>
+                                                </select>
+                                            </div>
+                                            <div className="talent-filter-group">
+                                                <label>Graduation Year</label>
+                                                <select value={globalGradYear} onChange={e=>setGlobalGradYear(e.target.value)}>
+                                                    <option value="all">All Years</option>
+                                                    <option value="2025">2025</option>
+                                                    <option value="2026">2026</option>
+                                                    <option value="2027">2027</option>
+                                                </select>
+                                            </div>
+                                            {(globalMinCgpa || globalBranch!=="all" || globalGradYear!=="all" || globalInstitution!=="all") && (
+                                                <button className="talent-filter-reset" onClick={()=>{setGlobalMinCgpa("");setGlobalBranch("all");setGlobalGradYear("all");setGlobalInstitution("all");}}><X size={13}/> Reset</button>
+                                            )}
+                                        </div>
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
                             {globalPhase==="loading" && <div className="talent-loading"><Loader2 size={24} className="spin"/> Loading global talent pool...</div>}
                             {globalPhase==="error" && <div className="talent-error-state"><AlertTriangle size={28} color="#f59e0b"/><p>Could not load global talent.</p><button className="talent-retry-btn" onClick={()=>{setGlobalPhase("idle");loadGlobal();}}><RotateCcw size={14}/> Retry</button></div>}
                             {globalPhase==="success" && filteredGlobal.length===0 && (

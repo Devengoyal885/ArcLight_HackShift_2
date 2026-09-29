@@ -5,7 +5,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { 
     MessageSquare, Video, Mic, Target, 
     Sparkles, ArrowRight, Play, BookOpen, 
-    Award, TrendingUp, ChevronRight, Square, Loader2
+    Award, TrendingUp, ChevronRight, Square, Loader2, Users
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { getInterviewStats, type InterviewStats } from '../../services/interviewHistoryService';
@@ -19,10 +19,10 @@ declare global {
     }
 }
 
-export default function CommunicationHubPage() {
+export default function CommunicationHubPage({ isEmbedded = false }: { isEmbedded?: boolean }) {
     const navigate = useNavigate();
     const { user, dbUid } = useAuth();
-    const [activeTab, setActiveTab] = useState<'overview' | 'lessons' | 'voice'>('overview');
+    const [activeTab, setActiveTab] = useState<'overview' | 'lessons' | 'voice' | 'inbox' | 'announcements'>('overview');
     const [statsLoading, setStatsLoading] = useState(true);
     const [interviewStats, setInterviewStats] = useState<InterviewStats | null>(null);
 
@@ -137,10 +137,9 @@ export default function CommunicationHubPage() {
         setAccuracyScore(score);
     };
 
-    return (
-        <div className="comm-page">
-            <FloatingNavbar variant="candidate" />
-            <div className="comm-bg" />
+    const content = (
+        <>
+            {!isEmbedded && <div className="comm-bg" />}
 
             <main className="comm-main">
                 {/* ── Hero Section ── */}
@@ -232,7 +231,26 @@ export default function CommunicationHubPage() {
                                 </div>
                                 <h3>Pronunciation Check</h3>
                                 <p>Read technical text out loud and let our speech engine rate your accuracy.</p>
-                                <span className="comm-link" style={{ color: '#10b981' }}>Start Speaking <ChevronRight size={14} /></span>
+                            </div>
+                        </motion.div>
+
+                        <motion.div 
+                            className="comm-action-card comm-action-secondary"
+                            initial={{ opacity: 0, x: 20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: 0.6 }}
+                            onClick={() => {
+                                alert("Searching for a peer online... (This would connect to a WebRTC signaling server in production)");
+                            }}
+                        >
+                            <div className="comm-action-content">
+                                <div className="comm-action-header">
+                                    <Users size={24} color="#3b82f6" />
+                                    <span className="comm-action-badge" style={{ background: '#3b82f620', color: '#3b82f6'}}>Live Match</span>
+                                </div>
+                                <h3>Peer Mock Interview</h3>
+                                <p>Match with a real peer on Capable to practice case studies or system design.</p>
+                                <span className="comm-link" style={{ color: '#3b82f6' }}>Find a Peer <ChevronRight size={14} /></span>
                             </div>
                         </motion.div>
                     </div>
@@ -241,8 +259,10 @@ export default function CommunicationHubPage() {
                 {/* ── Tabs Content ── */}
                 <div className="comm-tabs">
                     <button className={`comm-tab ${activeTab === 'overview' ? 'active' : ''}`} onClick={() => setActiveTab('overview')}>Overview</button>
-                    <button className={`comm-tab ${activeTab === 'lessons' ? 'active' : ''}`} onClick={() => setActiveTab('lessons')}>Video Lessons (YouTube)</button>
-                    <button className={`comm-tab ${activeTab === 'voice' ? 'active' : ''}`} onClick={() => setActiveTab('voice')}>Voice Accuracy Check</button>
+                    <button className={`comm-tab ${activeTab === 'lessons' ? 'active' : ''}`} onClick={() => setActiveTab('lessons')}>Video Lessons</button>
+                    <button className={`comm-tab ${activeTab === 'voice' ? 'active' : ''}`} onClick={() => setActiveTab('voice')}>Voice Check</button>
+                    <button className={`comm-tab ${activeTab === 'inbox' ? 'active' : ''}`} onClick={() => setActiveTab('inbox')}>Inbox & Messages</button>
+                    <button className={`comm-tab ${activeTab === 'announcements' ? 'active' : ''}`} onClick={() => setActiveTab('announcements')}>Announcements</button>
                 </div>
 
                 <div className="comm-tab-content">
@@ -353,8 +373,85 @@ export default function CommunicationHubPage() {
                             )}
                         </motion.div>
                     )}
+
+                    {activeTab === 'inbox' && (
+                        <motion.div 
+                            className="comm-inbox"
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            style={{ background: '#fff', borderRadius: '16px', border: '1px solid #e2e8f0', padding: '24px' }}
+                        >
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+                                <div>
+                                    <h2 style={{ fontSize: '1.25rem', color: '#0f172a' }}>Direct Messages</h2>
+                                    <p style={{ color: '#64748b' }}>Connect directly with recruiters and hiring managers.</p>
+                                </div>
+                                <span style={{ background: '#eff6ff', color: '#2563eb', padding: '6px 12px', borderRadius: '20px', fontSize: '13px', fontWeight: 600 }}>2 Unread</span>
+                            </div>
+
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                                {[
+                                    { name: 'Sarah Jenkins', role: 'Technical Recruiter at Google', msg: 'Hi! I saw your recent project on CapAble and would love to chat about an open role...', time: '10:30 AM', unread: true },
+                                    { name: 'David Chen', role: 'Engineering Manager at Meta', msg: 'Your system design assessment scores are impressive. Let me know when you are free.', time: 'Yesterday', unread: true },
+                                    { name: 'Amanda Smith', role: 'HR at Stripe', msg: 'Thanks for applying. We will get back to you soon.', time: '2 days ago', unread: false }
+                                ].map((m, i) => (
+                                    <div key={i} style={{ display: 'flex', gap: '16px', padding: '16px', borderRadius: '12px', background: m.unread ? '#f8fafc' : '#fff', border: m.unread ? '1px solid #e2e8f0' : '1px solid transparent', cursor: 'pointer' }}>
+                                        <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: 'linear-gradient(135deg, #e0e7ff, #c7d2fe)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 600, color: '#4f46e5' }}>
+                                            {m.name.charAt(0)}
+                                        </div>
+                                        <div style={{ flex: 1 }}>
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
+                                                <span style={{ fontWeight: 600, color: '#0f172a' }}>{m.name}</span>
+                                                <span style={{ fontSize: '12px', color: '#94a3b8' }}>{m.time}</span>
+                                            </div>
+                                            <div style={{ fontSize: '13px', color: '#64748b', marginBottom: '4px' }}>{m.role}</div>
+                                            <div style={{ fontSize: '14px', color: m.unread ? '#1e293b' : '#64748b', fontWeight: m.unread ? 500 : 400 }}>{m.msg}</div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </motion.div>
+                    )}
+
+                    {activeTab === 'announcements' && (
+                        <motion.div 
+                            className="comm-announcements"
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            style={{ background: '#fff', borderRadius: '16px', border: '1px solid #e2e8f0', padding: '24px' }}
+                        >
+                            <h2 style={{ fontSize: '1.25rem', color: '#0f172a', marginBottom: '8px' }}>College Announcements</h2>
+                            <p style={{ color: '#64748b', marginBottom: '24px' }}>Important updates from your placement cell and institution.</p>
+                            
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                                {[
+                                    { title: 'Pre-Placement Talk: Amazon', date: 'Oct 15, 2026', type: 'Event', desc: 'Mandatory session for all eligible students. Amazon will be discussing the SDE-1 role and recruitment process.' },
+                                    { title: 'Resume Submission Deadline', date: 'Oct 12, 2026', type: 'Deadline', desc: 'Final date to submit your tailored resumes on the portal for the upcoming Mega Placement Drive.' },
+                                    { title: 'New CapAble Feature: AI Mock Interviews', date: 'Oct 10, 2026', type: 'Update', desc: 'The institution has enabled Vapi AI mock interviews for all students. Practice now in the Comm Hub.' }
+                                ].map((a, i) => (
+                                    <div key={i} style={{ padding: '20px', borderRadius: '12px', border: '1px solid #e2e8f0', borderLeft: `4px solid ${a.type === 'Deadline' ? '#ef4444' : a.type === 'Event' ? '#3b82f6' : '#10b981'}` }}>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                                            <h3 style={{ fontSize: '1.1rem', color: '#0f172a', margin: 0 }}>{a.title}</h3>
+                                            <span style={{ fontSize: '13px', color: '#64748b', background: '#f1f5f9', padding: '2px 8px', borderRadius: '12px' }}>{a.date}</span>
+                                        </div>
+                                        <span style={{ display: 'inline-block', fontSize: '12px', fontWeight: 600, color: a.type === 'Deadline' ? '#ef4444' : a.type === 'Event' ? '#3b82f6' : '#10b981', marginBottom: '8px' }}>{a.type}</span>
+                                        <p style={{ color: '#475569', fontSize: '14px', margin: 0, lineHeight: 1.5 }}>{a.desc}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        </motion.div>
+                    )}
                 </div>
             </main>
+        </>
+    );
+
+    if (isEmbedded) return content;
+
+    return (
+        <div className="comm-page">
+            <FloatingNavbar variant="candidate" />
+            {content}
         </div>
     );
 }

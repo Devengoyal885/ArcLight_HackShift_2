@@ -7,6 +7,7 @@ import {
     createInterviewSlot, getInterviewSlots, bookInterviewSlot, deleteInterviewSlot,
     cancelInterviewSlot, type InterviewSlot,
 } from '../../services/interviewSchedulerService';
+import { notifyInterviewWhatsApp } from '../../services/twilioService';
 import {
     CalendarDays, Plus, Trash2, Video, Building2, Phone,
     Loader2, Users, CheckCircle2, X, Briefcase, Clock, Link,
@@ -98,6 +99,21 @@ export default function InterviewSchedulerPage() {
                 candidateEmail: app.candidateEmail,
                 appId: bookingAppId,
             });
+
+            // Trigger WhatsApp Notification
+            if (selectedRole?.companyName) {
+                await notifyInterviewWhatsApp({
+                    phone: "+1234567890", // placeholder for demo
+                    candidateName: app.candidateName,
+                    company: selectedRole.companyName,
+                    role: selectedRole.title,
+                    date: bookSlot.date,
+                    time: bookSlot.time,
+                    mode: bookSlot.mode,
+                    meetLink: bookSlot.meetLink
+                }).catch(console.error);
+            }
+
             const refreshed = await getInterviewSlots(dbUid, selectedRole?.id);
             setSlots(refreshed);
             setBookSlot(null);
@@ -134,9 +150,17 @@ export default function InterviewSchedulerPage() {
                         <h1>Interview Scheduler</h1>
                         <p>Create time slots and assign candidates to interviews</p>
                     </div>
-                    <button className="sched-add-btn" onClick={() => setShowForm(true)}>
-                        <Plus size={16} /> Add Slot
-                    </button>
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                        <button className="sched-add-btn" style={{ background: '#f8fafc', color: '#0f172a', border: '1px solid #e2e8f0' }} title="Send candidates a link to pick their own time">
+                            <Link size={14} /> Self-Schedule Link
+                        </button>
+                        <button className="sched-add-btn" style={{ background: '#f8fafc', color: '#0f172a', border: '1px solid #e2e8f0' }} title="Sync with Google or Outlook Calendar">
+                            <CalendarDays size={14} /> Sync Calendar
+                        </button>
+                        <button className="sched-add-btn" onClick={() => setShowForm(true)}>
+                            <Plus size={16} /> Add Slot
+                        </button>
+                    </div>
                 </motion.header>
 
                 {/* Role tabs */}
@@ -264,8 +288,18 @@ export default function InterviewSchedulerPage() {
                                 {form.mode === 'video' && (
                                     <div className="sched-field sched-field--full">
                                         <label>Meet Link (optional)</label>
-                                        <input placeholder="https://meet.google.com/..." value={form.meetLink}
-                                            onChange={e => setForm(f => ({ ...f, meetLink: e.target.value }))} />
+                                        <div style={{ display: 'flex', gap: '8px' }}>
+                                            <input placeholder="https://meet.google.com/..." value={form.meetLink}
+                                                onChange={e => setForm(f => ({ ...f, meetLink: e.target.value }))}
+                                                style={{ flex: 1 }} />
+                                            <button 
+                                                className="sched-add-btn" 
+                                                style={{ padding: '0 12px', whiteSpace: 'nowrap', border: '1px solid #e2e8f0', background: '#f8fafc', color: '#0f172a' }}
+                                                onClick={() => setForm(f => ({ ...f, meetLink: 'https://zoom.us/j/' + Math.floor(Math.random()*1000000000) }))}
+                                            >
+                                                Generate Zoom/Meet
+                                            </button>
+                                        </div>
                                     </div>
                                 )}
                                 {form.mode === 'in_person' && (
@@ -275,6 +309,13 @@ export default function InterviewSchedulerPage() {
                                             onChange={e => setForm(f => ({ ...f, venue: e.target.value }))} />
                                     </div>
                                 )}
+                            </div>
+                            
+                            <div className="sched-field sched-field--full" style={{ marginTop: '12px', marginBottom: '16px' }}>
+                                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontWeight: 500, fontSize: '13px' }}>
+                                    <input type="checkbox" defaultChecked />
+                                    Send automated email/SMS reminders (24h & 1h before)
+                                </label>
                             </div>
 
                             <button className="sched-modal-submit" onClick={handleCreateSlot}

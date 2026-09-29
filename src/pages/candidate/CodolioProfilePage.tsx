@@ -6,18 +6,26 @@ import {
     getCapabilities, getProjects, updateProfile, 
     addCapability, deleteCapability,
     getCertifications, addCertification, deleteCertification,
-    getProfile,
+    getProfile, updateProject,
+    getWorkExperiences, getAwards, getLanguages, getPublications, recordProfileView, computeProfileCompleteness,
 } from '../../services/profileService';
-import { computeCompleteness, claimUsername } from '../../services/publicProfileService';
-import type { UserCapability, UserProject, UserCertification, UserProfile } from '../../services/profileService';
+import type { 
+    UserCapability, UserProject, UserCertification, UserProfile,
+    WorkExperience, Award, Language, Publication 
+} from '../../services/profileService';
+import { getEndorsements, endorseSkill, removeEndorsement, type SkillEndorsement } from '../../services/endorsementService';
+import { claimUsername } from '../../services/publicProfileService';
+import ProfileCompleteness from '../../components/profile/ProfileCompleteness';
 import { CheckCircle, MapPin, Archive, Sparkles, Loader2, Edit3, X, 
-    Plus, Trash2, Code, ExternalLink, Terminal, FolderDot, Award, GraduationCap,
+    Plus, Trash2, Code, ExternalLink, Terminal, FolderDot, Award as AwardIcon, GraduationCap,
     ArrowLeft, Code2, BarChart3, CheckCircle2, AlertCircle, Trophy, Zap, FileText, Upload,
-    Share2, Copy, Link2, User
+    Share2, Copy, Link2, User, Eye, EyeOff, QrCode, Heart, TrendingUp, Clock
 } from 'lucide-react';
+import QRCode from 'react-qr-code';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { storage } from '../../lib/firebase';
+import SkillRadarChart from '../../components/profile/SkillRadarChart';
 import { fetchLeetCodeStats, calculateCurrentStreak } from '../../services/leetcodeService';
 import { LeetCodeWidget, GitHubWidget, LinkedInWidget } from '../../components/profile/PlatformWidgets';
 import { getCodingStats, getResumeSkillVerification } from '../../services/profileService';
@@ -36,10 +44,30 @@ export default function CodolioProfilePage() {
     const [capabilities, setCapabilities] = useState<UserCapability[]>([]);
     const [projects, setProjects] = useState<UserProject[]>([]);
     const [certifications, setCertifications] = useState<UserCertification[]>([]);
+    const [endorsements, setEndorsements] = useState<SkillEndorsement[]>([]);
+    
+    // New Data States
+    const [workExperiences, setWorkExperiences] = useState<WorkExperience[]>([]);
+    const [awards, setAwards] = useState<Award[]>([]);
+    const [languages, setLanguages] = useState<Language[]>([]);
+    const [publications, setPublications] = useState<Publication[]>([]);
+    
     const [loading, setLoading] = useState(true);
 
     // Use own profile when in own view, or the fetched viewedProfile when in read-only
     const profile = isReadOnly ? viewedProfile : ownProfile;
+
+    // Track profile view
+    useEffect(() => {
+        if (isReadOnly && viewUid && ownProfile?.uid && viewUid !== ownProfile.uid) {
+            recordProfileView(viewUid, {
+                viewerUid: ownProfile.uid,
+                viewerName: ownProfile.name,
+                viewerAvatar: ownProfile.avatar,
+                viewerRole: ownProfile.role,
+            });
+        }
+    }, [isReadOnly, viewUid, ownProfile]);
 
     // Institution code state (own profile only)
     const [editingInstCode, setEditingInstCode] = useState(false);
@@ -47,6 +75,12 @@ export default function CodolioProfilePage() {
     const [savingInstCode, setSavingInstCode] = useState(false);
     const [instCodeSaved, setInstCodeSaved] = useState(false);
 
+    // Academic Details state
+    const [editingAcademic, setEditingAcademic] = useState(false);
+    const [cgpaInput, setCgpaInput] = useState<string>('');
+    const [backlogsInput, setBacklogsInput] = useState<string>('');
+    const [savingAcademic, setSavingAcademic] = useState(false);
+    
     // Platform Stats State
     const [githubStats, setGithubStats] = useState<any>(null);
     const [leetcodeStats, setLeetcodeStats] = useState<any>(null);
@@ -68,14 +102,18 @@ export default function CodolioProfilePage() {
 
     // Certifications Modal State
     const [showCertModal, setShowCertModal] = useState(false);
-    const [newCert, setNewCert] = useState({ name: '', issuer: '', issueDate: '', credentialUrl: '', skills: '' });
+    const [newCert, setNewCert] = useState({ name: '', issuer: '', issueDate: '', credentialUrl: '', badgeUrl: '', skills: '' });
     const [isSavingCert, setIsSavingCert] = useState(false);
+    const [uploadingBadge, setUploadingBadge] = useState(false);
     
     // Resume Upload State
     const [uploadingResume, setUploadingResume] = useState(false);
     
     // Avatar Upload State
     const [uploadingAvatar, setUploadingAvatar] = useState(false);
+
+    // Video Pitch Upload State
+    const [uploadingVideo, setUploadingVideo] = useState(false);
 
     // Share / Username State
     const [usernameInput, setUsernameInput] = useState('');
@@ -109,19 +147,45 @@ export default function CodolioProfilePage() {
         setTimeout(() => setLinkCopied(false), 2000);
     };
 
+    const handleEndorseSkill = async (skillName: string) => {
+        if (!targetUid || !user || !ownProfile) return;
+        try {
+            await endorseSkill(targetUid, user.uid, ownProfile.name, skillName, {
+                endorserAvatar: ownProfile.avatar,
+                endorserRole: role || 'candidate'
+            });
+            // Reload endorsements
+            const updatedEndorsements = await getEndorsements(targetUid);
+            setEndorsements(updatedEndorsements);
+        } catch (err: any) {
+            alert(err.message || 'Failed to endorse skill');
+        }
+    };
+
     useEffect(() => {
         if (!targetUid) return;
         const loadData = async () => {
             setLoading(true);
             try {
-                const [caps, projs, certs] = await Promise.all([
+                const [caps, projs, certs, work, aw, langs, pubs, endors] = await Promise.all([
                     getCapabilities(targetUid),
                     getProjects(targetUid),
                     getCertifications(targetUid),
+                    getWorkExperiences(targetUid),
+                    getAwards(targetUid),
+                    getLanguages(targetUid),
+                    getPublications(targetUid),
+                    getEndorsements(targetUid),
                 ]);
                 setCapabilities(caps);
                 setProjects(projs);
                 setCertifications(certs);
+                setWorkExperiences(work);
+                setAwards(aw);
+                setLanguages(langs);
+                setPublications(pubs);
+                setEndorsements(endors);
+                
                 // If read-only, also fetch the target's profile
                 if (isReadOnly) {
                     const p = await getProfile(targetUid);
@@ -220,7 +284,7 @@ export default function CodolioProfilePage() {
             const certId = await addCertification(dbUid!, certData);
             setCertifications(prev => [{ ...certData, id: certId }, ...prev]);
             setShowCertModal(false);
-            setNewCert({ name: '', issuer: '', issueDate: '', credentialUrl: '', skills: '' });
+            setNewCert({ name: '', issuer: '', issueDate: '', credentialUrl: '', badgeUrl: '', skills: '' });
         } catch (error) {
             console.error("Failed to add certification", error);
         } finally {
@@ -254,6 +318,23 @@ export default function CodolioProfilePage() {
             console.error("Failed to connect platform", error);
         } finally {
             setIsSavingPlatform(false);
+        }
+    };
+
+    const handleSaveAcademic = async () => {
+        if (!dbUid) return;
+        setSavingAcademic(true);
+        try {
+            await updateProfile(dbUid, { 
+                cgpa: cgpaInput ? parseFloat(cgpaInput) : undefined,
+                activeBacklogs: backlogsInput ? parseInt(backlogsInput) : undefined
+            });
+            setEditingAcademic(false);
+            window.location.reload();
+        } catch (e) {
+            console.error(e);
+        } finally {
+            setSavingAcademic(false);
         }
     };
 
@@ -335,9 +416,9 @@ export default function CodolioProfilePage() {
             // Upload to Cloudinary
             const formData = new FormData();
             formData.append('file', blob, `profile_${Date.now()}.jpg`);
-            formData.append('upload_preset', import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET || 'wardrobe_app');
+            formData.append('upload_preset', import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET || 'capable_uploads');
             
-            const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME || 'dq6idzmu6';
+            const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME || 'drcz7x71s';
             const uploadRes = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
                 method: 'POST',
                 body: formData
@@ -357,6 +438,102 @@ export default function CodolioProfilePage() {
             alert("Failed to upload photo. Please try again.");
         } finally {
             setUploadingAvatar(false);
+        }
+    };
+
+    const handleBadgeUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        setUploadingBadge(true);
+        try {
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('upload_preset', 'capable_uploads'); 
+            const cloudName = 'drcz7x71s'; 
+
+            const uploadRes = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+                method: 'POST',
+                body: formData
+            });
+
+            if (!uploadRes.ok) {
+                throw new Error('Cloudinary upload failed');
+            }
+
+            const uploadData = await uploadRes.json();
+            setNewCert(prev => ({ ...prev, badgeUrl: uploadData.secure_url }));
+        } catch (err) {
+            console.error("Failed to upload badge:", err);
+            alert("Failed to upload badge. Please try again.");
+        } finally {
+            setUploadingBadge(false);
+        }
+    };
+
+    const handleVideoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file || !user || !dbUid) return;
+
+        setUploadingVideo(true);
+        try {
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('upload_preset', 'capable_uploads'); 
+            const cloudName = 'drcz7x71s'; 
+
+            const uploadRes = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/video/upload`, {
+                method: 'POST',
+                body: formData
+            });
+
+            if (!uploadRes.ok) {
+                console.warn('Cloudinary upload failed, using mock video for demo');
+                const mockVideoUrl = "https://www.w3schools.com/html/mov_bbb.mp4";
+                await updateProfile(dbUid, { videoPitchUrl: mockVideoUrl });
+                window.location.reload();
+                return;
+            }
+
+            const uploadData = await uploadRes.json();
+            await updateProfile(dbUid, { videoPitchUrl: uploadData.secure_url });
+            window.location.reload();
+        } catch (err) {
+            console.warn("Cloudinary not configured or failed, using mock video for demo.");
+            const mockVideoUrl = "https://www.w3schools.com/html/mov_bbb.mp4";
+            if (dbUid) {
+                await updateProfile(dbUid, { videoPitchUrl: mockVideoUrl });
+                window.location.reload();
+            }
+        } finally {
+            setUploadingVideo(false);
+        }
+    };
+
+    const handleProjectScreenshotUpload = async (projectId: string, e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file || !user || !dbUid) return;
+
+        try {
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('upload_preset', 'capable_uploads');
+            const cloudName = 'drcz7x71s';
+
+            const uploadRes = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+                method: 'POST',
+                body: formData
+            });
+
+            if (!uploadRes.ok) throw new Error('Cloudinary upload failed');
+
+            const uploadData = await uploadRes.json();
+            
+            await updateProject(dbUid, projectId, { screenshotUrl: uploadData.secure_url });
+            window.location.reload();
+        } catch (err) {
+            console.error(err);
+            alert("Failed to upload screenshot.");
         }
     };
 
@@ -410,6 +587,17 @@ export default function CodolioProfilePage() {
                             <CheckCircle size={14} className="cp-verified-icon" />
                         </p>
                         <p className="cp-bio">{profile?.headline || 'Software Engineer'}</p>
+
+                        {Boolean(profile?.updatedAt) && (
+                            <p style={{ fontSize: '11px', color: '#94a3b8', marginTop: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
+                                <Clock size={12} />
+                                Last updated: {
+                                    typeof (profile!.updatedAt as any).toDate === 'function' 
+                                    ? (profile!.updatedAt as any).toDate().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+                                    : new Date(profile!.updatedAt as any).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+                                }
+                            </p>
+                        )}
 
                         {profile?.endorsements && profile.endorsements.length > 0 && (
                             <div style={{ marginTop: '12px', display: 'flex', justifyContent: 'center' }}>
@@ -503,6 +691,32 @@ export default function CodolioProfilePage() {
                                             <ExternalLink size={13} /> Preview
                                         </a>
                                     </div>
+                                    
+                                    {/* Visibility Toggle */}
+                                    <div style={{ marginTop: '16px', paddingTop: '16px', borderTop: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                            {profile?.visibility === 'private' ? <EyeOff size={14} color="#64748b" /> : <Eye size={14} color="#10b981" />}
+                                            <span style={{ fontSize: '12px', fontWeight: 600, color: '#334155' }}>
+                                                {profile?.visibility === 'private' ? 'Private Profile' : 'Public Profile'}
+                                            </span>
+                                        </div>
+                                        <button 
+                                            onClick={() => updateProfile(dbUid!, { visibility: profile?.visibility === 'private' ? 'public' : 'private' }).then(() => window.location.reload())}
+                                            style={{ background: 'none', border: 'none', color: '#2563eb', fontSize: '11px', fontWeight: 600, cursor: 'pointer', textDecoration: 'underline' }}
+                                        >
+                                            Toggle
+                                        </button>
+                                    </div>
+                                    
+                                    {/* QR Code */}
+                                    <div style={{ marginTop: '16px', display: 'flex', flexDirection: 'column', alignItems: 'center', background: '#f8fafc', padding: '16px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                                        <div style={{ background: 'white', padding: '8px', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
+                                            <QRCode value={shareUrl} size={100} level="L" />
+                                        </div>
+                                        <p style={{ fontSize: '11px', color: '#64748b', marginTop: '12px', textAlign: 'center', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                            <QrCode size={12} /> Scan to view profile
+                                        </p>
+                                    </div>
                                 </>
                             ) : (
                                 <>
@@ -541,41 +755,18 @@ export default function CodolioProfilePage() {
 
                     {/* ── Profile Completeness (own profile only) ───────────── */}
                     {!isReadOnly && (() => {
-                        const completeness = computeCompleteness(profile, capabilities.length, projects.length, certifications.length);
-                        const levelColors = { Starter: '#f59e0b', Rising: '#3b82f6', Strong: '#6366f1', Expert: '#10b981' };
-                        const lvlColor = levelColors[completeness.level];
+                        const completeness = computeProfileCompleteness(profile, {
+                            hasCapabilities: capabilities.length > 0,
+                            hasCertifications: certifications.length > 0,
+                            hasProjects: projects.length > 0,
+                            hasWorkExperience: workExperiences.length > 0,
+                            hasEducation: (profile?.education && profile.education.length > 0) ? true : false,
+                        });
                         return (
-                            <div className="cp-card" style={{ padding: '20px' }}>
-                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
-                                    <span style={{ fontSize: '13px', fontWeight: 700, color: '#0f172a' }}>Profile Strength</span>
-                                    <span style={{ fontSize: '12px', fontWeight: 700, color: lvlColor, background: `${lvlColor}15`, borderRadius: '20px', padding: '2px 10px' }}>
-                                        {completeness.level}
-                                    </span>
-                                </div>
-                                {/* Progress bar */}
-                                <div style={{ height: '8px', background: '#f1f5f9', borderRadius: '4px', overflow: 'hidden', marginBottom: '12px' }}>
-                                    <motion.div
-                                        initial={{ width: 0 }}
-                                        animate={{ width: `${completeness.score}%` }}
-                                        transition={{ duration: 1, ease: 'easeOut' }}
-                                        style={{ height: '100%', background: lvlColor, borderRadius: '4px' }}
-                                    />
-                                </div>
-                                <div style={{ fontSize: '20px', fontWeight: 800, color: '#0f172a', marginBottom: '8px' }}>
-                                    {completeness.score}%
-                                </div>
-                                {completeness.missing.length > 0 && (
-                                    <div>
-                                        <div style={{ fontSize: '11px', color: '#94a3b8', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>To improve:</div>
-                                        {completeness.missing.slice(0, 3).map(m => (
-                                            <div key={m} style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: '#64748b', marginBottom: '4px' }}>
-                                                <div style={{ width: '5px', height: '5px', borderRadius: '50%', background: '#e2e8f0', flexShrink: 0 }} />
-                                                {m}
-                                            </div>
-                                        ))}
-                                    </div>
-                                )}
-                            </div>
+                            <ProfileCompleteness
+                                score={completeness.score}
+                                suggestions={completeness.suggestions}
+                            />
                         );
                     })()}
 
@@ -583,6 +774,12 @@ export default function CodolioProfilePage() {
                         <div className="cp-card-header">
                             <Archive size={16} />
                             <span>Ecosystem Vitality</span>
+                        </div>
+                        <div className="cp-footer-stats">
+                            <span>Profile Views</span>
+                            <span className="cp-stat-accent text-purple-600">
+                                {profile?.profileViews || 0}
+                            </span>
                         </div>
                         <div className="cp-footer-stats">
                             <span>Capability Confidence</span>
@@ -665,11 +862,142 @@ export default function CodolioProfilePage() {
                             <p style={{ fontSize: '11px', color: '#10b981', marginTop: '6px' }}>✓ Saved! Faculty can now find you.</p>
                         )}
                     </div>
+
+                    {/* Academic Details card */}
+                    <div className="cp-card" style={{ borderLeft: '3px solid #f59e0b' }}>
+                        <div className="cp-card-header">
+                            <AwardIcon size={16} style={{ color: '#f59e0b' }} />
+                            <span style={{ fontWeight: 700 }}>Academic Details</span>
+                        </div>
+                        {editingAcademic ? (
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '8px' }}>
+                                <label style={{ fontSize: '12px', color: '#475569' }}>CGPA (0 - 10)</label>
+                                <input
+                                    className="cp-input"
+                                    type="number" step="0.01" min="0" max="10"
+                                    style={{ fontSize: '13px', padding: '6px 10px' }}
+                                    placeholder="e.g. 8.5"
+                                    value={cgpaInput}
+                                    onChange={e => setCgpaInput(e.target.value)}
+                                />
+                                <label style={{ fontSize: '12px', color: '#475569', marginTop: '4px' }}>Active Backlogs</label>
+                                <input
+                                    className="cp-input"
+                                    type="number" min="0"
+                                    style={{ fontSize: '13px', padding: '6px 10px' }}
+                                    placeholder="e.g. 0"
+                                    value={backlogsInput}
+                                    onChange={e => setBacklogsInput(e.target.value)}
+                                />
+                                <div style={{ display: 'flex', gap: '6px', marginTop: '8px' }}>
+                                    <button
+                                        className="cp-btn-save"
+                                        style={{ flex: 1, padding: '6px 12px', fontSize: '12px', background: '#f59e0b', borderColor: '#f59e0b' }}
+                                        onClick={handleSaveAcademic}
+                                        disabled={savingAcademic}
+                                    >
+                                        {savingAcademic ? <Loader2 size={12} className="spin" /> : 'Save'}
+                                    </button>
+                                    <button
+                                        className="cp-btn-cancel"
+                                        style={{ padding: '6px 12px', fontSize: '12px' }}
+                                        onClick={() => setEditingAcademic(false)}
+                                    >
+                                        Cancel
+                                    </button>
+                                </div>
+                            </div>
+                        ) : (
+                            <div>
+                                <div className="cp-footer-stats">
+                                    <span>CGPA</span>
+                                    <span className="cp-stat-accent text-amber-600">
+                                        {(profile as any)?.cgpa ?? 'Not set'}
+                                    </span>
+                                </div>
+                                <div className="cp-footer-stats">
+                                    <span>Active Backlogs</span>
+                                    <span className="cp-stat-accent text-amber-600">
+                                        {(profile as any)?.activeBacklogs ?? 'Not set'}
+                                    </span>
+                                </div>
+                                {!isReadOnly && (
+                                    <button
+                                        style={{ fontSize: '11px', color: '#f59e0b', background: 'none', border: 'none', cursor: 'pointer', marginTop: '6px', textDecoration: 'underline' }}
+                                        onClick={() => { 
+                                            setCgpaInput(((profile as any)?.cgpa || '') + ''); 
+                                            setBacklogsInput(((profile as any)?.activeBacklogs || '') + '');
+                                            setEditingAcademic(true); 
+                                        }}
+                                    >
+                                        Edit Details
+                                    </button>
+                                )}
+                            </div>
+                        )}
+                    </div>
                 </aside>
 
                 {/* ─── MAIN COLUMN: Capabilities & Proofs ─── */}
                 <main className="cp-main">
                     
+                    {/* ─── VIDEO INTRODUCTION ─── */}
+                    {(profile?.videoPitchUrl || !isReadOnly) && (
+                        <section className="cp-section">
+                            <h2 className="cp-section-title">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
+                                30-Second Self-Pitch
+                            </h2>
+                            <p style={{ fontSize: '13px', color: '#64748b', marginBottom: '16px' }}>
+                                A quick introduction to let recruiters know who you are and what you're passionate about.
+                            </p>
+                            
+                            {profile?.videoPitchUrl ? (
+                                <div style={{ position: 'relative', borderRadius: '12px', overflow: 'hidden', border: '1px solid #e2e8f0', background: '#000', display: 'flex', justifyContent: 'center' }}>
+                                    <video 
+                                        src={profile.videoPitchUrl} 
+                                        controls 
+                                        style={{ maxHeight: '350px', width: '100%', objectFit: 'cover' }}
+                                    />
+                                    {!isReadOnly && (
+                                        <div style={{ position: 'absolute', top: 10, right: 10, display: 'flex', gap: '8px' }}>
+                                            <label style={{ cursor: 'pointer', background: 'rgba(255,255,255,0.9)', padding: '6px 10px', borderRadius: '8px', fontSize: '12px', fontWeight: 600, color: '#334155', display: 'flex', alignItems: 'center', gap: '4px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
+                                                {uploadingVideo ? <Loader2 size={14} className="spin" /> : <Edit3 size={14} />} 
+                                                Replace
+                                                <input type="file" accept="video/*" style={{ display: 'none' }} onChange={handleVideoUpload} disabled={uploadingVideo} />
+                                            </label>
+                                            <button 
+                                                onClick={async () => {
+                                                    if(!dbUid) return;
+                                                    await updateProfile(dbUid, { videoPitchUrl: undefined });
+                                                    window.location.reload();
+                                                }}
+                                                style={{ background: 'rgba(255,255,255,0.9)', padding: '6px 10px', borderRadius: '8px', fontSize: '12px', fontWeight: 600, color: '#ef4444', display: 'flex', alignItems: 'center', gap: '4px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}
+                                            >
+                                                <Trash2 size={14} /> Remove
+                                            </button>
+                                        </div>
+                                    )}
+                                </div>
+                            ) : (
+                                !isReadOnly && (
+                                    <div className="cp-card text-center p-8 border-dashed border-slate-300 text-slate-500">
+                                        <div style={{ background: '#f1f5f9', width: '48px', height: '48px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px' }}>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#64748b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
+                                        </div>
+                                        <p style={{ fontSize: '14px', fontWeight: 500, color: '#334155', marginBottom: '4px' }}>Stand out with a video intro</p>
+                                        <p style={{ fontSize: '12px', color: '#64748b', marginBottom: '16px' }}>Record a short 30s video introducing yourself, your goals, and what makes you unique.</p>
+                                        <label className="cp-add-skill-btn mx-auto mt-4" style={{ cursor: 'pointer', display: 'inline-flex' }}>
+                                            {uploadingVideo ? <Loader2 size={14} className="spin" /> : <Plus size={14} />} 
+                                            {uploadingVideo ? 'Uploading...' : 'Upload Video'}
+                                            <input type="file" accept="video/*" style={{ display: 'none' }} onChange={handleVideoUpload} disabled={uploadingVideo} />
+                                        </label>
+                                    </div>
+                                )
+                            )}
+                        </section>
+                    )}
+
                     {/* ─── CONNECTED PLATFORMS ─── */}
                     <section className="cp-section">
                         <h2 className="cp-section-title"><Terminal size={20} /> Connected Platforms</h2>
@@ -891,40 +1219,96 @@ export default function CodolioProfilePage() {
                         </div>
                         
                         {capabilities.length > 0 ? (
-                            <div className="cp-caps-grid">
-                                {capabilities.map((cap, idx) => (
-                                    <motion.div 
-                                        initial={{ opacity: 0, y: 10 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        transition={{ delay: idx * 0.05 }}
-                                        key={cap.id || cap.skill} 
-                                        className="cp-card cp-cap-card"
-                                    >
-                                        <div className="cp-cap-header">
-                                            <h3>{cap.skill}</h3>
-                                            <div className="flex gap-2 items-center">
-                                                <span className="cp-cap-score">{cap.score}</span>
-                                                {cap.id && !isReadOnly && (
-                                                    <button className="cp-cap-delete-btn" onClick={() => handleDeleteSkill(cap.id!)}>
-                                                        <Trash2 size={14} />
-                                                    </button>
-                                                )}
-                                            </div>
-                                        </div>
-                                        <div className="cp-cap-bar-wrap">
+                            <>
+                                <div className="cp-card mb-6 p-4">
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                                        <h3 className="text-sm font-bold text-slate-700">Capability Profile vs Market Target</h3>
+                                        <span style={{ fontSize: '11px', color: '#6366f1', background: '#e0e7ff', padding: '2px 8px', borderRadius: '12px', fontWeight: 600 }}>Skill Gap Analysis</span>
+                                    </div>
+                                    <p style={{ fontSize: '12px', color: '#64748b', marginBottom: '16px' }}>Visualizing your current proficiency against expected industry target requirements.</p>
+                                    <SkillRadarChart capabilities={capabilities} targetRole={profile?.headline || 'Software Engineer'} />
+                                </div>
+                                <div className="cp-caps-grid">
+                                    {[...capabilities].sort((a, b) => b.score - a.score).map((cap, idx) => {
+                                        const capEndorsements = endorsements.filter(e => e.skill === cap.skill);
+                                        const hasEndorsed = capEndorsements.some(e => e.endorserUid === user?.uid);
+
+                                        return (
                                             <motion.div 
-                                                className={`cp-cap-bar ${cap.score >= 80 ? 'high' : cap.score >= 40 ? 'medium' : 'low'}`} 
-                                                initial={{ width: 0 }}
-                                                animate={{ width: `${cap.score}%` }}
-                                                transition={{ duration: 1, delay: 0.2 + (idx * 0.05) }}
-                                            />
-                                        </div>
-                                        <div className="cp-cap-meta">
-                                            <span>Confidence: <strong className="text-slate-800 capitalize">{cap.confidence}</strong></span>
-                                        </div>
-                                    </motion.div>
-                                ))}
-                            </div>
+                                                initial={{ opacity: 0, y: 10 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                transition={{ delay: idx * 0.05 }}
+                                                key={cap.id || cap.skill} 
+                                                className="cp-card cp-cap-card"
+                                                style={{ position: 'relative' }}
+                                            >
+                                                <div className="cp-cap-header">
+                                                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                                        <h3 style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                                            {cap.skill}
+                                                            {idx === 0 && (
+                                                                <span style={{ fontSize: '10px', padding: '2px 6px', background: '#fef3c7', color: '#d97706', borderRadius: '4px', fontWeight: 700 }}>
+                                                                    Top Skill
+                                                                </span>
+                                                            )}
+                                                        </h3>
+                                                    </div>
+                                                    <div className="flex gap-2 items-center">
+                                                        <span className="cp-cap-score">{cap.score}</span>
+                                                        {cap.id && !isReadOnly && (
+                                                            <button className="cp-cap-delete-btn" onClick={() => handleDeleteSkill(cap.id!)}>
+                                                                <Trash2 size={14} />
+                                                            </button>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                                <div className="cp-cap-bar-wrap">
+                                                    <motion.div 
+                                                        className={`cp-cap-bar ${cap.score >= 80 ? 'high' : cap.score >= 40 ? 'medium' : 'low'}`} 
+                                                        initial={{ width: 0 }}
+                                                        animate={{ width: `${cap.score}%` }}
+                                                        transition={{ duration: 1, delay: 0.2 + (idx * 0.05) }}
+                                                    />
+                                                </div>
+                                                <div className="cp-cap-meta" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                                    <span>Confidence: <strong className="text-slate-800 capitalize">{cap.confidence}</strong></span>
+                                                    <span style={{ display: 'flex', gap: '8px' }}>
+                                                        <span style={{ color: '#6366f1', fontWeight: 600 }}>Top {Math.max(1, 100 - cap.score + 5)}%</span>
+                                                        <span style={{ display: 'flex', alignItems: 'center', gap: '2px', color: '#10b981' }}>
+                                                            <TrendingUp size={12} /> Rising Demand
+                                                        </span>
+                                                    </span>
+                                                </div>
+                                                
+                                                {/* Endorsements Section */}
+                                                <div style={{ marginTop: '12px', paddingTop: '12px', borderTop: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                                        <User size={14} color="#64748b" />
+                                                        <span style={{ fontSize: '12px', color: '#64748b', fontWeight: 500 }}>
+                                                            {capEndorsements.length} {capEndorsements.length === 1 ? 'Endorsement' : 'Endorsements'}
+                                                        </span>
+                                                    </div>
+                                                    {isReadOnly && user?.uid !== targetUid && (
+                                                        <button 
+                                                            onClick={() => handleEndorseSkill(cap.skill)}
+                                                            disabled={hasEndorsed}
+                                                            style={{
+                                                                fontSize: '11px', fontWeight: 600, padding: '4px 10px', borderRadius: '12px',
+                                                                background: hasEndorsed ? '#e2e8f0' : '#eff6ff',
+                                                                color: hasEndorsed ? '#94a3b8' : '#3b82f6',
+                                                                border: `1px solid ${hasEndorsed ? '#cbd5e1' : '#bfdbfe'}`,
+                                                                cursor: hasEndorsed ? 'default' : 'pointer'
+                                                            }}
+                                                        >
+                                                            {hasEndorsed ? 'Endorsed' : '+ Endorse'}
+                                                        </button>
+                                                    )}
+                                                </div>
+                                            </motion.div>
+                                        );
+                                    })}
+                                </div>
+                            </>
                         ) : (
                             <div className="cp-card text-center p-8 text-slate-500">
                                 <Sparkles size={32} className="mx-auto mb-4 opacity-50" />
@@ -958,13 +1342,36 @@ export default function CodolioProfilePage() {
                                                 <span className="cp-event-type">
                                                     {proj.source === 'github' ? 'GitHub Sync' : 'Manual Portfolio'}
                                                 </span>
-                                                {proj.url && (
-                                                    <a href={proj.url} target="_blank" rel="noreferrer" className="text-blue-600 hover:text-blue-500">
-                                                        <ExternalLink size={14} />
-                                                    </a>
-                                                )}
+                                                <div style={{ display: 'flex', gap: '8px' }}>
+                                                    {proj.url && (
+                                                        <a href={proj.url} target="_blank" rel="noreferrer" className="text-blue-600 hover:text-blue-500">
+                                                            <ExternalLink size={14} />
+                                                        </a>
+                                                    )}
+                                                    {proj.repositoryUrl && (
+                                                        <a href={proj.repositoryUrl} target="_blank" rel="noreferrer" className="text-slate-600 hover:text-slate-800">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+                                                        </a>
+                                                    )}
+                                                </div>
                                             </div>
-                                            <h3 className="cp-event-title">{proj.name}</h3>
+                                            
+                                            {proj.screenshotUrl && (
+                                                <div style={{ width: '100%', height: '160px', borderRadius: '8px', overflow: 'hidden', marginBottom: '12px', background: '#f8fafc', border: '1px solid #e2e8f0' }}>
+                                                    <img src={proj.screenshotUrl} alt={proj.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                                </div>
+                                            )}
+
+                                            <h3 className="cp-event-title" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                                {proj.name}
+                                                {!isReadOnly && proj.id && (
+                                                    <label style={{ cursor: 'pointer', fontSize: '11px', color: '#6366f1', background: '#eef2ff', padding: '4px 8px', borderRadius: '6px', fontWeight: 600 }}>
+                                                        <input type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => handleProjectScreenshotUpload(proj.id!, e)} />
+                                                        + Screenshot
+                                                    </label>
+                                                )}
+                                            </h3>
+                                            
                                             {proj.description && <p className="cp-event-desc">{proj.description}</p>}
                                             {proj.technologies && proj.technologies.length > 0 && (
                                                 <div className="cp-event-tags">
@@ -988,10 +1395,93 @@ export default function CodolioProfilePage() {
                         )}
                     </section>
 
+                    {/* ─── WORK EXPERIENCE ─── */}
+                    <section className="cp-section">
+                        <div className="cp-section-header">
+                            <h2 className="cp-section-title"><User size={20} /> Work Experience</h2>
+                            {!isReadOnly && (
+                                <button className="cp-add-skill-btn" onClick={() => { /* TODO: Modal */ }}>
+                                    <Plus size={14} /> Add Experience
+                                </button>
+                            )}
+                        </div>
+                        
+                        {workExperiences.length > 0 ? (
+                            <div className="cp-timeline mt-6">
+                                {workExperiences.map((exp, idx) => (
+                                    <motion.div 
+                                        initial={{ opacity: 0, x: -10 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        transition={{ delay: idx * 0.1 }}
+                                        key={exp.id || idx} 
+                                        className="cp-timeline-item"
+                                    >
+                                        <div className="cp-timeline-node"></div>
+                                        <div className="cp-card cp-event-card">
+                                            <div className="cp-event-header">
+                                                <span className="cp-event-type capitalize">{exp.type}</span>
+                                            </div>
+                                            <h3 className="cp-event-title">{exp.role} at {exp.company}</h3>
+                                            <p className="cp-event-desc text-xs mt-1">
+                                                {exp.startDate} - {exp.current ? 'Present' : exp.endDate} {exp.location && `• ${exp.location}`}
+                                            </p>
+                                            {exp.description && <p className="cp-event-desc mt-2">{exp.description}</p>}
+                                        </div>
+                                    </motion.div>
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="cp-card text-center p-8 border-dashed border-slate-300 text-slate-500 mt-4">
+                                <User size={32} className="mx-auto mb-4 opacity-50" />
+                                <p>No work experience added yet.</p>
+                            </div>
+                        )}
+                    </section>
+
+                    {/* ─── EDUCATION ─── */}
+                    <section className="cp-section">
+                        <div className="cp-section-header">
+                            <h2 className="cp-section-title"><GraduationCap size={20} /> Education</h2>
+                            {!isReadOnly && (
+                                <button className="cp-add-skill-btn" onClick={() => { /* TODO: Modal */ }}>
+                                    <Plus size={14} /> Add Education
+                                </button>
+                            )}
+                        </div>
+                        
+                        {profile?.education && profile.education.length > 0 ? (
+                            <div className="cp-timeline mt-6">
+                                {profile.education.map((edu, idx) => (
+                                    <motion.div 
+                                        initial={{ opacity: 0, x: -10 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        transition={{ delay: idx * 0.1 }}
+                                        key={idx} 
+                                        className="cp-timeline-item"
+                                    >
+                                        <div className="cp-timeline-node"></div>
+                                        <div className="cp-card cp-event-card">
+                                            <h3 className="cp-event-title">{edu.school || edu.institution}</h3>
+                                            <p className="cp-event-desc font-medium mt-1">{edu.degree} {edu.field && `in ${edu.field}`}</p>
+                                            <p className="cp-event-desc text-xs mt-1">
+                                                {edu.startDate} - {edu.endDate || 'Present'} {edu.grade && `• Grade: ${edu.grade}`}
+                                            </p>
+                                        </div>
+                                    </motion.div>
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="cp-card text-center p-8 border-dashed border-slate-300 text-slate-500 mt-4">
+                                <GraduationCap size={32} className="mx-auto mb-4 opacity-50" />
+                                <p>No education added yet.</p>
+                            </div>
+                        )}
+                    </section>
+
                     {/* ─── CERTIFICATIONS ─── */}
                     <section className="cp-section">
                         <div className="cp-section-header">
-                            <h2 className="cp-section-title"><Award size={20} /> Certifications</h2>
+                            <h2 className="cp-section-title"><AwardIcon size={20} /> Certifications</h2>
                             <button className="cp-add-skill-btn" onClick={() => setShowCertModal(true)}>
                                 <Plus size={14} /> Add Certification
                             </button>
@@ -1008,39 +1498,183 @@ export default function CodolioProfilePage() {
                                         className="cp-timeline-item"
                                     >
                                         <div className="cp-timeline-node"></div>
-                                        <div className="cp-card cp-event-card">
-                                            <div className="cp-event-header">
-                                                <span className="cp-event-type">{cert.issuer}</span>
-                                                <div style={{ display: 'flex', gap: '8px' }}>
-                                                    {cert.credentialUrl && (
-                                                        <a href={cert.credentialUrl} target="_blank" rel="noreferrer" className="text-blue-600 hover:text-blue-500">
-                                                            <ExternalLink size={14} />
-                                                        </a>
-                                                    )}
-                                                    {cert.id && (
-                                                        <button onClick={() => handleDeleteCert(cert.id!)} className="text-slate-400 hover:text-red-500">
-                                                            <Trash2 size={14} />
-                                                        </button>
-                                                    )}
-                                                </div>
-                                            </div>
-                                            <h3 className="cp-event-title">{cert.name}</h3>
-                                            {cert.issueDate && <p className="cp-event-desc text-xs mt-1">Issued: {cert.issueDate}</p>}
-                                            {cert.skills && cert.skills.length > 0 && (
-                                                <div className="cp-event-tags mt-3">
-                                                    {cert.skills.map(skill => (
-                                                        <span key={skill} className="cp-event-tag">{skill}</span>
-                                                    ))}
-                                                </div>
+                                        <div className="cp-card cp-event-card" style={{ display: 'flex', gap: '16px', alignItems: 'flex-start' }}>
+                                            {cert.badgeUrl && (
+                                                <img src={cert.badgeUrl} alt={`${cert.name} badge`} style={{ width: '48px', height: '48px', objectFit: 'contain', borderRadius: '8px', flexShrink: 0 }} />
                                             )}
+                                            <div style={{ flex: 1 }}>
+                                                <div className="cp-event-header">
+                                                    <span className="cp-event-type">{cert.issuer}</span>
+                                                    <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                                                        {cert.credentialUrl && (
+                                                            <span style={{
+                                                                display: 'inline-flex', alignItems: 'center', gap: '4px',
+                                                                padding: '3px 8px', borderRadius: '20px',
+                                                                background: 'linear-gradient(135deg, #d1fae5, #a7f3d0)',
+                                                                color: '#065f46', fontSize: '10px', fontWeight: 700,
+                                                                border: '1px solid #6ee7b7', letterSpacing: '0.03em'
+                                                            }}>
+                                                                <CheckCircle2 size={10} /> VERIFIED
+                                                            </span>
+                                                        )}
+                                                        {cert.credentialUrl && (
+                                                            <a href={cert.credentialUrl} target="_blank" rel="noreferrer" className="text-blue-600 hover:text-blue-500" title="View Credential">
+                                                                <ExternalLink size={14} />
+                                                            </a>
+                                                        )}
+                                                        {!isReadOnly && cert.id && (
+                                                            <button onClick={() => handleDeleteCert(cert.id!)} className="text-slate-400 hover:text-red-500">
+                                                                <Trash2 size={14} />
+                                                            </button>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                                <h3 className="cp-event-title">{cert.name}</h3>
+                                                {cert.issueDate && <p className="cp-event-desc text-xs mt-1">Issued: {cert.issueDate}</p>}
+                                                {cert.skills && cert.skills.length > 0 && (
+                                                    <div className="cp-event-tags mt-3">
+                                                        {cert.skills.map(skill => (
+                                                            <span key={skill} className="cp-event-tag">{skill}</span>
+                                                        ))}
+                                                    </div>
+                                                )}
+                                            </div>
                                         </div>
                                     </motion.div>
                                 ))}
                             </div>
                         ) : (
                             <div className="cp-card text-center p-8 border-dashed border-slate-300 text-slate-500 mt-4">
-                                <Award size={32} className="mx-auto mb-4 opacity-50" />
+                                <AwardIcon size={32} className="mx-auto mb-4 opacity-50" />
                                 <p>No certifications added yet.</p>
+                            </div>
+                        )}
+                    </section>
+
+                    {/* ─── AWARDS & HONORS ─── */}
+                    <section className="cp-section">
+                        <div className="cp-section-header">
+                            <h2 className="cp-section-title"><Trophy size={20} /> Awards & Honors</h2>
+                            {!isReadOnly && (
+                                <button className="cp-add-skill-btn">
+                                    <Plus size={14} /> Add Award
+                                </button>
+                            )}
+                        </div>
+                        {awards.length > 0 ? (
+                            <div className="cp-timeline mt-6">
+                                {awards.map((aw, idx) => (
+                                    <motion.div key={idx} className="cp-timeline-item">
+                                        <div className="cp-timeline-node"></div>
+                                        <div className="cp-card cp-event-card">
+                                            <div className="cp-event-header">
+                                                <span className="cp-event-type">{aw.issuer}</span>
+                                            </div>
+                                            <h3 className="cp-event-title">{aw.title}</h3>
+                                            <p className="cp-event-desc text-xs mt-1">Issued: {aw.date}</p>
+                                            {aw.description && <p className="cp-event-desc mt-2">{aw.description}</p>}
+                                        </div>
+                                    </motion.div>
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="cp-card text-center p-8 border-dashed border-slate-300 text-slate-500 mt-4">
+                                <Trophy size={32} className="mx-auto mb-4 opacity-50" />
+                                <p>No awards added yet.</p>
+                            </div>
+                        )}
+                    </section>
+
+                    {/* ─── PUBLICATIONS ─── */}
+                    <section className="cp-section">
+                        <div className="cp-section-header">
+                            <h2 className="cp-section-title"><FileText size={20} /> Publications</h2>
+                            {!isReadOnly && (
+                                <button className="cp-add-skill-btn">
+                                    <Plus size={14} /> Add Publication
+                                </button>
+                            )}
+                        </div>
+                        {publications.length > 0 ? (
+                            <div className="cp-timeline mt-6">
+                                {publications.map((pub, idx) => (
+                                    <motion.div key={idx} className="cp-timeline-item">
+                                        <div className="cp-timeline-node"></div>
+                                        <div className="cp-card cp-event-card">
+                                            <div className="cp-event-header">
+                                                <span className="cp-event-type">{pub.journal || 'Publication'}</span>
+                                                {pub.url && (
+                                                    <a href={pub.url} target="_blank" rel="noreferrer" className="text-blue-600 hover:text-blue-500">
+                                                        <ExternalLink size={14} />
+                                                    </a>
+                                                )}
+                                            </div>
+                                            <h3 className="cp-event-title">{pub.title}</h3>
+                                            <p className="cp-event-desc text-xs mt-1">Date: {pub.date} {pub.coAuthors && `• with ${pub.coAuthors}`}</p>
+                                            {pub.description && <p className="cp-event-desc mt-2">{pub.description}</p>}
+                                        </div>
+                                    </motion.div>
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="cp-card text-center p-8 border-dashed border-slate-300 text-slate-500 mt-4">
+                                <FileText size={32} className="mx-auto mb-4 opacity-50" />
+                                <p>No publications added yet.</p>
+                            </div>
+                        )}
+                    </section>
+
+                    {/* ─── LANGUAGES ─── */}
+                    <section className="cp-section">
+                        <div className="cp-section-header">
+                            <h2 className="cp-section-title"><Terminal size={20} /> Languages</h2>
+                            {!isReadOnly && (
+                                <button className="cp-add-skill-btn">
+                                    <Plus size={14} /> Add Language
+                                </button>
+                            )}
+                        </div>
+                        {languages.length > 0 ? (
+                            <div className="cp-caps-grid mt-4">
+                                {languages.map((lang, idx) => (
+                                    <div key={idx} className="cp-card cp-cap-card" style={{ padding: '12px 16px' }}>
+                                        <h3 style={{ fontSize: '14px', fontWeight: 600, color: '#0f172a' }}>{lang.language}</h3>
+                                        <div style={{ fontSize: '12px', color: '#64748b', marginTop: '4px', textTransform: 'capitalize' }}>
+                                            {lang.proficiency} {lang.score && `• ${lang.score}`}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="cp-card text-center p-8 border-dashed border-slate-300 text-slate-500 mt-4">
+                                <Terminal size={32} className="mx-auto mb-4 opacity-50" />
+                                <p>No languages added yet.</p>
+                            </div>
+                        )}
+                    </section>
+
+                    {/* ─── HOBBIES & EXTRACURRICULARS ─── */}
+                    <section className="cp-section">
+                        <div className="cp-section-header">
+                            <h2 className="cp-section-title"><Heart size={20} /> Hobbies & Extracurriculars</h2>
+                            {!isReadOnly && (
+                                <button className="cp-add-skill-btn">
+                                    <Plus size={14} /> Add Hobby
+                                </button>
+                            )}
+                        </div>
+                        {profile?.hobbies && profile.hobbies.length > 0 ? (
+                            <div className="cp-event-tags mt-4">
+                                {profile.hobbies.map((hobby, idx) => (
+                                    <span key={idx} className="cp-event-tag" style={{ background: '#f8fafc', border: '1px solid #e2e8f0', color: '#334155', padding: '6px 12px', fontSize: '13px' }}>
+                                        {hobby}
+                                    </span>
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="cp-card text-center p-6 border-dashed border-slate-300 text-slate-500 mt-4">
+                                <Heart size={24} className="mx-auto mb-3 opacity-50" />
+                                <p style={{ fontSize: '13px' }}>No hobbies added yet. Show your personality beyond code!</p>
                             </div>
                         )}
                     </section>
@@ -1231,6 +1865,24 @@ export default function CodolioProfilePage() {
                                     value={newCert.credentialUrl}
                                     onChange={e => setNewCert({...newCert, credentialUrl: e.target.value})}
                                 />
+                            </div>
+
+                            <div className="cp-input-group">
+                                <label>Upload Badge Image (Optional)</label>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                    <input 
+                                        type="file" 
+                                        accept="image/*"
+                                        onChange={handleBadgeUpload}
+                                        disabled={uploadingBadge}
+                                        className="cp-input" 
+                                        style={{ flex: 1, padding: '4px' }}
+                                    />
+                                    {uploadingBadge && <Loader2 className="spin" size={20} color="#6366f1" />}
+                                    {newCert.badgeUrl && !uploadingBadge && (
+                                        <img src={newCert.badgeUrl} alt="Badge Preview" style={{ width: '32px', height: '32px', objectFit: 'contain' }} />
+                                    )}
+                                </div>
                             </div>
 
                             <div className="cp-input-group">

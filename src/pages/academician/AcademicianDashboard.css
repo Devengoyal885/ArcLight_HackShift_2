@@ -1,4 +1,4 @@
-.acad-page {
+﻿.acad-page {
     min-height: 100vh;
     background: #f8fafc;
     position: relative;
@@ -45,7 +45,7 @@
     gap: var(--space-10);
 }
 
-/* ─── Header ─── */
+/* â”€â”€â”€ Header â”€â”€â”€ */
 .acad-header {
     display: flex;
     flex-direction: column;
@@ -80,7 +80,7 @@
     line-height: var(--leading-relaxed);
 }
 
-/* ─── Stats Strip ─── */
+/* â”€â”€â”€ Stats Strip â”€â”€â”€ */
 .acad-stats {
     display: flex;
     gap: var(--space-4);
@@ -115,7 +115,7 @@
     letter-spacing: var(--tracking-wide);
 }
 
-/* ─── Controls ─── */
+/* â”€â”€â”€ Controls â”€â”€â”€ */
 .acad-controls {
     display: flex;
     flex-direction: column;
@@ -177,7 +177,7 @@
     border-color: #7c3aed;
 }
 
-/* ─── Loading / Empty ─── */
+/* â”€â”€â”€ Loading / Empty â”€â”€â”€ */
 .acad-loading, .acad-empty {
     display: flex;
     flex-direction: column;
@@ -197,7 +197,7 @@
 .acad-spin { animation: acad-spin 1s linear infinite; }
 @keyframes acad-spin { to { transform: rotate(360deg); } }
 
-/* ─── Grid ─── */
+/* â”€â”€â”€ Grid â”€â”€â”€ */
 .acad-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -336,7 +336,7 @@
 
 .acad-apply-btn:hover { filter: brightness(1.1); }
 
-/* ─── Quick Links ─── */
+/* â”€â”€â”€ Quick Links â”€â”€â”€ */
 .acad-links-panel {
     padding: var(--space-6);
     background: white;
@@ -393,7 +393,7 @@
     .acad-stats { flex-direction: column; }
 }
 
-/* ── Institution Code Banner ──────────────────────────────────────────────── */
+/* â”€â”€ Institution Code Banner â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .acad-inst-banner {
     display: flex;
     align-items: flex-start;

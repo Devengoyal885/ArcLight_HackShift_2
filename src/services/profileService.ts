@@ -17,7 +17,8 @@ import {
     getDocs, addDoc, deleteDoc, serverTimestamp,
     query, orderBy, limit, where, arrayUnion
 } from 'firebase/firestore';
-import { db } from '../lib/firebase';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { db, storage } from '../lib/firebase';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -32,19 +33,30 @@ export interface UserProfile {
     headline?: string;
     bio?: string;
     location?: string;
+    phone?: string;
+    website?: string;
     githubUsername?: string;
     linkedinUrl?: string;
     portfolioUrl?: string;
     leetcodeUsername?: string;
-    resumeText?: string;         // raw resume text used for parsing
-    resumeUrl?: string;          // url to uploaded resume file
-    skills?: string[];           // legacy or flattened skills array
-    education?: any[];           // legacy or flattened education array
-    institutionCode?: string;    // links faculty/students to an institution
-    department?: string;         // faculty department
+    resumeText?: string;
+    resumeUrl?: string;
+    videoPitchUrl?: string;
+    skills?: string[];
+    education?: any[];
+    institutionCode?: string;
+    department?: string;
     profileComplete: boolean;
-    capabilities?: any[];        // user capabilities
-    endorsements?: { facultyUid: string; facultyName: string; date: string }[]; // faculty endorsements
+    capabilities?: any[];
+    endorsements?: { facultyUid: string; facultyName: string; date: string }[];
+    hobbies?: string[];                  // NEW: hobbies & extracurriculars
+    visibility?: 'public' | 'employers' | 'private';  // NEW: profile visibility
+    profileViews?: number;               // NEW: view count
+    isFrozen?: boolean;
+    isNotInterested?: boolean;
+    isVerified?: boolean;
+    cgpa?: number;
+    activeBacklogs?: number;
     createdAt?: unknown;
     updatedAt?: unknown;
 }
@@ -54,6 +66,8 @@ export interface UserProject {
     name: string;
     description?: string;
     url?: string;
+    repositoryUrl?: string;
+    screenshotUrl?: string;
     technologies: string[];
     source: 'github' | 'manual';
     stars?: number;
@@ -78,6 +92,7 @@ export interface UserCertification {
     issueDate: string;
     credentialId?: string;
     credentialUrl?: string;
+    badgeUrl?: string;
     skills: string[];
     addedAt?: unknown;
 }
@@ -89,6 +104,55 @@ export interface SavedOpportunity {
     company: string;
     url?: string;
     savedAt?: unknown;
+}
+
+export interface WorkExperience {
+    id?: string;
+    company: string;
+    role: string;
+    location?: string;
+    startDate: string;       // 'YYYY-MM' format
+    endDate?: string;        // 'YYYY-MM' or empty = current
+    current: boolean;
+    description?: string;
+    type: 'fulltime' | 'internship' | 'parttime' | 'freelance' | 'contract';
+    addedAt?: unknown;
+}
+
+export interface Award {
+    id?: string;
+    title: string;
+    issuer: string;
+    date: string;            // 'YYYY-MM'
+    description?: string;
+    addedAt?: unknown;
+}
+
+export interface Language {
+    id?: string;
+    language: string;
+    proficiency: 'native' | 'professional' | 'intermediate' | 'basic';
+    score?: string;          // e.g. "IELTS 7.5", "TOEFL 110"
+    addedAt?: unknown;
+}
+
+export interface Publication {
+    id?: string;
+    title: string;
+    journal?: string;
+    date: string;
+    url?: string;
+    coAuthors?: string;
+    description?: string;
+    addedAt?: unknown;
+}
+
+export interface ProfileView {
+    viewerUid: string;
+    viewerName?: string;
+    viewerAvatar?: string;
+    viewerRole?: string;
+    viewedAt: unknown;
 }
 
 export interface Application {
@@ -197,6 +261,10 @@ export async function clearManualProjects(uid: string): Promise<void> {
 
 export async function deleteProject(uid: string, projectId: string): Promise<void> {
     await deleteDoc(doc(db, 'users', uid, 'projects', projectId));
+}
+
+export async function updateProject(uid: string, projectId: string, updates: Partial<UserProject>): Promise<void> {
+    await updateDoc(doc(db, 'users', uid, 'projects', projectId), { ...updates, updatedAt: serverTimestamp() });
 }
 
 // ─── Capabilities ─────────────────────────────────────────────────────────────
@@ -558,6 +626,154 @@ export async function getResumeSkillVerification(
         return { skill, status: 'unverified' as const, score: 0, evidence: 'No related activity found' };
     });
 }
+// ─── Work Experience ──────────────────────────────────────────────────────────
 
+export async function getWorkExperiences(uid: string): Promise<WorkExperience[]> {
+    const col = collection(db, 'users', uid, 'workExperiences');
+    const snap = await getDocs(query(col, orderBy('addedAt', 'desc')));
+    return snap.docs.map(d => ({ id: d.id, ...d.data() } as WorkExperience));
+}
 
+export async function addWorkExperience(uid: string, data: Omit<WorkExperience, 'id' | 'addedAt'>): Promise<string> {
+    const col = collection(db, 'users', uid, 'workExperiences');
+    const ref = await addDoc(col, { ...data, addedAt: serverTimestamp() });
+    return ref.id;
+}
 
+export async function deleteWorkExperience(uid: string, id: string): Promise<void> {
+    await deleteDoc(doc(db, 'users', uid, 'workExperiences', id));
+}
+
+export async function updateWorkExperience(uid: string, id: string, data: Partial<WorkExperience>): Promise<void> {
+    await setDoc(doc(db, 'users', uid, 'workExperiences', id), { ...data, updatedAt: serverTimestamp() }, { merge: true });
+}
+
+// ─── Awards & Honors ─────────────────────────────────────────────────────────
+
+export async function getAwards(uid: string): Promise<Award[]> {
+    const col = collection(db, 'users', uid, 'awards');
+    const snap = await getDocs(query(col, orderBy('addedAt', 'desc')));
+    return snap.docs.map(d => ({ id: d.id, ...d.data() } as Award));
+}
+
+export async function addAward(uid: string, data: Omit<Award, 'id' | 'addedAt'>): Promise<string> {
+    const col = collection(db, 'users', uid, 'awards');
+    const ref = await addDoc(col, { ...data, addedAt: serverTimestamp() });
+    return ref.id;
+}
+
+export async function deleteAward(uid: string, id: string): Promise<void> {
+    await deleteDoc(doc(db, 'users', uid, 'awards', id));
+}
+
+// ─── Languages ────────────────────────────────────────────────────────────────
+
+export async function getLanguages(uid: string): Promise<Language[]> {
+    const col = collection(db, 'users', uid, 'languages');
+    const snap = await getDocs(col);
+    return snap.docs.map(d => ({ id: d.id, ...d.data() } as Language));
+}
+
+export async function addLanguage(uid: string, data: Omit<Language, 'id' | 'addedAt'>): Promise<string> {
+    const col = collection(db, 'users', uid, 'languages');
+    const ref = await addDoc(col, { ...data, addedAt: serverTimestamp() });
+    return ref.id;
+}
+
+export async function deleteLanguage(uid: string, id: string): Promise<void> {
+    await deleteDoc(doc(db, 'users', uid, 'languages', id));
+}
+
+// ─── Publications ─────────────────────────────────────────────────────────────
+
+export async function getPublications(uid: string): Promise<Publication[]> {
+    const col = collection(db, 'users', uid, 'publications');
+    const snap = await getDocs(query(col, orderBy('addedAt', 'desc')));
+    return snap.docs.map(d => ({ id: d.id, ...d.data() } as Publication));
+}
+
+export async function addPublication(uid: string, data: Omit<Publication, 'id' | 'addedAt'>): Promise<string> {
+    const col = collection(db, 'users', uid, 'publications');
+    const ref = await addDoc(col, { ...data, addedAt: serverTimestamp() });
+    return ref.id;
+}
+
+export async function deletePublication(uid: string, id: string): Promise<void> {
+    await deleteDoc(doc(db, 'users', uid, 'publications', id));
+}
+
+// ─── Profile Views ────────────────────────────────────────────────────────────
+
+export async function recordProfileView(viewedUid: string, viewer: Omit<ProfileView, 'viewedAt'>): Promise<void> {
+    try {
+        // Store individual view record
+        const viewsCol = collection(db, 'users', viewedUid, 'profileViews');
+        await addDoc(viewsCol, { ...viewer, viewedAt: serverTimestamp() });
+        // Increment total counter on profile
+        const profileRef = doc(db, 'users', viewedUid, 'profile', 'data');
+        const snap = await getDoc(profileRef);
+        const current = snap.exists() ? (snap.data().profileViews || 0) : 0;
+        await setDoc(profileRef, { profileViews: current + 1 }, { merge: true });
+    } catch { /* fail silently — view tracking is non-critical */ }
+}
+
+export async function getRecentProfileViews(uid: string, limitCount = 10): Promise<ProfileView[]> {
+    const col = collection(db, 'users', uid, 'profileViews');
+    const snap = await getDocs(query(col, orderBy('viewedAt', 'desc'), limit(limitCount)));
+    return snap.docs.map(d => d.data() as ProfileView);
+}
+
+// ─── Profile Completeness ─────────────────────────────────────────────────────
+
+export function computeProfileCompleteness(profile: UserProfile | null, extras: {
+    hasCapabilities: boolean;
+    hasCertifications: boolean;
+    hasProjects: boolean;
+    hasWorkExperience: boolean;
+    hasEducation: boolean;
+}): { score: number; suggestions: { label: string; action: string; points: number }[] } {
+    if (!profile) return { score: 0, suggestions: [] };
+    const suggestions: { label: string; action: string; points: number }[] = [];
+    let score = 0;
+
+    const checks: [boolean, string, string, number][] = [
+        [!!profile.avatar, 'Add a profile photo', 'Upload your photo in the profile section', 10],
+        [!!profile.name?.trim(), 'Add your full name', 'Edit your profile to add your name', 5],
+        [!!profile.headline?.trim(), 'Add a professional headline', 'e.g. "Final Year CSE Student | MERN Developer"', 5],
+        [!!profile.bio?.trim(), 'Write a bio / summary', 'Add 2-3 sentences about yourself and your goals', 5],
+        [!!profile.location?.trim(), 'Add your location', 'City, State — helps with local opportunity matching', 5],
+        [!!profile.linkedinUrl?.trim(), 'Connect LinkedIn', 'Link your LinkedIn profile for social proof', 5],
+        [!!profile.githubUsername?.trim(), 'Connect GitHub', 'Sync your repos for automatic skill detection', 10],
+        [!!profile.resumeUrl, 'Upload your resume', 'Upload a PDF resume for AI parsing', 10],
+        [extras.hasCapabilities, 'Add skills / capabilities', 'Add at least 3 skills to your capability profile', 10],
+        [extras.hasCertifications, 'Add certifications', 'Add any certifications or courses completed', 5],
+        [extras.hasProjects, 'Showcase a project', 'Add at least one personal/academic project', 10],
+        [extras.hasWorkExperience, 'Add work experience', 'Add internships, part-time jobs, or freelance work', 10],
+        [extras.hasEducation, 'Add education', 'Add your college and degree details', 10],
+    ];
+
+    for (const [done, label, action, points] of checks) {
+        if (done) {
+            score += points;
+        } else {
+            suggestions.push({ label, action, points });
+        }
+    }
+
+    return { score: Math.min(100, score), suggestions };
+}
+
+export async function uploadOfferLetterToApplication(
+    opportunityId: string,
+    applicationId: string,
+    file: File
+): Promise<string> {
+    const fileRef = ref(storage, `offerLetters/${opportunityId}/${applicationId}/${file.name}`);
+    await uploadBytes(fileRef, file);
+    const downloadUrl = await getDownloadURL(fileRef);
+
+    const appRef = doc(db, 'postedRoles', opportunityId, 'applications', applicationId);
+    await updateDoc(appRef, { offerLetterUrl: downloadUrl });
+
+    return downloadUrl;
+}

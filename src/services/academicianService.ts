@@ -31,6 +31,8 @@ export interface FacultyProfile {
     expertise: string[];
     researchAreas: string[];
     publications?: number;
+    hIndex?: number;
+    citations?: number;
     yearsOfExperience?: number;
     availableForMentorship: boolean;
     availableForConsultancy: boolean;

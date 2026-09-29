@@ -21,6 +21,8 @@ export default function AcademicianProfilePage() {
     const [expertise, setExpertise] = useState('');
     const [researchAreas, setResearchAreas] = useState('');
     const [publications, setPublications] = useState<number>(0);
+    const [hIndex, setHIndex] = useState<number>(0);
+    const [citations, setCitations] = useState<number>(0);
     const [yearsOfExperience, setYearsOfExperience] = useState<number>(0);
     const [linkedinUrl, setLinkedinUrl] = useState('');
     const [googleScholarUrl, setGoogleScholarUrl] = useState('');
@@ -39,6 +41,8 @@ export default function AcademicianProfilePage() {
                     setExpertise(p.expertise?.join(', ') || '');
                     setResearchAreas(p.researchAreas?.join(', ') || '');
                     setPublications(p.publications || 0);
+                    setHIndex((p as any).hIndex || 0);
+                    setCitations((p as any).citations || 0);
                     setYearsOfExperience(p.yearsOfExperience || 0);
                     setLinkedinUrl(p.linkedinUrl || '');
                     setGoogleScholarUrl(p.googleScholarUrl || '');
@@ -62,6 +66,8 @@ export default function AcademicianProfilePage() {
                 expertise: expertise.split(',').map(s => s.trim()).filter(Boolean),
                 researchAreas: researchAreas.split(',').map(s => s.trim()).filter(Boolean),
                 publications,
+                hIndex,
+                citations,
                 yearsOfExperience,
                 linkedinUrl,
                 googleScholarUrl,
@@ -122,6 +128,16 @@ export default function AcademicianProfilePage() {
                                     <input type="number" min="0" value={publications} onChange={e => setPublications(parseInt(e.target.value) || 0)} />
                                 </div>
                             </div>
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginTop: '-0.5rem', marginBottom: '1rem' }}>
+                                <div className="acad-form-group">
+                                    <label>h-index (Google Scholar)</label>
+                                    <input type="number" min="0" value={hIndex} onChange={e => setHIndex(parseInt(e.target.value) || 0)} />
+                                </div>
+                                <div className="acad-form-group">
+                                    <label>Total Citations</label>
+                                    <input type="number" min="0" value={citations} onChange={e => setCitations(parseInt(e.target.value) || 0)} />
+                                </div>
+                            </div>
                             <div className="acad-form-group">
                                 <label>Google Scholar URL</label>
                                 <input value={googleScholarUrl} onChange={e => setGoogleScholarUrl(e.target.value)} />
@@ -144,6 +160,37 @@ export default function AcademicianProfilePage() {
                                 {saving ? <Loader2 size={16} className="spin" /> : saved ? <CheckCircle2 size={16} /> : <Save size={16} />}
                                 {saved ? 'Saved!' : 'Save Profile'}
                             </button>
+                        </div>
+
+                        {/* Faculty Awards Nomination Section */}
+                        <div style={{ maxWidth: '600px', background: 'rgba(255,255,255,0.03)', padding: '2rem', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.06)', marginTop: '24px' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                                <div>
+                                    <h2 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#f8fafc' }}>Faculty Awards Nomination</h2>
+                                    <p style={{ margin: '4px 0 0', fontSize: '0.85rem', color: '#94a3b8' }}>Apply or nominate peers for institutional and national excellence awards.</p>
+                                </div>
+                            </div>
+
+                            <div style={{ display: 'grid', gap: '12px' }}>
+                                {[
+                                    { title: 'Best Researcher Award 2026', org: 'AICTE', status: 'Open', deadline: 'Oct 30' },
+                                    { title: 'Excellence in Teaching', org: 'University Grants Commission', status: 'Nominated', deadline: 'Nov 15' },
+                                ].map((award, i) => (
+                                    <div key={i} style={{ border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', padding: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                        <div>
+                                            <div style={{ fontWeight: 600, color: '#f8fafc' }}>{award.title}</div>
+                                            <div style={{ fontSize: '0.85rem', color: '#94a3b8', marginTop: '4px' }}>{award.org} • Deadline: {award.deadline}</div>
+                                        </div>
+                                        <div>
+                                            {award.status === 'Open' ? (
+                                                <button style={{ background: '#2563eb', border: 'none', borderRadius: '6px', padding: '6px 16px', fontSize: '0.85rem', fontWeight: 600, color: '#fff', cursor: 'pointer' }}>Apply</button>
+                                            ) : (
+                                                <span style={{ fontSize: '12px', fontWeight: 700, color: '#10b981', background: 'rgba(16,185,129,0.15)', padding: '4px 10px', borderRadius: '12px' }}>{award.status}</span>
+                                            )}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
                     </section>
                 )}

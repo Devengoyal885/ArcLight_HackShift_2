@@ -1,4 +1,4 @@
-/* ResumeBuilderPage.css */
+﻿/* ResumeBuilderPage.css */
 
 .rb-page {
     min-height: 100vh;
@@ -6,7 +6,7 @@
     padding-top: 72px;
 }
 
-/* ── Gallery ── */
+/* â”€â”€ Gallery â”€â”€ */
 .rb-gallery-wrap {
     max-width: 1100px;
     margin: 0 auto;
@@ -142,7 +142,7 @@
     font-weight: 600;
 }
 
-/* ── Builder ── */
+/* â”€â”€ Builder â”€â”€ */
 .rb-builder {
     display: flex;
     height: calc(100vh - 72px);
@@ -321,7 +321,7 @@
     font-size: 12px;
     color: #334155;
     cursor: pointer;
-    transition: all 0.15s;
+    transition: opacity 120ms cubic-bezier(0.23, 1, 0.32, 1), background 120ms cubic-bezier(0.23, 1, 0.32, 1), color 120ms cubic-bezier(0.23, 1, 0.32, 1), border-color 120ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 150ms cubic-bezier(0.23, 1, 0.32, 1), transform 80ms cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 .rb-font-btn:hover { border-color: #2563eb; background: #eff6ff; }
@@ -372,7 +372,7 @@
     font-size: 12px;
     font-weight: 700;
     cursor: pointer;
-    transition: all 0.15s;
+    transition: opacity 120ms cubic-bezier(0.23, 1, 0.32, 1), background 120ms cubic-bezier(0.23, 1, 0.32, 1), color 120ms cubic-bezier(0.23, 1, 0.32, 1), border-color 120ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 150ms cubic-bezier(0.23, 1, 0.32, 1), transform 80ms cubic-bezier(0.23, 1, 0.32, 1);
 }
 .rb-ats-btn:hover:not(:disabled) { background: #dbeafe; }
 .rb-ats-btn:disabled { opacity: 0.5; cursor: not-allowed; }
@@ -433,7 +433,7 @@
     font-weight: 600;
     color: #64748b;
     cursor: pointer;
-    transition: all 0.15s;
+    transition: opacity 120ms cubic-bezier(0.23, 1, 0.32, 1), background 120ms cubic-bezier(0.23, 1, 0.32, 1), color 120ms cubic-bezier(0.23, 1, 0.32, 1), border-color 120ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 150ms cubic-bezier(0.23, 1, 0.32, 1), transform 80ms cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 .rb-prev-tab:hover { background: #f1f5f9; }

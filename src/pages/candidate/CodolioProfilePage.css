@@ -1,4 +1,4 @@
-/* ─── Premium Elegant Light Profile Page ────────────────────────────────── */
+﻿/* â”€â”€â”€ Premium Elegant Light Profile Page â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 .cp-page {
     min-height: 100vh;
@@ -203,7 +203,7 @@
     align-items: center;
     gap: 8px;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: opacity 150ms cubic-bezier(0.23, 1, 0.32, 1), background 150ms cubic-bezier(0.23, 1, 0.32, 1), color 150ms cubic-bezier(0.23, 1, 0.32, 1), border-color 150ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 200ms cubic-bezier(0.23, 1, 0.32, 1), transform 80ms cubic-bezier(0.23, 1, 0.32, 1);
     box-shadow: 0 2px 4px rgba(0,0,0,0.02);
 }
 .cp-add-skill-btn:hover { 
@@ -283,7 +283,7 @@
     color: #94a3b8;
     cursor: pointer;
     opacity: 0;
-    transition: all 0.2s;
+    transition: opacity 150ms cubic-bezier(0.23, 1, 0.32, 1), background 150ms cubic-bezier(0.23, 1, 0.32, 1), color 150ms cubic-bezier(0.23, 1, 0.32, 1), border-color 150ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 200ms cubic-bezier(0.23, 1, 0.32, 1), transform 80ms cubic-bezier(0.23, 1, 0.32, 1);
     display: flex;
     align-items: center;
     padding: 4px;
@@ -306,7 +306,7 @@
     background: #ffffff;
     border: 1px solid #f1f5f9;
     border-radius: 16px;
-    transition: all 0.3s ease;
+    transition: opacity 200ms cubic-bezier(0.23, 1, 0.32, 1), background 200ms cubic-bezier(0.23, 1, 0.32, 1), color 200ms cubic-bezier(0.23, 1, 0.32, 1), border-color 200ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 220ms cubic-bezier(0.23, 1, 0.32, 1), transform 80ms cubic-bezier(0.23, 1, 0.32, 1) ease;
     box-shadow: 0 4px 20px -10px rgba(0, 0, 0, 0.03);
 }
 .cp-platform-card:hover { 
@@ -358,7 +358,7 @@
     font-size: 0.85rem;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: opacity 150ms cubic-bezier(0.23, 1, 0.32, 1), background 150ms cubic-bezier(0.23, 1, 0.32, 1), color 150ms cubic-bezier(0.23, 1, 0.32, 1), border-color 150ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 200ms cubic-bezier(0.23, 1, 0.32, 1), transform 80ms cubic-bezier(0.23, 1, 0.32, 1);
 }
 .cp-platform-action:hover { background: #e2e8f0; color: #1e293b; }
 
@@ -532,14 +532,14 @@
     transition: background 0.2s, transform 0.1s;
 }
 .cp-btn-save { background: #2563eb; border: none; color: #ffffff; padding: 10px 20px; border-radius: 10px; cursor: pointer; font-weight: 600; transition: background 0.2s, transform 0.1s; }
-.cp-btn-save:hover { background: #1d4ed8; transform: translateY(-1px); }
+.cp-btn-save:hover { background: #1d4ed8; transform: translateZ(0); /* GPU layer — Emil: no layout-triggering Y shifts on hover */ }
 .cp-btn-save:active { transform: translateY(0); }
 .cp-btn-save:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
 .spin { animation: spin 1s linear infinite; }
 @keyframes spin { 100% { transform: rotate(360deg); } }
 
-/* ─── CapAble Coding Profile ─────────────────────────────────────────────── */
+/* â”€â”€â”€ CapAble Coding Profile â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 .cp-coding-stats-grid {
     display: grid;
@@ -711,7 +711,7 @@
     padding: 8px 16px;
     cursor: pointer;
     text-decoration: none;
-    transition: all 0.15s;
+    transition: opacity 120ms cubic-bezier(0.23, 1, 0.32, 1), background 120ms cubic-bezier(0.23, 1, 0.32, 1), color 120ms cubic-bezier(0.23, 1, 0.32, 1), border-color 120ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 150ms cubic-bezier(0.23, 1, 0.32, 1), transform 80ms cubic-bezier(0.23, 1, 0.32, 1);
     margin-top: 6px;
 }
 
@@ -771,7 +771,7 @@
     font-weight: 600;
     cursor: pointer;
     box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-    transition: all 0.2s;
+    transition: opacity 150ms cubic-bezier(0.23, 1, 0.32, 1), background 150ms cubic-bezier(0.23, 1, 0.32, 1), color 150ms cubic-bezier(0.23, 1, 0.32, 1), border-color 150ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 200ms cubic-bezier(0.23, 1, 0.32, 1), transform 80ms cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 .cp-btn-edit-toggle.active {
@@ -810,7 +810,7 @@
     font-size: 0.85rem;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: opacity 150ms cubic-bezier(0.23, 1, 0.32, 1), background 150ms cubic-bezier(0.23, 1, 0.32, 1), color 150ms cubic-bezier(0.23, 1, 0.32, 1), border-color 150ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 200ms cubic-bezier(0.23, 1, 0.32, 1), transform 80ms cubic-bezier(0.23, 1, 0.32, 1);
     margin-left: auto;
 }
 .cp-btn-upload-resume:hover {
@@ -854,7 +854,7 @@
 }
 
 .bento-item:hover {
-    transform: translateY(-2px);
+    /* GPU layer only */
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
 }
 

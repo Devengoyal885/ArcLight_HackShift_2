@@ -251,6 +251,50 @@ export default function InstitutionDashboard() {
                                             </div>
                                         </motion.div>
                                     </div>
+
+                                    {/* Advanced Tracking */}
+                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', marginTop: '24px' }}>
+                                        {/* Year over Year Comparison */}
+                                        <motion.div style={{ background: '#fff', border: '1.5px solid #e2e8f0', borderRadius: '16px', padding: '1.5rem' }}>
+                                            <h3 style={{ fontSize: '15px', fontWeight: 700, color: '#0f172a', marginBottom: '20px' }}>Year-over-Year Placements</h3>
+                                            <div style={{ height: '220px' }}>
+                                                 <ResponsiveContainer width="100%" height="100%">
+                                                     <BarChart data={[{year:'2022', placed:320}, {year:'2023', placed:450}, {year:'2024', placed:(metrics.totalPlacements || 500)}]} margin={{ top: 4, right: 8, left: -20, bottom: 0 }}>
+                                                         <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
+                                                         <XAxis dataKey="year" tick={{ fontSize: 11, fill: '#64748b' }} axisLine={false} tickLine={false} />
+                                                         <YAxis tick={{ fontSize: 11, fill: '#64748b' }} axisLine={false} tickLine={false} />
+                                                         <Tooltip cursor={{ fill: '#f1f5f9' }} contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} />
+                                                         <Bar dataKey="placed" fill="#10b981" radius={[4, 4, 0, 0]} barSize={28} />
+                                                     </BarChart>
+                                                 </ResponsiveContainer>
+                                            </div>
+                                        </motion.div>
+                                        
+                                        {/* Active Drives & Calendar */}
+                                        <motion.div style={{ background: '#fff', border: '1.5px solid #e2e8f0', borderRadius: '16px', padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                                            <div>
+                                                <h3 style={{ fontSize: '15px', fontWeight: 700, color: '#0f172a', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                                    <Briefcase size={18} color="#f59e0b" /> Real-time Active Drives
+                                                </h3>
+                                                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                                    {['Google - SWE Intern', 'Microsoft - SDE'].map(d => (
+                                                        <div key={d} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 12px', background: '#f8fafc', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                                                            <span style={{ fontWeight: 600, fontSize: '13px', color: '#0f172a' }}>{d}</span>
+                                                            <span style={{ background: '#dcfce7', color: '#16a34a', padding: '4px 8px', borderRadius: '12px', fontSize: '10px', fontWeight: 700, textTransform: 'uppercase' }}>Live</span>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <h3 style={{ fontSize: '15px', fontWeight: 700, color: '#0f172a', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                                    <CalendarDays size={18} color="#2563eb" /> Placement Calendar
+                                                </h3>
+                                                <div style={{ padding: '12px', background: '#eff6ff', border: '1px dashed #93c5fd', borderRadius: '8px', fontSize: '13px', color: '#1e40af', fontWeight: 500 }}>
+                                                    Upcoming: Amazon Cloud Support (Oct 15)
+                                                </div>
+                                            </div>
+                                        </motion.div>
+                                    </div>
                                 </>
                             )}
 

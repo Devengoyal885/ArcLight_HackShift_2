@@ -11,8 +11,9 @@ import { Link } from 'react-router-dom';
 import {
     Kanban, ChevronRight, ChevronLeft, Loader2, Users, Briefcase,
     Zap, FileText, ExternalLink, AlertCircle, Trophy, X, Settings2,
-    ArrowRight, Check, Download,
+    ArrowRight, Check, Download, GitCompare
 } from 'lucide-react';
+import { CandidateComparisonModal } from '../../components/ui/CandidateComparisonModal';
 import './PipelinePage.css';
 
 /** Export all pipeline candidates for a role as CSV */
@@ -151,11 +152,13 @@ function AutoShortlistModal({
 
 // ── Candidate Card ────────────────────────────────────────────────────────────
 function CandidateCard({
-    app, onMove, onOffer, isPending,
+    app, onMove, onOffer, onCompareToggle, isCompareSelected, isPending,
 }: {
     app: AppWithMeta;
     onMove: (appId: string, dir: 'next' | 'prev' | 'reject') => void;
     onOffer: (app: AppWithMeta) => void;
+    onCompareToggle: (appId: string) => void;
+    isCompareSelected: boolean;
     isPending: boolean;
 }) {
     const stageIdx = PIPELINE_STAGES.indexOf(app.status as PipelineStage);
@@ -184,10 +187,22 @@ function CandidateCard({
                 )}
             </div>
 
+            <div style={{ marginTop: '8px', marginBottom: '8px' }}>
+                <input type="text" placeholder="@team Add comment..." style={{ width: '100%', fontSize: '11px', padding: '6px', borderRadius: '4px', border: '1px solid #e2e8f0' }} />
+            </div>
+
             <div className="pipe-card-actions">
                 <Link to={`/employer/candidate/${app.candidateUid}`} className="pipe-card-btn pipe-card-btn--view">
                     <ExternalLink size={13} /> Profile
                 </Link>
+                <button className={`pipe-card-btn ${isCompareSelected ? 'pipe-card-btn--compare-active' : ''}`} style={isCompareSelected ? { background: '#eff6ff', color: '#2563eb', borderColor: '#bfdbfe' } : {}} title="Select for comparison" onClick={() => onCompareToggle(app.id)}>
+                    <GitCompare size={13} /> Compare
+                </button>
+                {app.status === 'Interview Scheduled' && (
+                    <button className="pipe-card-btn" style={{ background: '#fef3c7', color: '#d97706', border: '1px solid #fde68a' }} title="Interview Scorecard & Panel">
+                        <Trophy size={13} /> Scorecard
+                    </button>
+                )}
                 {app.status === 'Offer Extended' && (
                     <button className="pipe-card-btn pipe-card-btn--offer" onClick={() => onOffer(app)}>
                         <FileText size={13} /> Offer Letter
@@ -196,8 +211,13 @@ function CandidateCard({
                 {!isRejected && (
                     <button
                         className="pipe-card-btn pipe-card-btn--reject"
-                        onClick={() => onMove(app.id, 'reject')}
+                        onClick={() => {
+                            if (window.confirm("Reject candidate? An automated rejection email will be sent.")) {
+                                onMove(app.id, 'reject');
+                            }
+                        }}
                         disabled={isPending}
+                        title="Reject & Auto-Email"
                     >
                         <X size={13} />
                     </button>
@@ -239,6 +259,16 @@ export default function PipelinePage() {
     const [offerApp, setOfferApp] = useState<AppWithMeta | null>(null);
     const [showAutoShortlist, setShowAutoShortlist] = useState(false);
     const [shortlistResult, setShortlistResult] = useState<string | null>(null);
+    const [selectedForCompare, setSelectedForCompare] = useState<string[]>([]);
+    const [showCompareModal, setShowCompareModal] = useState(false);
+
+    const toggleCompare = useCallback((appId: string) => {
+        setSelectedForCompare(prev => {
+            if (prev.includes(appId)) return prev.filter(id => id !== appId);
+            if (prev.length >= 2) return prev;
+            return [...prev, appId];
+        });
+    }, []);
 
     const companyName = (profile as any)?.companyName ?? 'Your Company';
 
@@ -300,9 +330,9 @@ export default function PipelinePage() {
                         <p>Drag candidates through your hiring funnel stage by stage</p>
                     </div>
                     <div style={{ display: 'flex', gap: 8 }}>
-                        {selectedRoleId && applications.filter(a => a.status === 'Applied').length > 0 && (
+                        {selectedRoleId && applications.length > 0 && (
                             <button className="pipe-autoshort-btn" onClick={() => setShowAutoShortlist(true)}>
-                                <Zap size={15} /> Auto-Shortlist
+                                <Zap size={15} /> Auto-Shortlist & Bulk Move
                             </button>
                         )}
                         {applications.length > 0 && selectedRole && (
@@ -401,6 +431,8 @@ export default function PipelinePage() {
                                                     app={app}
                                                     onMove={handleMove}
                                                     onOffer={setOfferApp}
+                                                    onCompareToggle={toggleCompare}
+                                                    isCompareSelected={selectedForCompare.includes(app.id)}
                                                     isPending={pendingIds.has(app.id)}
                                                 />
                                             ))}
@@ -430,6 +462,8 @@ export default function PipelinePage() {
                                             app={app}
                                             onMove={handleMove}
                                             onOffer={setOfferApp}
+                                            onCompareToggle={toggleCompare}
+                                            isCompareSelected={selectedForCompare.includes(app.id)}
                                             isPending={pendingIds.has(app.id)}
                                         />
                                     ))}
@@ -458,6 +492,44 @@ export default function PipelinePage() {
                         ));
                         setShortlistResult(`✅ ${n} candidates auto-shortlisted to Screening`);
                     }}
+                />
+            )}
+
+            {/* Action floating bar when candidates selected for comparison */}
+            <AnimatePresence>
+                {selectedForCompare.length > 0 && (
+                    <motion.div 
+                        className="pipe-compare-float"
+                        initial={{ y: 100, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        exit={{ y: 100, opacity: 0 }}
+                    >
+                        <span>{selectedForCompare.length} selected for comparison</span>
+                        <button 
+                            disabled={selectedForCompare.length < 2} 
+                            onClick={() => setShowCompareModal(true)}
+                            className="pipe-compare-trigger-btn"
+                        >
+                            Compare Now
+                        </button>
+                        <button onClick={() => setSelectedForCompare([])} className="pipe-compare-clear-btn">Clear</button>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            {/* Candidate Comparison Modal */}
+            {showCompareModal && selectedForCompare.length === 2 && (
+                <CandidateComparisonModal 
+                    candidates={applications.filter(a => selectedForCompare.includes(a.id)).map(a => ({
+                        candidateUid: a.candidateUid,
+                        candidateName: a.candidateName,
+                        candidateHeadline: a.candidateHeadline,
+                        roleTitle: selectedRole?.title || "Role",
+                        status: a.status,
+                        capabilityMatch: a.capabilityMatch,
+                        appliedAt: a.appliedAt
+                    }))} 
+                    onClose={() => setShowCompareModal(false)} 
                 />
             )}
         </div>

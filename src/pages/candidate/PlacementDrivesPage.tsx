@@ -11,7 +11,7 @@ import type { UserCapability } from '../../services/profileService';
 import {
     Briefcase, CheckCircle2, XCircle, AlertTriangle, Calendar,
     MapPin, IndianRupee, Clock, Loader2, Trophy, ChevronRight,
-    Users, Building2,
+    Users, Building2, Award
 } from 'lucide-react';
 import './PlacementDrivesPage.css';
 
@@ -24,7 +24,7 @@ function daysLeft(deadline: string) {
     return d;
 }
 
-export default function PlacementDrivesPage() {
+export default function PlacementDrivesPage({ isEmbedded = false }: { isEmbedded?: boolean }) {
     const { dbUid, profile } = useAuth();
 
     const [drives, setDrives] = useState<PlacementDrive[]>([]);
@@ -95,7 +95,7 @@ export default function PlacementDrivesPage() {
     if (!instCode) {
         return (
             <div className="pd-page">
-                <FloatingNavbar variant="candidate" />
+                {!isEmbedded && <FloatingNavbar variant="candidate" />}
                 <div className="pd-empty">
                     <Building2 size={48} color="#e2e8f0" />
                     <h3>No Institution Linked</h3>
@@ -106,8 +106,9 @@ export default function PlacementDrivesPage() {
     }
 
     return (
-        <div className="pd-page">
-            <FloatingNavbar variant="candidate" />
+        <div className="pd-page" style={isEmbedded ? { background: 'transparent' } : {}}>
+            {!isEmbedded && <FloatingNavbar variant="candidate" />
+            }
             <div className="pd-content">
                 <motion.header className="pd-header" initial={{ opacity: 0, y: -16 }} animate={{ opacity: 1, y: 0 }}>
                     <div>
@@ -175,6 +176,7 @@ export default function PlacementDrivesPage() {
                                                 <div className="pd-meta">
                                                     {drive.package && <span><IndianRupee size={12} /> {drive.package}</span>}
                                                     {drive.location && <span><MapPin size={12} /> {drive.location}</span>}
+                                                    {drive.eligibility?.minCGPA !== undefined && <span><Award size={12} /> CGPA &gt; {drive.eligibility.minCGPA}</span>}
                                                     <span><Calendar size={12} /> Deadline: {new Date(drive.deadline).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}</span>
                                                 </div>
                                             </div>

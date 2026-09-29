@@ -7,13 +7,14 @@ import {
     getInstitutionCandidates,
     getInstitutionFaculty,
     getStudentRecord,
+    updateStudentAdminFlags,
     type StudentRecord,
 } from '../../services/institutionService';
 import type { UserProfile } from '../../services/profileService';
 import {
     Users, GraduationCap, Search, Loader2, AlertCircle,
     ChevronDown, ChevronUp, ExternalLink, BookOpen, Briefcase, Award, Download,
-    Upload, UserPlus, CheckCircle2, X,
+    Upload, UserPlus, CheckCircle2, X, Bell, Send
 } from 'lucide-react';
 import { parseInviteCSV, bulkCreateInvites, type PendingInvite } from '../../services/inviteService';
 import './InstitutionSubPages.css';
@@ -40,6 +41,31 @@ export default function StudentsPage() {
 
     const institutionCode = adminProfile?.institutionCode || '';
     const institutionName = (adminProfile as any)?.institutionName || '';
+
+    // Bulk Notification state
+    const [selectedUids, setSelectedUids] = useState<Set<string>>(new Set());
+    const [showNotifyModal, setShowNotifyModal] = useState(false);
+    const [notifyTitle, setNotifyTitle] = useState('');
+    const [notifyMessage, setNotifyMessage] = useState('');
+    const [sendingNotify, setSendingNotify] = useState(false);
+    const [notifySuccess, setNotifySuccess] = useState(false);
+
+    const handleSendBulkNotification = () => {
+        if (!notifyTitle.trim() || !notifyMessage.trim() || selectedUids.size === 0) return;
+        setSendingNotify(true);
+        // Simulate network call
+        setTimeout(() => {
+            setSendingNotify(false);
+            setNotifySuccess(true);
+            setTimeout(() => {
+                setNotifySuccess(false);
+                setShowNotifyModal(false);
+                setSelectedUids(new Set());
+                setNotifyTitle('');
+                setNotifyMessage('');
+            }, 2000);
+        }, 1200);
+    };
 
     useEffect(() => {
         setLoading(true);
@@ -76,6 +102,16 @@ export default function StudentsPage() {
             } finally {
                 setLoadingRecords(false);
             }
+        }
+    };
+
+    const handleAdminFlagChange = async (uid: string, flag: 'isFrozen' | 'isNotInterested' | 'isVerified', value: boolean) => {
+        try {
+            await updateStudentAdminFlags(uid, { [flag]: value });
+            // Update local state so UI reflects the change immediately
+            setStudents(prev => prev.map(s => s.uid === uid ? { ...s, [flag]: value } : s));
+        } catch (e) {
+            console.error('Failed to update admin flag', e);
         }
     };
 
@@ -282,7 +318,7 @@ export default function StudentsPage() {
                     </button>
                     <button
                         className={`inst-subtab ${peopleTab === 'faculty' ? 'active' : ''}`}
-                        onClick={() => { setPeopleTab('faculty'); setExpanded(null); setSearch(''); }}
+                        onClick={() => { setPeopleTab('faculty'); setExpanded(null); setSearch(''); setSelectedUids(new Set()); }}
                     >
                         <GraduationCap size={14} /> Faculty ({faculty.length})
                     </button>
@@ -332,8 +368,19 @@ export default function StudentsPage() {
                         <table className="inst-table">
                             <thead>
                                 <tr>
+                                    <th style={{ width: '40px' }}>
+                                        <input
+                                            type="checkbox"
+                                            checked={filtered.length > 0 && selectedUids.size === filtered.length}
+                                            onChange={e => {
+                                                if (e.target.checked) setSelectedUids(new Set(filtered.map(s => s.uid)));
+                                                else setSelectedUids(new Set());
+                                            }}
+                                        />
+                                    </th>
                                     <th>Person</th>
                                     <th>{peopleTab === 'students' ? 'Skills' : 'Department'}</th>
+                                    {peopleTab === 'students' && <th>CGPA/Backlogs</th>}
                                     <th>{peopleTab === 'students' ? 'Progress' : 'Mentorship'}</th>
                                     <th>Status</th>
                                     <th>Actions</th>
@@ -353,9 +400,21 @@ export default function StudentsPage() {
                                                 initial={{ opacity: 0, y: 10 }}
                                                 animate={{ opacity: 1, y: 0 }}
                                                 transition={{ delay: i * 0.02 }}
-                                                style={{ cursor: 'pointer' }}
+                                                style={{ cursor: 'pointer', background: selectedUids.has(uid) ? '#f0f9ff' : 'transparent' }}
                                                 onClick={() => toggleExpand(uid, person)}
                                             >
+                                                <td onClick={e => e.stopPropagation()}>
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={selectedUids.has(uid)}
+                                                        onChange={e => {
+                                                            const next = new Set(selectedUids);
+                                                            if (e.target.checked) next.add(uid);
+                                                            else next.delete(uid);
+                                                            setSelectedUids(next);
+                                                        }}
+                                                    />
+                                                </td>
                                                 <td>
                                                     <div className="inst-student-cell">
                                                         {person.avatar ? (
@@ -383,6 +442,16 @@ export default function StudentsPage() {
                                                         <span style={{ fontSize: '0.82rem', color: '#475569' }}>{(person as any).department || 'Not specified'}</span>
                                                     )}
                                                 </td>
+                                                {peopleTab === 'students' && (
+                                                    <td>
+                                                        <div style={{ fontSize: '0.82rem', color: '#334155', fontWeight: 600 }}>
+                                                            {person.cgpa ? `${person.cgpa} CGPA` : 'N/A'}
+                                                        </div>
+                                                        <div style={{ fontSize: '0.75rem', color: person.activeBacklogs ? '#ef4444' : '#64748b' }}>
+                                                            {person.activeBacklogs ? `${person.activeBacklogs} active backlogs` : 'No backlogs'}
+                                                        </div>
+                                                    </td>
+                                                )}
                                                 <td>
                                                     {peopleTab === 'students' ? (
                                                         <div>
@@ -442,7 +511,7 @@ export default function StudentsPage() {
                                                                             <Loader2 size={16} className="spin" /> Loading record...
                                                                         </div>
                                                                     ) : rec ? (
-                                                                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.25rem' }}>
+                                                                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1.25rem' }}>
                                                                             {/* Capabilities */}
                                                                             <div>
                                                                                 <p style={{ fontSize: '0.7rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', color: '#64748b', margin: '0 0 0.75rem' }}>
@@ -479,6 +548,38 @@ export default function StudentsPage() {
                                                                                     <div style={{ color: '#64748b', fontSize: '0.82rem' }}>Job Applications</div>
                                                                                 </div>
                                                                             </div>
+                                                                            {/* Admin Actions */}
+                                                                            <div>
+                                                                                <p style={{ fontSize: '0.7rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', color: '#64748b', margin: '0 0 0.75rem' }}>
+                                                                                    Admin Actions
+                                                                                </p>
+                                                                                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                                                                    <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: '#0f172a', cursor: 'pointer', fontWeight: 500 }}>
+                                                                                        <input 
+                                                                                            type="checkbox" 
+                                                                                            checked={!!person.isFrozen}
+                                                                                            onChange={(e) => handleAdminFlagChange(uid, 'isFrozen', e.target.checked)}
+                                                                                        />
+                                                                                        Freeze Placements
+                                                                                    </label>
+                                                                                    <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: '#0f172a', cursor: 'pointer', fontWeight: 500 }}>
+                                                                                        <input 
+                                                                                            type="checkbox" 
+                                                                                            checked={!!person.isNotInterested}
+                                                                                            onChange={(e) => handleAdminFlagChange(uid, 'isNotInterested', e.target.checked)}
+                                                                                        />
+                                                                                        Not interested
+                                                                                    </label>
+                                                                                    <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: '#0f172a', cursor: 'pointer', fontWeight: 500 }}>
+                                                                                        <input 
+                                                                                            type="checkbox" 
+                                                                                            checked={person.isVerified ?? person.profileComplete}
+                                                                                            onChange={(e) => handleAdminFlagChange(uid, 'isVerified', e.target.checked)}
+                                                                                        />
+                                                                                        Verify Profile
+                                                                                    </label>
+                                                                                </div>
+                                                                            </div>
                                                                         </div>
                                                                     ) : (
                                                                         <span style={{ fontSize: '0.82rem', color: '#94a3b8' }}>No detailed records available.</span>
@@ -497,6 +598,127 @@ export default function StudentsPage() {
                     </div>
                 )}
             </div>
+
+            {/* Floating Action Bar for Bulk Notify */}
+            <AnimatePresence>
+                {selectedUids.size > 0 && !showNotifyModal && (
+                    <motion.div
+                        initial={{ opacity: 0, y: 50, x: '-50%' }}
+                        animate={{ opacity: 1, y: 0, x: '-50%' }}
+                        exit={{ opacity: 0, y: 50, x: '-50%' }}
+                        style={{
+                            position: 'fixed',
+                            bottom: '30px',
+                            left: '50%',
+                            background: '#0f172a',
+                            color: 'white',
+                            padding: '12px 24px',
+                            borderRadius: '100px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '24px',
+                            boxShadow: '0 10px 25px rgba(0,0,0,0.2)',
+                            zIndex: 100,
+                        }}
+                    >
+                        <div style={{ fontSize: '14px', fontWeight: 600 }}>
+                            {selectedUids.size} {selectedUids.size === 1 ? 'person' : 'people'} selected
+                        </div>
+                        <button
+                            onClick={() => setShowNotifyModal(true)}
+                            style={{
+                                background: '#3b82f6',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '20px',
+                                padding: '8px 16px',
+                                fontSize: '13px',
+                                fontWeight: 600,
+                                cursor: 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '8px'
+                            }}
+                        >
+                            <Bell size={14} /> Send Notification
+                        </button>
+                        <button
+                            onClick={() => setSelectedUids(new Set())}
+                            style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer' }}
+                            title="Clear selection"
+                        >
+                            <X size={16} />
+                        </button>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            {/* Notification Modal */}
+            <AnimatePresence>
+                {showNotifyModal && (
+                    <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 999, display: 'flex', alignItems: 'center', justifyContent: 'center' }} onClick={() => !sendingNotify && setShowNotifyModal(false)}>
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.95 }}
+                            onClick={e => e.stopPropagation()}
+                            style={{ background: 'white', borderRadius: '16px', padding: '24px', width: '90%', maxWidth: '500px', boxShadow: '0 20px 40px rgba(0,0,0,0.2)' }}
+                        >
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                                <h3 style={{ margin: 0, fontSize: '18px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                    <Bell size={20} color="#3b82f6" /> Notify {selectedUids.size} {selectedUids.size === 1 ? 'Person' : 'People'}
+                                </h3>
+                                <button onClick={() => setShowNotifyModal(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#94a3b8' }}>
+                                    <X size={20} />
+                                </button>
+                            </div>
+                            {notifySuccess ? (
+                                <div style={{ textAlign: 'center', padding: '30px 0' }}>
+                                    <CheckCircle2 size={48} color="#10b981" style={{ margin: '0 auto 16px' }} />
+                                    <h4 style={{ margin: '0 0 8px', fontSize: '18px' }}>Sent Successfully!</h4>
+                                    <p style={{ color: '#64748b', fontSize: '14px', margin: 0 }}>Notification has been delivered to all selected users.</p>
+                                </div>
+                            ) : (
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                                    <div>
+                                        <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: '#334155', marginBottom: '6px' }}>Subject</label>
+                                        <input 
+                                            type="text" 
+                                            value={notifyTitle}
+                                            onChange={e => setNotifyTitle(e.target.value)}
+                                            placeholder="e.g. Urgent: Update your resume" 
+                                            style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid #cbd5e1' }} 
+                                        />
+                                    </div>
+                                    <div>
+                                        <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: '#334155', marginBottom: '6px' }}>Message</label>
+                                        <textarea 
+                                            rows={5} 
+                                            value={notifyMessage}
+                                            onChange={e => setNotifyMessage(e.target.value)}
+                                            placeholder="Type your message here..." 
+                                            style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid #cbd5e1', resize: 'vertical' }}
+                                        ></textarea>
+                                    </div>
+                                    <button 
+                                        onClick={handleSendBulkNotification}
+                                        disabled={sendingNotify || !notifyTitle.trim() || !notifyMessage.trim()}
+                                        style={{ 
+                                            background: '#3b82f6', color: 'white', border: 'none', padding: '12px', 
+                                            borderRadius: '8px', fontWeight: 600, cursor: (sendingNotify || !notifyTitle.trim() || !notifyMessage.trim()) ? 'not-allowed' : 'pointer', 
+                                            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginTop: '8px',
+                                            opacity: (sendingNotify || !notifyTitle.trim() || !notifyMessage.trim()) ? 0.7 : 1
+                                        }}
+                                    >
+                                        {sendingNotify ? <Loader2 size={16} className="spin" /> : <Send size={16} />}
+                                        {sendingNotify ? 'Sending...' : 'Send Notification'}
+                                    </button>
+                                </div>
+                            )}
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
         </div>
     );
 }

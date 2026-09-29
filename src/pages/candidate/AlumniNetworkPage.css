@@ -1,4 +1,4 @@
-/* AlumniNetworkPage.css */
+﻿/* AlumniNetworkPage.css */
 .alum-page { min-height: 100vh; background: #f8fafc; padding-top: 80px; }
 .alum-content { max-width: 1100px; margin: 0 auto; padding: 28px 20px 80px; }
 
@@ -21,7 +21,7 @@
     padding: 8px 16px; border-radius: 100px;
     border: 1.5px solid #e2e8f0; background: white;
     font-size: 13px; font-weight: 600; color: #64748b;
-    cursor: pointer; transition: all 0.15s;
+    cursor: pointer; transition: opacity 120ms cubic-bezier(0.23, 1, 0.32, 1), background 120ms cubic-bezier(0.23, 1, 0.32, 1), color 120ms cubic-bezier(0.23, 1, 0.32, 1), border-color 120ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 150ms cubic-bezier(0.23, 1, 0.32, 1), transform 80ms cubic-bezier(0.23, 1, 0.32, 1);
 }
 .alum-tab:hover { border-color: #2563eb; color: #2563eb; }
 .alum-tab.active { background: #2563eb; border-color: #2563eb; color: white; }
@@ -64,7 +64,7 @@
     box-shadow: 0 2px 8px rgba(0,0,0,0.04);
     transition: box-shadow 0.2s, transform 0.2s;
 }
-.alum-card:hover { box-shadow: 0 8px 24px rgba(0,0,0,0.1); transform: translateY(-2px); }
+.alum-card:hover { box-shadow: 0 8px 24px rgba(0,0,0,0.1); transform: translateZ(0); /* GPU layer — Emil: no layout-triggering Y shifts on hover */ }
 
 .alum-mentor-badge {
     position: absolute; top: 12px; right: 12px;
@@ -106,7 +106,7 @@
 .alum-btn {
     display: flex; align-items: center; justify-content: center; gap: 6px;
     padding: 8px; border-radius: 8px; font-size: 12px; font-weight: 700;
-    cursor: pointer; border: none; transition: all 0.15s; text-decoration: none;
+    cursor: pointer; border: none; transition: opacity 120ms cubic-bezier(0.23, 1, 0.32, 1), background 120ms cubic-bezier(0.23, 1, 0.32, 1), color 120ms cubic-bezier(0.23, 1, 0.32, 1), border-color 120ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 150ms cubic-bezier(0.23, 1, 0.32, 1), transform 80ms cubic-bezier(0.23, 1, 0.32, 1); text-decoration: none;
 }
 .alum-btn--linkedin { background: #dbeafe; color: #1e40af; }
 .alum-btn--linkedin:hover { background: #bfdbfe; }

@@ -1,4 +1,4 @@
-/* ─── Premium Light Glassmorphic Employer Dashboard ───────────────────────── */
+﻿/* â”€â”€â”€ Premium Light Glassmorphic Employer Dashboard â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 .emp-dash {
     min-height: 100vh;
@@ -21,7 +21,7 @@
     gap: 32px;
 }
 
-/* ─── Header ─── */
+/* â”€â”€â”€ Header â”€â”€â”€ */
 .emp-dash-header { display: flex; flex-direction: column; gap: 4px; }
 .emp-dash-greeting { font-size: 14px; font-weight: 600; color: #64748b; }
 .emp-dash-org { 
@@ -32,7 +32,7 @@
 }
 .emp-dash-sub { font-size: 16px; color: #475569; }
 
-/* ─── Skeletons ─── */
+/* â”€â”€â”€ Skeletons â”€â”€â”€ */
 .emp-skeleton { background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 8px; }
 .emp-skeleton--h1  { height: 40px; width: 260px; }
 .emp-skeleton--sub { height: 18px; width: 340px; margin-top: 4px; }
@@ -41,7 +41,7 @@
 .emp-skeleton--lbl { height: 14px; width: 80px; margin-top: 4px; }
 @keyframes shimmer { to { background-position: -200% 0; } }
 
-/* ─── Error State ─── */
+/* â”€â”€â”€ Error State â”€â”€â”€ */
 .emp-error-state {
     background: rgba(255, 255, 255, 0.7);
     backdrop-filter: blur(20px);
@@ -62,7 +62,7 @@
 }
 .emp-retry-btn:hover { background: #1e293b; transform: translateY(-1px); }
 
-/* ─── Onboarding Card ─── */
+/* â”€â”€â”€ Onboarding Card â”€â”€â”€ */
 .emp-onboarding-card {
     background: linear-gradient(135deg, rgba(239, 246, 255, 0.8) 0%, rgba(250, 245, 255, 0.8) 100%);
     backdrop-filter: blur(20px);
@@ -98,7 +98,7 @@
 }
 .emp-onboarding-actions { display: flex; gap: 12px; flex-wrap: wrap; }
 
-/* ─── KPI Strip ─── */
+/* â”€â”€â”€ KPI Strip â”€â”€â”€ */
 .emp-metric-wrapper {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -138,7 +138,7 @@
 .emp-metric-value { font-size: 26px; font-weight: 800; color: #0f172a; line-height: 1; }
 .emp-metric-label { font-size: 12px; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
 
-/* ─── Generic Cards ─── */
+/* â”€â”€â”€ Generic Cards â”€â”€â”€ */
 .emp-card {
     background: rgba(255, 255, 255, 0.8);
     backdrop-filter: blur(24px);
@@ -166,7 +166,7 @@
 .emp-card-action:hover { color: #1d4ed8; }
 .emp-card-body { padding: 24px; position: relative; z-index: 2; }
 
-/* ─── Pipeline ─── */
+/* â”€â”€â”€ Pipeline â”€â”€â”€ */
 .emp-pipeline-body { padding: 32px 32px 24px; position: relative; z-index: 2;}
 .emp-pipeline-row {
     display: flex;
@@ -215,7 +215,7 @@
     border-radius: 20px;
 }
 
-/* ─── Buttons ─── */
+/* â”€â”€â”€ Buttons â”€â”€â”€ */
 .emp-btn {
     display: inline-flex; align-items: center; gap: 8px;
     padding: 10px 20px; border-radius: 12px;
@@ -232,7 +232,7 @@
 }
 .emp-btn-outline:hover { background: #eff6ff; border-color: #93c5fd; }
 
-/* ─── Feed (Recent Applications) ─── */
+/* â”€â”€â”€ Feed (Recent Applications) â”€â”€â”€ */
 .emp-feed-list { display: flex; flex-direction: column; gap: 16px; }
 .emp-feed-item {
     display: flex; align-items: center; gap: 16px;
@@ -273,7 +273,7 @@
 }
 .emp-icon-btn:hover { color: #2563eb; border-color: #bfdbfe; background: #eff6ff; }
 
-/* ─── Needs Attention ─── */
+/* â”€â”€â”€ Needs Attention â”€â”€â”€ */
 .emp-all-clear {
     display: flex; align-items: center; gap: 16px;
     padding: 20px; background: #f0fdf4;
@@ -308,7 +308,7 @@
 }
 .emp-attention-action:hover { background: #dbeafe; }
 
-/* ─── Quick Actions ─── */
+/* â”€â”€â”€ Quick Actions â”€â”€â”€ */
 .emp-quick-actions { display: flex; flex-direction: column; gap: 12px; }
 .emp-action-block {
     display: flex; align-items: center; gap: 16px;
@@ -329,7 +329,7 @@
 .emp-action-text h4 { font-size: 14px; font-weight: 600; color: #0f172a; margin: 0; }
 .emp-action-text p  { font-size: 13px; color: #64748b; margin: 0; }
 
-/* ─── Opportunities Grid ─── */
+/* â”€â”€â”€ Opportunities Grid â”€â”€â”€ */
 .emp-opportunities-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -374,7 +374,7 @@
 .emp-opp-btn--outline { background: #ffffff; color: #475569; border: 1px solid #cbd5e1; }
 .emp-opp-btn--outline:hover { background: #f8fafc; border-color: #94a3b8; color: #0f172a; }
 
-/* ─── Capability Intelligence ─── */
+/* â”€â”€â”€ Capability Intelligence â”€â”€â”€ */
 .emp-capability-intro { font-size: 15px; color: #475569; margin: 0 0 20px; line-height: 1.5; }
 .emp-capability-tags { display: flex; flex-wrap: wrap; gap: 10px; }
 .emp-capability-tag {
@@ -383,7 +383,7 @@
     border: 1px solid #e9d5ff;
 }
 
-/* ─── Layout ─── */
+/* â”€â”€â”€ Layout â”€â”€â”€ */
 .emp-dash-layout {
     display: grid;
     grid-template-columns: 1.5fr 1fr;
@@ -392,7 +392,7 @@
 }
 .emp-dash-col { display: flex; flex-direction: column; gap: 32px; }
 
-/* ─── Loaders / Empties ─── */
+/* â”€â”€â”€ Loaders / Empties â”€â”€â”€ */
 .emp-loading-state, .emp-empty-state {
     display: flex; flex-direction: column; align-items: center;
     justify-content: center; gap: 12px;
@@ -400,11 +400,11 @@
     color: #64748b;
 }
 
-/* ─── Spin ─── */
+/* â”€â”€â”€ Spin â”€â”€â”€ */
 .spin { animation: spin 1s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* ─── Responsive ─── */
+/* â”€â”€â”€ Responsive â”€â”€â”€ */
 @media (max-width: 1200px) {
     .emp-metric-wrapper--6 { grid-template-columns: repeat(3, 1fr); }
 }

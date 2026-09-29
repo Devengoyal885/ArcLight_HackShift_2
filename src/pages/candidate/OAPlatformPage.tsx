@@ -433,7 +433,7 @@ export default function OAPlatformPage() {
                         </div>
                         <input type="text" value={calcInput} onChange={e => setCalcInput(e.target.value)} placeholder="e.g. 15 * 42" style={{ padding: '8px', width: '200px', border: '1px solid #cbd5e1', borderRadius: 4 }} />
                         <div style={{ marginTop: 8, fontWeight: 600, color: '#2563eb' }}>
-                            Result: {(() => { try { return eval(calcInput) || ''; } catch { return 'Error'; } })()}
+                            Result: {(() => { try { return new Function('return ' + calcInput)() || ''; } catch { return 'Error'; } })()}
                         </div>
                     </div>
                 )}

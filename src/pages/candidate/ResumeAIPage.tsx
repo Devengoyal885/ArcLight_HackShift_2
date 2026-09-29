@@ -28,7 +28,7 @@ const FAMOUS_JDS = [
     }
 ];
 
-export default function ResumeAIPage() {
+export default function ResumeAIPage({ isEmbedded = false }: { isEmbedded?: boolean }) {
     const { user, dbUid, profile } = useAuth();
     const [capabilities, setCapabilities] = useState<UserCapability[]>([]);
     const [projects, setProjects] = useState<UserProject[]>([]);
@@ -142,8 +142,8 @@ export default function ResumeAIPage() {
 
     return (
         <div className="res-page">
-            <FloatingNavbar variant="candidate" />
-            <div className="res-bg" />
+            {!isEmbedded && <FloatingNavbar variant="candidate" />}
+            {!isEmbedded && <div className="res-bg" />}
 
             <main className="res-main">
                 <motion.div className="res-header" initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>

@@ -1,4 +1,4 @@
-.res-page {
+﻿.res-page {
     min-height: 100vh;
     background: #f8fafc;
     position: relative;
@@ -133,7 +133,7 @@
     align-items: center;
     gap: 8px;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: opacity 150ms cubic-bezier(0.23, 1, 0.32, 1), background 150ms cubic-bezier(0.23, 1, 0.32, 1), color 150ms cubic-bezier(0.23, 1, 0.32, 1), border-color 150ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 200ms cubic-bezier(0.23, 1, 0.32, 1), transform 80ms cubic-bezier(0.23, 1, 0.32, 1);
 }
 .res-btn-primary:hover:not(:disabled) { background: #1d4ed8; }
 .res-btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
@@ -297,7 +297,7 @@
     font-weight: 600;
     color: #334155;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: opacity 150ms cubic-bezier(0.23, 1, 0.32, 1), background 150ms cubic-bezier(0.23, 1, 0.32, 1), color 150ms cubic-bezier(0.23, 1, 0.32, 1), border-color 150ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 200ms cubic-bezier(0.23, 1, 0.32, 1), transform 80ms cubic-bezier(0.23, 1, 0.32, 1);
 }
 .res-chip:hover {
     background: #e2e8f0;
@@ -472,7 +472,7 @@
 .res-preview-html *:first-child { margin-top: 0; }
 .res-preview-html *:last-child { margin-bottom: 0; }
 
-/* ─── MODERN PROFESSIONAL THEME ─── */
+/* â”€â”€â”€ MODERN PROFESSIONAL THEME â”€â”€â”€ */
 .res-preview-html.theme-modern {
     font-family: 'Inter', system-ui, sans-serif;
     color: #334155;
@@ -508,7 +508,7 @@
 .res-preview-html.theme-modern li::marker { color: #94a3b8; font-size: inherit; }
 .res-preview-html.theme-modern strong { color: #0f172a; }
 
-/* ─── CREATIVE BOLD THEME ─── */
+/* â”€â”€â”€ CREATIVE BOLD THEME â”€â”€â”€ */
 .res-preview-html.theme-creative {
     font-family: 'Outfit', 'Inter', sans-serif;
     color: #1f2937;
@@ -539,9 +539,9 @@
 }
 .res-preview-html.theme-creative h4 { font-size: 1.1rem; color: #111827; }
 .res-preview-html.theme-creative li { color: #374151; }
-.res-preview-html.theme-creative li::marker { color: #818cf8; content: "» "; }
+.res-preview-html.theme-creative li::marker { color: #818cf8; content: "Â» "; }
 
-/* ─── TABS ─── */
+/* â”€â”€â”€ TABS â”€â”€â”€ */
 .res-tabs {
     display: flex;
     gap: var(--space-2);
@@ -558,12 +558,12 @@
     color: var(--color-ink-500);
     cursor: pointer;
     border-radius: var(--radius-md);
-    transition: all var(--duration-fast);
+    transition: opacity var(--duration-fast) var(--ease-out), background var(--duration-fast) var(--ease-out), color var(--duration-fast) var(--ease-out), border-color var(--duration-fast) var(--ease-out), box-shadow 200ms var(--ease-out), transform 80ms var(--ease-out);
 }
 .res-tab:hover { background: var(--color-ink-100); }
 .res-tab.active { background: var(--color-ink-900); color: white; }
 
-/* ─── APPLICATIONS LIST ─── */
+/* â”€â”€â”€ APPLICATIONS LIST â”€â”€â”€ */
 .res-apps {
     display: flex;
     flex-direction: column;

@@ -1,0 +1,315 @@
+﻿.settings-page {
+    padding: 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+    color: var(--color-ink-900);
+}
+
+.settings-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 40px;
+}
+
+.settings-header-content {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.settings-header-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: rgba(99, 102, 241, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.settings-header h1 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin: 0 0 4px 0;
+    color: var(--color-ink-900);
+}
+
+.settings-header p {
+    margin: 0;
+    color: var(--color-ink-400);
+    font-size: 0.95rem;
+}
+
+.settings-layout {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 40px;
+}
+
+.settings-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.settings-tab {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-radius: 12px;
+    border: none;
+    background: transparent;
+    color: var(--color-ink-400);
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.2s ease;
+}
+
+.settings-tab:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--color-ink-900);
+}
+
+body[data-theme="light"] .settings-tab:hover {
+    background: rgba(15, 23, 42, 0.05);
+}
+
+.settings-tab.active {
+    background: rgba(99, 102, 241, 0.1);
+    color: #6366f1;
+}
+
+.settings-content {
+    min-height: 500px;
+}
+
+.settings-section h2 {
+    font-size: 1.4rem;
+    margin: 0 0 24px 0;
+    color: var(--color-ink-900);
+}
+
+.settings-card {
+    background: rgba(30, 41, 59, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 32px;
+    backdrop-filter: blur(12px);
+}
+
+body[data-theme="light"] .settings-card {
+    background: white;
+    border: 1px solid rgba(15, 23, 42, 0.1);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+}
+
+.settings-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.settings-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-ink-900);
+    margin-bottom: 4px;
+}
+
+.settings-desc {
+    font-size: 0.85rem;
+    color: var(--color-ink-400);
+}
+
+.settings-divider {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.1);
+    margin: 24px 0;
+}
+
+body[data-theme="light"] .settings-divider {
+    background: rgba(15, 23, 42, 0.1);
+}
+
+.settings-toggle-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--color-ink-900);
+    padding: 8px 16px;
+    border-radius: 99px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+body[data-theme="light"] .settings-toggle-btn {
+    background: rgba(15, 23, 42, 0.05);
+    border-color: rgba(15, 23, 42, 0.1);
+}
+
+.settings-select {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--color-ink-900);
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    outline: none;
+}
+
+body[data-theme="light"] .settings-select {
+    background: white;
+    border-color: rgba(15, 23, 42, 0.2);
+}
+
+.settings-switch input {
+    display: none;
+}
+
+.settings-switch label {
+    display: block;
+    width: 44px;
+    height: 24px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 99px;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+body[data-theme="light"] .settings-switch label {
+    background: rgba(15, 23, 42, 0.2);
+}
+
+.settings-switch label::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 20px;
+    height: 20px;
+    background: white;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.settings-switch input:checked + label {
+    background: #6366f1;
+}
+
+.settings-switch input:checked + label::after {
+    transform: translateX(20px);
+}
+
+.settings-btn-primary {
+    background: #6366f1;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 99px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.settings-btn-primary:hover {
+    background: #4f46e5;
+}
+
+.settings-btn-secondary {
+    background: transparent;
+    color: var(--color-ink-900);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 10px 20px;
+    border-radius: 99px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+}
+
+body[data-theme="light"] .settings-btn-secondary {
+    border-color: rgba(15, 23, 42, 0.2);
+}
+
+.settings-btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+body[data-theme="light"] .settings-btn-secondary:hover {
+    background: rgba(15, 23, 42, 0.05);
+}
+
+.settings-btn-danger {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    padding: 10px 20px;
+    border-radius: 99px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+}
+
+.settings-btn-danger:hover {
+    background: #ef4444;
+    color: white;
+}
+
+.conn-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.conn-icon.github {
+    background: #333;
+    color: white;
+}
+
+.settings-saved-toast {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+    border: 1px solid rgba(16, 185, 129, 0.2);
+    padding: 8px 16px;
+    border-radius: 99px;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
+    .settings-layout {
+        grid-template-columns: 1fr;
+    }
+    .settings-sidebar {
+        flex-direction: row;
+        overflow-x: auto;
+        padding-bottom: 8px;
+    }
+    .settings-tab {
+        white-space: nowrap;
+    }
+    .settings-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+}

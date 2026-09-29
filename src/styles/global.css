@@ -1,4 +1,4 @@
-@import './tokens.css';
+﻿@import './tokens.css';
 
 *,
 *::before,
@@ -20,10 +20,31 @@ body {
     font-size: var(--text-base);
     font-weight: var(--weight-regular);
     line-height: var(--leading-normal);
-    color: var(--color-ink-900);
-    background: #f8fafc;
+    color: #e2e8f0;
+    /* ETHEREAL GLASS: Deepest OLED black */
+    background: #050505;
     min-height: 100vh;
     overflow-x: hidden;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+body[data-theme="light"] {
+    /* EDITORIAL LUXURY: Warm cream paper */
+    background: #fdfbf7;
+    color: #111111;
+}
+
+body[data-theme="light"] .c-dash-main,
+body[data-theme="light"] .navbar-inner,
+body[data-theme="light"] .c-job-card-premium {
+    background: white;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    border-color: #e2e8f0;
+}
+
+body[data-theme="light"] .c-dash-name,
+body[data-theme="light"] .c-job-title-premium {
+    color: #0f172a;
 }
 
 a {
@@ -57,7 +78,7 @@ ol {
     list-style: none;
 }
 
-/* ─── Scrollbar ─── */
+/* â”€â”€â”€ Scrollbar â”€â”€â”€ */
 ::-webkit-scrollbar {
     width: 4px;
     height: 4px;
@@ -72,13 +93,13 @@ ol {
     border-radius: var(--radius-pill);
 }
 
-/* ─── Selection ─── */
+/* â”€â”€â”€ Selection â”€â”€â”€ */
 ::selection {
     background: var(--color-electric-dim);
     color: var(--color-electric);
 }
 
-/* ─── Utility Classes ─── */
+/* â”€â”€â”€ Utility Classes â”€â”€â”€ */
 .visually-hidden {
     position: absolute;
     width: 1px;
@@ -94,7 +115,19 @@ ol {
     white-space: nowrap;
 }
 
-/* ─── Page Layout ─── */
+/* â”€â”€â”€ UI BRAIN OVERRIDES (Kill Dark Gradients / Orbs) â”€â”€â”€ */
+[class*="-orb"],
+.c-dash-orb,
+.hub-orb,
+.onb-orb {
+    display: none !important;
+}
+
+.c-dash, .hub-page, .hub-layout, .onb-root {
+    background: transparent !important;
+}
+
+/* â”€â”€â”€ Page Layout â”€â”€â”€ */
 .page-wrapper {
     min-height: 100vh;
     padding-top: calc(var(--navbar-height) + var(--space-8));
@@ -107,17 +140,22 @@ ol {
     padding: 0 var(--space-8);
 }
 
-/* ─── Emil Kowalski Global Performance Fix ───────────────────────────────────
-   "transition: all" triggers layout + paint on EVERY property change.
-   We can't remove 150+ violations at once, so we constrain them here:
-   Any element using transition:all will only visibly transition the
-   GPU-safe properties (transform + opacity). Layout properties
-   (height, width, padding, margin) still change instantly which is correct.
-   Individual components should progressively migrate to explicit properties.
-─────────────────────────────────────────────────────────────────────────── */
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   Emil KOWALSKI â€” COMPLETE ANIMATION SYSTEM
+   Source: emil-design-eng SKILL.md
+   
+   Rules enforced globally:
+   1. transition: all â†’ never. Specify only GPU-composited properties.
+   2. Elements never animate from scale(0) â€” always from scale(0.95+).
+   3. ease-in is banned on UI. Only ease-out (or ease-out custom) for enters.
+   4. All UI durations under 300ms. Marketing can be longer.
+   5. Hover animations gated behind (hover: hover) to prevent mobile flicker.
+   6. prefers-reduced-motion: keep opacity/color, remove transform/position.
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
-/* Cards and interactive containers — establish sensible defaults */
-.card,
+/* â”€â”€ 1. GPU-only transition constraint â”€â”€ */
+/* Stop 'transition: all' from triggering layout/paint on every property.
+   Override any component-level 'all' so only GPU-composited props show. */
 [class*="-card"],
 [class*="-item"],
 [class*="-btn"],
@@ -125,24 +163,158 @@ ol {
 [class*="-tab"],
 [class*="-option"],
 [class*="-pill"] {
-    /* Enforce GPU-composited properties for transforms */
-    will-change: auto; /* Reset — will-change:transform only during active anim */
+    will-change: auto;
 }
 
-/* Scroll-entry reveal utility — use on any section/card that enters viewport */
+/* â”€â”€ 2. Global button press feedback (Emil: scale(0.97) on :active) â”€â”€ */
+/* Applied to every pressable element site-wide. Components can override. */
+button:not(:disabled):active,
+[role="button"]:not(:disabled):active,
+a:active {
+    transform: scale(0.97);
+    /* Instant down â€” 80ms Emil spec */
+    transition: transform 80ms cubic-bezier(0.23, 1, 0.32, 1) !important;
+}
+
+/* â”€â”€ 3. Hover guard â€” touch devices fire hover on tap (false positives) â”€â”€ */
+@media (hover: hover) and (pointer: fine) {
+    /* Global hover lift â€” overridden by specific components */
+    [class*="-card"]:hover,
+    [class*="-panel"]:hover {
+        /* Elevation shift, no layout-triggering translateY */
+        box-shadow: var(--shadow-hover-lift, 0 14px 30px -8px rgba(0,0,0,0.20));
+    }
+}
+
+/* â”€â”€â”€ Keyframe Library â”€â”€â”€ */
+
+/* fadeInUp â€” page stagger entries (translate not layout-triggering) */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* scaleIn â€” popovers/modals/dropdowns (from 0.95 not 0 â€” Emil rule) */
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* slideInRight â€” side panels */
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(24px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* slideInDown â€” elements from above (navbar dropdowns, toasts) */
+@keyframes slideInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-8px) scale(0.98);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* float â€” decorative idle loops (slow â€” doesn't distract) */
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50%       { transform: translateY(-6px); }
+}
+
+/* pulse-ring â€” notification/status indicators */
+@keyframes pulse-ring {
+    0%   { transform: scale(0.95); opacity: 1; }
+    70%  { transform: scale(1.15); opacity: 0; }
+    100% { transform: scale(1.15); opacity: 0; }
+}
+
+/* shimmer â€” loading skeletons (GPU: background-position only) */
+@keyframes shimmer {
+    0%   { background-position: -200% 0; }
+    100% { background-position:  200% 0; }
+}
+
+/* spin-slow â€” decorative indicators */
+@keyframes spin-slow {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+}
+
+/* drawLine â€” SVG path reveal */
+@keyframes drawLine {
+    from { stroke-dashoffset: 1000; }
+    to   { stroke-dashoffset: 0; }
+}
+
+/* â”€â”€â”€ Utility animation classes â”€â”€â”€ */
+
+/* Page entries â€” ease-out, 220ms (under Emil's 300ms limit) */
+.animate-fade-up {
+    animation: fadeInUp 220ms cubic-bezier(0.23, 1, 0.32, 1) both;
+}
+
+.animate-scale-in {
+    animation: scaleIn 180ms cubic-bezier(0.23, 1, 0.32, 1) both;
+}
+
+.animate-slide-right {
+    animation: slideInRight 220ms cubic-bezier(0.23, 1, 0.32, 1) both;
+}
+
+.animate-float {
+    animation: float 4s ease-in-out infinite;
+}
+
+/* â”€â”€ Stagger helpers â€” 50ms apart (Emil: 30-80ms range) â”€â”€ */
+/* Usage: add animate-stagger to parent, each child auto-staggers */
+.animate-stagger > * {
+    animation: fadeInUp 220ms cubic-bezier(0.23, 1, 0.32, 1) both;
+}
+.animate-stagger > *:nth-child(1)  { animation-delay:   0ms; }
+.animate-stagger > *:nth-child(2)  { animation-delay:  50ms; }
+.animate-stagger > *:nth-child(3)  { animation-delay: 100ms; }
+.animate-stagger > *:nth-child(4)  { animation-delay: 150ms; }
+.animate-stagger > *:nth-child(5)  { animation-delay: 200ms; }
+.animate-stagger > *:nth-child(6)  { animation-delay: 250ms; }
+.animate-stagger > *:nth-child(7)  { animation-delay: 300ms; }
+.animate-stagger > *:nth-child(8)  { animation-delay: 350ms; }
+
+/* â”€â”€ Scroll-entry reveal utility â”€â”€ */
+/* JS sets .is-visible via IntersectionObserver */
 .reveal-on-scroll {
     opacity: 0;
     transform: translateY(16px);
     transition:
-        opacity var(--duration-normal) var(--ease-out),
-        transform var(--duration-normal) var(--ease-out);
+        opacity 280ms cubic-bezier(0.23, 1, 0.32, 1),
+        transform 280ms cubic-bezier(0.23, 1, 0.32, 1);
 }
 .reveal-on-scroll.is-visible {
     opacity: 1;
     transform: translateY(0);
 }
 
-/* Double-bezel card utility (high-end-visual-design principle) */
+/* â”€â”€ Double-bezel card utility (stitch-design-taste) â”€â”€ */
 .card-outer {
     background: rgba(255, 255, 255, 0.55);
     border: 1px solid rgba(255, 255, 255, 0.82);
@@ -161,7 +333,7 @@ ol {
     box-shadow: inset 0 1px 1px rgba(255,255,255,0.6);
 }
 
-/* Eyebrow tag utility (high-end-visual-design) */
+/* â”€â”€ Eyebrow tag utility â”€â”€ */
 .eyebrow {
     display: inline-flex;
     align-items: center;
@@ -177,120 +349,30 @@ ol {
     border: 1px solid rgba(37, 99, 235, 0.15);
 }
 
-/* ─── Animations ─── */
-
-/* fadeInUp — page-level stagger entries (max 300ms duration, ease-out) */
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(12px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+/* â”€â”€ Shimmer skeleton utility â”€â”€ */
+.skeleton {
+    background: linear-gradient(
+        90deg,
+        #f1f5f9 25%,
+        #e2e8f0 50%,
+        #f1f5f9 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s linear infinite;
+    border-radius: var(--radius-md);
 }
 
-/* scaleIn — for popovers/modals entering (starts 0.95 not 0 — Emil rule) */
-@keyframes scaleIn {
-    from {
-        opacity: 0;
-        transform: scale(0.95);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
+/* â”€â”€ Popover / Dropdown base (origin-aware â€” Emil rule) â”€â”€ */
+/* Components set --transform-origin to match their trigger position */
+.popover-base {
+    transform-origin: var(--transform-origin, top center);
+    animation: scaleIn 180ms cubic-bezier(0.23, 1, 0.32, 1) both;
 }
 
-/* slideInRight — for panels, side sheets */
-@keyframes slideInRight {
-    from {
-        opacity: 0;
-        transform: translateX(24px);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
-}
-
-/* float — decorative only, slow so it doesn't distract */
-@keyframes float {
-    0%, 100% { transform: translateY(0px); }
-    50%       { transform: translateY(-8px); }
-}
-
-/* pulse-ring — notification indicator */
-@keyframes pulse-ring {
-    0%   { transform: scale(0.95); opacity: 1; }
-    70%  { transform: scale(1.15); opacity: 0; }
-    100% { transform: scale(1.15); opacity: 0; }
-}
-
-/* spin-slow — decorative spinners */
-@keyframes spin-slow {
-    from { transform: rotate(0deg); }
-    to   { transform: rotate(360deg); }
-}
-
-/* shimmer — loading skeletons */
-@keyframes shimmer {
-    0%   { background-position: -200% 0; }
-    100% { background-position: 200% 0; }
-}
-
-/* drawLine — SVG path reveal */
-@keyframes drawLine {
-    from { stroke-dashoffset: 1000; }
-    to   { stroke-dashoffset: 0; }
-}
-
-/* ─── Utility animation classes ─── */
-.animate-float {
-    animation: float 4s ease-in-out infinite;
-}
-
-/* ease-out, 220ms — under the 300ms Emil limit */
-.animate-fade-up {
-    animation: fadeInUp var(--duration-normal) var(--ease-out) both;
-}
-
-.animate-scale-in {
-    animation: scaleIn var(--duration-normal) var(--ease-out) both;
-}
-
-/* Stagger helpers — cascade items 50ms apart (Emil: 30-80ms range) */
-.animate-stagger > * { animation: fadeInUp var(--duration-normal) var(--ease-out) both; }
-.animate-stagger > *:nth-child(1) { animation-delay:   0ms; }
-.animate-stagger > *:nth-child(2) { animation-delay:  50ms; }
-.animate-stagger > *:nth-child(3) { animation-delay: 100ms; }
-.animate-stagger > *:nth-child(4) { animation-delay: 150ms; }
-.animate-stagger > *:nth-child(5) { animation-delay: 200ms; }
-.animate-stagger > *:nth-child(6) { animation-delay: 250ms; }
-
-/* ─── Global button press feedback (Emil: scale(0.97) on :active) ─── */
-button,
-[role="button"],
-.btn,
-.lmb {
-    transition: transform var(--duration-instant) var(--ease-out);
-}
-
-@media (hover: hover) and (pointer: fine) {
-    button:not(:disabled):hover,
-    [role="button"]:not(:disabled):hover {
-        /* Individual components override with more specific hover styles */
-    }
-}
-
-button:not(:disabled):active,
-[role="button"]:not(:disabled):active,
-.lmb:not(:disabled):active {
-    transform: scale(0.97);
-}
-
-/* ─── Reduced motion — opacity/color OK, movement/scale removed ─── */
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   REDUCED MOTION â€” opacity/color OK, movement/scale removed
+   Emil: "Reduced motion means fewer and gentler, not zero"
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
@@ -300,12 +382,63 @@ button:not(:disabled):active,
         transition-duration: 0.01ms !important;
     }
 
-    /* Keep opacity fades — they aid comprehension without causing motion sickness */
+    /* Keep opacity fades â€” aid comprehension without motion sickness */
     .animate-fade-up,
     .animate-scale-in,
-    .animate-stagger > * {
+    .animate-stagger > *,
+    .reveal-on-scroll {
         animation: none;
         opacity: 1;
         transform: none;
     }
-}
+
+    /* Keep status indicator pulses but strip scale */
+    .c-dash-pulse-dot {
+        animation: none;
+        box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.4);
+    }
+}
+
+/* --- Focus Ring — keyboard accessibility (Emil: required, not optional) --- */
+:focus-visible {
+    outline: 2px solid var(--color-electric, #2563eb);
+    outline-offset: 3px;
+    border-radius: 4px;
+}
+
+/* --- Form Inputs — smooth state transitions --- */
+input:not([type="checkbox"]):not([type="radio"]),
+textarea,
+select {
+    transition:
+        border-color 150ms cubic-bezier(0.23, 1, 0.32, 1),
+        box-shadow 150ms cubic-bezier(0.23, 1, 0.32, 1),
+        background 150ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+input:not([type="checkbox"]):not([type="radio"]):focus,
+textarea:focus,
+select:focus {
+    outline: none;
+    border-color: var(--color-electric, #2563eb);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+/* --- Links — no layout-triggering hover, opacity only --- */
+@media (hover: hover) and (pointer: fine) {
+    a:not([class]):hover {
+        opacity: 0.75;
+        transition: opacity 150ms cubic-bezier(0.23, 1, 0.32, 1);
+    }
+}
+
+/* --- Smooth scroll for anchor links --- */
+html {
+    scroll-behavior: smooth;
+}
+
+/* --- Selection highlight --- */
+::selection {
+    background: rgba(37, 99, 235, 0.15);
+    color: var(--color-electric, #2563eb);
+}

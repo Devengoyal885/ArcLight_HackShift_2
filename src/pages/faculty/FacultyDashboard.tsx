@@ -13,6 +13,8 @@ import {
 import type { UserProfile, LearningResource, UserCapability } from "../../services/profileService";
 import { fetchFacultyOpportunities } from "../../services/facultyOpportunityService";
 import type { FacultyOpportunity } from "../../services/facultyOpportunityService";
+import { getFacultyProjects, createProject, deleteProject, updateProjectAllocation } from "../../services/projectAllocationService";
+import type { AllocatedProject } from "../../services/projectAllocationService";
 import {
     Users, GraduationCap, Loader2, AlertTriangle, RotateCcw,
     BookOpen, Target, Briefcase, ChevronRight, Search,
@@ -37,14 +39,16 @@ interface StudentSummary {
     topSkills: string[];
     applicationCount: number;
     profileComplete: boolean;
+    interviewReadinessScore: number;
 }
 
 const PAGE_SIZE = 20;
 
-type FacultyTab = "students" | "fdp" | "internship" | "research" | "consultancy";
+type FacultyTab = "students" | "projects" | "fdp" | "internship" | "research" | "consultancy";
 
 const TAB_META: { id: FacultyTab; label: string; icon: React.ReactNode; color: string }[] = [
     { id: "students", label: "Students", icon: <Users size={15} />, color: "#2563eb" },
+    { id: "projects", label: "Projects", icon: <Lightbulb size={15} />, color: "#f97316" },
     { id: "fdp", label: "FDP", icon: <BookMarked size={15} />, color: "#7c3aed" },
     { id: "internship", label: "Internships", icon: <Briefcase size={15} />, color: "#10b981" },
     { id: "research", label: "Research", icon: <FlaskConical size={15} />, color: "#f59e0b" },
@@ -97,6 +101,57 @@ export default function FacultyDashboard() {
     const [oppLoading, setOppLoading] = useState(false);
     const [oppLoaded, setOppLoaded] = useState(false);
 
+    // ── Projects data ─────────────────────────────────────────────────────────
+    const [projects, setProjects] = useState<AllocatedProject[]>([]);
+    const [projectsLoading, setProjectsLoading] = useState(false);
+    const [newProjectTitle, setNewProjectTitle] = useState("");
+    const [newProjectDesc, setNewProjectDesc] = useState("");
+    const [isCreatingProject, setIsCreatingProject] = useState(false);
+
+    const loadProjects = useCallback(async () => {
+        if (!user) return;
+        setProjectsLoading(true);
+        try {
+            const list = await getFacultyProjects(user.uid);
+            setProjects(list);
+        } catch (e) {
+            console.error("Failed to load projects", e);
+        } finally {
+            setProjectsLoading(false);
+        }
+    }, [user]);
+
+    const handleCreateProject = async () => {
+        if (!user || !newProjectTitle.trim()) return;
+        setIsCreatingProject(true);
+        try {
+            const p = await createProject(user.uid, newProjectTitle.trim(), newProjectDesc.trim(), []);
+            setProjects([p, ...projects]);
+            setNewProjectTitle("");
+            setNewProjectDesc("");
+        } catch (e) {
+            console.error("Failed to create project", e);
+        } finally {
+            setIsCreatingProject(false);
+        }
+    };
+
+    const handleToggleStudentInProject = async (projectId: string, studentUid: string) => {
+        const proj = projects.find(p => p.id === projectId);
+        if (!proj) return;
+        const isAllocated = proj.studentUids.includes(studentUid);
+        const newUids = isAllocated 
+            ? proj.studentUids.filter(u => u !== studentUid)
+            : [...proj.studentUids, studentUid];
+        
+        try {
+            await updateProjectAllocation(projectId, newUids);
+            setProjects(prev => prev.map(p => p.id === projectId ? { ...p, studentUids: newUids } : p));
+        } catch (e) {
+            console.error("Failed to update allocation", e);
+        }
+    };
+
     const loadStudents = useCallback(async () => {
         if (!user) return;
         if (!institutionCode) { setStudentsLoading(false); setStudents([]); return; }
@@ -122,6 +177,12 @@ export default function FacultyDashboard() {
                         ? Math.round(capData.reduce((s, c) => s + c.score, 0) / capData.length) : 0;
                     const topSkills = capData.sort((a, b) => b.score - a.score).slice(0, 3).map(c => c.skill);
 
+                    const interviewReadinessScore = Math.round(
+                        (candidate.profileComplete ? 20 : 0) + 
+                        (avgScore * 0.4) + 
+                        (learningData.length > 0 ? (completed / learningData.length) * 40 : 0)
+                    );
+
                     return {
                         profile: candidate,
                         learningTotal: learningData.length,
@@ -131,6 +192,7 @@ export default function FacultyDashboard() {
                         topSkills,
                         applicationCount: appData.length,
                         profileComplete: candidate.profileComplete ?? false,
+                        interviewReadinessScore,
                     };
                 })
             );
@@ -142,7 +204,9 @@ export default function FacultyDashboard() {
         }
     }, [user, institutionCode]);
 
+
     useEffect(() => { loadStudents(); }, [loadStudents]);
+    useEffect(() => { if (activeTab === "projects") loadProjects(); }, [activeTab, loadProjects]);
 
     // Load opportunities lazily when user switches to those tabs
     useEffect(() => {
@@ -358,6 +422,12 @@ export default function FacultyDashboard() {
                                                                     <span className="faculty-kpi-num" style={{ fontSize: 20 }}>{student.applicationCount}</span>
                                                                     <span className="faculty-stat-sub">applied</span>
                                                                 </div>
+                                                                <div className="faculty-student-stat">
+                                                                    <div className="faculty-stat-label"><AlertCircle size={13} />Readiness</div>
+                                                                    <div className={`faculty-score-badge ${student.interviewReadinessScore >= 80 ? "faculty-score-badge--green" : student.interviewReadinessScore >= 50 ? "faculty-score-badge--blue" : "faculty-score-badge--amber"}`}>
+                                                                        {student.interviewReadinessScore}%
+                                                                    </div>
+                                                                </div>
                                                                 <div className="faculty-student-actions">
                                                                     {student.profile.endorsements?.some((e: any) => e.facultyUid === user?.uid) ? (
                                                                         <span className="faculty-endorsed-badge"><CheckCircle2 size={14}/> Endorsed</span>
@@ -412,8 +482,89 @@ export default function FacultyDashboard() {
                         </motion.div>
                     )}
 
+                    {/* ─────────────── PROJECTS TAB ─────────────── */}
+                    {activeTab === "projects" && (
+                        <motion.div key="projects" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
+                            <div className="faculty-opp-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                <div>
+                                    <h2 className="faculty-opp-title"><Lightbulb size={20} /> Faculty-Student Projects</h2>
+                                    <p className="faculty-opp-sub">Create projects and allocate students from your institution.</p>
+                                </div>
+                            </div>
+                            
+                            <div style={{ background: 'white', padding: 20, borderRadius: 12, border: '1px solid #e2e8f0', marginBottom: 24 }}>
+                                <h3>Create New Project</h3>
+                                <div style={{ display: 'flex', gap: 12, marginTop: 12, alignItems: 'flex-start' }}>
+                                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 8 }}>
+                                        <input 
+                                            value={newProjectTitle} onChange={e => setNewProjectTitle(e.target.value)}
+                                            placeholder="Project Title" style={{ padding: '8px 12px', border: '1px solid #cbd5e1', borderRadius: 6, fontSize: 14 }}
+                                        />
+                                        <input 
+                                            value={newProjectDesc} onChange={e => setNewProjectDesc(e.target.value)}
+                                            placeholder="Short description..." style={{ padding: '8px 12px', border: '1px solid #cbd5e1', borderRadius: 6, fontSize: 14 }}
+                                        />
+                                    </div>
+                                    <button 
+                                        onClick={handleCreateProject} disabled={isCreatingProject || !newProjectTitle.trim()}
+                                        style={{ padding: '10px 16px', background: '#f97316', color: 'white', border: 'none', borderRadius: 6, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, fontWeight: 500 }}
+                                    >
+                                        {isCreatingProject ? <Loader2 size={16} className="spin" /> : <Lightbulb size={16} />} 
+                                        Create
+                                    </button>
+                                </div>
+                            </div>
+
+                            {projectsLoading ? (
+                                <div className="faculty-loading"><Loader2 size={24} className="faculty-spin" /><p>Loading projects...</p></div>
+                            ) : projects.length === 0 ? (
+                                <div className="faculty-empty">
+                                    <Lightbulb size={36} color="#94a3b8" />
+                                    <h3>No projects created</h3>
+                                    <p>Create a project above to start allocating students.</p>
+                                </div>
+                            ) : (
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                                    {projects.map(proj => (
+                                        <div key={proj.id} style={{ background: 'white', padding: 20, borderRadius: 12, border: '1px solid #e2e8f0' }}>
+                                            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                                <h4 style={{ margin: 0, fontSize: 16, color: '#0f172a' }}>{proj.title}</h4>
+                                                <span style={{ fontSize: 12, color: '#64748b' }}>{new Date(proj.createdAt).toLocaleDateString()}</span>
+                                            </div>
+                                            <p style={{ margin: '8px 0 16px', fontSize: 14, color: '#475569' }}>{proj.description || "No description provided."}</p>
+                                            
+                                            <div style={{ borderTop: '1px solid #e2e8f0', paddingTop: 16 }}>
+                                                <h5 style={{ margin: '0 0 12px', fontSize: 13, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Allocate Students</h5>
+                                                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, maxHeight: 150, overflowY: 'auto' }}>
+                                                    {students.length === 0 && <span style={{ fontSize: 13, color: '#94a3b8' }}>No students in institution to allocate.</span>}
+                                                    {students.map(s => {
+                                                        const isAllocated = proj.studentUids.includes(s.profile.uid);
+                                                        return (
+                                                            <button
+                                                                key={s.profile.uid}
+                                                                onClick={() => handleToggleStudentInProject(proj.id, s.profile.uid)}
+                                                                style={{
+                                                                    padding: '4px 10px', fontSize: 12, borderRadius: 12, border: `1px solid ${isAllocated ? '#f97316' : '#cbd5e1'}`,
+                                                                    background: isAllocated ? '#fff7ed' : 'white', color: isAllocated ? '#c2410c' : '#475569',
+                                                                    cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4
+                                                                }}
+                                                            >
+                                                                {s.profile.name || "Unknown"}
+                                                                {isAllocated && <CheckCircle2 size={12} />}
+                                                            </button>
+                                                        )
+                                                    })}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </motion.div>
+                    )}
+
                     {/* ─────────────── OPPORTUNITY TABS (FDP / Internship / Research / Consultancy) ─────────────── */}
-                    {activeTab !== "students" && (
+                    {!["students", "projects"].includes(activeTab) && (
                         <motion.div key={activeTab} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
                             <div className="faculty-opp-header">
                                 <div>

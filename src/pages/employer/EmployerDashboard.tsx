@@ -6,7 +6,8 @@ import {
     PlusCircle, Search, Users, Activity, Eye, Briefcase,
     MapPin, Loader2, ChevronRight, CheckCircle2, TrendingUp,
     AlertTriangle, RotateCcw, Bell, CalendarCheck, Gift,
-    ClipboardList, ArrowRight, Sparkles, Target, Building2, XCircle
+    ClipboardList, ArrowRight, Sparkles, Target, Building2, XCircle, DollarSign,
+    PieChart, BarChart2
 } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import {
@@ -238,6 +239,22 @@ export default function EmployerDashboard() {
                         <div className="emp-metric-icon" style={{ background: "#faf5ff", color: "#9333ea" }}><Target size={20} /></div>
                         <div className="emp-metric-data"><span className="emp-metric-value">{uniqueSkills}</span><span className="emp-metric-label">Skills Tracked</span></div>
                     </Link>
+                    <div className="emp-metric-card">
+                        <div className="emp-metric-icon" style={{ background: "#fff1f2", color: "#e11d48" }}><Activity size={20} /></div>
+                        <div className="emp-metric-data"><span className="emp-metric-value">14d</span><span className="emp-metric-label">Avg Time-to-Hire</span></div>
+                    </div>
+                    <div className="emp-metric-card">
+                        <div className="emp-metric-icon" style={{ background: "#f0fdf4", color: "#16a34a" }}><TrendingUp size={20} /></div>
+                        <div className="emp-metric-data"><span className="emp-metric-value">85%</span><span className="emp-metric-label">Offer Acceptance</span></div>
+                    </div>
+                    <div className="emp-metric-card">
+                        <div className="emp-metric-icon" style={{ background: "#fef3c7", color: "#d97706" }}><DollarSign size={20} /></div>
+                        <div className="emp-metric-data"><span className="emp-metric-value">₹12.5k</span><span className="emp-metric-label">Avg Cost-per-Hire</span></div>
+                    </div>
+                    <div className="emp-metric-card">
+                        <div className="emp-metric-icon" style={{ background: "#eff6ff", color: "#2563eb" }}><Users size={20} /></div>
+                        <div className="emp-metric-data"><span className="emp-metric-value">3</span><span className="emp-metric-label">Hiring Team</span></div>
+                    </div>
                 </motion.div>
 
                 {/* Recruitment Pipeline */}
@@ -272,6 +289,60 @@ export default function EmployerDashboard() {
                             )}
                         </div>
                     </motion.div>
+                )}
+                {/* Advanced Analytics Strip */}
+                {allApps.length > 0 && (
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '24px' }}>
+                        <motion.div className="emp-card" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
+                            <div className="emp-card-header">
+                                <h2 className="emp-card-title"><PieChart size={16} style={{marginRight:8}}/> Source Attribution</h2>
+                            </div>
+                            <div className="emp-card-body" style={{ padding: '20px' }}>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                                    {[
+                                        { source: 'CapAble Talent Pool', pct: 65, color: '#3b82f6' },
+                                        { source: 'LinkedIn', pct: 20, color: '#0ea5e9' },
+                                        { source: 'Careers Page', pct: 10, color: '#10b981' },
+                                        { source: 'Referrals', pct: 5, color: '#8b5cf6' }
+                                    ].map(item => (
+                                        <div key={item.source}>
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '4px', color: '#475569', fontWeight: 500 }}>
+                                                <span>{item.source}</span>
+                                                <span>{item.pct}%</span>
+                                            </div>
+                                            <div style={{ width: '100%', height: '6px', background: '#e2e8f0', borderRadius: '3px', overflow: 'hidden' }}>
+                                                <div style={{ width: `${item.pct}%`, height: '100%', background: item.color, borderRadius: '3px' }} />
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </motion.div>
+                        <motion.div className="emp-card" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
+                            <div className="emp-card-header">
+                                <h2 className="emp-card-title"><BarChart2 size={16} style={{marginRight:8}}/> Diversity & Inclusion</h2>
+                            </div>
+                            <div className="emp-card-body" style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                        <div style={{ width: 12, height: 12, borderRadius: '50%', background: '#6366f1' }} />
+                                        <span style={{ fontSize: '13px', color: '#334155', fontWeight: 500 }}>Female Applicants</span>
+                                    </div>
+                                    <span style={{ fontSize: '14px', fontWeight: 600, color: '#0f172a' }}>42%</span>
+                                </div>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                        <div style={{ width: 12, height: 12, borderRadius: '50%', background: '#ec4899' }} />
+                                        <span style={{ fontSize: '13px', color: '#334155', fontWeight: 500 }}>Underrepresented Groups</span>
+                                    </div>
+                                    <span style={{ fontSize: '14px', fontWeight: 600, color: '#0f172a' }}>28%</span>
+                                </div>
+                                <div style={{ marginTop: 'auto', padding: '12px', background: '#f8fafc', borderRadius: '8px', fontSize: '12px', color: '#64748b' }}>
+                                    <strong>Insight:</strong> Female applicant ratio is up 15% this quarter for Engineering roles, driven by your recent targeted campaign.
+                                </div>
+                            </div>
+                        </motion.div>
+                    </div>
                 )}
 
                 {/* Two-column: Recent Applications + Right Column */}

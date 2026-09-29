@@ -38,6 +38,8 @@ export interface OpportunityCard {
     // Internal platform postings (from employers)
     isInternalPosting?: boolean;
     internalRoleId?: string;
+    applicantCount?: number;
+    deadline?: string;
 }
 
 export interface OpportunitySearchParams {
@@ -212,9 +214,10 @@ async function fetchEmployerPostedRoles(): Promise<OpportunityCard[]> {
             description: r.description,
             tags: r.tags || r.requiredSkills || [],
             salary: r.salary || r.stipend,
-            postedAt: undefined,
             isInternalPosting: true,
             internalRoleId: r._docId || r.id,
+            applicantCount: r.applicantCount || r.applicants || 0,
+            deadline: r.deadline,
         } as OpportunityCard));
     } catch (e) {
         console.error('[opportunityService] Employer posted roles fetch failed:', e);

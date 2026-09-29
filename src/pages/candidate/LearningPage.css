@@ -1,4 +1,4 @@
-.learn-page {
+﻿.learn-page {
     min-height: 100vh;
     background: #f8fafc;
     position: relative;
@@ -57,7 +57,7 @@
     line-height: var(--leading-relaxed);
 }
 
-/* ─── Goal Strip ─── */
+/* â”€â”€â”€ Goal Strip â”€â”€â”€ */
 .learn-goal-strip {
     display: flex;
     gap: var(--space-6);
@@ -117,7 +117,7 @@
 
 
 
-/* ─── Weekly Cards ─── */
+/* â”€â”€â”€ Weekly Cards â”€â”€â”€ */
 .learn-weeks {
     display: flex;
     flex-direction: column;
@@ -212,7 +212,7 @@
     white-space: nowrap;
 }
 
-/* ─── CTA ─── */
+/* â”€â”€â”€ CTA â”€â”€â”€ */
 .learn-cta-row {
     display: flex;
     align-items: center;
@@ -231,12 +231,12 @@
     font-size: var(--text-md);
     font-weight: var(--weight-bold);
     text-decoration: none;
-    transition: all var(--duration-normal);
+    transition: opacity var(--duration-normal) var(--ease-out), background var(--duration-normal) var(--ease-out), color var(--duration-normal) var(--ease-out), border-color var(--duration-normal) var(--ease-out), box-shadow 220ms var(--ease-out), transform 80ms var(--ease-out);
 }
 
 .learn-cta-btn:hover {
     background: var(--color-electric-light);
-    transform: translateY(-2px);
+    transform: translateZ(0); /* GPU layer — Emil: no layout-triggering Y shifts on hover */
 }
 
 .learn-cta-secondary {
@@ -253,7 +253,7 @@
     color: white;
 }
 
-/* ─── Loop ─── */
+/* â”€â”€â”€ Loop â”€â”€â”€ */
 .learn-product-loop {
     display: flex;
     flex-wrap: wrap;
@@ -294,7 +294,7 @@
     }
 }
 
-/* ─── Real Data Additions ─── */
+/* â”€â”€â”€ Real Data Additions â”€â”€â”€ */
 .inline-icon { display: inline-block; vertical-align: middle; margin-right: 4px; }
 .text-blue { color: #2563eb; }
 .text-gray { color: #94a3b8; }
@@ -331,7 +331,7 @@
     margin-top: 16px;
     transition: transform 0.2s, box-shadow 0.2s;
 }
-.learn-generate-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2); }
+.learn-generate-btn:hover { /* GPU layer only */ box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2); }
 
 .learn-list {
     display: grid;
@@ -418,11 +418,11 @@
     font-size: 0.85rem;
     font-weight: 700;
     text-decoration: none;
-    transition: all 0.2s;
+    transition: opacity 150ms cubic-bezier(0.23, 1, 0.32, 1), background 150ms cubic-bezier(0.23, 1, 0.32, 1), color 150ms cubic-bezier(0.23, 1, 0.32, 1), border-color 150ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 200ms cubic-bezier(0.23, 1, 0.32, 1), transform 80ms cubic-bezier(0.23, 1, 0.32, 1);
 }
 .learn-action-btn.primary:hover { background: #2563eb; color: #fff; border-color: #2563eb; }
 
-/* ── Gamified Soft Skills Arena ── */
+/* â”€â”€ Gamified Soft Skills Arena â”€â”€ */
 .learn-softskills-arena {
     background: linear-gradient(135deg, rgba(244, 63, 94, 0.05) 0%, rgba(251, 146, 60, 0.05) 100%);
     border: 1px solid rgba(244, 63, 94, 0.2);
@@ -527,7 +527,7 @@
     font-size: 1.05rem;
     text-decoration: none;
     box-shadow: 0 8px 20px -6px rgba(244, 63, 94, 0.5), inset 0 -3px 0 rgba(0, 0, 0, 0.1);
-    transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transition: opacity 150ms cubic-bezier(0.34, 1.56, 0.64, 1);
     cursor: pointer;
 }
 
@@ -540,4 +540,4 @@
 .lsa-btn:active {
     transform: translateY(1px);
     box-shadow: 0 4px 10px -4px rgba(244, 63, 94, 0.5), inset 0 -1px 0 rgba(0, 0, 0, 0.1);
-}
+}

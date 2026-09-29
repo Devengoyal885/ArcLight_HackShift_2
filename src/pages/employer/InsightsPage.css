@@ -1,4 +1,4 @@
-.insights-page {
+﻿.insights-page {
     min-height: 100vh;
     background: #f8fafc;
 }
@@ -156,7 +156,7 @@
     }
 }
 
-/* ─── KPI Strip ─── */
+/* â”€â”€â”€ KPI Strip â”€â”€â”€ */
 .insights-kpi-strip {
     display: flex;
     gap: var(--space-4);
@@ -192,7 +192,7 @@
     letter-spacing: var(--tracking-wide);
 }
 
-/* ─── Loading / Empty ─── */
+/* â”€â”€â”€ Loading / Empty â”€â”€â”€ */
 .insights-loading, .insights-empty {
     display: flex;
     flex-direction: column;
@@ -206,7 +206,7 @@
 .insights-spin { animation: insights-spin 1s linear infinite; }
 @keyframes insights-spin { to { transform: rotate(360deg); } }
 
-/* ─── Posting Type List ─── */
+/* â”€â”€â”€ Posting Type List â”€â”€â”€ */
 .insights-type-list {
     display: flex;
     flex-direction: column;
@@ -239,7 +239,7 @@
     color: var(--color-ink-900);
 }
 
-/* ─── Tabs ─── */
+/* â”€â”€â”€ Tabs â”€â”€â”€ */
 .insights-tabs {
     display: flex;
     gap: var(--space-2);
@@ -273,7 +273,7 @@
     box-shadow: 0 2px 8px rgba(37,99,235,0.25);
 }
 
-/* ─── Wide card (full grid width) ─── */
+/* â”€â”€â”€ Wide card (full grid width) â”€â”€â”€ */
 .insights-card--wide {
     grid-column: 1 / -1;
-}
+}

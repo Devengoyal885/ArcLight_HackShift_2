@@ -1,4 +1,4 @@
-.app-track-page {
+﻿.app-track-page {
     min-height: 100vh;
     background: #f8fafc;
     font-family: 'Inter', sans-serif;
@@ -159,7 +159,7 @@
 
 .app-track-action-btn:hover {
     background: #0f172a;
-    transform: translateY(-1px);
+    transform: translateZ(0); /* GPU layer — Emil: no layout-triggering Y shifts on hover */
 }
 
 .app-track-message {
@@ -267,7 +267,7 @@
     font-size: 0.875rem;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.15s;
+    transition: opacity 120ms cubic-bezier(0.23, 1, 0.32, 1), background 120ms cubic-bezier(0.23, 1, 0.32, 1), color 120ms cubic-bezier(0.23, 1, 0.32, 1), border-color 120ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 150ms cubic-bezier(0.23, 1, 0.32, 1), transform 80ms cubic-bezier(0.23, 1, 0.32, 1);
 }
 .app-tab.active { background: #fff; color: #1d4ed8; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
 .app-tab-count {
@@ -310,7 +310,7 @@
     background: #f8fafc;
     min-width: 80px;
     position: relative;
-    transition: all 0.2s;
+    transition: opacity 150ms cubic-bezier(0.23, 1, 0.32, 1), background 150ms cubic-bezier(0.23, 1, 0.32, 1), color 150ms cubic-bezier(0.23, 1, 0.32, 1), border-color 150ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 200ms cubic-bezier(0.23, 1, 0.32, 1), transform 80ms cubic-bezier(0.23, 1, 0.32, 1);
 }
 .pipeline-stage.active { box-shadow: 0 2px 10px rgba(37,99,235,0.12); }
 .pipeline-stage-count { font-size: 1.2rem; font-weight: 800; }
@@ -355,7 +355,7 @@
     border: 1.5px solid #e2e8f0;
     border-radius: 12px;
     padding: 16px 18px;
-    transition: all 0.2s;
+    transition: opacity 150ms cubic-bezier(0.23, 1, 0.32, 1), background 150ms cubic-bezier(0.23, 1, 0.32, 1), color 150ms cubic-bezier(0.23, 1, 0.32, 1), border-color 150ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 200ms cubic-bezier(0.23, 1, 0.32, 1), transform 80ms cubic-bezier(0.23, 1, 0.32, 1);
 }
 .saved-job-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.06); border-color: #93c5fd; }
 .saved-job-icon {
@@ -392,7 +392,7 @@
     font-weight: 700;
     cursor: pointer;
     text-decoration: none;
-    transition: all 0.2s;
+    transition: opacity 150ms cubic-bezier(0.23, 1, 0.32, 1), background 150ms cubic-bezier(0.23, 1, 0.32, 1), color 150ms cubic-bezier(0.23, 1, 0.32, 1), border-color 150ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 200ms cubic-bezier(0.23, 1, 0.32, 1), transform 80ms cubic-bezier(0.23, 1, 0.32, 1);
 }
 .saved-job-apply-btn:hover { background: #1d4ed8; }
 .saved-job-remove-btn {
@@ -406,7 +406,7 @@
     width: 34px;
     height: 34px;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: opacity 150ms cubic-bezier(0.23, 1, 0.32, 1), background 150ms cubic-bezier(0.23, 1, 0.32, 1), color 150ms cubic-bezier(0.23, 1, 0.32, 1), border-color 150ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 200ms cubic-bezier(0.23, 1, 0.32, 1), transform 80ms cubic-bezier(0.23, 1, 0.32, 1);
 }
 .saved-job-remove-btn:hover:not(:disabled) { background: #fecaca; }
 .saved-job-remove-btn:disabled { opacity: 0.5; cursor: not-allowed; }

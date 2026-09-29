@@ -1,11 +1,11 @@
-/* NotificationBell.css */
+﻿/* NotificationBell.css */
 
 .nb-wrap {
     position: relative;
     flex-shrink: 0;
 }
 
-/* ─── Bell Button ─── */
+/* â”€â”€â”€ Bell Button â”€â”€â”€ */
 .nb-btn {
     position: relative;
     display: flex;
@@ -46,7 +46,7 @@
     pointer-events: none;
 }
 
-/* ─── Panel ─── */
+/* â”€â”€â”€ Panel â”€â”€â”€ */
 .nb-panel {
     position: absolute;
     top: calc(100% + 10px);
@@ -116,7 +116,7 @@
 
 .nb-close-btn:hover { background: #f1f5f9; color: #374151; }
 
-/* ─── List ─── */
+/* â”€â”€â”€ List â”€â”€â”€ */
 .nb-list {
     overflow-y: auto;
     flex: 1;
@@ -137,7 +137,7 @@
     margin: 0;
 }
 
-/* ─── Item ─── */
+/* â”€â”€â”€ Item â”€â”€â”€ */
 .nb-item {
     display: flex;
     align-items: flex-start;

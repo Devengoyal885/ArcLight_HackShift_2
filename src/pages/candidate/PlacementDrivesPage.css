@@ -1,4 +1,4 @@
-/* PlacementDrivesPage.css */
+﻿/* PlacementDrivesPage.css */
 .pd-page { min-height: 100vh; background: #f8fafc; padding-top: 80px; }
 .pd-content { max-width: 900px; margin: 0 auto; padding: 28px 20px 80px; }
 
@@ -78,7 +78,7 @@
     background: none; border: 1px solid #e2e8f0;
     border-radius: 8px; padding: 7px 14px;
     font-size: 12px; font-weight: 600; color: #64748b; cursor: pointer;
-    transition: all 0.15s;
+    transition: opacity 120ms cubic-bezier(0.23, 1, 0.32, 1), background 120ms cubic-bezier(0.23, 1, 0.32, 1), color 120ms cubic-bezier(0.23, 1, 0.32, 1), border-color 120ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 150ms cubic-bezier(0.23, 1, 0.32, 1), transform 80ms cubic-bezier(0.23, 1, 0.32, 1);
 }
 .pd-expand-btn:hover { border-color: #2563eb; color: #2563eb; }
 .pd-expand-btn .rotated { transform: rotate(90deg); transition: transform 0.2s; }

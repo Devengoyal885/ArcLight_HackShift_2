@@ -20,7 +20,7 @@ const ICON_MAP = [
     <Compass size={24} />
 ];
 
-export default function CareerPage() {
+export default function CareerPage({ isEmbedded = false }: { isEmbedded?: boolean }) {
     const { user, dbUid, profile } = useAuth();
     const navigate = useNavigate();
     const [capabilities, setCapabilities] = useState<UserCapability[]>([]);
@@ -132,106 +132,38 @@ export default function CareerPage() {
 
     if (loading || generating) {
         return (
-            <div style={{
-                display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-                minHeight: '100vh', background: 'linear-gradient(135deg, #f0f4ff 0%, #fafbff 50%, #f5f0ff 100%)',
-                position: 'relative',
-            }}>
-                <FloatingNavbar variant="candidate" />
-                <div style={{ textAlign: 'center', padding: '3rem 2rem', maxWidth: '480px' }}>
-                    {/* Animated ring */}
-                    <div style={{ position: 'relative', width: '80px', height: '80px', margin: '0 auto 2rem' }}>
-                        <div style={{
-                            position: 'absolute', inset: 0, borderRadius: '50%',
-                            border: '3px solid #e0e7ff',
-                        }} />
-                        <div style={{
-                            position: 'absolute', inset: 0, borderRadius: '50%',
-                            border: '3px solid transparent',
-                            borderTopColor: '#6366f1',
-                            animation: 'spin 1s linear infinite',
-                        }} />
-                        <div style={{
-                            position: 'absolute', inset: '12px', borderRadius: '50%',
-                            background: 'linear-gradient(135deg, #818cf8, #6366f1)',
-                            display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        }}>
-                            <Sparkles size={22} color="white" />
-                        </div>
-                    </div>
-
-                    <h2 style={{
-                        fontSize: '1.5rem', fontWeight: 700, color: '#1e1b4b',
-                        marginBottom: '0.75rem', lineHeight: 1.3,
-                    }}>
-                        {generating ? 'Plotting your career path…' : 'Loading your profile…'}
-                    </h2>
-                    <p style={{ color: '#6b7280', fontSize: '0.95rem', marginBottom: '2.5rem', lineHeight: 1.6 }}>
+            <div className="career-loading-root">
+                {!isEmbedded && <FloatingNavbar variant="candidate" />}
+                <div className="career-loading-card">
+                    <div className="career-loading-ring" />
+                    <h2>{generating ? 'Plotting your career path…' : 'Loading your profile…'}</h2>
+                    <p>
                         {generating
-                            ? 'Our AI is analyzing your verified capabilities and identifying your best-fit career trajectories.'
+                            ? 'Analyzing your verified capabilities and identifying best-fit career trajectories.'
                             : 'Fetching your verified capability data…'
                         }
                     </p>
-
-                    {/* Animated progress dots */}
-                    <div style={{ display: 'flex', gap: '8px', justifyContent: 'center', alignItems: 'center' }}>
+                    <div className="career-loading-dots">
                         {[0, 1, 2, 3].map(i => (
-                            <div key={i} style={{
-                                width: '8px', height: '8px', borderRadius: '50%',
-                                background: '#6366f1',
-                                animation: `pulse 1.4s ease-in-out ${i * 0.2}s infinite`,
-                                opacity: 0.3,
-                            }} />
+                            <div key={i} className="career-loading-dot" />
                         ))}
                     </div>
-
-
                 </div>
-
-                <style>{`
-                    @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-                    @keyframes pulse { 0%, 100% { opacity: 0.3; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.2); } }
-                `}</style>
             </div>
         );
     }
 
     if (targetRoles.length === 0) {
         return (
-            <div style={{
-                display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-                minHeight: '100vh', background: 'linear-gradient(135deg, #f0f4ff 0%, #fafbff 50%, #f5f0ff 100%)',
-            }}>
-                <FloatingNavbar variant="candidate" />
-                <div style={{
-                    textAlign: 'center', maxWidth: '440px', background: 'white',
-                    padding: '2.5rem 2rem', borderRadius: '20px',
-                    boxShadow: '0 4px 24px rgba(99,102,241,0.08)', border: '1px solid #e0e7ff',
-                }}>
-                    <div style={{
-                        width: '64px', height: '64px', borderRadius: '50%',
-                        background: 'linear-gradient(135deg, #818cf8, #6366f1)',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        margin: '0 auto 1.25rem',
-                    }}>
-                        <Sparkles size={28} color="white" />
+            <div className="career-loading-root">
+                {!isEmbedded && <FloatingNavbar variant="candidate" />}
+                <div className="career-empty-card">
+                    <div className="career-empty-icon">
+                        <Sparkles size={24} />
                     </div>
-                    <h2 style={{ fontSize: '1.35rem', fontWeight: 700, color: '#1e1b4b', marginBottom: '0.5rem' }}>
-                        Ready to chart your career?
-                    </h2>
-                    <p style={{ color: '#6b7280', marginBottom: '1.75rem', lineHeight: 1.6, fontSize: '0.95rem' }}>
-                        We'll use AI to analyze your verified capabilities and map out your best-fit career trajectories.
-                    </p>
-                    <button
-                        style={{
-                            background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', color: 'white',
-                            fontWeight: 700, padding: '0.75rem 1.75rem', borderRadius: '12px',
-                            border: 'none', cursor: 'pointer', fontSize: '0.95rem',
-                            display: 'inline-flex', alignItems: 'center', gap: '8px',
-                            boxShadow: '0 4px 14px rgba(99,102,241,0.35)',
-                        }}
-                        onClick={() => handleGenerateRoles(true)}
-                    >
+                    <h2>Chart your career</h2>
+                    <p>We'll use AI to analyze your verified capabilities and map out your best-fit career trajectories.</p>
+                    <button className="career-empty-btn" onClick={() => handleGenerateRoles(true)}>
                         <Sparkles size={16} /> Generate Career Map
                     </button>
                 </div>
@@ -262,52 +194,83 @@ export default function CareerPage() {
 
     return (
         <div className="career-page">
-            <FloatingNavbar variant="candidate" />
-            <div className="career-page-bg" />
+            {!isEmbedded && <FloatingNavbar variant="candidate" />}
+            {!isEmbedded && <div className="career-page-bg" />}
 
             <main className="career-main">
-                {/* Header */}
-                <motion.div className="career-header-section" initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }}>
+                {/* Header — asymmetric split layout */}
+                <motion.div
+                    className="career-header-section"
+                    initial={{ opacity: 0, y: -12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
+                >
                     <div className="career-header-content">
-                        <span className="career-badge"><Sparkles size={14} style={{ display: 'inline', marginRight: '4px' }}/> AI Career Roadmap</span>
+                        <span className="career-badge">
+                            <Sparkles size={12} /> AI Career Roadmap
+                        </span>
                         <h1 className="career-title">Chart your path to<br /><em>Professional Mastery.</em></h1>
-                        <p className="career-sub">Discover curated career paths mapped exactly to your verified capabilities. Identify real gaps and follow a concrete timeline.</p>
+                        <p className="career-sub">Curated career paths mapped to your verified capabilities. Identify real gaps and follow a concrete timeline.</p>
+                    </div>
+
+                    {/* Header stat strip — apple glass material */}
+                    <div className="career-header-stat-strip">
+                        <div className="career-stat-item">
+                            <div className="career-stat-icon" style={{ background: 'rgba(37,99,235,0.08)', color: '#2563eb' }}>
+                                <Target size={18} />
+                            </div>
+                            <div className="career-stat-text">
+                                <span className="career-stat-label">Role Matches</span>
+                                <span className="career-stat-value">{targetRoles.length} Paths</span>
+                            </div>
+                        </div>
+                        <div className="career-stat-item">
+                            <div className="career-stat-icon" style={{ background: 'rgba(239,68,68,0.08)', color: '#dc2626' }}>
+                                <TrendingUp size={18} />
+                            </div>
+                            <div className="career-stat-text">
+                                <span className="career-stat-label">Skill Gaps</span>
+                                <span className="career-stat-value">{numGaps} to close</span>
+                            </div>
+                        </div>
+                        <div className="career-stat-item">
+                            <div className="career-stat-icon" style={{ background: 'rgba(16,185,129,0.08)', color: '#10b981' }}>
+                                <Compass size={18} />
+                            </div>
+                            <div className="career-stat-text">
+                                <span className="career-stat-label">Capabilities</span>
+                                <span className="career-stat-value">{capabilities.length} verified</span>
+                            </div>
+                        </div>
                     </div>
                 </motion.div>
 
                 {/* Top Roles Carousel */}
-                <motion.section className="career-carousel-section" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
+                <motion.section className="career-carousel-section" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1, duration: 0.4, ease: [0.23, 1, 0.32, 1] }}>
                     <div className="career-carousel-header">
-                        <h2>Personalized Trajectories for You</h2>
-                        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                        <div>
+                            <p className="career-section-eyebrow">Personalized for you</p>
+                            <h2>Career Trajectories</h2>
+                        </div>
+                        <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
                             <button
+                                className="career-regen-btn"
                                 onClick={() => handleGenerateRoles(true)}
-                                style={{
-                                    display: 'flex', alignItems: 'center', gap: '6px',
-                                    background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
-                                    color: 'white', border: 'none', borderRadius: '8px',
-                                    padding: '7px 14px', fontSize: '13px', fontWeight: 700,
-                                    cursor: 'pointer', boxShadow: '0 2px 8px rgba(99,102,241,0.3)',
-                                }}
                             >
                                 <Sparkles size={14} /> Regenerate
                             </button>
                             <div className="carousel-nav">
-                                <button onClick={prevRole} className="carousel-btn"><ChevronLeft size={20} /></button>
-                                <button onClick={nextRole} className="carousel-btn"><ChevronRight size={20} /></button>
+                                <button onClick={prevRole} className="carousel-btn"><ChevronLeft size={18} /></button>
+                                <button onClick={nextRole} className="carousel-btn"><ChevronRight size={18} /></button>
                             </div>
                         </div>
                     </div>
 
-                    <div className="career-carousel-container" style={{ overflow: 'hidden', padding: '8px 0' }}>
+                    <div className="career-carousel-container">
                         <div
                             className="career-carousel-track"
                             style={{
-                                display: 'flex',
-                                gap: '24px',
-                                transition: 'transform 0.5s cubic-bezier(0.16, 1, 0.3, 1)',
-                                transform: `translateX(calc(-${activeRoleIndex} * (300px + 24px)))`,
-                                width: 'max-content',
+                                transform: `translateX(calc(-${activeRoleIndex} * (280px + 16px)))`,
                             }}
                         >
                             {targetRoles.map((role, idx) => {
@@ -323,68 +286,51 @@ export default function CareerPage() {
                                     : 0;
 
                                 const isActive = idx === activeRoleIndex;
-                                const iconGradients = [
-                                    'linear-gradient(135deg,#6366f1,#8b5cf6)',
-                                    'linear-gradient(135deg,#0ea5e9,#6366f1)',
-                                    'linear-gradient(135deg,#10b981,#0ea5e9)',
-                                    'linear-gradient(135deg,#f59e0b,#ef4444)',
+                                const iconBgs = [
+                                    { bg: '#18181B', color: 'white' },
+                                    { bg: '#1d4ed8', color: 'white' },
+                                    { bg: '#047857', color: 'white' },
+                                    { bg: '#b45309', color: 'white' },
                                 ];
                                 const matchColor = dynamicMatch >= 70 ? '#10b981' : dynamicMatch >= 40 ? '#f59e0b' : '#ef4444';
-                                const matchBg = dynamicMatch >= 70 ? 'rgba(16,185,129,0.1)' : dynamicMatch >= 40 ? 'rgba(245,158,11,0.1)' : 'rgba(239,68,68,0.1)';
+                                const matchBg = dynamicMatch >= 70 ? 'rgba(16,185,129,0.08)' : dynamicMatch >= 40 ? 'rgba(245,158,11,0.08)' : 'rgba(239,68,68,0.08)';
+                                const matchBorder = dynamicMatch >= 70 ? 'rgba(16,185,129,0.2)' : dynamicMatch >= 40 ? 'rgba(245,158,11,0.2)' : 'rgba(239,68,68,0.2)';
 
                                 return (
                                     <motion.div
                                         key={role.id || idx}
                                         onClick={() => setActiveRoleIndex(idx)}
-                                        whileHover={{ y: -4, boxShadow: '0 16px 32px rgba(0,0,0,0.1)' }}
-                                        style={{
-                                            width: '300px', flexShrink: 0,
-                                            background: isActive ? 'linear-gradient(135deg, #fafbff 0%, #f0f4ff 100%)' : 'white',
-                                            border: isActive ? '2px solid #6366f1' : '1px solid #e2e8f0',
-                                            borderRadius: '20px',
-                                            padding: '20px',
-                                            cursor: 'pointer',
-                                            boxShadow: isActive
-                                                ? '0 8px 24px rgba(99,102,241,0.15)'
-                                                : '0 4px 6px rgba(0,0,0,0.02)',
-                                            transition: 'all 0.3s ease',
-                                            position: 'relative', overflow: 'hidden',
-                                        }}
+                                        className={`career-role-card${isActive ? ' active' : ''}`}
+                                        initial={{ opacity: 0, y: 12 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ delay: idx * 0.06, duration: 0.35, ease: [0.23, 1, 0.32, 1] }}
                                     >
-                                        {isActive && (
-                                            <div style={{
-                                                position: 'absolute', top: 0, left: 0, right: 0, height: '3px',
-                                                background: 'linear-gradient(90deg, #6366f1, #8b5cf6)',
-                                            }} />
-                                        )}
-                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
-                                            <div style={{
-                                                width: '48px', height: '48px', borderRadius: '14px',
-                                                background: iconGradients[idx % iconGradients.length],
-                                                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                                boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-                                            }}>
-                                                {[<Map size={22} color="white" />, <Target size={22} color="white" />, <TrendingUp size={22} color="white" />, <Compass size={22} color="white" />][idx % 4]}
+                                        <div className="role-card-header">
+                                            <div
+                                                className="role-card-icon"
+                                                style={{ background: iconBgs[idx % iconBgs.length].bg }}
+                                            >
+                                                {[<Map size={20} color="white" />, <Target size={20} color="white" />, <TrendingUp size={20} color="white" />, <Compass size={20} color="white" />][idx % 4]}
                                             </div>
-                                            <span style={{
-                                                background: matchBg, color: matchColor,
-                                                padding: '4px 10px', borderRadius: '20px',
-                                                fontSize: '12px', fontWeight: 700,
-                                            }}>
+                                            <span
+                                                className="role-match-badge"
+                                                style={{ background: matchBg, color: matchColor, border: `1px solid ${matchBorder}` }}
+                                            >
                                                 {dynamicMatch}% Match
                                             </span>
                                         </div>
-                                        <h3 style={{ fontSize: '16px', fontWeight: 700, color: '#0f172a', marginBottom: '12px', lineHeight: 1.3 }}>
-                                            {role.role}
-                                        </h3>
-                                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                                        <h3 className="role-card-title">{role.role}</h3>
+                                        <div className="role-tags">
                                             {role.tags.map(tag => (
-                                                <span key={tag} style={{
-                                                    fontSize: '11px', padding: '3px 10px',
-                                                    background: isActive ? '#e0e7ff' : '#f1f5f9',
-                                                    color: isActive ? '#4338ca' : '#475569',
-                                                    borderRadius: '20px', fontWeight: 600,
-                                                }}>
+                                                <span
+                                                    key={tag}
+                                                    className="role-tag"
+                                                    style={{
+                                                        background: isActive ? 'rgba(37,99,235,0.08)' : '#F4F4F5',
+                                                        color: isActive ? '#2563eb' : '#52525b',
+                                                        border: isActive ? '1px solid rgba(37,99,235,0.14)' : '1px solid transparent',
+                                                    }}
+                                                >
                                                     {tag}
                                                 </span>
                                             ))}
@@ -395,18 +341,14 @@ export default function CareerPage() {
                         </div>
                     </div>
 
-                    {/* Dots indicator */}
-                    <div style={{ display: 'flex', gap: '6px', justifyContent: 'center', marginTop: '12px' }}>
+                    {/* Dot indicators */}
+                    <div className="career-carousel-dots">
                         {targetRoles.map((_, idx) => (
                             <div
                                 key={idx}
                                 onClick={() => setActiveRoleIndex(idx)}
-                                style={{
-                                    width: idx === activeRoleIndex ? '24px' : '8px',
-                                    height: '8px', borderRadius: '4px',
-                                    background: idx === activeRoleIndex ? '#6366f1' : '#e2e8f0',
-                                    cursor: 'pointer', transition: 'all 0.3s ease',
-                                }}
+                                className={`career-carousel-dot${idx === activeRoleIndex ? ' active' : ''}`}
+                                style={{ width: idx === activeRoleIndex ? '24px' : '8px', cursor: 'pointer' }}
                             />
                         ))}
                     </div>
@@ -415,16 +357,14 @@ export default function CareerPage() {
                 <div className="career-dashboard-layout">
                     {/* Left Column: Skill Gaps Dashboard */}
                     <AnimatePresence mode="wait">
-                        <motion.div key={activeRole.id} className="career-dashboard-col" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.3 }}>
+                        <motion.div key={activeRole.id} className="career-dashboard-col" initial={{ opacity: 0, x: -16 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -16 }} transition={{ duration: 0.3, ease: [0.23, 1, 0.32, 1] }}>
                             <div className="dashboard-panel">
                                 <div className="panel-header">
                                     <div>
                                         <h3>Capability Assessment</h3>
-                                        <p style={{ fontSize: '12px', color: '#94a3b8', marginTop: '2px' }}>
-                                            For: <strong style={{ color: '#6366f1' }}>{activeRole.role}</strong>
-                                        </p>
+                                        <p className="panel-sub">For: <strong style={{ color: '#2563eb' }}>{activeRole.role}</strong></p>
                                     </div>
-                                    <span className="gap-badge">{numGaps} Gap{numGaps !== 1 ? 's' : ''} Identified</span>
+                                    <span className="gap-badge">{numGaps} Gap{numGaps !== 1 ? 's' : ''}</span>
                                 </div>
 
                                 <div className="caps-grid">
@@ -432,9 +372,9 @@ export default function CareerPage() {
                                         <motion.div
                                             key={cap.id}
                                             className="cap-grid-item"
-                                            initial={{ opacity: 0, y: 10 }}
+                                            initial={{ opacity: 0, y: 8 }}
                                             animate={{ opacity: 1, y: 0 }}
-                                            transition={{ delay: 0.1 + i * 0.05 }}
+                                            transition={{ delay: 0.08 + i * 0.04, ease: [0.23, 1, 0.32, 1] }}
                                         >
                                             <SkillGapIndicator
                                                 label={cap.label}
@@ -532,72 +472,77 @@ export default function CareerPage() {
                     </AnimatePresence>
                 </div>
 
-                {/* Bottom Action Center / Launchpad */}
-                <motion.section 
-                    className="career-action-center" 
-                    initial={{ opacity: 0, y: 20 }} 
-                    animate={{ opacity: 1, y: 0 }} 
-                    transition={{ delay: 0.4 }}
-                    style={{ marginTop: '24px', display: 'flex', gap: '16px', flexWrap: 'wrap' }}
+                {/* Bottom Action Center — Bento 2x2 grid */}
+                <motion.section
+                    className="career-action-center"
+                    initial={{ opacity: 0, y: 16 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.4, duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
                 >
-                    <div style={{ flex: '1 1 300px', background: 'white', borderRadius: '16px', padding: '24px', border: '1px solid #e2e8f0', boxShadow: '0 4px 6px rgba(0,0,0,0.02)', display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-                        <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: '#f0fdf4', color: '#16a34a', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px' }}>
+                    <div className="career-action-tile">
+                        <div className="career-action-icon" style={{ background: 'rgba(22,163,74,0.08)', color: '#16a34a' }}>
                             <FileText size={20} />
                         </div>
-                        <h4 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#0f172a', marginBottom: '8px' }}>Tailor Resume</h4>
-                        <p style={{ color: '#64748b', fontSize: '0.9rem', marginBottom: '20px', lineHeight: 1.5 }}>
-                            Automatically generate a resume perfectly aligned with the {activeRole.role} requirements.
+                        <h4 className="career-action-title">Tailor Resume</h4>
+                        <p className="career-action-desc">
+                            Generate a resume perfectly aligned with the {activeRole.role} requirements.
                         </p>
-                        <button 
+                        <button
+                            className="career-action-btn"
                             onClick={() => {
                                 const jd = `Target Role: ${activeRole.role}\nKey Requirements: ${activeRole.requirements.map(r => r.skill).join(', ')}`;
                                 navigate('/candidate/resume', { state: { jdText: jd } });
                             }}
-                            style={{ marginTop: 'auto', width: '100%', background: '#f8fafc', border: '1px solid #e2e8f0', color: '#0f172a', padding: '10px', borderRadius: '8px', fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s' }}
-                            onMouseOver={e => (e.currentTarget.style.background = '#f1f5f9')}
-                            onMouseOut={e => (e.currentTarget.style.background = '#f8fafc')}
                         >
-                            Start Tailoring
+                            Start tailoring
                         </button>
                     </div>
 
-                    <div style={{ flex: '1 1 300px', background: 'white', borderRadius: '16px', padding: '24px', border: '1px solid #e2e8f0', boxShadow: '0 4px 6px rgba(0,0,0,0.02)', display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-                        <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: '#f0f9ff', color: '#0284c7', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px' }}>
+                    <div className="career-action-tile">
+                        <div className="career-action-icon" style={{ background: 'rgba(2,132,199,0.08)', color: '#0284c7' }}>
                             <Video size={20} />
                         </div>
-                        <h4 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#0f172a', marginBottom: '8px' }}>Mock Interview</h4>
-                        <p style={{ color: '#64748b', fontSize: '0.9rem', marginBottom: '20px', lineHeight: 1.5 }}>
-                            Practice a realistic AI interview specifically designed for the {activeRole.role} position.
+                        <h4 className="career-action-title">Mock Interview</h4>
+                        <p className="career-action-desc">
+                            Practice a realistic AI interview designed for the {activeRole.role} position.
                         </p>
-                        <button 
-                            onClick={() => {
-                                navigate('/candidate/interview', { state: { role: activeRole.role } });
-                            }}
-                            style={{ marginTop: 'auto', width: '100%', background: '#f8fafc', border: '1px solid #e2e8f0', color: '#0f172a', padding: '10px', borderRadius: '8px', fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s' }}
-                            onMouseOver={e => (e.currentTarget.style.background = '#f1f5f9')}
-                            onMouseOut={e => (e.currentTarget.style.background = '#f8fafc')}
+                        <button
+                            className="career-action-btn"
+                            onClick={() => navigate('/candidate/interview', { state: { role: activeRole.role } })}
                         >
-                            Start Practice
+                            Start practice
                         </button>
                     </div>
-                    
-                    <div style={{ flex: '1 1 300px', background: 'white', borderRadius: '16px', padding: '24px', border: '1px solid #e2e8f0', boxShadow: '0 4px 6px rgba(0,0,0,0.02)', display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-                        <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: '#fef2f2', color: '#dc2626', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px' }}>
+
+                    <div className="career-action-tile">
+                        <div className="career-action-icon" style={{ background: 'rgba(220,38,38,0.08)', color: '#dc2626' }}>
                             <Briefcase size={20} />
                         </div>
-                        <h4 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#0f172a', marginBottom: '8px' }}>Find Jobs</h4>
-                        <p style={{ color: '#64748b', fontSize: '0.9rem', marginBottom: '20px', lineHeight: 1.5 }}>
-                            Browse live job openings on CapAble that match this exact role profile.
+                        <h4 className="career-action-title">Find Jobs</h4>
+                        <p className="career-action-desc">
+                            Browse live openings that match this exact role profile.
                         </p>
-                        <button 
-                            onClick={() => {
-                                navigate('/candidate/opportunities', { state: { search: activeRole.role } });
-                            }}
-                            style={{ marginTop: 'auto', width: '100%', background: '#f8fafc', border: '1px solid #e2e8f0', color: '#0f172a', padding: '10px', borderRadius: '8px', fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s' }}
-                            onMouseOver={e => (e.currentTarget.style.background = '#f1f5f9')}
-                            onMouseOut={e => (e.currentTarget.style.background = '#f8fafc')}
+                        <button
+                            className="career-action-btn"
+                            onClick={() => navigate('/candidate/opportunities', { state: { search: activeRole.role } })}
                         >
-                            Search Jobs
+                            Search jobs
+                        </button>
+                    </div>
+
+                    <div className="career-action-tile">
+                        <div className="career-action-icon" style={{ background: 'rgba(124,58,237,0.08)', color: '#7c3aed' }}>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                        </div>
+                        <h4 className="career-action-title">Find a Mentor</h4>
+                        <p className="career-action-desc">
+                            Connect with professionals working as a {activeRole.role}.
+                        </p>
+                        <button
+                            className="career-action-btn"
+                            onClick={() => alert(`Matchmaking initialized for ${activeRole.role} mentors.`)}
+                        >
+                            Match with mentor
                         </button>
                     </div>
                 </motion.section>

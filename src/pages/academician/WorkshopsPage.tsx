@@ -82,6 +82,18 @@ export default function WorkshopsPage() {
                 )}
 
                 <section className="acad-section">
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'linear-gradient(to right, rgba(37, 99, 235, 0.1), rgba(124, 58, 237, 0.1))', padding: '1.5rem', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.05)', marginBottom: '32px' }}>
+                        <div>
+                            <h2 style={{ fontSize: '1.15rem', fontWeight: 700, color: '#f8fafc', margin: '0 0 4px' }}>Industry Expert Matching</h2>
+                            <p style={{ margin: 0, fontSize: '0.85rem', color: '#94a3b8', maxWidth: '600px' }}>Request a guest speaker from our network of industry professionals for your classes or department events.</p>
+                        </div>
+                        <button style={{ background: '#2563eb', color: 'white', border: 'none', padding: '0.6rem 1.25rem', borderRadius: '8px', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <User size={16} /> Request Speaker
+                        </button>
+                    </div>
+                </section>
+
+                <section className="acad-section">
                     <h2 className="acad-section-title">Upcoming Workshops</h2>
                     {loading ? (
                         <div className="acad-loading"><Loader2 size={28} className="spin" /><p>Loading events...</p></div>

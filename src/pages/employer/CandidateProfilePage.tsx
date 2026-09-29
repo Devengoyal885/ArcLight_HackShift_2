@@ -140,10 +140,12 @@ export default function CandidateProfilePage() {
                                         disabled={actionLoading}
                                         onClick={async () => {
                                             if (!id || !user) return;
-                                            if (!confirm('Reject this candidate?')) return;
+                                            const feedbackStr = window.prompt('Provide feedback to the candidate (optional):');
+                                            if (feedbackStr === null) return; // User cancelled
+                                            
                                             setActionLoading(true);
                                             try {
-                                                await updateApplicationStatus(appState.roleId!, appState.applicationId!, id, 'Rejected');
+                                                await updateApplicationStatus(appState.roleId!, appState.applicationId!, id, 'Rejected', undefined, undefined, undefined, feedbackStr);
                                                 setCurrentStatus('Rejected');
                                             } catch(e) { console.error(e); }
                                             finally { setActionLoading(false); }

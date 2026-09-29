@@ -1,0 +1,1 @@
+https://login.salesforce.com/services/oauth2/authorize?state=a43091b4b733&prompt=login&scope=refresh_token%20api%20web&code_challenge=EUqUGgB1KeVQy13wUOWzZ3v9uQG95O46XoZ7zz14vMk&response_type=code&client_id=PlatformCLI&redirect_uri=http%3A%2F%2Flocalhost%3A1717%2FOauthRedirect

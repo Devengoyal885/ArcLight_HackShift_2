@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { FloatingNavbar } from '../../components/navigation/FloatingNavbar';
-import { getGlobalPlacements, type PlacementRecord } from '../../services/institutionService';
-import { TrendingUp, Search, Loader2, AlertCircle } from 'lucide-react';
+import { getGlobalPlacements, verifyPlacementOffer, type PlacementRecord } from '../../services/institutionService';
+import { TrendingUp, Search, Loader2, AlertCircle, CheckCircle2, XCircle, FileText, IndianRupee } from 'lucide-react';
 import './InstitutionSubPages.css';
 
 const STATUS_ORDER = [
@@ -20,12 +20,26 @@ export default function PlacementsPage() {
     const [search, setSearch] = useState('');
     const [filterStatus, setFilterStatus] = useState('all');
 
-    useEffect(() => {
+    const loadPlacements = () => {
         getGlobalPlacements()
             .then(setPlacements)
             .catch(console.error)
             .finally(() => setLoading(false));
+    };
+
+    useEffect(() => {
+        loadPlacements();
     }, []);
+
+    const handleVerify = async (roleId: string, appId: string, verify: boolean) => {
+        if (!roleId || !appId) return;
+        try {
+            await verifyPlacementOffer(roleId, appId, verify);
+            loadPlacements();
+        } catch (e) {
+            console.error("Failed to verify offer", e);
+        }
+    };
 
     const filtered = placements.filter(p => {
         const matchesSearch = !search.trim() ||
@@ -150,6 +164,8 @@ export default function PlacementsPage() {
                                     <th>Candidate</th>
                                     <th>Company</th>
                                     <th>Role</th>
+                                    <th>Package</th>
+                                    <th>Offer Letter</th>
                                     <th>Status</th>
                                 </tr>
                             </thead>
@@ -169,6 +185,43 @@ export default function PlacementsPage() {
                                         </td>
                                         <td style={{ fontWeight: 600, color: '#0f172a' }}>{p.companyName}</td>
                                         <td style={{ color: '#475569' }}>{p.roleTitle}</td>
+                                        <td style={{ color: '#475569', fontWeight: 500 }}>
+                                            {p.salaryPackage ? (
+                                                <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                                    <IndianRupee size={12} /> {p.salaryPackage} LPA
+                                                </span>
+                                            ) : '—'}
+                                        </td>
+                                        <td>
+                                            {p.status === 'Offer Extended' || p.status === 'Placed' ? (
+                                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                                    {p.offerLetterUrl ? (
+                                                        <a href={p.offerLetterUrl} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#2563eb', fontSize: '13px', textDecoration: 'none' }}>
+                                                            <FileText size={14} /> View
+                                                        </a>
+                                                    ) : (
+                                                        <span style={{ color: '#94a3b8', fontSize: '13px' }}>Missing</span>
+                                                    )}
+                                                    
+                                                    {p.offerVerified ? (
+                                                        <span style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#10b981', fontSize: '12px', fontWeight: 600, background: '#ecfdf5', padding: '2px 8px', borderRadius: '12px' }}>
+                                                            <CheckCircle2 size={12} /> Verified
+                                                        </span>
+                                                    ) : p.offerLetterUrl ? (
+                                                        <div style={{ display: 'flex', gap: '4px' }}>
+                                                            <button onClick={() => handleVerify(p.roleId, p.applicationId, true)} style={{ background: '#10b981', color: 'white', border: 'none', padding: '4px 8px', borderRadius: '4px', cursor: 'pointer', fontSize: '11px', fontWeight: 600 }}>
+                                                                Verify
+                                                            </button>
+                                                            <button onClick={() => handleVerify(p.roleId, p.applicationId, false)} style={{ background: '#ef4444', color: 'white', border: 'none', padding: '4px 8px', borderRadius: '4px', cursor: 'pointer', fontSize: '11px', fontWeight: 600 }}>
+                                                                Reject
+                                                            </button>
+                                                        </div>
+                                                    ) : null}
+                                                </div>
+                                            ) : (
+                                                <span style={{ color: '#cbd5e1' }}>—</span>
+                                            )}
+                                        </td>
                                         <td>
                                             <span className={`inst-badge inst-badge--${p.status.replace(/\s+/g, '')}`}
                                                 style={{ background: STATUS_ORDER.find(s => s.key === p.status)?.color + '18' || undefined, color: STATUS_ORDER.find(s => s.key === p.status)?.color || undefined }}>

@@ -1,8 +1,10 @@
 import { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FloatingNavbar } from '../../components/navigation/FloatingNavbar';
+import ProfileNudgeBanner from '../../components/ui/ProfileNudgeBanner';
 import { IdentityCard3D } from '../../components/3d/IdentityCard3D';
 import { JobSkeleton } from '../../components/ui/JobSkeleton';
+import { Tooltip } from '../../components/ui/Tooltip';
 import { Link, useNavigate } from 'react-router-dom';
 import {
     ChevronRight, Map, Briefcase, GraduationCap, Building2, MapPin,
@@ -56,6 +58,19 @@ export default function CandidateDashboard() {
         return Math.round(capabilities.reduce((s, c) => s + c.score, 0) / capabilities.length);
     }, [capabilities]);
 
+    const careerReadinessScore = useMemo(() => {
+        let score = 0;
+        if (capabilities.length >= 5) score += 40;
+        else if (capabilities.length > 0) score += capabilities.length * 8;
+        
+        if (capabilityConfidence > 80) score += 30;
+        else if (capabilityConfidence > 50) score += 15;
+        
+        if (profile?.githubUsername) score += 15;
+        if (profile?.headline) score += 15;
+        return score > 100 ? 100 : score;
+    }, [capabilities, capabilityConfidence, profile]);
+
     // Load capabilities from Firestore
     useEffect(() => {
         if (!user) return;
@@ -67,6 +82,8 @@ export default function CandidateDashboard() {
             setCapsLoaded(true);
         });
     }, [user]);
+
+    const globalScore = (profile as any)?.totalScore || 0;
 
     // Fetch full cron pool, filter by tab type client-side, score against user skills
     useEffect(() => {
@@ -151,7 +168,7 @@ export default function CandidateDashboard() {
             className="c-job-card-premium"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ type: 'spring', stiffness: 200, damping: 20, delay: i * 0.05 }}
+            transition={{ type: 'spring', bounce: 0, duration: 0.4, delay: i * 0.05 }}
         >
             <div className="c-job-header-premium">
                 <div className="c-job-logo-wrapper">
@@ -239,13 +256,15 @@ export default function CandidateDashboard() {
                         </linearGradient>
                     </defs>
                 </svg>
-                <div className="c-dash-orb c-dash-orb--1" />
-                <div className="c-dash-orb c-dash-orb--2" />
-                <div className="c-dash-orb c-dash-orb--3" />
-                <div className="c-dash-grid" />
+                {/* Ethereal Noise Overlay */}
+                <div className="c-dash-noise-overlay" />
+                {/* No neon orbs. */}
             </div>
 
             <main className="c-dash-main">
+                <div style={{ padding: '0 24px', maxWidth: '1400px', margin: '0 auto', width: '100%' }}>
+                    <ProfileNudgeBanner />
+                </div>
                 <div className="c-dash-grid-layout">
                     {/* ─── LEFT: Identity & Overview ─── */}
                     <motion.div
@@ -254,39 +273,55 @@ export default function CandidateDashboard() {
                         animate={{ opacity: 1, x: 0 }}
                     >
                         <div className="c-dash-greeting">
-                            <p className="c-dash-time-label">{greeting}</p>
-                            <h1 className="c-dash-name">{firstName}.</h1>
+                            <h1 className="c-dash-name">
+                                {greeting.split(' ')[0]} 
+                                <span className="c-dash-inline-pill">
+                                    <span className="c-dash-pulse-dot" /> {globalScore} IQ
+                                </span> 
+                                {greeting.split(' ')[1] ? greeting.split(' ')[1] : ''} <br/> 
+                                <span style={{ color: '#64748B' }}>{firstName}.</span>
+                            </h1>
+                            <p className="c-dash-time-label" style={{ marginTop: '16px' }}>
+                                Your career intelligence is active.
+                            </p>
                         </div>
 
-                        <IdentityCard3D
-                            name={displayName}
-                            role={profile?.headline || 'Software Engineer'}
-                            initials={photoURL ? '' : initials}
-                            capabilityConfidence={capabilityConfidence}
-                            verifiedEvidence={capabilities.length}
-                            projectCount={0}
-                            photoURL={photoURL}
-                        />
+                        <Tooltip content="Your 3D Identity Card. Share it via Codolio profile!" position="right" delay={1}>
+                            <IdentityCard3D
+                                name={displayName}
+                                role={profile?.headline || 'Software Engineer'}
+                                initials={photoURL ? '' : initials}
+                                capabilityConfidence={capabilityConfidence}
+                                verifiedEvidence={capabilities.length}
+                                projectCount={0}
+                                photoURL={photoURL}
+                                globalScore={globalScore}
+                            />
+                        </Tooltip>
 
                         {/* Identity Actions & Capabilities */}
                         <div className="c-dash-identity-actions">
                             {/* GitHub sync button */}
                             {profile?.githubUsername ? (
-                                <button className="id-capsule-btn" onClick={handleGithubSync} disabled={syncingGithub}>
-                                    <span className="id-capsule-icon"><GitBranch size={14} /></span>
-                                    <span className="id-capsule-text">
-                                        {syncingGithub ? 'Syncing...' : `Sync GitHub (@${profile.githubUsername})`}
-                                    </span>
-                                    <span className="id-capsule-action">
-                                        {syncingGithub ? <Loader2 size={14} className="spin" /> : <RefreshCw size={14} className="id-capsule-refresh" />}
-                                    </span>
-                                </button>
+                                <Tooltip content="Sync your latest repos to boost your profile score" position="right" delay={0.5}>
+                                    <button className="id-capsule-btn" onClick={handleGithubSync} disabled={syncingGithub}>
+                                        <span className="id-capsule-icon"><GitBranch size={14} /></span>
+                                        <span className="id-capsule-text">
+                                            {syncingGithub ? 'Syncing...' : `Sync GitHub (@${profile.githubUsername})`}
+                                        </span>
+                                        <span className="id-capsule-action">
+                                            {syncingGithub ? <Loader2 size={14} className="spin" /> : <RefreshCw size={14} className="id-capsule-refresh" />}
+                                        </span>
+                                    </button>
+                                </Tooltip>
                             ) : (
-                                <Link to="/candidate/portfolio" className="id-capsule-btn">
-                                    <span className="id-capsule-icon"><GitBranch size={14} /></span>
-                                    <span className="id-capsule-text">Connect GitHub</span>
-                                    <span className="id-capsule-action"><ChevronRight size={14} className="id-capsule-arrow" /></span>
-                                </Link>
+                                <Tooltip content="Connect GitHub to automatically showcase your repos" position="right" delay={0.5}>
+                                    <Link to="/candidate/portfolio" className="id-capsule-btn">
+                                        <span className="id-capsule-icon"><GitBranch size={14} /></span>
+                                        <span className="id-capsule-text">Connect GitHub</span>
+                                        <span className="id-capsule-action"><ChevronRight size={14} className="id-capsule-arrow" /></span>
+                                    </Link>
+                                </Tooltip>
                             )}
 
                             {/* Resume Builder button */}
@@ -299,28 +334,115 @@ export default function CandidateDashboard() {
 
                         {/* Capability summary */}
                         {capabilities.length > 0 && (
-                            <div className="id-capsule-matrix">
-                                <div className="id-matrix-header">TOP CAPABILITIES</div>
-                                <div className="id-matrix-list">
-                                    {capabilities.slice(0, 4).map((cap, idx) => (
-                                        <div key={cap.skill} className={`id-matrix-row ${idx === 0 ? 'top-highlight' : ''}`}>
-                                            <div className="id-matrix-row-header">
-                                                <span className="id-matrix-skill-name">
-                                                    {idx === 0 ? '◈ ' : ''}{cap.skill}
-                                                </span>
-                                                {idx === 0 && <span className="id-matrix-top-badge">TOP CAPABILITY</span>}
-                                            </div>
-                                            <div className="id-matrix-progress-container">
-                                                <div className="id-matrix-progress-rail">
-                                                    <div className="id-matrix-progress-fill" style={{ width: `${cap.score}%` }} />
+                            <div className="agency-outer">
+                                <div className="agency-inner id-capsule-matrix">
+                                    <div className="id-matrix-header">TOP CAPABILITIES</div>
+                                    <div className="id-matrix-list">
+                                        {capabilities.slice(0, 4).map((cap, idx) => (
+                                            <div key={cap.skill} className={`id-matrix-row ${idx === 0 ? 'top-highlight' : ''}`}>
+                                                <div className="id-matrix-row-header">
+                                                    <span className="id-matrix-skill-name">
+                                                        {idx === 0 ? '◈ ' : ''}{cap.skill}
+                                                    </span>
+                                                    {idx === 0 && <span className="id-matrix-top-badge">TOP CAPABILITY</span>}
                                                 </div>
-                                                <span className="id-matrix-score">{cap.score}%</span>
+                                                <div className="id-matrix-progress-container">
+                                                    <div className="id-matrix-progress-rail">
+                                                        <motion.div 
+                                                            className="id-matrix-progress-fill" 
+                                                            initial={{ width: 0 }}
+                                                            animate={{ width: `${cap.score}%` }}
+                                                            transition={{ delay: 0.3 + idx * 0.1, type: 'spring', bounce: 0, duration: 0.8 }}
+                                                        />
+                                                    </div>
+                                                    <span className="id-matrix-score">{cap.score}%</span>
+                                                </div>
                                             </div>
-                                        </div>
-                                    ))}
+                                        ))}
+                                    </div>
                                 </div>
                             </div>
                         )}
+
+                        {/* Career Readiness Score */}
+                        <motion.div 
+                            className="agency-outer" 
+                            style={{ marginTop: '16px' }}
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.2 }}
+                        >
+                            <div className="agency-inner id-capsule-matrix">
+                                <div className="id-matrix-header">CAREER READINESS</div>
+                                <div className="id-matrix-row">
+                                    <div className="id-matrix-row-header">
+                                        <span className="id-matrix-skill-name">Overall Score</span>
+                                    </div>
+                                    <div className="id-matrix-progress-container">
+                                        <div className="id-matrix-progress-rail">
+                                            <motion.div 
+                                                className="id-matrix-progress-fill" 
+                                                initial={{ width: 0 }}
+                                                animate={{ width: `${careerReadinessScore}%` }}
+                                                style={{ background: careerReadinessScore > 75 ? '#10b981' : careerReadinessScore > 50 ? '#f59e0b' : '#ef4444' }}
+                                                transition={{ delay: 0.5, type: 'spring', bounce: 0, duration: 1 }}
+                                            />
+                                        </div>
+                                        <span className="id-matrix-score">{careerReadinessScore}%</span>
+                                    </div>
+                                </div>
+                                <p style={{ fontSize: '12px', color: '#64748b', marginTop: '12px' }}>
+                                    Based on your capabilities, verified skills, and profile completeness.
+                                </p>
+                            </div>
+                        </motion.div>
+
+                        {/* Peer Benchmarking */}
+                        <motion.div 
+                            className="agency-outer" 
+                            style={{ marginTop: '16px' }}
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.3 }}
+                        >
+                            <div className="agency-inner id-capsule-matrix">
+                                <div className="id-matrix-header">PEER BENCHMARKING</div>
+                                <div className="id-matrix-row">
+                                    <div className="id-matrix-row-header">
+                                        <span className="id-matrix-skill-name">Overall College Rank</span>
+                                    </div>
+                                    <div className="id-matrix-progress-container">
+                                        <div className="id-matrix-progress-rail">
+                                            <motion.div 
+                                                className="id-matrix-progress-fill" 
+                                                initial={{ width: 0 }}
+                                                animate={{ width: `85%` }}
+                                                style={{ background: '#3b82f6' }}
+                                                transition={{ delay: 0.6, type: 'spring', bounce: 0, duration: 1 }}
+                                            />
+                                        </div>
+                                        <span className="id-matrix-score">Top 15%</span>
+                                    </div>
+                                </div>
+                                <div className="id-matrix-row" style={{ marginTop: '12px' }}>
+                                    <div className="id-matrix-row-header">
+                                        <span className="id-matrix-skill-name">Branch Rank</span>
+                                    </div>
+                                    <div className="id-matrix-progress-container">
+                                        <div className="id-matrix-progress-rail">
+                                            <motion.div 
+                                                className="id-matrix-progress-fill" 
+                                                initial={{ width: 0 }}
+                                                animate={{ width: `92%` }}
+                                                style={{ background: '#8b5cf6' }}
+                                                transition={{ delay: 0.7, type: 'spring', bounce: 0, duration: 1 }}
+                                            />
+                                        </div>
+                                        <span className="id-matrix-score">Top 8%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </motion.div>
 
                         {capabilities.length === 0 && !loadingJobs && (
                             <div className="c-dash-empty-caps">
@@ -387,58 +509,37 @@ export default function CandidateDashboard() {
                                 className={`c-dash-tab ${activeTab === 'placements' ? 'active' : ''}`}
                                 onClick={() => setActiveTab('placements')}
                             >
-                                <Briefcase size={16} /> Placements
+                                {activeTab === 'placements' && (
+                                    <motion.div 
+                                        layoutId="active-tab-indicator" 
+                                        className="c-dash-tab-pill" 
+                                        transition={{ type: 'spring', bounce: 0.15, duration: 0.4 }} 
+                                    />
+                                )}
+                                <span style={{ position: 'relative', zIndex: 2, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                    <Briefcase size={16} /> Placements
+                                </span>
                             </button>
                             <button
                                 className={`c-dash-tab ${activeTab === 'internships' ? 'active' : ''}`}
                                 onClick={() => setActiveTab('internships')}
                             >
-                                <GraduationCap size={16} /> Internships
+                                {activeTab === 'internships' && (
+                                    <motion.div 
+                                        layoutId="active-tab-indicator" 
+                                        className="c-dash-tab-pill" 
+                                        transition={{ type: 'spring', bounce: 0.15, duration: 0.4 }} 
+                                    />
+                                )}
+                                <span style={{ position: 'relative', zIndex: 2, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                    <GraduationCap size={16} /> Internships
+                                </span>
                             </button>
                         </div>
 
                         {/* Job Feed */}
                         <div className="c-dash-feed-section">
-                            {/* Company Logo Showcase */}
-                            <div className="c-company-showcase">
-                                <div className="c-company-showcase-title">Trusted by top companies</div>
-                                <div className="c-company-marquee-viewport">
-                                    <div className="c-company-logos-track">
-                                    {/* Duplicated for seamless marquee */}
-                                    {[1, 2].map(key => (
-                                        <div key={key} style={{ display: 'flex', gap: '48px' }}>
-                                            <div className="c-company-logo-wrapper">
-                                                <img src="/logos/flipkart.svg" alt="Flipkart logo" />
-                                            </div>
-                                            <div className="c-company-logo-wrapper">
-                                                <img src="/logos/amazon.svg" alt="Amazon logo" />
-                                            </div>
-                                            <div className="c-company-logo-wrapper">
-                                                <img src="/logos/google.svg" alt="Google logo" />
-                                            </div>
-                                            <div className="c-company-logo-wrapper">
-                                                <img src="/logos/microsoft.svg" alt="Microsoft logo" />
-                                            </div>
-                                            <div className="c-company-logo-wrapper">
-                                                <img src="/logos/nvidia.svg" alt="NVIDIA logo" />
-                                            </div>
-                                            <div className="c-company-logo-wrapper">
-                                                <img src="/logos/ibm.svg" alt="IBM logo" />
-                                            </div>
-                                            <div className="c-company-logo-wrapper">
-                                                <img src="/logos/adobe.svg" alt="Adobe logo" />
-                                            </div>
-                                            <div className="c-company-logo-wrapper">
-                                                <img src="/logos/infosys.svg" alt="Infosys logo" />
-                                            </div>
-                                            <div className="c-company-logo-wrapper">
-                                                <img src="/logos/tcs.svg" alt="TCS logo" />
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                                </div>
-                            </div>
+                            {/* Replaced Marquee with empty space to follow Asymmetric Bento/Restraint */}
 
                             <h2 className="c-dash-section-title">
                                 {loadingJobs ? 'Finding opportunities...' : `${opportunities.length} Opportunities for you`}

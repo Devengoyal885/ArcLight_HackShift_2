@@ -1,4 +1,4 @@
-/* ─── CAPABLE: PREMIUM UTILITARIAN MINIMALISM ─── */
+﻿/* â”€â”€â”€ CAPABLE: PREMIUM UTILITARIAN MINIMALISM â”€â”€â”€ */
 @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&display=swap');
 
 .lp-page {
@@ -30,7 +30,7 @@
     -webkit-font-smoothing: antialiased;
 }
 
-/* ── Typography Resets ── */
+/* â”€â”€ Typography Resets â”€â”€ */
 .lp-page h1, .lp-page h2, .lp-page h3 {
     font-family: var(--font-serif);
     font-weight: 400;
@@ -39,7 +39,7 @@
     margin: 0;
 }
 
-/* ── Floating Minimal Navbar ── */
+/* â”€â”€ Floating Minimal Navbar â”€â”€ */
 .lp-nav {
     position: fixed;
     top: 0; left: 0; right: 0;
@@ -85,7 +85,7 @@
     .lp-nav-links a:hover { color: var(--c-ink); }
 }
 
-/* ── Buttons ── */
+/* â”€â”€ Buttons â”€â”€ */
 .lp-btn {
     display: inline-flex;
     align-items: center;
@@ -128,7 +128,7 @@
     font-size: 1rem;
 }
 
-/* ── Hero Section (Editorial Print Style) ── */
+/* â”€â”€ Hero Section (Editorial Print Style) â”€â”€ */
 .lp-hero {
     position: relative;
     padding: 10rem 2rem 6rem;
@@ -234,7 +234,7 @@
     letter-spacing: 0.05em;
 }
 
-/* ── Generic Section Layout ── */
+/* â”€â”€ Generic Section Layout â”€â”€ */
 .lp-section {
     padding: 8rem 2rem;
 }
@@ -260,7 +260,7 @@
     letter-spacing: -0.02em;
 }
 
-/* ── Features Bento (Utilitarian) ── */
+/* â”€â”€ Features Bento (Utilitarian) â”€â”€ */
 .lp-features-grid {
     display: grid;
     grid-template-columns: repeat(12, 1fr);
@@ -335,7 +335,7 @@
     margin: 0;
 }
 
-/* ── How it works (Premium Animated Stepper) ── */
+/* â”€â”€ How it works (Premium Animated Stepper) â”€â”€ */
 .lp-steps {
     display: flex;
     flex-direction: column;
@@ -397,9 +397,9 @@
     margin: 0;
 }
 
-/* ══════════════════════════════════════════════
-   FOR WHOM — BENTO LAYOUT  (Premium Utilitarian Minimalism)
-══════════════════════════════════════════════ */
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   FOR WHOM â€” BENTO LAYOUT  (Premium Utilitarian Minimalism)
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
 /* Outer bento: candidate 58% / stack 42% */
 .lp-for-bento {
@@ -409,9 +409,9 @@
     align-items: start;
 }
 
-/* ══ Candidate hero card (Editorial Luxury, Double-Bezel) ══ */
+/* â•â• Candidate hero card (Editorial Luxury, Double-Bezel) â•â• */
 .lp-for-candidate {
-    /* Outer shell — warm bone wrapper */
+    /* Outer shell â€” warm bone wrapper */
     background: #F2F0EC;
     border: 1px solid #E0DDD8;
     border-radius: 18px;
@@ -429,7 +429,7 @@
 .lp-for-candidate-inner {
     background: #FFFFFF;
     border: 1px solid #EAE9E5;
-    border-radius: 13px;          /* calc(18px - 6px + 1px) — concentric */
+    border-radius: 13px;          /* calc(18px - 6px + 1px) â€” concentric */
     padding: 2.5rem;
     display: flex;
     flex-direction: column;
@@ -481,7 +481,7 @@
     color: #4A4947;
 }
 
-/* Serif headline — large editorial */
+/* Serif headline â€” large editorial */
 .lp-for-candidate-headline {
     font-family: var(--font-serif);
     font-size: clamp(2rem, 3vw, 2.75rem);
@@ -576,7 +576,7 @@
 
 .lp-for-candidate-cta:hover { gap: 0.75rem; }
 
-/* ═══ Profile mock visual (faux OS window) ═══ */
+/* â•â•â• Profile mock visual (faux OS window) â•â•â• */
 .lp-for-candidate-visual {
     /* Outer wrapper = slight bone tint to separate */
     background: #F7F6F3;
@@ -739,7 +739,7 @@
     border: 1px solid #E0DDD8;
 }
 
-/* ══ Right stack (Institutions + Employers) ══ */
+/* â•â• Right stack (Institutions + Employers) â•â• */
 .lp-for-stack {
     display: flex;
     flex-direction: column;
@@ -850,7 +850,7 @@
     .lp-for-candidate-features { grid-template-columns: 1fr; }
 }
 
-/* ── Reduced Motion ── */
+/* â”€â”€ Reduced Motion â”€â”€ */
 @media (prefers-reduced-motion: reduce) {
     *, ::before, ::after {
         animation-duration: 0.01ms !important;
@@ -860,7 +860,7 @@
     }
 }
 
-/* ── Navbar Fixes ── */
+/* â”€â”€ Navbar Fixes â”€â”€ */
 .lp-nav-inner {
     max-width: 1200px;
     margin: 0 auto;
@@ -895,7 +895,7 @@
     color: var(--c-ink);
 }
 
-/* ── Stats & Trust ── */
+/* â”€â”€ Stats & Trust â”€â”€ */
 .lp-stat-item {
     display: flex;
     flex-direction: column;
@@ -914,7 +914,7 @@
 }
 
 
-/* ── Testimonials ── */
+/* â”€â”€ Testimonials â”€â”€ */
 .lp-testimonials {
     max-width: 800px;
     margin: 0 auto;
@@ -986,7 +986,7 @@
     background: var(--c-ink);
 }
 
-/* ── CTA Section ── */
+/* â”€â”€ CTA Section â”€â”€ */
 .lp-cta {
     padding: 8rem 2rem;
     background: var(--c-ink);
@@ -1020,7 +1020,7 @@
     color: var(--c-surface);
 }
 
-/* ── Footer ── */
+/* â”€â”€ Footer â”€â”€ */
 .lp-footer {
     padding: 6rem 2rem 2rem;
     background: var(--c-surface);

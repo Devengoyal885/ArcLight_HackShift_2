@@ -9,6 +9,8 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { saveInterviewSession } from '../../services/interviewHistoryService';
+import { loadFaceModels, startFaceAnalysis, type FaceAnalysisResult } from '../../services/faceAnalyzer';
+import { addPoints } from '../../services/scoreService';
 import './AIInterviewSimulator.css';
 
 const VAPI_PUBLIC_KEY = "af6cccc7-49bd-4211-b98f-a6405b51dcef"; 
@@ -43,22 +45,28 @@ export default function AIInterviewSimulator() {
     const [wordCount, setWordCount] = useState(0);
     const [sessionSaved, setSessionSaved] = useState(false);
 
+    // Face Analysis state
+    const stopFaceAnalysisRef = useRef<(() => FaceAnalysisResult) | (() => void) | null>(null);
+    const [faceResult, setFaceResult] = useState<FaceAnalysisResult | null>(null);
+
     useEffect(() => {
-        if (state === 'lobby' || state === 'interview') {
-            if (camOn) {
-                navigator.mediaDevices.getUserMedia({ video: true, audio: false })
-                    .then(stream => {
-                        streamRef.current = stream;
-                        if (videoRef.current) {
-                            videoRef.current.srcObject = stream;
-                        }
-                    })
-                    .catch(err => console.error("Camera access denied:", err));
-            } else {
-                if (streamRef.current) {
-                    streamRef.current.getTracks().forEach(t => t.stop());
-                    streamRef.current = null;
-                }
+        loadFaceModels();
+    }, []);
+
+    useEffect(() => {
+        if (camOn) {
+            navigator.mediaDevices.getUserMedia({ video: true, audio: false })
+                .then(stream => {
+                    streamRef.current = stream;
+                    if (videoRef.current) {
+                        videoRef.current.srcObject = stream;
+                    }
+                })
+                .catch(err => console.error("Camera access denied:", err));
+        } else {
+            if (streamRef.current) {
+                streamRef.current.getTracks().forEach(t => t.stop());
+                streamRef.current = null;
             }
         }
         
@@ -67,7 +75,15 @@ export default function AIInterviewSimulator() {
                 streamRef.current.getTracks().forEach(t => t.stop());
             }
         };
-    }, [state, camOn]);
+    }, [camOn]);
+
+    const videoRefCallback = (node: HTMLVideoElement | null) => {
+        videoRef.current = node;
+        if (node && streamRef.current) {
+            node.srcObject = streamRef.current;
+            node.play().catch(e => console.error("Video autoPlay blocked:", e));
+        }
+    };
 
     useEffect(() => {
         const VapiClass = (Vapi as any).default || Vapi;
@@ -82,6 +98,16 @@ export default function AIInterviewSimulator() {
 
         vapi.on('call-end', () => {
             setIsConnected(false);
+            
+            // Stop Face Analysis
+            if (stopFaceAnalysisRef.current) {
+                const res = stopFaceAnalysisRef.current();
+                if (res) {
+                    setFaceResult(res as FaceAnalysisResult);
+                }
+                stopFaceAnalysisRef.current = null;
+            }
+            
             setState('results');
         });
 
@@ -124,9 +150,14 @@ export default function AIInterviewSimulator() {
             timer = setInterval(() => {
                 setTimeElapsed(prev => prev + 1);
             }, 1000);
+
+            // Start Face Analysis safely once interview DOM is active
+            if (camOn && videoRef.current && !stopFaceAnalysisRef.current) {
+                stopFaceAnalysisRef.current = startFaceAnalysis(videoRef.current, () => {});
+            }
         }
         return () => clearInterval(timer);
-    }, [state, isConnected]);
+    }, [state, isConnected, camOn]);
 
     // Auto-save session to Firestore when results are shown
     useEffect(() => {
@@ -146,6 +177,7 @@ export default function AIInterviewSimulator() {
             }).then(() => {
                 setSessionSaved(true);
                 console.log('[Interview] Session saved to Firestore.');
+                return addPoints(dbUid, fluency, `Completed Mock Interview (${targetRole})`);
             }).catch(err => console.error('[Interview] Failed to save session:', err));
         }
     }, [state]);
@@ -213,7 +245,7 @@ export default function AIInterviewSimulator() {
                         <div className="ai-sim-lobby-card">
                             <div className="ai-sim-preview">
                                 {camOn ? (
-                                    <video ref={videoRef} autoPlay playsInline muted className="ai-sim-cam-feed-video" />
+                                    <video ref={videoRefCallback} autoPlay playsInline muted className="ai-sim-cam-feed-video" />
                                 ) : (
                                     <div style={{ display: 'flex', height: '100%', alignItems: 'center', justifyContent: 'center' }}>
                                         <VideoOff size={48} color="#94a3b8" />
@@ -289,7 +321,7 @@ export default function AIInterviewSimulator() {
 
                         {camOn && (
                             <div className="user-pip">
-                                <video ref={videoRef} autoPlay playsInline muted />
+                                <video ref={videoRefCallback} autoPlay playsInline muted />
                             </div>
                         )}
 
@@ -357,6 +389,63 @@ export default function AIInterviewSimulator() {
                                     <span className="res-label">Duration</span>
                                 </div>
                             </div>
+
+                            {/* Body Language Analysis (AI Video Feedback) */}
+                            {camOn && faceResult && (
+                                <div style={{ background: 'rgba(255,255,255,0.03)', borderRadius: '16px', padding: '32px', marginTop: '24px', textAlign: 'left', border: '1px solid rgba(255,255,255,0.1)', backdropFilter: 'blur(10px)' }}>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+                                        <h3 style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#f8fafc', margin: 0, fontSize: '1.25rem' }}>
+                                            <Activity size={22} color="#a5b4fc" /> Vision AI Analysis
+                                        </h3>
+                                        <span style={{ background: 'rgba(165, 180, 252, 0.1)', color: '#a5b4fc', padding: '4px 10px', borderRadius: '20px', fontSize: '0.75rem', fontWeight: 600, letterSpacing: '0.05em' }}>LIVE FEEDBACK</span>
+                                    </div>
+                                    
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                                        {/* Metric 1 */}
+                                        <div>
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                                                <span style={{ color: '#cbd5e1', fontSize: '0.95rem', fontWeight: 500 }}>Eye Contact Maintenance</span>
+                                                <span style={{ color: faceResult.eyeContactScore >= 70 ? '#10b981' : '#f59e0b', fontWeight: 700 }}>
+                                                    {faceResult.eyeContactScore}% - {faceResult.eyeContactScore >= 80 ? 'Excellent' : faceResult.eyeContactScore >= 60 ? 'Good' : 'Needs Work'}
+                                                </span>
+                                            </div>
+                                            <div style={{ height: '8px', background: 'rgba(255,255,255,0.1)', borderRadius: '4px', overflow: 'hidden' }}>
+                                                <motion.div initial={{ width: 0 }} animate={{ width: `${faceResult.eyeContactScore}%` }} transition={{ duration: 1, delay: 0.2 }} style={{ height: '100%', background: faceResult.eyeContactScore >= 70 ? 'linear-gradient(90deg, #34d399, #10b981)' : 'linear-gradient(90deg, #fbbf24, #f59e0b)', borderRadius: '4px' }} />
+                                            </div>
+                                        </div>
+                                        {/* Metric 2 */}
+                                        <div>
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                                                <span style={{ color: '#cbd5e1', fontSize: '0.95rem', fontWeight: 500 }}>Posture & Framing</span>
+                                                <span style={{ color: faceResult.postureScore >= 80 ? '#3b82f6' : '#f59e0b', fontWeight: 700 }}>
+                                                    {faceResult.postureScore}% - {faceResult.postureScore >= 80 ? 'Centered' : 'Off-center'}
+                                                </span>
+                                            </div>
+                                            <div style={{ height: '8px', background: 'rgba(255,255,255,0.1)', borderRadius: '4px', overflow: 'hidden' }}>
+                                                <motion.div initial={{ width: 0 }} animate={{ width: `${faceResult.postureScore}%` }} transition={{ duration: 1, delay: 0.4 }} style={{ height: '100%', background: faceResult.postureScore >= 80 ? 'linear-gradient(90deg, #60a5fa, #3b82f6)' : 'linear-gradient(90deg, #fbbf24, #f59e0b)', borderRadius: '4px' }} />
+                                            </div>
+                                        </div>
+                                        {/* Metric 3 */}
+                                        <div>
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                                                <span style={{ color: '#cbd5e1', fontSize: '0.95rem', fontWeight: 500 }}>Primary Facial Sentiment</span>
+                                                <span style={{ color: '#a5b4fc', fontWeight: 700 }}>{faceResult.primarySentiment}</span>
+                                            </div>
+                                        </div>
+
+                                        {/* Warnings */}
+                                        {faceResult.warnings.length > 0 && (
+                                            <div style={{ marginTop: '8px', padding: '12px', background: 'rgba(245, 158, 11, 0.1)', borderLeft: '4px solid #f59e0b', borderRadius: '4px' }}>
+                                                {faceResult.warnings.map((w, i) => (
+                                                    <p key={i} style={{ margin: i === 0 ? 0 : '8px 0 0 0', fontSize: '0.85rem', color: '#fbbf24', lineHeight: 1.5 }}>
+                                                        * {w}
+                                                    </p>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            )}
 
                             <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', marginTop: '32px', flexWrap: 'wrap' }}>
                                 <button className="ai-btn-join" onClick={() => setState('lobby')} style={{ maxWidth: '220px', background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)' }}>

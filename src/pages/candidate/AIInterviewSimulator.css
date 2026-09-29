@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+﻿@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
 
 .ai-sim-page {
     min-height: 100vh;
@@ -60,14 +60,14 @@
     border-radius: 99px;
     cursor: pointer;
     font-weight: 600;
-    transition: all 0.3s;
+    transition: opacity 200ms cubic-bezier(0.23, 1, 0.32, 1), background 200ms cubic-bezier(0.23, 1, 0.32, 1), color 200ms cubic-bezier(0.23, 1, 0.32, 1), border-color 200ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 220ms cubic-bezier(0.23, 1, 0.32, 1), transform 80ms cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 .ai-sim-back:hover {
     background: rgba(255, 255, 255, 0.1);
 }
 
-/* ── Lobby ── */
+/* â”€â”€ Lobby â”€â”€ */
 .ai-sim-lobby {
     flex: 1;
     display: flex;
@@ -128,7 +128,7 @@
     justify-content: center;
     cursor: pointer;
     border: 1px solid rgba(255,255,255,0.2);
-    transition: all 0.2s;
+    transition: opacity 150ms cubic-bezier(0.23, 1, 0.32, 1), background 150ms cubic-bezier(0.23, 1, 0.32, 1), color 150ms cubic-bezier(0.23, 1, 0.32, 1), border-color 150ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 200ms cubic-bezier(0.23, 1, 0.32, 1), transform 80ms cubic-bezier(0.23, 1, 0.32, 1);
 }
 .ai-btn-circle:hover { background: rgba(255,255,255,0.1); }
 .ai-btn-circle.danger { background: #ef4444; border-color: #ef4444; }
@@ -171,14 +171,14 @@
     cursor: pointer;
     margin-top: 24px;
     box-shadow: 0 10px 20px -5px rgba(99, 102, 241, 0.4);
-    transition: all 0.2s;
+    transition: opacity 150ms cubic-bezier(0.23, 1, 0.32, 1), background 150ms cubic-bezier(0.23, 1, 0.32, 1), color 150ms cubic-bezier(0.23, 1, 0.32, 1), border-color 150ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 200ms cubic-bezier(0.23, 1, 0.32, 1), transform 80ms cubic-bezier(0.23, 1, 0.32, 1);
 }
 .ai-btn-join:hover {
-    transform: translateY(-2px);
+    /* GPU layer only */
     box-shadow: 0 15px 25px -5px rgba(99, 102, 241, 0.6);
 }
 
-/* ── Active Interview UI ── */
+/* â”€â”€ Active Interview UI â”€â”€ */
 .ai-sim-active {
     flex: 1;
     position: relative;
@@ -205,7 +205,7 @@
     border-radius: 50%;
     background: radial-gradient(circle at 30% 30%, #a5b4fc, #6366f1);
     box-shadow: 0 0 40px rgba(99, 102, 241, 0.6), inset 0 0 20px rgba(255,255,255,0.5);
-    transition: all 0.1s ease-out;
+    transition: opacity 100ms ease-out, background 100ms ease-out, color 100ms ease-out, transform 80ms ease-out;
 }
 
 .ai-orb-rings {
@@ -333,11 +333,11 @@
     gap: 8px;
     cursor: pointer;
     box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
-    transition: all 0.2s;
+    transition: opacity 150ms cubic-bezier(0.23, 1, 0.32, 1), background 150ms cubic-bezier(0.23, 1, 0.32, 1), color 150ms cubic-bezier(0.23, 1, 0.32, 1), border-color 150ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 200ms cubic-bezier(0.23, 1, 0.32, 1), transform 80ms cubic-bezier(0.23, 1, 0.32, 1);
 }
-.ai-btn-end:hover { background: #dc2626; transform: translateY(-2px); }
+.ai-btn-end:hover { background: #dc2626; transform: translateZ(0); /* GPU layer — Emil: no layout-triggering Y shifts on hover */ }
 
-/* ── Results ── */
+/* â”€â”€ Results â”€â”€ */
 .ai-sim-results {
     flex: 1;
     display: flex;

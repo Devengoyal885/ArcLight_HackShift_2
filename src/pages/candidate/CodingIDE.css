@@ -1,8 +1,8 @@
-/* ─────────────────────────────────────────────────────────────────────────────
-   CodingIDE.css  ·  Premium light theme matching CapAble design system
-   ───────────────────────────────────────────────────────────────────────────── */
+﻿/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+   CodingIDE.css  Â·  Premium light theme matching CapAble design system
+   â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
-/* ── Root layout ──────────────────────────────────────────────────────────── */
+/* â”€â”€ Root layout â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 .ide-root {
     display: flex;
@@ -15,7 +15,7 @@
     position: relative;
 }
 
-/* ── Top Bar ──────────────────────────────────────────────────────────────── */
+/* â”€â”€ Top Bar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 .ide-topbar {
     display: flex;
@@ -143,7 +143,7 @@
     padding: 4px 10px;
     border-radius: 6px;
     cursor: pointer;
-    transition: all 0.15s;
+    transition: opacity 120ms cubic-bezier(0.23, 1, 0.32, 1), background 120ms cubic-bezier(0.23, 1, 0.32, 1), color 120ms cubic-bezier(0.23, 1, 0.32, 1), border-color 120ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 150ms cubic-bezier(0.23, 1, 0.32, 1), transform 80ms cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 .ide-hints-btn:hover {
@@ -171,7 +171,7 @@
     padding: 4px 10px;
     border-radius: 6px;
     cursor: pointer;
-    transition: all 0.15s;
+    transition: opacity 120ms cubic-bezier(0.23, 1, 0.32, 1), background 120ms cubic-bezier(0.23, 1, 0.32, 1), color 120ms cubic-bezier(0.23, 1, 0.32, 1), border-color 120ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 150ms cubic-bezier(0.23, 1, 0.32, 1), transform 80ms cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 .ide-skip-btn:hover {
@@ -179,7 +179,7 @@
     color: #334155;
 }
 
-/* ── Hints Panel ──────────────────────────────────────────────────────────── */
+/* â”€â”€ Hints Panel â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 .ide-hints-panel {
     position: absolute;
@@ -271,14 +271,14 @@
     border-radius: 8px;
     padding: 9px;
     cursor: pointer;
-    transition: all 0.15s;
+    transition: opacity 120ms cubic-bezier(0.23, 1, 0.32, 1), background 120ms cubic-bezier(0.23, 1, 0.32, 1), color 120ms cubic-bezier(0.23, 1, 0.32, 1), border-color 120ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 150ms cubic-bezier(0.23, 1, 0.32, 1), transform 80ms cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 .ide-get-hint-btn:hover:not(:disabled) { background: #dbeafe; }
 .ide-get-hint-btn:disabled { opacity: 0.6; cursor: not-allowed; }
 .ide-hints-exhausted { font-size: 12px; color: #94a3b8; text-align: center; }
 
-/* ── Body ─────────────────────────────────────────────────────────────────── */
+/* â”€â”€ Body â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 .ide-body {
     display: flex;
@@ -287,7 +287,7 @@
     min-height: 0;
 }
 
-/* ── Problem Panel ────────────────────────────────────────────────────────── */
+/* â”€â”€ Problem Panel â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 .ide-problem-panel {
     display: flex;
@@ -317,7 +317,7 @@
     border: none;
     border-bottom: 2px solid transparent;
     cursor: pointer;
-    transition: all 0.15s;
+    transition: opacity 120ms cubic-bezier(0.23, 1, 0.32, 1), background 120ms cubic-bezier(0.23, 1, 0.32, 1), color 120ms cubic-bezier(0.23, 1, 0.32, 1), border-color 120ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 150ms cubic-bezier(0.23, 1, 0.32, 1), transform 80ms cubic-bezier(0.23, 1, 0.32, 1);
     white-space: nowrap;
 }
 
@@ -403,7 +403,7 @@
     border-radius: 4px;
 }
 
-/* ── Examples ─────────────────────────────────────────────────────────────── */
+/* â”€â”€ Examples â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 .ide-example {
     background: #f8fafc;
@@ -461,7 +461,7 @@
     line-height: 1.5;
 }
 
-/* ── Test Cases ───────────────────────────────────────────────────────────── */
+/* â”€â”€ Test Cases â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 .ide-tc-header {
     display: flex;
@@ -481,7 +481,7 @@
     border-radius: 5px;
     padding: 3px 8px;
     cursor: pointer;
-    transition: all 0.15s;
+    transition: opacity 120ms cubic-bezier(0.23, 1, 0.32, 1), background 120ms cubic-bezier(0.23, 1, 0.32, 1), color 120ms cubic-bezier(0.23, 1, 0.32, 1), border-color 120ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 150ms cubic-bezier(0.23, 1, 0.32, 1), transform 80ms cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 .ide-toggle-hidden:hover { background: #e2e8f0; }
@@ -537,7 +537,7 @@
     font-style: italic;
 }
 
-/* ── Resizer ──────────────────────────────────────────────────────────────── */
+/* â”€â”€ Resizer â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 .ide-resizer {
     width: 5px;
@@ -570,7 +570,7 @@
     background: #2563eb;
 }
 
-/* ── Editor Panel ─────────────────────────────────────────────────────────── */
+/* â”€â”€ Editor Panel â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 .ide-editor-panel {
     flex: 1;
@@ -605,7 +605,7 @@
     border-radius: 7px;
     padding: 5px 10px;
     cursor: pointer;
-    transition: all 0.15s;
+    transition: opacity 120ms cubic-bezier(0.23, 1, 0.32, 1), background 120ms cubic-bezier(0.23, 1, 0.32, 1), color 120ms cubic-bezier(0.23, 1, 0.32, 1), border-color 120ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 150ms cubic-bezier(0.23, 1, 0.32, 1), transform 80ms cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 .ide-lang-btn:hover { background: #f1f5f9; border-color: #cbd5e1; }
@@ -664,7 +664,7 @@
     border-radius: 7px;
     padding: 7px 10px;
     cursor: pointer;
-    transition: all 0.12s;
+    transition: opacity 100ms cubic-bezier(0.23, 1, 0.32, 1), background 100ms cubic-bezier(0.23, 1, 0.32, 1), color 100ms cubic-bezier(0.23, 1, 0.32, 1), transform 80ms cubic-bezier(0.23, 1, 0.32, 1);
     text-align: left;
 }
 
@@ -686,7 +686,7 @@
 
 .ide-editor-actions { display: flex; align-items: center; gap: 6px; }
 
-/* ── Monaco Wrapper ───────────────────────────────────────────────────────── */
+/* â”€â”€ Monaco Wrapper â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 .ide-monaco-wrap {
     flex: 1;
@@ -694,7 +694,7 @@
     min-height: 0;
 }
 
-/* ── Output Panel ─────────────────────────────────────────────────────────── */
+/* â”€â”€ Output Panel â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 .ide-output-panel {
     border-top: 1px solid #e2e8f0;
@@ -778,7 +778,7 @@
     background: transparent;
     border: none;
     cursor: pointer;
-    transition: all 0.15s;
+    transition: opacity 120ms cubic-bezier(0.23, 1, 0.32, 1), background 120ms cubic-bezier(0.23, 1, 0.32, 1), color 120ms cubic-bezier(0.23, 1, 0.32, 1), border-color 120ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 150ms cubic-bezier(0.23, 1, 0.32, 1), transform 80ms cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 .ide-output-tab.active {
@@ -883,7 +883,7 @@
     font-family: 'Fira Code', monospace;
 }
 
-/* ── DiffView ─────────────────────────────────────────────────────────────── */
+/* â”€â”€ DiffView â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 .ide-diff-view {
     display: grid;
@@ -929,7 +929,7 @@
 
 .ide-diff-text { color: #1e293b; white-space: pre-wrap; word-break: break-all; }
 
-/* ── Console ──────────────────────────────────────────────────────────────── */
+/* â”€â”€ Console â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 .ide-console-pre {
     font-family: 'Fira Code', 'SF Mono', Menlo, monospace;
@@ -940,7 +940,7 @@
     word-break: break-all;
 }
 
-/* ── AI Mentor Button ─────────────────────────────────────────────────────── */
+/* â”€â”€ AI Mentor Button â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 .ide-ai-mentor-btn {
     display: flex;
@@ -954,7 +954,7 @@
     border-radius: 6px;
     padding: 5px 10px;
     cursor: pointer;
-    transition: all 0.15s;
+    transition: opacity 120ms cubic-bezier(0.23, 1, 0.32, 1), background 120ms cubic-bezier(0.23, 1, 0.32, 1), color 120ms cubic-bezier(0.23, 1, 0.32, 1), border-color 120ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 150ms cubic-bezier(0.23, 1, 0.32, 1), transform 80ms cubic-bezier(0.23, 1, 0.32, 1);
     flex-shrink: 0;
 }
 
@@ -977,7 +977,7 @@
 
 .ide-ai-hint-box svg { flex-shrink: 0; margin-top: 2px; color: #0284c7; }
 
-/* ── Action Bar ───────────────────────────────────────────────────────────── */
+/* â”€â”€ Action Bar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 .ide-action-bar {
     display: flex;
@@ -1007,7 +1007,7 @@
     border-radius: 8px;
     padding: 8px 16px;
     cursor: pointer;
-    transition: all 0.18s;
+    transition: opacity 150ms cubic-bezier(0.23, 1, 0.32, 1), background 150ms cubic-bezier(0.23, 1, 0.32, 1), color 150ms cubic-bezier(0.23, 1, 0.32, 1), transform 80ms cubic-bezier(0.23, 1, 0.32, 1);
     white-space: nowrap;
 }
 
@@ -1060,7 +1060,7 @@
     cursor: not-allowed;
 }
 
-/* ── Fullscreen Gate ──────────────────────────────────────────────────────── */
+/* â”€â”€ Fullscreen Gate â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 .ide-fullscreen-gate {
     display: flex;
@@ -1136,13 +1136,13 @@
     border-radius: 10px;
     padding: 12px 24px;
     cursor: pointer;
-    transition: all 0.18s;
+    transition: opacity 150ms cubic-bezier(0.23, 1, 0.32, 1), background 150ms cubic-bezier(0.23, 1, 0.32, 1), color 150ms cubic-bezier(0.23, 1, 0.32, 1), transform 80ms cubic-bezier(0.23, 1, 0.32, 1);
     box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
 }
 
 .ide-enter-fs-btn:hover { background: #1d4ed8; }
 
-/* ── AI Drawer ────────────────────────────────────────────────────────────── */
+/* â”€â”€ AI Drawer â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 .ide-drawer-backdrop {
     position: fixed;
@@ -1194,7 +1194,7 @@
     border: 1px solid #e2e8f0;
     border-radius: 6px;
     cursor: pointer;
-    transition: all 0.15s;
+    transition: opacity 120ms cubic-bezier(0.23, 1, 0.32, 1), background 120ms cubic-bezier(0.23, 1, 0.32, 1), color 120ms cubic-bezier(0.23, 1, 0.32, 1), border-color 120ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 150ms cubic-bezier(0.23, 1, 0.32, 1), transform 80ms cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 .ide-ai-drawer-close:hover { color: #334155; background: #e2e8f0; }
@@ -1260,7 +1260,7 @@
     line-height: 1.6;
 }
 
-/* ── Confetti ─────────────────────────────────────────────────────────────── */
+/* â”€â”€ Confetti â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 .ide-confetti-overlay {
     position: fixed;
@@ -1290,7 +1290,7 @@
     }
 }
 
-/* ── Animations ───────────────────────────────────────────────────────────── */
+/* â”€â”€ Animations â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 .spin {
     animation: spin 1s linear infinite;

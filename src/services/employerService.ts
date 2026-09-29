@@ -60,6 +60,8 @@ export interface PostedRole {
     applicants?: number;
     postedAt?: unknown;
     updatedAt?: unknown;
+    seatCapacity?: number;
+    autoCloseOnSeatCap?: boolean;
 }
 
 export interface RoleApplication {
@@ -76,6 +78,7 @@ export interface RoleApplication {
     message?: string;
     interviewDetails?: { venue: string; date: string; time: string };
     offerDetails?: { salary: string; startDate: string; offerLetterUrl?: string };
+    feedback?: string;
     scheduledAssessment?: {
         type: 'ai_interview' | 'coding_assessment';
         domain: string;
@@ -312,7 +315,8 @@ export async function updateApplicationStatus(
     status: RoleApplication['status'],
     message?: string,
     interviewDetails?: { venue: string; date: string; time: string },
-    offerDetails?: { salary: string; startDate: string; offerLetterUrl?: string }
+    offerDetails?: { salary: string; startDate: string; offerLetterUrl?: string },
+    feedback?: string
 ): Promise<void> {
     const updates: any = {
         status,
@@ -321,6 +325,7 @@ export async function updateApplicationStatus(
     if (message) updates.message = message;
     if (interviewDetails) updates.interviewDetails = interviewDetails;
     if (offerDetails) updates.offerDetails = offerDetails;
+    if (feedback) updates.feedback = feedback;
 
     // Update Employer side
     await updateDoc(doc(db, 'postedRoles', roleId, 'applications', applicationId), updates);

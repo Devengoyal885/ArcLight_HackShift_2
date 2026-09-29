@@ -24,6 +24,9 @@ export interface PlacementRecord {
     companyName: string;
     status: RoleApplication['status'];
     appliedAt: unknown;
+    offerLetterUrl?: string;
+    offerVerified?: boolean;
+    salaryPackage?: string;
 }
 
 export interface InstitutionEvent {
@@ -113,6 +116,14 @@ export async function getInstitutionFaculty(
 
 // ─── Per-student record ───────────────────────────────────────────────────────
 
+export async function updateStudentAdminFlags(
+    uid: string,
+    flags: { isFrozen?: boolean; isNotInterested?: boolean; isVerified?: boolean }
+): Promise<void> {
+    const docRef = doc(db, 'users', uid, 'profile', 'data');
+    await updateDoc(docRef, flags as any);
+}
+
 export async function getStudentRecord(
     uid: string,
     profile: UserProfile
@@ -176,6 +187,9 @@ export async function getGlobalPlacements(): Promise<PlacementRecord[]> {
                 companyName: data.companyName,
                 status: data.status,
                 appliedAt: data.appliedAt,
+                offerLetterUrl: (data as any).offerLetterUrl,
+                offerVerified: (data as any).offerVerified,
+                salaryPackage: (data as any).salaryPackage,
             });
         });
     }
@@ -187,6 +201,15 @@ export async function getGlobalPlacements(): Promise<PlacementRecord[]> {
     return placements.sort(
         (a, b) => (weight[b.status] || 0) - (weight[a.status] || 0)
     );
+}
+
+export async function verifyPlacementOffer(
+    roleId: string,
+    applicationId: string,
+    verified: boolean
+): Promise<void> {
+    const appRef = doc(db, 'postedRoles', roleId, 'applications', applicationId);
+    await updateDoc(appRef, { offerVerified: verified });
 }
 
 // ─── Institution Events ───────────────────────────────────────────────────────

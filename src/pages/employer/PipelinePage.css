@@ -1,4 +1,4 @@
-/* PipelinePage.css */
+﻿/* PipelinePage.css */
 
 .pipe-page {
     min-height: 100vh;
@@ -449,3 +449,63 @@
     .pipe-board { flex-direction: column; }
     .pipe-column { min-width: 100%; max-width: 100%; }
 }
+
+.pipe-card-btn--compare-active {
+    background: #eff6ff !important;
+    color: #2563eb !important;
+    border-color: #bfdbfe !important;
+}
+
+.pipe-compare-float {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #0f172a;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 99px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    z-index: 1000;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.pipe-compare-trigger-btn {
+    background: #3b82f6;
+    color: white;
+    border: none;
+    padding: 6px 16px;
+    border-radius: 99px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.pipe-compare-trigger-btn:hover:not(:disabled) {
+    background: #2563eb;
+}
+
+.pipe-compare-trigger-btn:disabled {
+    background: #334155;
+    color: #94a3b8;
+    cursor: not-allowed;
+}
+
+.pipe-compare-clear-btn {
+    background: transparent;
+    color: #94a3b8;
+    border: none;
+    font-size: 0.875rem;
+    cursor: pointer;
+    padding: 4px;
+}
+
+.pipe-compare-clear-btn:hover {
+    color: white;
+}
+

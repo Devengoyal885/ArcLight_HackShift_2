@@ -1,0 +1,106 @@
+﻿/* OffCampusPage.css */
+.offcampus-page { min-height: 100vh; background: #f8fafc; padding-top: 100px; padding-bottom: 60px; font-family: 'Inter', sans-serif; color: #0f172a; position: relative; overflow-x: hidden; }
+
+/* Glowing bg blob */
+.offcampus-page::before {
+    content: '';
+    position: fixed;
+    top: -20%; left: -10%;
+    width: 50%; height: 50%;
+    background: radial-gradient(circle, rgba(37, 99, 235, 0.1) 0%, transparent 70%);
+    filter: blur(100px);
+    z-index: 0;
+    pointer-events: none;
+}
+
+.offcampus-container { max-width: 960px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+.offcampus-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 32px; gap: 16px; }
+.offcampus-title { font-size: 2.2rem; font-weight: 800; color: #0f172a; display: flex; align-items: center; gap: 12px; margin: 0 0 6px; letter-spacing: -0.03em; }
+.offcampus-subtitle { color: #475569; font-size: 1rem; margin: 0; }
+.offcampus-add-btn { display: flex; align-items: center; gap: 8px; background: #0f172a; color: #fff; border: none; border-radius: 14px; padding: 12px 24px; font-size: 0.95rem; font-weight: 700; cursor: pointer; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); transition: opacity 150ms cubic-bezier(0.23, 1, 0.32, 1), background 150ms cubic-bezier(0.23, 1, 0.32, 1), color 150ms cubic-bezier(0.23, 1, 0.32, 1), border-color 150ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 200ms cubic-bezier(0.23, 1, 0.32, 1), transform 80ms cubic-bezier(0.23, 1, 0.32, 1); white-space: nowrap; }
+.offcampus-add-btn:hover { background: #1e293b; /* GPU layer only */ box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+
+.offcampus-stats { display: grid; grid-template-columns: repeat(6, 1fr); gap: 16px; margin-bottom: 32px; }
+.offcampus-stat-card { background: white; border: 1px solid rgba(0,0,0,0.05); border-radius: 20px; padding: 16px; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); }
+.offcampus-stat-num { font-size: 1.8rem; font-weight: 800; color: #2563eb; line-height: 1; }
+.offcampus-stat-lbl { font-size: 0.75rem; color: #64748b; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+
+.offcampus-actions-alert { display: flex; align-items: center; gap: 12px; background: #fef3c7; border: 1px solid #fde68a; border-radius: 16px; padding: 16px 20px; font-size: 0.95rem; color: #b45309; margin-bottom: 24px; font-weight: 500; }
+.offcampus-actions-alert strong { color: #d97706; }
+
+.offcampus-filters { display: flex; flex-direction: column; gap: 16px; margin-bottom: 32px; background: white; padding: 24px; border-radius: 20px; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); }
+.offcampus-search { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 14px; padding: 14px 20px; color: #0f172a; font-size: 0.95rem; outline: none; width: 100%; box-sizing: border-box; transition: opacity 150ms cubic-bezier(0.23, 1, 0.32, 1), background 150ms cubic-bezier(0.23, 1, 0.32, 1), color 150ms cubic-bezier(0.23, 1, 0.32, 1), border-color 150ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 200ms cubic-bezier(0.23, 1, 0.32, 1), transform 80ms cubic-bezier(0.23, 1, 0.32, 1); font-family: inherit; }
+.offcampus-search:focus { border-color: #3b82f6; background: white; box-shadow: 0 0 0 4px rgba(59,130,246,0.1); }
+.offcampus-search::placeholder { color: #94a3b8; }
+.offcampus-status-filters { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; flex-wrap: wrap; }
+.offcampus-filter-btn { background: #f8fafc; border: 1px solid #e2e8f0; color: #475569; border-radius: 24px; padding: 8px 16px; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: opacity 150ms cubic-bezier(0.23, 1, 0.32, 1), background 150ms cubic-bezier(0.23, 1, 0.32, 1), color 150ms cubic-bezier(0.23, 1, 0.32, 1), border-color 150ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 200ms cubic-bezier(0.23, 1, 0.32, 1), transform 80ms cubic-bezier(0.23, 1, 0.32, 1); white-space: nowrap; }
+.offcampus-filter-btn.active { background: #3b82f6; border-color: #3b82f6; color: white; box-shadow: 0 4px 12px rgba(59,130,246,0.25); }
+.offcampus-filter-btn:hover:not(.active) { background: #f1f5f9; color: #0f172a; }
+
+.offcampus-list { display: flex; flex-direction: column; gap: 16px; }
+.offcampus-card { background: white; border: 1px solid rgba(0,0,0,0.05); border-radius: 24px; padding: 24px; transition: opacity 150ms cubic-bezier(0.23, 1, 0.32, 1), background 150ms cubic-bezier(0.23, 1, 0.32, 1), color 150ms cubic-bezier(0.23, 1, 0.32, 1), border-color 150ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 200ms cubic-bezier(0.23, 1, 0.32, 1), transform 80ms cubic-bezier(0.23, 1, 0.32, 1); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); }
+.offcampus-card:hover { border-color: #cbd5e1; /* GPU layer only */ box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05); }
+.offcampus-card.favorite { border-color: #fcd34d; background: #fffbeb; }
+
+.offcampus-card-main { display: flex; align-items: center; justify-content: space-between; cursor: pointer; gap: 16px; margin-bottom: 16px; }
+.offcampus-card-left { display: flex; align-items: center; gap: 16px; flex: 1; min-width: 0; }
+.offcampus-company-icon { width: 48px; height: 48px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; font-weight: 800; color: #2563eb; flex-shrink: 0; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+.offcampus-card-role { font-size: 1.1rem; font-weight: 800; color: #0f172a; margin-bottom: 4px; }
+.offcampus-card-meta { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.offcampus-card-meta span { display: flex; align-items: center; gap: 6px; font-size: 0.85rem; color: #475569; font-weight: 500; }
+.offcampus-source-badge { background: #f1f5f9; border-radius: 8px; padding: 2px 10px; font-size: 0.75rem; color: #64748b; font-weight: 600; }
+.offcampus-card-right { display: flex; align-items: center; gap: 16px; flex-shrink: 0; }
+.offcampus-salary { display: flex; align-items: center; gap: 6px; font-size: 0.95rem; color: #059669; font-weight: 700; background: #dcfce7; padding: 4px 12px; border-radius: 12px; }
+.offcampus-status-pill { font-size: 0.8rem; font-weight: 700; padding: 6px 16px; border-radius: 24px; text-transform: uppercase; }
+
+.offcampus-status-track { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; scrollbar-width: none; margin-bottom: 8px; }
+.offcampus-track-step { background: #f8fafc; border: 1px solid #e2e8f0; color: #64748b; border-radius: 16px; padding: 6px 14px; font-size: 0.8rem; cursor: pointer; transition: opacity 150ms cubic-bezier(0.23, 1, 0.32, 1), background 150ms cubic-bezier(0.23, 1, 0.32, 1), color 150ms cubic-bezier(0.23, 1, 0.32, 1), border-color 150ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 200ms cubic-bezier(0.23, 1, 0.32, 1), transform 80ms cubic-bezier(0.23, 1, 0.32, 1); white-space: nowrap; font-weight: 600; }
+.offcampus-track-step.active { font-weight: 700; background: #eff6ff; color: #2563eb; border-color: #bfdbfe; }
+.offcampus-track-step:hover:not(.active) { background: #f1f5f9; color: #0f172a; border-color: #cbd5e1; }
+
+.offcampus-expanded { overflow: hidden; padding-top: 20px; border-top: 1px solid #f1f5f9; margin-top: 16px; }
+.offcampus-expanded-grid { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+.offcampus-detail { display: flex; align-items: center; gap: 10px; font-size: 0.9rem; color: #475569; font-weight: 500; }
+.offcampus-detail--action { color: #d97706; font-weight: 600; }
+.offcampus-notes { font-size: 0.95rem; color: #334155; line-height: 1.7; margin: 0 0 20px; background: #f8fafc; border-radius: 12px; padding: 16px; border: 1px solid #e2e8f0; }
+.offcampus-expanded-actions { display: flex; gap: 12px; }
+.offcampus-link-btn { display: flex; align-items: center; gap: 8px; font-size: 0.9rem; color: #475569; background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 8px 16px; font-weight: 600; text-decoration: none; transition: opacity 150ms cubic-bezier(0.23, 1, 0.32, 1), background 150ms cubic-bezier(0.23, 1, 0.32, 1), color 150ms cubic-bezier(0.23, 1, 0.32, 1), border-color 150ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 200ms cubic-bezier(0.23, 1, 0.32, 1), transform 80ms cubic-bezier(0.23, 1, 0.32, 1); }
+.offcampus-link-btn:hover { background: #f8fafc; color: #0f172a; border-color: #cbd5e1; }
+.offcampus-edit-btn { display: flex; align-items: center; gap: 8px; font-size: 0.9rem; color: #4f46e5; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 12px; padding: 8px 16px; cursor: pointer; font-weight: 600; transition: opacity 150ms cubic-bezier(0.23, 1, 0.32, 1), background 150ms cubic-bezier(0.23, 1, 0.32, 1), color 150ms cubic-bezier(0.23, 1, 0.32, 1), border-color 150ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 200ms cubic-bezier(0.23, 1, 0.32, 1), transform 80ms cubic-bezier(0.23, 1, 0.32, 1); }
+.offcampus-edit-btn:hover { background: #e0e7ff; color: #4338ca; }
+.offcampus-del-btn { display: flex; align-items: center; gap: 8px; font-size: 0.9rem; color: #dc2626; background: #fef2f2; border: 1px solid #fecaca; border-radius: 12px; padding: 8px 16px; cursor: pointer; font-weight: 600; transition: opacity 150ms cubic-bezier(0.23, 1, 0.32, 1), background 150ms cubic-bezier(0.23, 1, 0.32, 1), color 150ms cubic-bezier(0.23, 1, 0.32, 1), border-color 150ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 200ms cubic-bezier(0.23, 1, 0.32, 1), transform 80ms cubic-bezier(0.23, 1, 0.32, 1); }
+.offcampus-del-btn:hover { background: #fee2e2; }
+
+.offcampus-loading { display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 80px 0; color: #64748b; font-weight: 600; }
+.offcampus-spinner { animation: ocspin 1s linear infinite; color: #3b82f6; }
+@keyframes ocspin { to { transform: rotate(360deg); } }
+.offcampus-empty { text-align: center; padding: 80px 0; color: #64748b; background: white; border-radius: 24px; border: 1px dashed #cbd5e1; }
+.offcampus-empty h3 { color: #0f172a; font-size: 1.25rem; font-weight: 800; margin: 16px 0 8px; }
+.offcampus-empty p { margin: 0 0 24px; font-size: 0.95rem; color: #475569; }
+
+/* Modal */
+.offcampus-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(12px); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 24px; }
+.offcampus-modal { background: white; border: 1px solid rgba(0,0,0,0.05); border-radius: 24px; width: 100%; max-width: 600px; max-height: 90vh; overflow-y: auto; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); }
+.offcampus-modal-header { display: flex; align-items: center; justify-content: space-between; padding: 32px 32px 0; }
+.offcampus-modal-header h2 { font-size: 1.4rem; font-weight: 800; color: #0f172a; margin: 0; letter-spacing: -0.02em; }
+.offcampus-modal-header button { background: white; border: 1px solid #e2e8f0; border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #64748b; transition: opacity 150ms cubic-bezier(0.23, 1, 0.32, 1), background 150ms cubic-bezier(0.23, 1, 0.32, 1), color 150ms cubic-bezier(0.23, 1, 0.32, 1), border-color 150ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 200ms cubic-bezier(0.23, 1, 0.32, 1), transform 80ms cubic-bezier(0.23, 1, 0.32, 1); box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+.offcampus-modal-header button:hover { background: #f8fafc; color: #0f172a; transform: scale(1.05); }
+.offcampus-modal-body { padding: 24px 32px; display: flex; flex-direction: column; gap: 20px; }
+.offcampus-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.offcampus-form-group { display: flex; flex-direction: column; gap: 8px; }
+.offcampus-form-group label { font-size: 0.85rem; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.05em; }
+.offcampus-input, .offcampus-select, .offcampus-textarea { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px 16px; color: #0f172a; font-size: 0.95rem; outline: none; width: 100%; box-sizing: border-box; transition: opacity 150ms cubic-bezier(0.23, 1, 0.32, 1), background 150ms cubic-bezier(0.23, 1, 0.32, 1), color 150ms cubic-bezier(0.23, 1, 0.32, 1), border-color 150ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 200ms cubic-bezier(0.23, 1, 0.32, 1), transform 80ms cubic-bezier(0.23, 1, 0.32, 1); font-family: inherit; font-weight: 500; }
+.offcampus-input:focus, .offcampus-select:focus, .offcampus-textarea:focus { border-color: #3b82f6; background: white; box-shadow: 0 0 0 4px rgba(59,130,246,0.1); }
+.offcampus-input::placeholder, .offcampus-textarea::placeholder { color: #94a3b8; }
+.offcampus-textarea { resize: vertical; min-height: 100px; }
+.offcampus-modal-footer { display: flex; gap: 12px; padding: 0 32px 32px; justify-content: flex-end; }
+.offcampus-btn-cancel { background: white; border: 1px solid #e2e8f0; border-radius: 12px; color: #475569; padding: 12px 24px; font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: opacity 150ms cubic-bezier(0.23, 1, 0.32, 1), background 150ms cubic-bezier(0.23, 1, 0.32, 1), color 150ms cubic-bezier(0.23, 1, 0.32, 1), border-color 150ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 200ms cubic-bezier(0.23, 1, 0.32, 1), transform 80ms cubic-bezier(0.23, 1, 0.32, 1); }
+.offcampus-btn-cancel:hover { background: #f8fafc; color: #0f172a; border-color: #cbd5e1; }
+.offcampus-btn-save { display: flex; align-items: center; gap: 8px; background: #0f172a; border: none; border-radius: 12px; color: #fff; padding: 12px 28px; font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: opacity 150ms cubic-bezier(0.23, 1, 0.32, 1), background 150ms cubic-bezier(0.23, 1, 0.32, 1), color 150ms cubic-bezier(0.23, 1, 0.32, 1), border-color 150ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 200ms cubic-bezier(0.23, 1, 0.32, 1), transform 80ms cubic-bezier(0.23, 1, 0.32, 1); }
+.offcampus-btn-save:hover:not(:disabled) { background: #1e293b; box-shadow: 0 4px 12px rgba(15,23,42,0.2); }
+.offcampus-btn-save:disabled { opacity: 0.5; cursor: not-allowed; box-shadow: none; }
+
+@media (max-width: 640px) {
+    .offcampus-stats { grid-template-columns: repeat(3, 1fr); }
+    .offcampus-form-row { grid-template-columns: 1fr; }
+}

@@ -1,4 +1,4 @@
-/* AptitudeTestPage.css */
+﻿/* AptitudeTestPage.css */
 
 .apt-page {
     min-height: 100vh;
@@ -12,7 +12,7 @@
     padding: 28px 20px 80px;
 }
 
-/* ── Config ── */
+/* â”€â”€ Config â”€â”€ */
 .apt-config-hero {
     text-align: center;
     margin-bottom: 28px;
@@ -67,7 +67,7 @@
     font-weight: 600;
     color: #334155;
     text-align: left;
-    transition: all 0.2s;
+    transition: opacity 150ms cubic-bezier(0.23, 1, 0.32, 1), background 150ms cubic-bezier(0.23, 1, 0.32, 1), color 150ms cubic-bezier(0.23, 1, 0.32, 1), border-color 150ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 200ms cubic-bezier(0.23, 1, 0.32, 1), transform 80ms cubic-bezier(0.23, 1, 0.32, 1);
     position: relative;
 }
 
@@ -135,7 +135,7 @@
 .apt-start-btn:hover:not(:disabled) { filter: brightness(1.08); }
 .apt-start-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-/* ── Quiz ── */
+/* â”€â”€ Quiz â”€â”€ */
 .apt-quiz { display: flex; flex-direction: column; gap: 0; }
 
 .apt-quiz-header {
@@ -242,7 +242,7 @@
     font-size: 14px;
     color: #334155;
     font-weight: 500;
-    transition: all 0.15s;
+    transition: opacity 120ms cubic-bezier(0.23, 1, 0.32, 1), background 120ms cubic-bezier(0.23, 1, 0.32, 1), color 120ms cubic-bezier(0.23, 1, 0.32, 1), border-color 120ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 150ms cubic-bezier(0.23, 1, 0.32, 1), transform 80ms cubic-bezier(0.23, 1, 0.32, 1);
 }
 .apt-option:hover:not([disabled]) {
     border-color: #2563eb;
@@ -299,7 +299,7 @@
 .apt-next-btn:hover:not(:disabled) { filter: brightness(1.08); }
 .apt-next-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
-/* ── Result ── */
+/* â”€â”€ Result â”€â”€ */
 .apt-result {
     display: flex;
     flex-direction: column;
@@ -396,7 +396,7 @@
     font-size: 14px;
     font-weight: 700;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: opacity 150ms cubic-bezier(0.23, 1, 0.32, 1), background 150ms cubic-bezier(0.23, 1, 0.32, 1), color 150ms cubic-bezier(0.23, 1, 0.32, 1), border-color 150ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 200ms cubic-bezier(0.23, 1, 0.32, 1), transform 80ms cubic-bezier(0.23, 1, 0.32, 1);
 }
 .apt-retry-btn:hover { background: #2563eb; color: white; }
 
@@ -408,7 +408,7 @@
     .apt-result-stats { grid-template-columns: repeat(2, 1fr); }
 }
 
-/* ── Settings section ── */
+/* â”€â”€ Settings section â”€â”€ */
 .apt-settings {
     background: #f8fafc;
     border: 1.5px solid #e2e8f0;
@@ -467,7 +467,7 @@
 .apt-toggle.on .apt-toggle-knob { transform: translateX(20px); }
 .apt-penalty-row { display: flex; flex-direction: column; gap: 6px; font-size: 0.82rem; color: #374151; }
 
-/* ── Quiz header additions ── */
+/* â”€â”€ Quiz header additions â”€â”€ */
 .apt-quiz-header { justify-content: space-between; flex-wrap: wrap; gap: 8px; }
 .apt-quiz-header-right { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .apt-flag-btn {
@@ -482,7 +482,7 @@
     font-size: 0.78rem;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.15s;
+    transition: opacity 120ms cubic-bezier(0.23, 1, 0.32, 1), background 120ms cubic-bezier(0.23, 1, 0.32, 1), color 120ms cubic-bezier(0.23, 1, 0.32, 1), border-color 120ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 150ms cubic-bezier(0.23, 1, 0.32, 1), transform 80ms cubic-bezier(0.23, 1, 0.32, 1);
 }
 .apt-flag-btn:hover { border-color: #f59e0b; color: #b45309; }
 .apt-flag-btn.flagged { background: #fef3c7; border-color: #f59e0b; color: #b45309; }
@@ -495,7 +495,7 @@
     font-size: 0.82rem;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.15s;
+    transition: opacity 120ms cubic-bezier(0.23, 1, 0.32, 1), background 120ms cubic-bezier(0.23, 1, 0.32, 1), color 120ms cubic-bezier(0.23, 1, 0.32, 1), border-color 120ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 150ms cubic-bezier(0.23, 1, 0.32, 1), transform 80ms cubic-bezier(0.23, 1, 0.32, 1);
 }
 .apt-nav-btn:hover { border-color: #93c5fd; color: #1d4ed8; }
 .apt-flagged-badge {
@@ -510,7 +510,7 @@
     font-weight: 700;
 }
 
-/* ── Stats bar ── */
+/* â”€â”€ Stats bar â”€â”€ */
 .apt-stats-bar {
     display: flex;
     gap: 16px;
@@ -528,14 +528,14 @@
 .apt-stats-item.flagged-count { background: #fef3c7; color: #b45309; }
 .apt-stats-item.remaining { background: #f1f5f9; color: #64748b; }
 
-/* ── Quiz body layout (with navigator) ── */
+/* â”€â”€ Quiz body layout (with navigator) â”€â”€ */
 .apt-quiz-body {
     display: flex;
     gap: 16px;
     align-items: flex-start;
 }
 
-/* ── Navigator panel ── */
+/* â”€â”€ Navigator panel â”€â”€ */
 .apt-navigator {
     background: #fff;
     border: 1.5px solid #e2e8f0;
@@ -580,7 +580,7 @@
     font-size: 0.72rem;
     font-weight: 700;
     cursor: pointer;
-    transition: all 0.15s;
+    transition: opacity 120ms cubic-bezier(0.23, 1, 0.32, 1), background 120ms cubic-bezier(0.23, 1, 0.32, 1), color 120ms cubic-bezier(0.23, 1, 0.32, 1), border-color 120ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 150ms cubic-bezier(0.23, 1, 0.32, 1), transform 80ms cubic-bezier(0.23, 1, 0.32, 1);
     position: relative;
     display: flex;
     align-items: center;
@@ -592,7 +592,7 @@
 .apt-nav-item:hover { transform: scale(1.05); }
 .nav-flag-icon { position: absolute; top: 1px; right: 1px; }
 
-/* ── Negative marking hint ── */
+/* â”€â”€ Negative marking hint â”€â”€ */
 .apt-neg-hint {
     display: flex;
     align-items: center;
@@ -606,7 +606,7 @@
     font-weight: 600;
 }
 
-/* ── Prev / Skip buttons ── */
+/* â”€â”€ Prev / Skip buttons â”€â”€ */
 .apt-quiz-nav {
     display: flex;
     gap: 8px;
@@ -625,7 +625,7 @@
     font-size: 0.85rem;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: opacity 150ms cubic-bezier(0.23, 1, 0.32, 1), background 150ms cubic-bezier(0.23, 1, 0.32, 1), color 150ms cubic-bezier(0.23, 1, 0.32, 1), border-color 150ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 200ms cubic-bezier(0.23, 1, 0.32, 1), transform 80ms cubic-bezier(0.23, 1, 0.32, 1);
 }
 .apt-prev-btn:hover:not(:disabled) { border-color: #93c5fd; color: #1d4ed8; }
 .apt-prev-btn:disabled { opacity: 0.4; cursor: not-allowed; }
@@ -638,11 +638,11 @@
     font-size: 0.85rem;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: opacity 150ms cubic-bezier(0.23, 1, 0.32, 1), background 150ms cubic-bezier(0.23, 1, 0.32, 1), color 150ms cubic-bezier(0.23, 1, 0.32, 1), border-color 150ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 200ms cubic-bezier(0.23, 1, 0.32, 1), transform 80ms cubic-bezier(0.23, 1, 0.32, 1);
 }
 .apt-skip-btn:hover { background: #fef3c7; }
 
-/* ── Raw score in result ── */
+/* â”€â”€ Raw score in result â”€â”€ */
 .apt-result-raw-score {
     font-size: 0.85rem;
     color: #64748b;

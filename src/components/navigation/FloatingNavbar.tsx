@@ -1,9 +1,10 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Briefcase, GraduationCap, Building2, ArrowRight, LogOut } from 'lucide-react';
+import { Briefcase, GraduationCap, Building2, ArrowRight, LogOut, Search, BadgeCheck, Sun, Moon, Settings2, Home, Compass, Users } from 'lucide-react';
 import { signOut } from 'firebase/auth';
 import { auth } from '../../lib/firebase';
 import { useAuth } from '../../context/AuthContext';
+import { useTheme } from '../../context/ThemeContext';
 import { NotificationBell } from './NotificationBell';
 import { LiquidMetalButton } from '../ui/LiquidMetalButton';
 import logo from '../../assets/sihlogo.png';
@@ -13,21 +14,20 @@ interface FloatingNavbarProps {
     variant: 'candidate' | 'employer' | 'academician' | 'institution';
 }
 
-const candidateLinks = [
-    { to: '/candidate', label: 'Home' },
-    { to: '/candidate/resume', label: 'Resume Builder' },
-    { to: '/candidate/career', label: 'Career' },
-    { to: '/candidate/learning', label: 'Learning' },
-    { to: '/candidate/opportunities', label: 'Opportunities' },
-    { to: '/candidate/placement-drives', label: 'Drives' },
-    { to: '/candidate/applications', label: 'Applications' },
-    { to: '/candidate/portfolio', label: 'Projects' },
-    { to: '/candidate/preparation', label: 'Prep Hub' },
-    { to: '/candidate/communication', label: 'Comm Hub' },
-    { to: '/candidate/coding-profile', label: 'Digital Profile' },
-];
+type NavLink = {
+    to: string;
+    label: string;
+    icon?: React.ReactNode;
+};
 
-const employerLinks = [
+const candidateLinks: NavLink[] = [
+    { to: '/candidate', label: 'Home', icon: <Home size={18} /> },
+    { to: '/candidate/career', label: 'Career', icon: <Compass size={18} /> },
+    { to: '/candidate/jobs', label: 'Jobs', icon: <Briefcase size={18} /> },
+    { to: '/candidate/preparation', label: 'Preparation', icon: <GraduationCap size={18} /> },
+    { to: '/candidate/community', label: 'Community', icon: <Users size={18} /> }
+];
+const employerLinks: NavLink[] = [
     { to: '/employer', label: 'Home' },
     { to: '/employer/talent', label: 'Talent' },
     { to: '/employer/roles', label: 'Roles' },
@@ -35,22 +35,24 @@ const employerLinks = [
     { to: '/employer/schedule', label: 'Schedule' },
     { to: '/employer/workforce', label: 'Workforce' },
     { to: '/employer/insights', label: 'Insights' },
+    { to: '/employer/branding', label: 'Branding' },
     { to: '/employer/partners', label: 'Partners' },
 ];
 
-const academicianLinks = [
+const academicianLinks: NavLink[] = [
     { to: '/faculty', label: 'Students' },
     { to: '/academician', label: 'My Dashboard' },
     { to: '/academician/mentorship', label: 'Mentorship' },
     { to: '/academician/workshops', label: 'Workshops' },
 ];
 
-const institutionLinks = [
+const institutionLinks: NavLink[] = [
     { to: '/institution', label: 'Dashboard' },
     { to: '/institution/students', label: 'Students' },
     { to: '/institution/placements', label: 'Placements' },
     { to: '/institution/drives', label: 'Drives' },
     { to: '/institution/analytics', label: 'Analytics' },
+    { to: '/institution/communications', label: 'Comms' },
     { to: '/institution/naac', label: 'NAAC' },
 ];
 
@@ -72,6 +74,7 @@ export function FloatingNavbar({ variant }: FloatingNavbarProps) {
     const location = useLocation();
     const navigate = useNavigate();
     const { user } = useAuth();
+    const { theme, toggleTheme } = useTheme();
     const links = linkMap[variant] || candidateLinks;
     const initials = user?.displayName?.split(' ').map((p: string) => p[0]).join('').slice(0, 2).toUpperCase() || 'U';
 
@@ -126,10 +129,28 @@ export function FloatingNavbar({ variant }: FloatingNavbarProps) {
             default:
                 return (
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <Link to="/candidate/coding-profile" className="navbar-profile-btn">
+                        <Link to="/candidate/coding-profile" className="navbar-profile-btn" style={{ gap: '6px' }}>
                             <div className="navbar-avatar">{initials}</div>
-                            <span>Profile</span>
+                            <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                Profile <BadgeCheck size={14} color="#3b82f6" fill="#eff6ff" />
+                            </span>
                         </Link>
+                        <Link 
+                            to="/settings"
+                            className="navbar-profile-btn"
+                            style={{ padding: '8px', border: 'none', background: 'transparent', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                            title="Settings"
+                        >
+                            <Settings2 size={16} color="var(--color-ink-400)" />
+                        </Link>
+                        <button 
+                            onClick={toggleTheme}
+                            className="navbar-profile-btn"
+                            style={{ padding: '8px', border: 'none', background: 'transparent', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                            title="Toggle Theme"
+                        >
+                            {theme === 'dark' ? <Sun size={16} color="#e2e8f0" /> : <Moon size={16} color="#475569" />}
+                        </button>
                         <button 
                             onClick={handleSignOut}
                             className="navbar-profile-btn"
@@ -148,7 +169,7 @@ export function FloatingNavbar({ variant }: FloatingNavbarProps) {
             className={`floating-navbar floating-navbar--${variant}`}
             initial={{ opacity: 0, y: -20, x: "-50%" }}
             animate={{ opacity: 1, y: 0, x: "-50%" }}
-            transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ type: 'spring', bounce: 0, duration: 0.4 }}
         >
             <div className="navbar-inner">
                 {/* Logo */}
@@ -159,7 +180,7 @@ export function FloatingNavbar({ variant }: FloatingNavbarProps) {
                 {/* Nav Links with animated active pill */}
                 <div className="navbar-links">
                     {links.map((link) => {
-                        const isActive = location.pathname === link.to;
+                        const isActive = location.pathname === link.to || location.pathname.startsWith(link.to + '/');
                         return (
                             <Link
                                 key={link.to}
@@ -170,15 +191,18 @@ export function FloatingNavbar({ variant }: FloatingNavbarProps) {
                                     <motion.span
                                         className="navbar-active-pill"
                                         layoutId={`nav-pill-${variant}`}
-                                        transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                                        transition={{ type: 'spring', bounce: 0.2, duration: 0.4 }} /* Slight momentum bounce for navigation tabs */
                                     />
                                 )}
-                                <span className="navbar-link-text">{link.label}</span>
+                                <div className="navbar-link-content" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
+                                    {link.icon && <div className="navbar-link-icon mobile-only" style={{ display: 'none' }}>{link.icon}</div>}
+                                    <span className="navbar-link-text">{link.label}</span>
+                                </div>
                                 {isActive && (
                                     <motion.span
                                         className="navbar-link-dot"
                                         layoutId={`nav-dot-${variant}`}
-                                        transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                                        transition={{ type: 'spring', bounce: 0.2, duration: 0.4 }}
                                     />
                                 )}
                             </Link>
@@ -188,6 +212,10 @@ export function FloatingNavbar({ variant }: FloatingNavbarProps) {
 
                 {/* Right Action */}
                 <div className="navbar-action">
+                    <button className="navbar-search-hint" onClick={() => window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true }))}>
+                        <Search size={14} />
+                        <span>Cmd+K</span>
+                    </button>
                     <NotificationBell />
                     {rightAction()}
                 </div>

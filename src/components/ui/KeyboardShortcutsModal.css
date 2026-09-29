@@ -1,0 +1,111 @@
+.shortcuts-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.4);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100000;
+    padding: 16px;
+}
+
+.shortcuts-modal-content {
+    background: var(--bg-card, #ffffff);
+    border-radius: 16px;
+    width: 100%;
+    max-width: 500px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+    color: var(--text-primary, #0f172a);
+    border: 1px solid var(--border-color, #e2e8f0);
+}
+
+.shortcuts-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border-color, #e2e8f0);
+}
+
+.shortcuts-header h2 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+.shortcuts-close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-secondary, #64748b);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+    border-radius: 6px;
+    transition: background 0.2s;
+}
+
+.shortcuts-close:hover {
+    background: rgba(0,0,0,0.05);
+}
+
+.shortcuts-body {
+    padding: 24px;
+}
+
+.shortcuts-section {
+    margin-bottom: 24px;
+}
+
+.shortcuts-section:last-child {
+    margin-bottom: 0;
+}
+
+.shortcuts-section h3 {
+    margin: 0 0 12px 0;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-secondary, #64748b);
+    font-weight: 600;
+}
+
+.shortcut-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border-color, #f1f5f9);
+}
+
+.shortcut-row:last-child {
+    border-bottom: none;
+}
+
+.shortcut-row span {
+    font-size: 0.95rem;
+    color: var(--text-primary, #1e293b);
+}
+
+.keys {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.85rem;
+    color: var(--text-secondary, #64748b);
+}
+
+kbd {
+    background: var(--bg-main, #f8fafc);
+    border: 1px solid var(--border-color, #cbd5e1);
+    border-radius: 4px;
+    padding: 3px 8px;
+    font-family: inherit;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-primary, #334155);
+    box-shadow: 0 2px 0 rgba(0, 0, 0, 0.05);
+}

@@ -12,9 +12,12 @@ import type { UserCapability } from '../../services/profileService';
 import {
     Calendar, ExternalLink, ChevronDown, ChevronUp, MapPin, Building2,
     Briefcase, Search, Filter, Star, ChevronLeft, ChevronRight,
-    Zap, Loader2, AlertCircle, Bookmark, BookmarkCheck, CheckCircle2, Sparkles,
-    Brain, TrendingUp, DollarSign, Target, AlertTriangle, X
+    Brain, TrendingUp, DollarSign, Target, AlertTriangle, X, Loader2,
+    BookmarkCheck, Bookmark, Zap, Sparkles, CheckCircle2, AlertCircle, User, Clock, SearchX
 } from 'lucide-react';
+import { CompanyReviewsModal } from '../../components/ui/CompanyReviewsModal';
+import { SkillGapModal } from '../../components/ui/SkillGapModal';
+import { EmptyState } from '../../components/ui/EmptyState';
 import './OpportunitiesPage.css';
 
 type MatchState = 'READY NOW' | 'NEAR MATCH' | 'SKILL-BUILDING' | 'ALL';
@@ -33,12 +36,15 @@ const matchTagColors: Record<string, { bg: string; text: string }> = {
     'Low Match':     { bg: '#f1f5f9', text: '#475569' },
 };
 
-export default function OpportunitiesPage() {
+export default function OpportunitiesPage({ isEmbedded = false }: { isEmbedded?: boolean }) {
     const { user, dbUid, profile } = useAuth();
     const navigate = useNavigate();
 
     // Tab
     const [pageTab, setPageTab] = useState<PageTab>('all');
+    
+    // Skill Gap Modal
+    const [selectedRecommendation, setSelectedRecommendation] = useState<RoleRecommendation | null>(null);
 
     // Capabilities & Projects for AI matching
     const [capabilities, setCapabilities] = useState<UserCapability[]>([]);
@@ -68,6 +74,9 @@ export default function OpportunitiesPage() {
     const [salaryMin, setSalaryMin] = useState<number | null>(null);
     const [companySize, setCompanySize] = useState<'all' | 'startup' | 'mid' | 'enterprise'>('all');
     const [showFilters, setShowFilters] = useState(false);
+    
+    // Company Reviews Modal
+    const [selectedCompany, setSelectedCompany] = useState<string | null>(null);
 
     const carouselRef = useRef<HTMLDivElement>(null);
 
@@ -206,20 +215,41 @@ export default function OpportunitiesPage() {
 
     const handleSave = async (opp: OpportunityCard) => {
         if (!user) return;
-        if (savedIds.has(opp.id)) {
-            const docId = savedDocIds[opp.id];
-            if (docId) {
-                await unsaveOpportunity(dbUid!, docId);
-                setSavedIds(prev => { const s = new Set(prev); s.delete(opp.id); return s; });
+        const isCurrentlySaved = savedIds.has(opp.id);
+        
+        // Optimistic update
+        setSavedIds(prev => {
+            const s = new Set(prev);
+            if (isCurrentlySaved) s.delete(opp.id);
+            else s.add(opp.id);
+            return s;
+        });
+
+        try {
+            if (isCurrentlySaved) {
+                const docId = savedDocIds[opp.id];
+                if (docId) {
+                    await unsaveOpportunity(dbUid!, docId);
+                }
+            } else {
+                const newDocId = await saveOpportunity(dbUid!, {
+                    opportunityId: opp.id,
+                    title: opp.title,
+                    company: opp.company,
+                    url: opp.url,
+                });
+                // Assuming saveOpportunity returns the docId. If it returns void, we might need a fetch later, 
+                // but for now the optimistic update works for the UI state.
             }
-        } else {
-            await saveOpportunity(dbUid!, {
-                opportunityId: opp.id,
-                title: opp.title,
-                company: opp.company,
-                url: opp.url,
+        } catch (err) {
+            console.error("Failed to save/unsave:", err);
+            // Revert on error
+            setSavedIds(prev => {
+                const s = new Set(prev);
+                if (isCurrentlySaved) s.add(opp.id);
+                else s.delete(opp.id);
+                return s;
             });
-            setSavedIds(prev => new Set(prev).add(opp.id));
         }
     };
 
@@ -279,9 +309,9 @@ export default function OpportunitiesPage() {
     };
 
     return (
-        <div className="opp-page">
-            <FloatingNavbar variant="candidate" />
-            <div className="opp-bg" />
+        <div className="opp-page" style={isEmbedded ? { background: 'transparent' } : {}}>
+            {!isEmbedded && <FloatingNavbar variant="candidate" />}
+            {!isEmbedded && <div className="opp-bg" />}
 
             <main className="opp-main">
                 <motion.div className="opp-header" initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
@@ -354,7 +384,13 @@ export default function OpportunitiesPage() {
 
                                             <div className="rec-body">
                                                 <h3 className="rec-role-title">{rec.role.title}</h3>
-                                                <p className="rec-company">{rec.role.companyName}</p>
+                                                <p 
+                                                    className="rec-company" 
+                                                    style={{ cursor: 'pointer', color: '#3b82f6', textDecoration: 'underline' }}
+                                                    onClick={(e) => { e.stopPropagation(); setSelectedCompany(rec.role.companyName); }}
+                                                >
+                                                    {rec.role.companyName}
+                                                </p>
                                                 <div className="rec-meta">
                                                     <span><MapPin size={13} /> {rec.role.location}</span>
                                                     <span><Briefcase size={13} /> {rec.role.type}</span>
@@ -398,6 +434,13 @@ export default function OpportunitiesPage() {
                                                     >
                                                         <Sparkles size={13} /> Tailor Resume
                                                     </button>
+                                                    <button
+                                                        className="rec-tailor-btn"
+                                                        style={{ background: '#f8fafc', color: '#475569', border: '1px solid #e2e8f0' }}
+                                                        onClick={() => setSelectedRecommendation(rec)}
+                                                    >
+                                                        <Brain size={13} /> AI Match Details
+                                                    </button>
                                                 </div>
                                             </div>
                                         </motion.div>
@@ -433,7 +476,13 @@ export default function OpportunitiesPage() {
                                                     </div>
                                                 </div>
                                                 <h3 className="feat-role">{opp.title}</h3>
-                                                <p className="feat-company">{opp.company}</p>
+                                                <p 
+                                                    className="feat-company"
+                                                    style={{ cursor: 'pointer', color: '#3b82f6', textDecoration: 'underline' }}
+                                                    onClick={(e) => { e.stopPropagation(); setSelectedCompany(opp.company); }}
+                                                >
+                                                    {opp.company}
+                                                </p>
                                                 <div className="feat-meta">
                                                     <span><MapPin size={12} /> {opp.location}</span>
                                                     <span><Briefcase size={12} /> {opp.type}</span>
@@ -478,6 +527,34 @@ export default function OpportunitiesPage() {
                                         />
                                     </div>
                                     <button className="opp-search-btn" onClick={handleSearch}>Search</button>
+                                </div>
+
+                                {/* Quick Filter Chips for Mobile/Fast Access */}
+                                <div className="quick-filter-chips">
+                                    <button 
+                                        className={`quick-chip ${filter === 'READY NOW' ? 'active' : ''}`}
+                                        onClick={() => setFilter(filter === 'READY NOW' ? 'ALL' : 'READY NOW')}
+                                    >
+                                        🔥 Ready Now
+                                    </button>
+                                    <button 
+                                        className={`quick-chip ${jobType === 'internship' ? 'active' : ''}`}
+                                        onClick={() => setJobType(jobType === 'internship' ? 'all' : 'internship')}
+                                    >
+                                        🎓 Internships
+                                    </button>
+                                    <button 
+                                        className={`quick-chip ${remoteOnly ? 'active' : ''}`}
+                                        onClick={() => setRemoteOnly(!remoteOnly)}
+                                    >
+                                        💻 Remote
+                                    </button>
+                                    <button 
+                                        className={`quick-chip ${salaryMin === 8 ? 'active' : ''}`}
+                                        onClick={() => setSalaryMin(salaryMin === 8 ? null : 8)}
+                                    >
+                                        💰 8+ LPA
+                                    </button>
                                 </div>
 
                                 <div className="sidebar-widget">
@@ -585,10 +662,11 @@ export default function OpportunitiesPage() {
                                 )}
 
                                 {!loading && !error && filtered.length === 0 && (
-                                    <div className="opp-state-center">
-                                        <Briefcase size={28} color="#94a3b8" />
-                                        <p>No opportunities match your current filters.<br />Try clearing the search or changing the match level.</p>
-                                    </div>
+                                    <EmptyState
+                                        icon={SearchX}
+                                        title="No matches found"
+                                        description="We couldn't find any opportunities matching your current filters. Try adjusting your search criteria."
+                                    />
                                 )}
 
                                 {/* CapAble Exclusive Platform Postings */}
@@ -625,11 +703,20 @@ export default function OpportunitiesPage() {
                                                                     </span>
                                                                 )}
                                                             </div>
-                                                            <p className="opp-card-company">{opp.company}</p>
+                                                            <p 
+                                                                className="opp-card-company"
+                                                                style={{ cursor: 'pointer', color: '#3b82f6', textDecoration: 'underline' }}
+                                                                onClick={(e) => { e.stopPropagation(); setSelectedCompany(opp.company); }}
+                                                            >
+                                                                {opp.company}
+                                                            </p>
                                                             <div className="opp-card-meta">
                                                                 <span><MapPin size={14} /> {opp.location}</span>
                                                                 <span><Briefcase size={14} /> {opp.type}</span>
+                                                                {opp.salary && <span><DollarSign size={14} /> {opp.salary}</span>}
                                                                 {opp.remote && <span style={{ color: '#10b981', fontWeight: 600 }}>🌐 Remote</span>}
+                                                                {opp.applicantCount !== undefined && <span><User size={14} /> {opp.applicantCount} applicants</span>}
+                                                                {opp.deadline && <span><Clock size={14} /> Due: {new Date(opp.deadline).toLocaleDateString()}</span>}
                                                             </div>
                                                             <div className="opp-card-tags">
                                                                 {opp.tags.map(tag => <span key={tag} className="opp-tag">{tag}</span>)}
@@ -704,11 +791,20 @@ export default function OpportunitiesPage() {
                                                                     </span>
                                                                 )}
                                                             </div>
-                                                            <p className="opp-card-company">{opp.company}</p>
+                                                            <p 
+                                                                className="opp-card-company"
+                                                                style={{ cursor: 'pointer', color: '#3b82f6', textDecoration: 'underline' }}
+                                                                onClick={(e) => { e.stopPropagation(); setSelectedCompany(opp.company); }}
+                                                            >
+                                                                {opp.company}
+                                                            </p>
                                                             <div className="opp-card-meta">
                                                                 <span><MapPin size={14} /> {opp.location}</span>
                                                                 <span><Briefcase size={14} /> {opp.type}</span>
+                                                                {opp.salary && <span><DollarSign size={14} /> {opp.salary}</span>}
                                                                 {opp.postedAt && <span><Calendar size={14} /> {new Date(opp.postedAt).toLocaleDateString()}</span>}
+                                                                {opp.applicantCount !== undefined && <span><User size={14} /> {opp.applicantCount} applicants</span>}
+                                                                {opp.deadline && <span><Clock size={14} /> Due: {new Date(opp.deadline).toLocaleDateString()}</span>}
                                                             </div>
                                                             <div className="opp-card-tags">
                                                                 {opp.tags.map(tag => <span key={tag} className="opp-tag">{tag}</span>)}
@@ -804,6 +900,19 @@ export default function OpportunitiesPage() {
                     </>
                 )}
             </main>
+            
+            <CompanyReviewsModal 
+                isOpen={!!selectedCompany}
+                companyName={selectedCompany || ''}
+                onClose={() => setSelectedCompany(null)}
+            />
+
+            {/* Skill Gap Modal */}
+            <SkillGapModal
+                isOpen={!!selectedRecommendation}
+                onClose={() => setSelectedRecommendation(null)}
+                recommendation={selectedRecommendation}
+            />
         </div>
     );
 }

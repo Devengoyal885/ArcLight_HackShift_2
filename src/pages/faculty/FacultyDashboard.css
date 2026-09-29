@@ -1,4 +1,4 @@
-/* FacultyDashboard.css */
+﻿/* FacultyDashboard.css */
 .faculty-page { min-height: 100vh; background: #f8fafc; font-family: "Inter", sans-serif; }
 .faculty-main { max-width: 1200px; margin: 0 auto; padding: 100px 24px 60px; }
 
@@ -114,7 +114,7 @@
 }
 @media (max-width: 600px) { .faculty-kpi-strip { grid-template-columns: 1fr; } }
 
-/* ── Tab Bar ────────────────────────────────────────────────────────────── */
+/* â”€â”€ Tab Bar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .faculty-tabs-bar {
     display: flex;
     gap: 4px;
@@ -143,7 +143,7 @@
 .faculty-tab-btn:hover { color: #0f172a; }
 .faculty-tab-btn.active { color: #2563eb; border-bottom-color: #2563eb; }
 
-/* ── Opportunity section ─────────────────────────────────────────────────── */
+/* â”€â”€ Opportunity section â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .faculty-opp-header { margin-bottom: 24px; }
 .faculty-opp-title {
     font-size: 22px;

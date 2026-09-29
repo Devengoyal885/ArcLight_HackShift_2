@@ -1,4 +1,4 @@
-.cprof-page {
+﻿.cprof-page {
     min-height: 100vh;
     background: #f8fafc;
 }
@@ -145,7 +145,7 @@
     text-align: right;
 }
 
-/* ─── Right ─── */
+/* â”€â”€â”€ Right â”€â”€â”€ */
 .cprof-match-card {
     padding: var(--space-6);
     background: white;
@@ -219,7 +219,7 @@
     line-height: var(--leading-relaxed);
 }
 
-/* ─── Evidence ─── */
+/* â”€â”€â”€ Evidence â”€â”€â”€ */
 .cprof-evidence-list {
     display: flex;
     flex-direction: column;
@@ -329,7 +329,7 @@
         grid-template-columns: 1fr;
     }
 }
-/* ─── Projects ─── */
+/* â”€â”€â”€ Projects â”€â”€â”€ */
 .cprof-projects-list { display: flex; flex-direction: column; gap: 10px; }
 .cprof-project-card { border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px 14px; background: #fafafa; }
 .cprof-project-top { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
@@ -340,7 +340,7 @@
 .cprof-project-techs { display: flex; flex-wrap: wrap; gap: 5px; }
 .cprof-tech-tag { font-size: 11px; font-weight: 600; color: #2563eb; background: #eff6ff; padding: 2px 8px; border-radius: 20px; }
 
-/* ─── Certifications ─── */
+/* â”€â”€â”€ Certifications â”€â”€â”€ */
 .cprof-certs-list { display: flex; flex-direction: column; gap: 8px; }
 .cprof-cert-card { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: #fafafa; border: 1px solid #e2e8f0; border-radius: 10px; }
 .cprof-cert-info { flex: 1; }
@@ -349,7 +349,7 @@
 .cprof-cert-link { color: #64748b; display: flex; }
 .cprof-cert-link:hover { color: #2563eb; }
 
-/* ─── Resume ─── */
+/* â”€â”€â”€ Resume â”€â”€â”€ */
 .cprof-resume-card { display: flex; align-items: center; gap: 12px; padding: 14px 16px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 10px; }
 .cprof-action-secondary {
     display: flex; align-items: center; gap: 5px;
@@ -360,7 +360,7 @@
 }
 .cprof-action-secondary:hover { background: #eff6ff; }
 
-/* ─── Recruiter Notes ─── */
+/* â”€â”€â”€ Recruiter Notes â”€â”€â”€ */
 .cprof-notes-input-row { display: flex; gap: 8px; margin-bottom: 12px; }
 .cprof-notes-input {
     flex: 1; padding: 10px 14px; border: 1px solid #e2e8f0;

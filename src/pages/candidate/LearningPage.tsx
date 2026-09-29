@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { FloatingNavbar } from '../../components/navigation/FloatingNavbar';
 import { Link } from 'react-router-dom';
-import { ArrowRight, BookOpen, ExternalLink, Loader2, Sparkles, AlertCircle, CheckCircle2, MessageSquare, Target } from 'lucide-react';
+import { ArrowRight, BookOpen, ExternalLink, Loader2, Sparkles, AlertCircle, CheckCircle2, MessageSquare, Target, Bookmark, Upload } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { getCapabilities, type LearningResource } from '../../services/profileService';
 import { generateLearningPath } from '../../services/learningService';
@@ -11,7 +11,7 @@ import { db } from '../../lib/firebase';
 import type { UserCapability } from '../../services/profileService';
 import './LearningPage.css';
 
-export default function LearningPage() {
+export default function LearningPage({ isEmbedded = false }: { isEmbedded?: boolean }) {
     const { user, dbUid, profile } = useAuth();
     const [capabilities, setCapabilities] = useState<UserCapability[]>([]);
     const [resources, setResources] = useState<LearningResource[]>([]);
@@ -20,6 +20,8 @@ export default function LearningPage() {
     const [error, setError] = useState<string | null>(null);
     const [careerTargetRole, setCareerTargetRole] = useState<string>('');
     const [careerMissingSkills, setCareerMissingSkills] = useState<string[]>([]);
+    const [savedCourses, setSavedCourses] = useState<Set<string>>(new Set());
+    const [completedCourses, setCompletedCourses] = useState<Set<string>>(new Set());
 
     useEffect(() => {
         if (!user || !dbUid) return;
@@ -143,8 +145,8 @@ export default function LearningPage() {
 
     return (
         <div className="learn-page">
-            <FloatingNavbar variant="candidate" />
-            <div className="learn-bg" />
+            {!isEmbedded && <FloatingNavbar variant="candidate" />}
+            {!isEmbedded && <div className="learn-bg" />}
 
             <main className="learn-main">
                 {/* ── Gamified Soft Skills Arena Banner ── */}
@@ -254,18 +256,66 @@ export default function LearningPage() {
                                         <BookOpen size={14} /> Focus: <strong>{res.skill}</strong>
                                     </div>
 
-                                    <div className="learn-card-actions">
-                                        <a href={res.url} target="_blank" rel="noopener noreferrer" className="learn-action-btn primary">
+                                    {completedCourses.has(res.resourceTitle) ? (
+                                        <div style={{ marginTop: '16px', background: '#ecfdf5', padding: '8px', borderRadius: '8px', border: '1px solid #a7f3d0' }}>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#059669', fontSize: '14px', fontWeight: 600 }}>
+                                                <CheckCircle2 size={16} /> Completed
+                                            </div>
+                                            <div style={{ background: '#d1fae5', height: '6px', borderRadius: '3px', marginTop: '8px' }}>
+                                                <div style={{ width: '100%', background: '#059669', height: '100%', borderRadius: '3px' }} />
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <div style={{ marginTop: '16px', background: '#f8fafc', padding: '8px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', color: '#64748b', fontSize: '13px', marginBottom: '6px' }}>
+                                                <span>Progress</span>
+                                                <span>0%</span>
+                                            </div>
+                                            <div style={{ background: '#e2e8f0', height: '6px', borderRadius: '3px' }}>
+                                                <div style={{ width: '0%', background: '#3b82f6', height: '100%', borderRadius: '3px' }} />
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    <div className="learn-card-actions" style={{ marginTop: '16px', display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                                        <a href={res.url} target="_blank" rel="noopener noreferrer" className="learn-action-btn primary" style={{ flex: 1, minWidth: '120px' }}>
                                             Start Learning <ExternalLink size={14} />
                                         </a>
+                                        <button
+                                            className="learn-action-btn"
+                                            style={{ background: completedCourses.has(res.resourceTitle) ? '#10b981' : '#f1f5f9', color: completedCourses.has(res.resourceTitle) ? '#fff' : '#64748b', border: 'none', padding: '8px 12px', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', fontWeight: 600, cursor: 'pointer' }}
+                                            onClick={() => {
+                                                const newCompleted = new Set(completedCourses);
+                                                if (newCompleted.has(res.resourceTitle)) newCompleted.delete(res.resourceTitle);
+                                                else newCompleted.add(res.resourceTitle);
+                                                setCompletedCourses(newCompleted);
+                                            }}
+                                        >
+                                            <CheckCircle2 size={14} /> {completedCourses.has(res.resourceTitle) ? 'Done' : 'Mark'}
+                                        </button>
+                                        <button
+                                            className="learn-action-btn"
+                                            style={{ background: savedCourses.has(res.resourceTitle) ? '#f59e0b' : '#f1f5f9', color: savedCourses.has(res.resourceTitle) ? '#fff' : '#64748b', border: 'none', padding: '8px 12px', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', fontWeight: 600, cursor: 'pointer' }}
+                                            onClick={() => {
+                                                const newSaved = new Set(savedCourses);
+                                                if (newSaved.has(res.resourceTitle)) newSaved.delete(res.resourceTitle);
+                                                else newSaved.add(res.resourceTitle);
+                                                setSavedCourses(newSaved);
+                                            }}
+                                        >
+                                            <Bookmark size={14} /> {savedCourses.has(res.resourceTitle) ? 'Saved' : 'Save'}
+                                        </button>
                                     </div>
                                 </motion.div>
                             ))}
                         </div>
                         
-                        <div className="learn-cta-row">
+                        <div className="learn-cta-row" style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', justifyContent: 'center' }}>
                             <button className="learn-cta-secondary" onClick={() => handleGenerate(true)}>
                                 <Sparkles size={14} /> Regenerate Path
+                            </button>
+                            <button className="learn-cta-secondary" style={{ background: '#f8fafc', color: '#0f172a' }}>
+                                <Upload size={14} /> Import Certificates
                             </button>
                             <Link to="/candidate/opportunities" className="learn-cta-btn">
                                 Check Opportunity Radar <ArrowRight size={14} />

@@ -235,9 +235,9 @@ export default function OnboardingPage() {
                 try {
                     const formData = new FormData();
                     formData.append('file', resumeFile);
-                    formData.append('upload_preset', import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET || 'wardrobe_app');
+                    formData.append('upload_preset', import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET || 'capable_uploads');
                     const res = await fetch(
-                        `https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME || 'dq6idzmu6'}/auto/upload`,
+                        `https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME || 'drcz7x71s'}/auto/upload`,
                         { method: 'POST', body: formData }
                     );
                     const data = await res.json();

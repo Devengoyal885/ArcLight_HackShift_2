@@ -67,6 +67,8 @@ export interface DriveRegistration {
     registeredAt?: unknown;
     eligible?: boolean;
     eligibilityReasons?: string[];
+    offerStatus?: 'pending' | 'offered' | 'rejected';
+    offerLetterUrl?: string;
 }
 
 export interface EligibilityResult {
@@ -238,3 +240,17 @@ export async function getEligibleStudents(
     const snap = await getDocs(q);
     return snap.docs.map(d => d.data() as DriveRegistration);
 }
+
+export async function updateOfferStatus(
+    driveId: string,
+    uid: string,
+    offerStatus: 'pending' | 'offered' | 'rejected',
+    offerLetterUrl?: string,
+): Promise<void> {
+    const updateData: any = { offerStatus };
+    if (offerLetterUrl !== undefined) {
+        updateData.offerLetterUrl = offerLetterUrl;
+    }
+    await updateDoc(doc(db, 'placementDrives', driveId, 'registrations', uid), updateData);
+}
+

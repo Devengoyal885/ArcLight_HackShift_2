@@ -1,4 +1,4 @@
-.comm-page {
+﻿.comm-page {
     min-height: 100vh;
     background: #f8fafc;
     color: #0f172a;
@@ -25,7 +25,7 @@
     z-index: 1;
 }
 
-/* ── Hero ── */
+/* â”€â”€ Hero â”€â”€ */
 .comm-hero {
     display: flex;
     justify-content: space-between;
@@ -108,7 +108,7 @@
     font-weight: 600;
 }
 
-/* ── Action Grid ── */
+/* â”€â”€ Action Grid â”€â”€ */
 .comm-action-grid {
     display: grid;
     grid-template-columns: 1.2fr 1fr;
@@ -129,7 +129,7 @@
 }
 
 .comm-action-card:hover {
-    transform: translateY(-4px);
+    /* GPU layer only */
     box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
 }
 
@@ -239,7 +239,7 @@
     font-size: 0.95rem;
 }
 
-/* ── Tabs ── */
+/* â”€â”€ Tabs â”€â”€ */
 .comm-tabs {
     display: flex;
     gap: 8px;
@@ -256,7 +256,7 @@
     font-size: 1.05rem;
     cursor: pointer;
     border-bottom: 2px solid transparent;
-    transition: all 0.2s;
+    transition: opacity 150ms cubic-bezier(0.23, 1, 0.32, 1), background 150ms cubic-bezier(0.23, 1, 0.32, 1), color 150ms cubic-bezier(0.23, 1, 0.32, 1), border-color 150ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 200ms cubic-bezier(0.23, 1, 0.32, 1), transform 80ms cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 .comm-tab:hover {
@@ -268,7 +268,7 @@
     border-bottom-color: #6366f1;
 }
 
-/* ── YouTube Videos Grid ── */
+/* â”€â”€ YouTube Videos Grid â”€â”€ */
 .real-videos {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -348,7 +348,7 @@
     font-size: 0.9rem;
 }
 
-/* ── Voice Practice (Real) ── */
+/* â”€â”€ Voice Practice (Real) â”€â”€ */
 .comm-voice-practice {
     background: white;
     border: 1px solid rgba(0, 0, 0, 0.05);
@@ -380,7 +380,7 @@
     font-size: 1.1rem;
     font-weight: 700;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: opacity 150ms cubic-bezier(0.23, 1, 0.32, 1), background 150ms cubic-bezier(0.23, 1, 0.32, 1), color 150ms cubic-bezier(0.23, 1, 0.32, 1), border-color 150ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 200ms cubic-bezier(0.23, 1, 0.32, 1), transform 80ms cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 .cv-btn-real:hover { background: #4f46e5; }

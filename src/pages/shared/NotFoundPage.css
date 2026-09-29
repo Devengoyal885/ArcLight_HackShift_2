@@ -1,0 +1,122 @@
+﻿.not-found-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #0f172a;
+    padding: 24px;
+    background-image: 
+        radial-gradient(circle at 15% 50%, rgba(99, 102, 241, 0.05), transparent 25%),
+        radial-gradient(circle at 85% 30%, rgba(56, 189, 248, 0.05), transparent 25%);
+}
+
+.not-found-content {
+    max-width: 500px;
+    text-align: center;
+    background: rgba(30, 41, 59, 0.5);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 24px;
+    padding: 48px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+.not-found-icon-wrapper {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    background: rgba(99, 102, 241, 0.1);
+    margin-bottom: 24px;
+    position: relative;
+}
+
+.not-found-icon-wrapper::after {
+    content: '';
+    position: absolute;
+    inset: -10px;
+    border-radius: 50%;
+    border: 1px dashed rgba(99, 102, 241, 0.3);
+    animation: rotate 10s linear infinite;
+}
+
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.not-found-icon {
+    color: #818cf8;
+}
+
+.not-found-title {
+    font-size: 5rem;
+    font-weight: 800;
+    margin: 0 0 8px 0;
+    background: linear-gradient(135deg, #f8fafc 0%, #94a3b8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    line-height: 1;
+}
+
+.not-found-subtitle {
+    font-size: 1.5rem;
+    color: #e2e8f0;
+    margin: 0 0 16px 0;
+    font-weight: 600;
+}
+
+.not-found-desc {
+    color: #94a3b8;
+    font-size: 1.05rem;
+    line-height: 1.6;
+    margin: 0 0 32px 0;
+}
+
+.not-found-actions {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+}
+
+.not-found-btn-primary, .not-found-btn-secondary {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+}
+
+.not-found-btn-primary {
+    background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+}
+
+.not-found-btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(99, 102, 241, 0.4);
+}
+
+.not-found-btn-secondary {
+    background: rgba(255, 255, 255, 0.05);
+    color: #e2e8f0;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.not-found-btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+@media (max-width: 640px) {
+    .not-found-actions {
+        flex-direction: column;
+    }
+}

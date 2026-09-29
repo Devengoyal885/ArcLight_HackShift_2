@@ -1,4 +1,4 @@
-.opp-page {
+﻿.opp-page {
     min-height: 100vh;
     background: #f8fafc;
     position: relative;
@@ -100,7 +100,7 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: all var(--duration-fast);
+    transition: opacity var(--duration-fast) var(--ease-out), background var(--duration-fast) var(--ease-out), color var(--duration-fast) var(--ease-out), border-color var(--duration-fast) var(--ease-out), box-shadow 200ms var(--ease-out), transform 80ms var(--ease-out);
 }
 
 .carousel-btn:hover {
@@ -137,11 +137,11 @@
     display: flex;
     flex-direction: column;
     gap: var(--space-3);
-    transition: all var(--duration-normal);
+    transition: opacity var(--duration-normal) var(--ease-out), background var(--duration-normal) var(--ease-out), color var(--duration-normal) var(--ease-out), border-color var(--duration-normal) var(--ease-out), box-shadow 220ms var(--ease-out), transform 80ms var(--ease-out);
 }
 
 .featured-card:hover {
-    transform: translateY(-2px);
+    /* GPU layer only */
     box-shadow: 0 10px 25px -5px rgba(245, 158, 11, 0.1);
     border-color: #fcd34d;
 }
@@ -216,7 +216,7 @@
     font-weight: var(--weight-semibold);
     cursor: pointer;
     text-decoration: none;
-    transition: all var(--duration-fast);
+    transition: opacity var(--duration-fast) var(--ease-out), background var(--duration-fast) var(--ease-out), color var(--duration-fast) var(--ease-out), border-color var(--duration-fast) var(--ease-out), box-shadow 200ms var(--ease-out), transform 80ms var(--ease-out);
 }
 
 .opp-btn-secondary {
@@ -240,7 +240,7 @@
 .opp-btn-primary:hover {
     background: #1f2937;
     border-color: #1f2937;
-    transform: translateY(-1px);
+    /* GPU layer only */
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
@@ -316,7 +316,7 @@
     border: 1px solid transparent;
     border-radius: var(--radius-md);
     cursor: pointer;
-    transition: all var(--duration-fast);
+    transition: opacity var(--duration-fast) var(--ease-out), background var(--duration-fast) var(--ease-out), color var(--duration-fast) var(--ease-out), border-color var(--duration-fast) var(--ease-out), box-shadow 200ms var(--ease-out), transform 80ms var(--ease-out);
     text-align: left;
 }
 
@@ -414,7 +414,7 @@
     border: 1px solid #e2e8f0;
     border-radius: var(--radius-xl);
     overflow: hidden;
-    transition: all var(--duration-fast);
+    transition: opacity var(--duration-fast) var(--ease-out), background var(--duration-fast) var(--ease-out), color var(--duration-fast) var(--ease-out), border-color var(--duration-fast) var(--ease-out), box-shadow 200ms var(--ease-out), transform 80ms var(--ease-out);
     box-shadow: 0 1px 3px rgba(0,0,0,0.02);
 }
 
@@ -528,7 +528,7 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: all var(--duration-fast);
+    transition: opacity var(--duration-fast) var(--ease-out), background var(--duration-fast) var(--ease-out), color var(--duration-fast) var(--ease-out), border-color var(--duration-fast) var(--ease-out), box-shadow 200ms var(--ease-out), transform 80ms var(--ease-out);
 }
 
 .opp-expand-btn:hover {
@@ -574,7 +574,7 @@
     }
 }
 
-/* ─── Real Data Additions ─── */
+/* â”€â”€â”€ Real Data Additions â”€â”€â”€ */
 .opp-state-center {
     display: flex;
     flex-direction: column;
@@ -607,7 +607,7 @@
     color: #94a3b8;
     padding: 6px;
     border-radius: 8px;
-    transition: all 0.2s;
+    transition: opacity 150ms cubic-bezier(0.23, 1, 0.32, 1), background 150ms cubic-bezier(0.23, 1, 0.32, 1), color 150ms cubic-bezier(0.23, 1, 0.32, 1), border-color 150ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 200ms cubic-bezier(0.23, 1, 0.32, 1), transform 80ms cubic-bezier(0.23, 1, 0.32, 1);
 }
 .opp-save-btn:hover { color: #f59e0b; }
 .opp-save-btn.saved { color: #f59e0b; }
@@ -650,7 +650,7 @@
 .spin { animation: opp-spin 1s linear infinite; }
 @keyframes opp-spin { to { transform: rotate(360deg); } }
 
-/* ── Page Tabs ── */
+/* â”€â”€ Page Tabs â”€â”€ */
 .opp-page-tabs {
     display: flex;
     gap: 8px;
@@ -671,7 +671,7 @@
     font-size: 0.875rem;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: opacity 150ms cubic-bezier(0.23, 1, 0.32, 1), background 150ms cubic-bezier(0.23, 1, 0.32, 1), color 150ms cubic-bezier(0.23, 1, 0.32, 1), border-color 150ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 200ms cubic-bezier(0.23, 1, 0.32, 1), transform 80ms cubic-bezier(0.23, 1, 0.32, 1);
     position: relative;
 }
 .opp-page-tab.active {
@@ -690,7 +690,7 @@
     letter-spacing: 0.05em;
 }
 
-/* ── AI Recommendations ── */
+/* â”€â”€ AI Recommendations â”€â”€ */
 .recs-header {
     display: flex;
     justify-content: space-between;
@@ -724,13 +724,13 @@
     display: flex;
     gap: 16px;
     align-items: flex-start;
-    transition: all 0.2s;
+    transition: opacity 150ms cubic-bezier(0.23, 1, 0.32, 1), background 150ms cubic-bezier(0.23, 1, 0.32, 1), color 150ms cubic-bezier(0.23, 1, 0.32, 1), border-color 150ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 200ms cubic-bezier(0.23, 1, 0.32, 1), transform 80ms cubic-bezier(0.23, 1, 0.32, 1);
     cursor: default;
 }
 .rec-card:hover {
     border-color: #93c5fd;
     box-shadow: 0 8px 24px rgba(37,99,235,0.08);
-    transform: translateY(-2px);
+    transform: translateZ(0); /* GPU layer — Emil: no layout-triggering Y shifts on hover */
 }
 .rec-score-wrap {
     display: flex;
@@ -865,7 +865,7 @@
     font-size: 0.82rem;
     font-weight: 700;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: opacity 150ms cubic-bezier(0.23, 1, 0.32, 1), background 150ms cubic-bezier(0.23, 1, 0.32, 1), color 150ms cubic-bezier(0.23, 1, 0.32, 1), border-color 150ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 200ms cubic-bezier(0.23, 1, 0.32, 1), transform 80ms cubic-bezier(0.23, 1, 0.32, 1);
 }
 .rec-apply-btn:hover:not(:disabled) { background: #1e40af; }
 .rec-apply-btn:disabled { opacity: 0.7; cursor: not-allowed; }
@@ -881,7 +881,7 @@
     font-size: 0.82rem;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: opacity 150ms cubic-bezier(0.23, 1, 0.32, 1), background 150ms cubic-bezier(0.23, 1, 0.32, 1), color 150ms cubic-bezier(0.23, 1, 0.32, 1), border-color 150ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 200ms cubic-bezier(0.23, 1, 0.32, 1), transform 80ms cubic-bezier(0.23, 1, 0.32, 1);
 }
 .rec-tailor-btn:hover { background: #f5f3ff; border-color: #7c3aed; }
 
@@ -891,3 +891,57 @@
     flex-direction: column;
     gap: 4px;
 }
+/* --- Stagger entrance — Emil: 30-80ms between items, decorative only --- */
+.opp-card {
+    animation: fadeInUp 220ms cubic-bezier(0.23, 1, 0.32, 1) both;
+}
+.opp-grid .opp-card:nth-child(1)  { animation-delay:  0ms; }
+.opp-grid .opp-card:nth-child(2)  { animation-delay: 40ms; }
+.opp-grid .opp-card:nth-child(3)  { animation-delay: 80ms; }
+.opp-grid .opp-card:nth-child(4)  { animation-delay: 120ms; }
+.opp-grid .opp-card:nth-child(5)  { animation-delay: 160ms; }
+.opp-grid .opp-card:nth-child(6)  { animation-delay: 200ms; }
+.opp-grid .opp-card:nth-child(7)  { animation-delay: 240ms; }
+.opp-grid .opp-card:nth-child(8)  { animation-delay: 280ms; }
+.opp-grid .opp-card:nth-child(n+9) { animation-delay: 320ms; }
+
+/* %% Quick Filter Chips %% */
+.quick-filter-chips {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 24px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    scrollbar-width: none;
+}
+.quick-filter-chips::-webkit-scrollbar {
+    display: none;
+}
+.quick-chip {
+    padding: 8px 16px;
+    border-radius: 99px;
+    border: 1px solid rgba(148, 163, 184, 0.3);
+    background: white;
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all var(--duration-fast) var(--ease-out);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+}
+.quick-chip:hover {
+    border-color: rgba(148, 163, 184, 0.6);
+    background: #f8fafc;
+}
+.quick-chip.active {
+    background: var(--color-electric);
+    color: white;
+    border-color: var(--color-electric);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+}
+
+

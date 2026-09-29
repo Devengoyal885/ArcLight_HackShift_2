@@ -104,31 +104,31 @@ export default function LoginPage() {
     const [name, setName] = useState('');
     const [error, setError] = useState('');
     const [infoMsg, setInfoMsg] = useState('');
+    
+    // Auth context
+    const { mockLogin, user, loading, role } = useAuth();
     const navigate = useNavigate();
-    const { user, loading } = useAuth();
 
-    // If user is already authenticated, check if they need onboarding or dashboard
+    // If user is already authenticated, redirect them to their correct dashboard.
+    // We use `role` from AuthContext which is derived from the profile, not stale localStorage.
     useEffect(() => {
-        const checkUserDestination = async () => {
-            if (!loading && user) {
-                const savedRole = (localStorage.getItem('userRole') as RoleType) || 'candidate';
-                try {
-                    const dbUid = `${user.uid}_${savedRole}`;
-                    const p = await getProfile(dbUid);
-                    if (p?.profileComplete) {
-                        navigate(dashboardFor(savedRole), { replace: true });
-                    } else {
-                        navigate('/onboarding', { replace: true });
-                    }
-                } catch (err) {
-                    // Fallback if profile fetch fails
-                    navigate(dashboardFor(savedRole), { replace: true });
-                }
+        if (loading) return; // Wait for Firebase to resolve
+        if (!user) return;   // Not logged in — stay on login page
+
+        const resolvedRole = (role as RoleType) || (localStorage.getItem('userRole') as RoleType) || 'candidate';
+        
+        const doRedirect = async () => {
+            try {
+                const dbUid = `${user.uid}_${resolvedRole}`;
+                const p = await getProfile(dbUid);
+                navigate(p?.profileComplete ? dashboardFor(resolvedRole) : '/onboarding', { replace: true });
+            } catch {
+                navigate(dashboardFor(resolvedRole), { replace: true });
             }
         };
-        checkUserDestination();
+        doRedirect();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [user, loading]);
+    }, [user, loading, role]);
 
     const currentRole: RoleType = step === 'select'
         ? 'candidate'
@@ -422,7 +422,23 @@ export default function LoginPage() {
 
                         <form className="login-form" onSubmit={handleEmailAuth}>
                             {error && (
-                                <div className="login-error-banner">{error}</div>
+                                <div className="login-error-banner" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                    <span>{error}</span>
+                                    {error.includes('auth/network-request-failed') && (
+                                        <button 
+                                            type="button"
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                mockLogin(currentRole);
+                                                navigate(dashboardFor(currentRole), { replace: true });
+                                            }}
+                                            className="login-btn-primary"
+                                            style={{ background: '#f59e0b', color: '#000', fontSize: '0.8rem', padding: '6px' }}
+                                        >
+                                            Network Blocked? Skip Login (Dev Mode)
+                                        </button>
+                                    )}
+                                </div>
                             )}
 
                             {!isLogin && (

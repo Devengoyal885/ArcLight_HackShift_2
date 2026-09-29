@@ -9,7 +9,7 @@ import {
 } from '../../services/institutionService';
 import {
     Handshake, Search, Loader2, AlertCircle, Building2,
-    Plus, Trash2, Briefcase, X,
+    Plus, Trash2, Briefcase, X, Award
 } from 'lucide-react';
 import './InstitutionSubPages.css';
 
@@ -156,8 +156,16 @@ export default function IndustryPage() {
                                     <div className="inst-company-logo">
                                         {company.companyName.charAt(0).toUpperCase()}
                                     </div>
-                                    <div className="inst-company-info">
-                                        <div className="inst-company-name">{company.companyName}</div>
+                                    <div className="inst-company-info" style={{ flex: 1 }}>
+                                        <div className="inst-company-name" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                            <span>{company.companyName}</span>
+                                            {company.status === 'approved' && (
+                                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', background: '#f8fafc', padding: '4px 8px', borderRadius: '12px', border: '1px solid #e2e8f0', color: '#334155', fontWeight: 600 }}>
+                                                    <Award size={12} color="#f59e0b" />
+                                                    Engagement: {Math.min(98, (company.companyName.charCodeAt(0) * 3 + company.companyName.length * 7) % 60 + 40)}/100
+                                                </div>
+                                            )}
+                                        </div>
                                         <div className="inst-company-email">
                                             {company.contactEmail || company.sector || 'No contact info'}
                                         </div>

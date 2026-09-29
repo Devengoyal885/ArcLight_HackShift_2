@@ -10,7 +10,7 @@ import {
 import {
     ArrowRight, Search, Loader2, Plus, Briefcase, BookOpen,
     GraduationCap, FlaskConical, CheckCircle2, Trash2,
-    Globe, Calendar, DollarSign, Users, AlertCircle,
+    Globe, Calendar, DollarSign, Users, AlertCircle, Copy,
 } from 'lucide-react';
 import './RolesPage.css';
 
@@ -51,6 +51,9 @@ export default function RolesPage() {
         duration: '',
         deadline: '',
         description: '',
+        customQuestions: '',
+        seatCapacity: '',
+        autoCloseOnSeatCap: false,
     });
 
     // My posted roles
@@ -112,6 +115,8 @@ export default function RolesPage() {
         if (formData.stipend) rolePayload.stipend = formData.stipend;
         if (formData.duration || model.suggestedDuration) rolePayload.duration = formData.duration || model.suggestedDuration;
         if (formData.deadline) rolePayload.deadline = formData.deadline;
+        if (formData.seatCapacity) rolePayload.seatCapacity = parseInt(formData.seatCapacity, 10);
+        if (formData.autoCloseOnSeatCap) rolePayload.autoCloseOnSeatCap = true;
 
         try {
             await postRole(dbUid!, rolePayload);
@@ -143,6 +148,33 @@ export default function RolesPage() {
         const newStatus = role.status === 'active' ? 'closed' : 'active';
         await updatePostedRole(dbUid!, role.id, { status: newStatus });
         setMyRoles(prev => prev.map(r => r.id === role.id ? { ...r, status: newStatus } : r));
+    };
+
+    const handleCloneRole = (role: PostedRole) => {
+        setRoleQuery(role.title + ' (Copy)');
+        setFormData({
+            location: role.location || 'India',
+            remote: !!role.remote,
+            salary: role.salary || '',
+            stipend: role.stipend || '',
+            duration: role.duration || '',
+            deadline: role.deadline || '',
+            description: role.description || '',
+            customQuestions: '',
+            seatCapacity: role.seatCapacity ? String(role.seatCapacity) : '',
+            autoCloseOnSeatCap: role.autoCloseOnSeatCap || false,
+        });
+        setModel({
+            role: role.title + ' (Copy)',
+            type: role.type,
+            summary: role.description || '',
+            capabilities: role.requiredCapabilities ? role.requiredCapabilities.map(c => ({ label: c.skill, weight: (c as any).weight || 1, required: c.required })) : [],
+            suggestedSkills: role.requiredSkills || [],
+            suggestedDuration: role.duration
+        });
+        setShowPostForm(true);
+        setActiveTab('generate');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
     return (
@@ -177,6 +209,19 @@ export default function RolesPage() {
                 <AnimatePresence mode="wait">
                     {activeTab === 'generate' && (
                         <motion.div key="gen" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
+                            {/* Templates */}
+                            <div style={{ display: 'flex', gap: '8px', marginBottom: '16px', flexWrap: 'wrap' }}>
+                                <span style={{ fontSize: '14px', color: '#64748b', alignSelf: 'center' }}>Templates:</span>
+                                {['Frontend Engineer', 'Backend Developer', 'Data Scientist', 'Marketing Intern', 'Product Manager'].map(t => (
+                                    <button 
+                                        key={t}
+                                        style={{ background: '#f1f5f9', border: 'none', padding: '4px 12px', borderRadius: '16px', fontSize: '13px', color: '#334155', cursor: 'pointer' }}
+                                        onClick={() => setRoleQuery(t)}
+                                    >
+                                        {t}
+                                    </button>
+                                ))}
+                            </div>
                             {/* Search input */}
                             <div style={{ display: 'flex', flexDirection: 'column', gap: 16, marginBottom: 24 }}>
                                 <div className="roles-search-row" style={{ marginBottom: 0 }}>
@@ -340,6 +385,28 @@ export default function RolesPage() {
                                                 />
                                             </div>
                                             <div className="roles-form-group">
+                                                <label>Seat / Capacity Limit (optional)</label>
+                                                <input
+                                                    type="number"
+                                                    min="1"
+                                                    placeholder="e.g. 10 (Close applications after 10 applied)"
+                                                    value={formData.seatCapacity || ''}
+                                                    onChange={e => setFormData(f => ({ ...f, seatCapacity: e.target.value }))}
+                                                />
+                                            </div>
+                                            {formData.seatCapacity && (
+                                                <div className="roles-form-group">
+                                                    <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 500, cursor: 'pointer', fontSize: '13px' }}>
+                                                        <input 
+                                                            type="checkbox" 
+                                                            checked={!!formData.autoCloseOnSeatCap}
+                                                            onChange={e => setFormData(f => ({ ...f, autoCloseOnSeatCap: e.target.checked }))}
+                                                        />
+                                                        Auto-close role when limit is reached
+                                                    </label>
+                                                </div>
+                                            )}
+                                            <div className="roles-form-group">
                                                 <label>Description (optional — AI summary will be used if blank)</label>
                                                 <textarea
                                                     value={formData.description}
@@ -347,6 +414,21 @@ export default function RolesPage() {
                                                     rows={3}
                                                     placeholder={model.summary}
                                                 />
+                                            </div>
+                                            <div className="roles-form-group">
+                                                <label>Custom Application Questions (one per line, optional)</label>
+                                                <textarea
+                                                    value={formData.customQuestions}
+                                                    onChange={e => setFormData(f => ({ ...f, customQuestions: e.target.value }))}
+                                                    rows={3}
+                                                    placeholder="e.g. Why do you want to join our company?"
+                                                />
+                                            </div>
+                                            <div className="roles-form-group">
+                                                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 500, cursor: 'pointer' }}>
+                                                    <input type="checkbox" defaultChecked />
+                                                    Automatically notify eligible candidates upon posting
+                                                </label>
                                             </div>
 
                                             {postSuccess && (
@@ -414,6 +496,9 @@ export default function RolesPage() {
                                                     onClick={() => handleToggleStatus(role)}
                                                 >
                                                     {role.status === 'active' ? 'Active' : 'Closed'}
+                                                </button>
+                                                <button className="roles-delete-btn" onClick={() => handleCloneRole(role)} title="Clone Role" style={{ color: '#0ea5e9' }}>
+                                                    <Copy size={14} />
                                                 </button>
                                                 <button className="roles-delete-btn" onClick={() => handleDelete(role)} title="Delete">
                                                     <Trash2 size={14} />

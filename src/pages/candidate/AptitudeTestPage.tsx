@@ -9,6 +9,7 @@ import {
 } from '../../data/aptitudeData';
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../../lib/firebase';
+import { addPoints } from '../../services/scoreService';
 import {
     Brain, Timer, CheckCircle2, XCircle, Trophy, RotateCcw,
     ChevronRight, ChevronLeft, Loader2, BarChart3, Target,
@@ -185,6 +186,11 @@ export default function AptitudeTestPage() {
                 elapsedSeconds: elapsed,
                 takenAt: serverTimestamp(),
             });
+
+            // Add real leaderboard points!
+            if (Math.max(0, rawScore) > 0) {
+                await addPoints(dbUid, Math.max(0, rawScore), `Completed Aptitude Test (${selectedCats.join(', ')})`);
+            }
         } catch (err) {
             console.warn('[AptitudeTest] Save failed:', err);
         } finally {

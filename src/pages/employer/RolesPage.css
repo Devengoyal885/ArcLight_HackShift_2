@@ -1,9 +1,9 @@
-.roles-page {
+﻿.roles-page {
     min-height: 100vh;
     background: #f8fafc;
 }
 
-/* ─── Keep all existing styles + append new ones ─── */
+/* â”€â”€â”€ Keep all existing styles + append new ones â”€â”€â”€ */
 
 .roles-main {
     padding: calc(var(--navbar-height) + var(--space-16)) var(--space-8) var(--space-16);
@@ -288,7 +288,7 @@
     }
 }
 
-/* ─── Tabs ─── */
+/* â”€â”€â”€ Tabs â”€â”€â”€ */
 .roles-tabs {
     display: flex;
     gap: var(--space-2);
@@ -324,7 +324,7 @@
     font-weight: 700;
 }
 
-/* ─── Error / Success ─── */
+/* â”€â”€â”€ Error / Success â”€â”€â”€ */
 .roles-error {
     display: flex;
     align-items: center;
@@ -349,7 +349,7 @@
     font-size: var(--text-sm);
 }
 
-/* ─── Model Header & Summary ─── */
+/* â”€â”€â”€ Model Header & Summary â”€â”€â”€ */
 .roles-model-header {
     display: flex;
     align-items: center;
@@ -371,7 +371,7 @@
     border-radius: var(--radius-pill);
 }
 
-/* ─── Skill Tags ─── */
+/* â”€â”€â”€ Skill Tags â”€â”€â”€ */
 .roles-skill-tags {
     display: flex;
     flex-wrap: wrap;
@@ -388,7 +388,7 @@
     font-weight: var(--weight-medium);
 }
 
-/* ─── Post Form ─── */
+/* â”€â”€â”€ Post Form â”€â”€â”€ */
 .roles-post-form {
     padding: var(--space-6);
     background: white;
@@ -455,7 +455,7 @@
 .roles-post-btn:hover { background: #1f2937; }
 .roles-post-btn:disabled { opacity: 0.7; cursor: not-allowed; }
 
-/* ─── My Roles ─── */
+/* â”€â”€â”€ My Roles â”€â”€â”€ */
 .roles-loading,
 .roles-empty {
     display: flex;
@@ -559,4 +559,4 @@
 
 @keyframes spin {
     to { transform: rotate(360deg); }
-}
+}

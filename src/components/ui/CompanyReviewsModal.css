@@ -1,0 +1,266 @@
+﻿.company-modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(15, 23, 42, 0.4);
+    backdrop-filter: blur(12px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 24px;
+}
+
+.company-modal-content {
+    background: white;
+    width: 100%;
+    max-width: 600px;
+    max-height: 85vh;
+    border-radius: 24px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+    font-family: 'Inter', sans-serif;
+}
+
+.company-modal-close {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    background: white;
+    border: 1px solid #e2e8f0;
+    color: #64748b;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    z-index: 10;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+}
+
+.company-modal-close:hover {
+    background: #f8fafc;
+    color: #0f172a;
+    transform: scale(1.05);
+}
+
+.company-modal-header {
+    padding: 40px 32px 32px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    background: linear-gradient(135deg, #f8fafc 0%, #eff6ff 100%);
+    position: relative;
+    overflow: hidden;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.company-modal-header::before {
+    content: '';
+    position: absolute;
+    top: -50%; right: -20%;
+    width: 300px; height: 300px;
+    background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 70%);
+    filter: blur(40px);
+    pointer-events: none;
+}
+
+.company-modal-logo {
+    width: 72px;
+    height: 72px;
+    border-radius: 20px;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+    position: relative;
+    z-index: 1;
+}
+
+.company-modal-title {
+    font-size: 28px;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0 0 8px 0;
+    letter-spacing: -0.5px;
+    position: relative;
+    z-index: 1;
+}
+
+.company-modal-subtitle {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 14px;
+    color: #64748b;
+    position: relative;
+    z-index: 1;
+}
+
+.company-rating {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-weight: 700;
+    color: #b45309;
+    background: #fef3c7;
+    padding: 4px 10px;
+    border-radius: 12px;
+    border: 1px solid #fde68a;
+}
+
+.company-modal-body {
+    padding: 32px;
+    overflow-y: auto;
+    flex: 1;
+    background: white;
+}
+
+.company-modal-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 64px 0;
+    color: #6366f1;
+    gap: 16px;
+}
+
+.company-modal-loading p {
+    color: #64748b;
+    font-size: 15px;
+}
+
+.company-culture-summary {
+    margin-bottom: 40px;
+    background: #f8fafc;
+    padding: 24px;
+    border-radius: 16px;
+    border: 1px solid #e2e8f0;
+}
+
+.company-culture-summary h3 {
+    font-size: 16px;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.company-culture-summary p {
+    font-size: 15px;
+    line-height: 1.7;
+    color: #475569;
+}
+
+.company-reviews-list h3 {
+    font-size: 20px;
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: 24px;
+    letter-spacing: -0.5px;
+}
+
+.company-review-card {
+    background: white;
+    border: 1px solid #e2e8f0;
+    padding: 24px;
+    border-radius: 16px;
+    margin-bottom: 16px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.company-review-card:hover {
+    box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05);
+    border-color: #cbd5e1;
+}
+
+.review-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+}
+
+.review-rating {
+    display: flex;
+    gap: 2px;
+    background: #f8fafc;
+    padding: 4px 8px;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+}
+
+.review-title {
+    font-weight: 700;
+    color: #0f172a;
+    font-size: 16px;
+    margin-bottom: 4px;
+}
+
+.review-role {
+    font-size: 13px;
+    color: #64748b;
+    font-weight: 500;
+}
+
+.review-body {
+    display: grid;
+    gap: 16px;
+    margin-top: 16px;
+    background: #f8fafc;
+    padding: 16px;
+    border-radius: 12px;
+}
+
+.review-pros, .review-cons {
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.review-pros strong {
+    color: #10b981;
+    display: block;
+    margin-bottom: 4px;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.review-cons strong {
+    color: #ef4444;
+    display: block;
+    margin-bottom: 4px;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.review-text {
+    color: #334155;
+}
+
+/* Custom Scrollbar */
+.company-modal-body::-webkit-scrollbar {
+    width: 6px;
+}
+
+.company-modal-body::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.company-modal-body::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+}

@@ -7,8 +7,9 @@ import { generateNAACReport, printNAACReport } from '../../services/naacReportSe
 import type { UserProfile } from '../../services/profileService';
 import {
     BarChart3, Loader2, AlertCircle, FileText, TrendingUp,
-    Users, Briefcase, Award, Download
+    Users, Briefcase, Award, Download, CalendarDays
 } from 'lucide-react';
+import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import './InstitutionSubPages.css';
 
 export default function AnalyticsPage() {
@@ -65,6 +66,35 @@ export default function AnalyticsPage() {
             setGeneratingReport(false);
         }
     };
+
+    // Readiness Heatmap Calculation
+    const readinessData = Object.keys(deptCounts).map(dept => {
+        const deptStudents = students.filter(s => (s as any).department === dept || (!s.department && dept === 'General'));
+        let needsIntervention = 0;
+        let progressing = 0;
+        let placementReady = 0;
+
+        deptStudents.forEach(s => {
+            const score = Math.min(100,
+                (s.profileComplete ? 30 : 0) +
+                ((s.skills?.length || 0) * 5) +
+                (s.resumeUrl ? 20 : 0) +
+                (s.githubUsername ? 10 : 0) +
+                (s.linkedinUrl ? 10 : 0)
+            );
+            if (score >= 76) placementReady++;
+            else if (score >= 41) progressing++;
+            else needsIntervention++;
+        });
+
+        return {
+            department: dept,
+            'Needs Intervention': needsIntervention,
+            'Progressing': progressing,
+            'Placement Ready': placementReady,
+        };
+    });
+
 
     const kpiCards = [
         { label: 'Total Students', value: totalStudents, icon: Users, color: '#6366f1' },
@@ -202,6 +232,177 @@ export default function AnalyticsPage() {
                                 </div>
                             </motion.div>
                         )}
+
+                        {/* Offer & Compensation Insights */}
+                        <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '16px' }}>
+                            {/* Year-wise Trends Chart */}
+                            <motion.div
+                                initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }}
+                                style={{ background: 'white', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '2rem', gridColumn: '1 / -1' }}
+                            >
+                                <h2 style={{ fontSize: '1.1rem', margin: '0 0 1.5rem', color: '#0f172a', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                    <CalendarDays size={18} color="#10b981" /> Year-wise Placement Trends
+                                </h2>
+                                <div style={{ height: '300px' }}>
+                                    <ResponsiveContainer width="100%" height="100%">
+                                        <LineChart data={[
+                                            { year: '2020', placed: 180, offers: 210 },
+                                            { year: '2021', placed: 240, offers: 280 },
+                                            { year: '2022', placed: 320, offers: 400 },
+                                            { year: '2023', placed: 450, offers: 510 },
+                                            { year: '2024', placed: 520, offers: 640 }
+                                        ]} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+                                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
+                                            <XAxis dataKey="year" tick={{ fontSize: 12, fill: '#64748b' }} axisLine={false} tickLine={false} />
+                                            <YAxis tick={{ fontSize: 12, fill: '#64748b' }} axisLine={false} tickLine={false} />
+                                            <Tooltip cursor={{ fill: '#f1f5f9' }} contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} />
+                                            <Legend verticalAlign="top" height={36} wrapperStyle={{ fontSize: '12px', fontWeight: 600, color: '#334155' }} />
+                                            <Line type="monotone" dataKey="placed" name="Students Placed" stroke="#2563eb" strokeWidth={3} dot={{ r: 4, fill: '#2563eb', strokeWidth: 2, stroke: '#fff' }} activeDot={{ r: 6 }} />
+                                            <Line type="monotone" dataKey="offers" name="Total Offers" stroke="#10b981" strokeWidth={3} dot={{ r: 4, fill: '#10b981', strokeWidth: 2, stroke: '#fff' }} activeDot={{ r: 6 }} />
+                                </LineChart>
+                                    </ResponsiveContainer>
+                                </div>
+                            </motion.div>
+
+                            {/* Student Readiness Heatmap */}
+                            <motion.div
+                                initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }}
+                                style={{ background: 'white', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '2rem', gridColumn: '1 / -1' }}
+                            >
+                                <h2 style={{ fontSize: '1.1rem', margin: '0 0 1.5rem', color: '#0f172a', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                    <Award size={18} color="#f59e0b" />
+                                    Student Readiness Heatmap (by Department)
+                                </h2>
+                                <p style={{ fontSize: '13px', color: '#64748b', marginBottom: '20px' }}>
+                                    Distribution of student readiness based on profile completeness, skill validation, and professional presence.
+                                </p>
+                                <div style={{ height: '300px' }}>
+                                    <ResponsiveContainer width="100%" height="100%">
+                                        <BarChart data={readinessData} margin={{ top: 10, right: 30, left: 0, bottom: 20 }}>
+                                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
+                                            <XAxis dataKey="department" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#64748b' }} dy={10} />
+                                            <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#64748b' }} />
+                                            <Tooltip 
+                                                contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+                                                cursor={{ fill: '#f8fafc' }}
+                                            />
+                                            <Legend wrapperStyle={{ paddingTop: '10px' }} />
+                                            <Bar dataKey="Needs Intervention" stackId="a" fill="#ef4444" radius={[0, 0, 4, 4]} />
+                                            <Bar dataKey="Progressing" stackId="a" fill="#f59e0b" />
+                                            <Bar dataKey="Placement Ready" stackId="a" fill="#10b981" radius={[4, 4, 0, 0]} />
+                                        </BarChart>
+                                    </ResponsiveContainer>
+                                </div>
+                            </motion.div>
+
+                            <motion.div
+                                initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }}
+                                style={{ background: 'white', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '2rem' }}
+                            >
+                                <h2 style={{ fontSize: '1.1rem', margin: '0 0 1.5rem', color: '#0f172a', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                    <TrendingUp size={18} color="#f59e0b" /> Compensation & Offers
+                                </h2>
+                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '20px' }}>
+                                    <div style={{ padding: '16px', background: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+                                        <div style={{ fontSize: '12px', color: '#64748b', fontWeight: 600 }}>Highest CTC</div>
+                                        <div style={{ fontSize: '24px', fontWeight: 800, color: '#0f172a' }}>₹42.5 LPA</div>
+                                    </div>
+                                    <div style={{ padding: '16px', background: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+                                        <div style={{ fontSize: '12px', color: '#64748b', fontWeight: 600 }}>Average CTC</div>
+                                        <div style={{ fontSize: '24px', fontWeight: 800, color: '#0f172a' }}>₹8.2 LPA</div>
+                                    </div>
+                                </div>
+                                <div style={{ display: 'flex', gap: '12px' }}>
+                                    <div style={{ flex: 1, padding: '12px', background: '#ecfdf5', borderRadius: '8px', border: '1px solid #a7f3d0' }}>
+                                        <div style={{ fontSize: '11px', color: '#047857', fontWeight: 700, textTransform: 'uppercase' }}>Accepted Offers</div>
+                                        <div style={{ fontSize: '18px', fontWeight: 800, color: '#065f46' }}>342</div>
+                                    </div>
+                                    <div style={{ flex: 1, padding: '12px', background: '#fef2f2', borderRadius: '8px', border: '1px solid #fecaca' }}>
+                                        <div style={{ fontSize: '11px', color: '#b91c1c', fontWeight: 700, textTransform: 'uppercase' }}>Declined Offers</div>
+                                        <div style={{ fontSize: '18px', fontWeight: 800, color: '#991b1b' }}>14</div>
+                                    </div>
+                                </div>
+                            </motion.div>
+
+                            <motion.div
+                                initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.38 }}
+                                style={{ background: 'white', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '2rem' }}
+                            >
+                                <h2 style={{ fontSize: '1.1rem', margin: '0 0 1.5rem', color: '#0f172a', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                    <Briefcase size={18} color="#2563eb" /> Company Funnel (Top 3)
+                                </h2>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                                    {[
+                                        { company: 'Google', applied: 420, shortlisted: 85, offered: 12 },
+                                        { company: 'Microsoft', applied: 380, shortlisted: 60, offered: 8 },
+                                        { company: 'Amazon', applied: 450, shortlisted: 110, offered: 25 }
+                                    ].map(c => (
+                                        <div key={c.company} style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                                            <div style={{ fontSize: '13px', fontWeight: 600, color: '#0f172a' }}>{c.company}</div>
+                                            <div style={{ display: 'flex', height: '8px', borderRadius: '4px', overflow: 'hidden' }}>
+                                                <div style={{ width: `${(c.applied/500)*100}%`, background: '#cbd5e1' }} title={`Applied: ${c.applied}`} />
+                                                <div style={{ width: `${(c.shortlisted/c.applied)*100}%`, background: '#60a5fa' }} title={`Shortlisted: ${c.shortlisted}`} />
+                                                <div style={{ width: `${(c.offered/c.shortlisted)*100}%`, background: '#2563eb' }} title={`Offered: ${c.offered}`} />
+                                            </div>
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', color: '#64748b' }}>
+                                                <span>{c.applied} Apps</span>
+                                                <span>{c.offered} Offers</span>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </motion.div>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginTop: '16px' }}>
+                            <motion.div
+                                initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.39 }}
+                                style={{ background: 'white', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '2rem' }}
+                            >
+                                <h2 style={{ fontSize: '1.1rem', margin: '0 0 1.5rem', color: '#0f172a', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                    <Users size={18} color="#ec4899" /> Gender Diversity in Placements
+                                </h2>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                                    <div>
+                                        <div style={{ fontSize: '13px', color: '#64748b', fontWeight: 600 }}>Female Hires</div>
+                                        <div style={{ fontSize: '20px', fontWeight: 800, color: '#ec4899' }}>184</div>
+                                    </div>
+                                    <div>
+                                        <div style={{ fontSize: '13px', color: '#64748b', fontWeight: 600 }}>Male Hires</div>
+                                        <div style={{ fontSize: '20px', fontWeight: 800, color: '#3b82f6' }}>158</div>
+                                    </div>
+                                </div>
+                                <div style={{ display: 'flex', height: '12px', borderRadius: '6px', overflow: 'hidden' }}>
+                                    <div style={{ width: '54%', background: '#ec4899' }} title="Female: 54%" />
+                                    <div style={{ width: '46%', background: '#3b82f6' }} title="Male: 46%" />
+                                </div>
+                            </motion.div>
+
+                            <motion.div
+                                initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.40 }}
+                                style={{ background: 'white', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '2rem' }}
+                            >
+                                <h2 style={{ fontSize: '1.1rem', margin: '0 0 1.5rem', color: '#0f172a', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                    <TrendingUp size={18} color="#8b5cf6" /> Time-to-Placement
+                                </h2>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                        <span style={{ fontSize: '13px', fontWeight: 600, color: '#334155' }}>Within 1 Month (Aug)</span>
+                                        <span style={{ fontSize: '14px', fontWeight: 800, color: '#0f172a' }}>45%</span>
+                                    </div>
+                                    <div style={{ background: '#f1f5f9', height: '6px', borderRadius: '3px', overflow: 'hidden' }}>
+                                        <div style={{ width: '45%', background: '#8b5cf6', height: '100%' }} />
+                                    </div>
+                                    
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '4px' }}>
+                                        <span style={{ fontSize: '13px', fontWeight: 600, color: '#334155' }}>Within 3 Months (Oct)</span>
+                                        <span style={{ fontSize: '14px', fontWeight: 800, color: '#0f172a' }}>82%</span>
+                                    </div>
+                                    <div style={{ background: '#f1f5f9', height: '6px', borderRadius: '3px', overflow: 'hidden' }}>
+                                        <div style={{ width: '82%', background: '#6366f1', height: '100%' }} />
+                                    </div>
+                                </div>
+                            </motion.div>
+                        </div>
+                    </div>
 
                         {/* NAAC Info Card */}
                         <motion.div

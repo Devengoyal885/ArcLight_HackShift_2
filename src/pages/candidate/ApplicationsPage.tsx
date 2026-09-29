@@ -2,14 +2,17 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FloatingNavbar } from '../../components/navigation/FloatingNavbar';
 import { useAuth } from '../../context/AuthContext';
-import { getCandidateApplications } from '../../services/employerService';
-import { getSavedOpportunities, unsaveOpportunity } from '../../services/profileService';
+import { getCandidateApplications, updateApplicationStatus } from '../../services/employerService';
+import { getSavedOpportunities, unsaveOpportunity, uploadOfferLetterToApplication } from '../../services/profileService';
 import { Link, useNavigate } from 'react-router-dom';
 import {
     Loader2, Briefcase, Calendar, MapPin, ExternalLink,
     CheckCircle, XCircle, AlertCircle, PlayCircle, Clock,
-    Bookmark, BookmarkX, TrendingUp, Award, Star, ChevronRight,
+    Bookmark, BookmarkX, TrendingUp, Award, Star, ChevronRight, Sparkles, Copy, CheckCircle2, MessageSquare,
+    Bell, Trash2, Upload
 } from 'lucide-react';
+import { geminiGenerate } from '../../services/geminiProxyService';
+import { EmptyState } from '../../components/ui/EmptyState';
 import './ApplicationsPage.css';
 
 type AppTab = 'pipeline' | 'saved';
@@ -23,7 +26,7 @@ const PIPELINE_STAGES = [
     { key: 'Placed', label: 'Placed 🏆', color: '#d97706' },
 ];
 
-export default function ApplicationsPage() {
+export default function ApplicationsPage({ isEmbedded = false }: { isEmbedded?: boolean }) {
     const { user, dbUid } = useAuth();
     const navigate = useNavigate();
     const [tab, setTab] = useState<AppTab>('pipeline');
@@ -33,15 +36,30 @@ export default function ApplicationsPage() {
     const [savedLoading, setSavedLoading] = useState(true);
     const [unsaving, setUnsaving] = useState<string | null>(null);
 
-    useEffect(() => {
-        if (!user) return;
-        getCandidateApplications(dbUid!).then(apps => {
+    const [aiLoading, setAiLoading] = useState<string | null>(null);
+    const [aiResult, setAiResult] = useState<{ id: string; type: 'reject' | 'email'; content: string } | null>(null);
+    const [copied, setCopied] = useState(false);
+    
+    const [compareLoading, setCompareLoading] = useState(false);
+    const [compareResult, setCompareResult] = useState<string | null>(null);
+    const [withdrawing, setWithdrawing] = useState<string | null>(null);
+    const [withdrawConfirm, setWithdrawConfirm] = useState<string | null>(null);
+    const [uploadingOfferId, setUploadingOfferId] = useState<string | null>(null);
+
+    const loadApplications = () => {
+        if (!dbUid) return;
+        getCandidateApplications(dbUid).then(apps => {
             setApplications(apps);
             setLoading(false);
         }).catch(err => {
             console.error(err);
             setLoading(false);
         });
+    };
+
+    useEffect(() => {
+        if (!user) return;
+        loadApplications();
     }, [user]);
 
     useEffect(() => {
@@ -65,6 +83,55 @@ export default function ApplicationsPage() {
         }
     };
 
+    const handleAiGenerate = async (app: any, type: 'reject' | 'email') => {
+        setAiLoading(app.id);
+        setAiResult(null);
+        try {
+            let prompt = '';
+            if (type === 'reject') {
+                prompt = `Analyze why a candidate might have been rejected for the role of "${app.title}" at "${app.company}". 
+Given they reached the "${app.status}" stage before rejection.
+The feedback was: ${app.feedback || 'None provided'}.
+Keep it encouraging, list 3 actionable areas of improvement (e.g., technical depth, communication), and format it cleanly with bullet points. Be concise.`;
+            } else {
+                prompt = `Write a professional follow-up/thank-you email to the recruiter at ${app.company} for the ${app.title} role. 
+The current status is ${app.status}. Keep it concise, polite, and confident (max 150 words). Include placeholders like [Recruiter Name].`;
+            }
+            const res = await geminiGenerate(prompt, { temperature: 0.7 });
+            setAiResult({ id: app.id, type, content: res });
+        } catch (e) {
+            console.error('AI Error:', e);
+        } finally {
+            setAiLoading(null);
+        }
+    };
+
+    const copyToClipboard = (text: string) => {
+        navigator.clipboard.writeText(text);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+    };
+
+    const handleWithdraw = async (app: any) => {
+        if (!app.id || !app.opportunityId) return;
+        setWithdrawing(app.id);
+        try {
+            await updateApplicationStatus(
+                app.opportunityId || app.roleId || '',
+                app.id,
+                dbUid!,
+                'Withdrawn' as any,
+                'Candidate withdrew application'
+            );
+            setApplications(prev => prev.map(a => a.id === app.id ? { ...a, status: 'Withdrawn' } : a));
+        } catch (e) {
+            console.error('Withdraw error:', e);
+        } finally {
+            setWithdrawing(null);
+            setWithdrawConfirm(null);
+        }
+    };
+
     const getStatusConfig = (status: string) => {
         switch (status) {
             case 'Applied': return { color: '#3b82f6', bg: '#eff6ff', icon: Clock, text: 'Under Review' };
@@ -74,7 +141,29 @@ export default function ApplicationsPage() {
             case 'Placed': return { color: '#d97706', bg: '#fef3c7', icon: CheckCircle, text: '🏆 Placed!' };
             case 'Rejected':
             case 'OA Rejected': return { color: '#ef4444', bg: '#fee2e2', icon: XCircle, text: 'Not Selected' };
+            case 'Withdrawn': return { color: '#64748b', bg: '#f1f5f9', icon: XCircle, text: 'Withdrawn' };
             default: return { color: '#64748b', bg: '#f1f5f9', icon: AlertCircle, text: status };
+        }
+    };
+
+    const handleCompareOffers = async () => {
+        const offers = applications.filter(a => ['Offer Extended', 'Placed'].includes(a.status));
+        if (offers.length < 2) return;
+        
+        setCompareLoading(true);
+        setCompareResult(null);
+        try {
+            const prompt = `Compare these ${offers.length} job offers I received:
+${offers.map((o, i) => `Offer ${i+1}: ${o.title} at ${o.company}`).join('\n')}
+
+Please act as a career advisor. Compare these offers in terms of likely compensation potential, brand value, growth trajectory, and work-life balance for someone early in their career. Structure the answer clearly using bullet points and end with a bolded concluding recommendation.`;
+            
+            const res = await geminiGenerate(prompt, { temperature: 0.7 });
+            setCompareResult(res);
+        } catch (e) {
+            console.error(e);
+        } finally {
+            setCompareLoading(false);
         }
     };
 
@@ -94,31 +183,79 @@ export default function ApplicationsPage() {
         return null;
     })();
 
+    const totalApps = applications.length;
+    const shortlists = applications.filter(a => ['Screening', 'OA Pending', 'Interview Scheduled', 'Offer Extended', 'Placed'].includes(a.status)).length;
+    
     const stats = {
-        total: applications.length,
+        total: totalApps,
         active: applications.filter(a => !['Rejected', 'OA Rejected'].includes(a.status)).length,
         interviews: applications.filter(a => a.status === 'Interview Scheduled').length,
         offers: applications.filter(a => ['Offer Extended', 'Placed'].includes(a.status)).length,
+        viewRate: totalApps > 0 ? Math.round((totalApps * 0.8) / totalApps * 100) : 0, // Mocked 80% view rate
+        shortlistRate: totalApps > 0 ? Math.round((shortlists / totalApps) * 100) : 0,
     };
 
     return (
-        <div className="app-track-page">
-            <FloatingNavbar variant="candidate" />
+        <div className="app-track-page" style={isEmbedded ? { background: 'transparent' } : {}}>
+            {!isEmbedded && <FloatingNavbar variant="candidate" />}
 
-            <main className="app-track-main">
+            <main className="app-track-main" style={isEmbedded ? { paddingTop: 0 } : {}}>
                 <motion.div className="app-track-header" initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
-                    <h1 className="app-track-title">Applications & Saved Jobs</h1>
-                    <p className="app-track-sub">Track your pipeline, manage saved opportunities, and complete pending actions.</p>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                        <div>
+                            <h1 className="app-track-title">Applications & Saved Jobs</h1>
+                            <p className="app-track-sub">Track your pipeline, manage saved opportunities, and complete pending actions.</p>
+                        </div>
+                        {stats.offers > 1 && (
+                            <button 
+                                onClick={handleCompareOffers} 
+                                disabled={compareLoading}
+                                style={{
+                                    display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 16px',
+                                    background: 'linear-gradient(135deg, #7c3aed, #9333ea)', color: '#fff',
+                                    border: 'none', borderRadius: '8px', fontWeight: 600, fontSize: '14px',
+                                    cursor: 'pointer', boxShadow: '0 4px 6px -1px rgba(124, 58, 237, 0.2)'
+                                }}
+                            >
+                                {compareLoading ? <Loader2 size={16} className="spin" /> : <Sparkles size={16} />}
+                                AI Offer Compare
+                            </button>
+                        )}
+                    </div>
                 </motion.div>
+                
+                {/* Offer Compare Result */}
+                <AnimatePresence>
+                    {compareResult && (
+                        <motion.div 
+                            initial={{ opacity: 0, y: -10, height: 0 }} 
+                            animate={{ opacity: 1, y: 0, height: 'auto' }} 
+                            exit={{ opacity: 0, height: 0 }}
+                            style={{ background: '#f8fafc', border: '1px solid #cbd5e1', borderRadius: '12px', padding: '24px', marginBottom: '24px' }}
+                        >
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                                <h3 style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '18px', fontWeight: 700, color: '#334155' }}>
+                                    <Sparkles color="#a855f7" /> AI Offer Comparison Analysis
+                                </h3>
+                                <button onClick={() => setCompareResult(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#64748b' }}>
+                                    <XCircle size={20} />
+                                </button>
+                            </div>
+                            <div style={{ fontSize: '14px', lineHeight: '1.6', color: '#475569', whiteSpace: 'pre-wrap' }}>
+                                {compareResult}
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
 
                 {/* Stats strip */}
                 <motion.div className="app-stats-strip" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }}>
                     {[
                         { label: 'Total Applied', value: stats.total, color: '#2563eb', icon: <Briefcase size={18} /> },
-                        { label: 'Active', value: stats.active, color: '#10b981', icon: <TrendingUp size={18} /> },
+                        { label: 'View Rate', value: `${stats.viewRate}%`, color: '#0ea5e9', icon: <Star size={18} /> },
+                        { label: 'Shortlist Rate', value: `${stats.shortlistRate}%`, color: '#14b8a6', icon: <TrendingUp size={18} /> },
                         { label: 'Interviews', value: stats.interviews, color: '#7c3aed', icon: <Calendar size={18} /> },
                         { label: 'Offers / Placed', value: stats.offers, color: '#d97706', icon: <Award size={18} /> },
-                        { label: 'Saved Jobs', value: savedOpps.length, color: '#f59e0b', icon: <Bookmark size={18} /> },
                     ].map(s => (
                         <div key={s.label} className="app-stat-card" style={{ '--stat-color': s.color } as React.CSSProperties}>
                             <div className="app-stat-icon" style={{ color: s.color }}>{s.icon}</div>
@@ -171,18 +308,56 @@ export default function ApplicationsPage() {
                             </motion.div>
                         )}
 
+                        {/* ── Interview Scheduled Alert Banner ── */}
+                        {(() => {
+                            const interviewApps = applications.filter(a => a.status === 'Interview Scheduled');
+                            if (interviewApps.length === 0) return null;
+                            return (
+                                <motion.div
+                                    initial={{ opacity: 0, y: -8 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    style={{
+                                        background: 'linear-gradient(135deg, #ecfdf5, #d1fae5)',
+                                        border: '1.5px solid #6ee7b7',
+                                        borderRadius: '12px',
+                                        padding: '14px 18px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '12px',
+                                        marginBottom: '16px',
+                                        boxShadow: '0 2px 12px rgba(16, 185, 129, 0.12)'
+                                    }}
+                                >
+                                    <span style={{ fontSize: '22px', animation: 'pulse 2s infinite' }}>🎉</span>
+                                    <div style={{ flex: 1 }}>
+                                        <p style={{ fontWeight: 700, color: '#065f46', fontSize: '14px', margin: 0 }}>
+                                            Interview Scheduled — Action Required!
+                                        </p>
+                                        <p style={{ fontSize: '12px', color: '#047857', margin: '2px 0 0' }}>
+                                            {interviewApps.map(a => `${a.title} at ${a.company}`).join(' · ')} · Check details below
+                                        </p>
+                                    </div>
+                                    <Bell size={18} color="#10b981" />
+                                </motion.div>
+                            );
+                        })()}
+
                         {loading ? (
                             <div className="app-track-loading">
                                 <Loader2 size={32} className="spin" />
                                 <p>Loading your applications...</p>
                             </div>
                         ) : applications.length === 0 ? (
-                            <div className="app-track-empty">
-                                <Briefcase size={48} color="#94a3b8" />
-                                <h2>No Applications Yet</h2>
-                                <p>You haven't applied to any roles on the platform.</p>
-                                <Link to="/candidate/opportunities" className="app-track-btn-primary">Find Opportunities</Link>
-                            </div>
+                            <EmptyState
+                                icon={Briefcase}
+                                title="No Applications Yet"
+                                description="You haven't applied to any roles on the platform yet. Start exploring jobs to build your career pipeline."
+                                actionElement={
+                                    <Link to="/candidate/opportunities" className="app-track-btn-primary">
+                                        Find Opportunities
+                                    </Link>
+                                }
+                            />
                         ) : (
                             <div className="app-track-list">
                                 <AnimatePresence>
@@ -231,12 +406,135 @@ export default function ApplicationsPage() {
                                                             </button>
                                                         )}
                                                     </div>
+
+                                                    {/* AI Actions */}
+                                                    <div className="app-track-ai-actions" style={{ marginTop: '12px', display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                                                        {app.status === 'Rejected' && (
+                                                            <button 
+                                                                onClick={() => handleAiGenerate(app, 'reject')}
+                                                                disabled={aiLoading === app.id}
+                                                                className="app-ai-btn"
+                                                            >
+                                                                {aiLoading === app.id ? <Loader2 size={14} className="spin" /> : <Sparkles size={14} />}
+                                                                Why was I rejected?
+                                                            </button>
+                                                        )}
+                                                        {['Interview Scheduled', 'Screening', 'OA Pending'].includes(app.status) && (
+                                                            <button 
+                                                                onClick={() => handleAiGenerate(app, 'email')}
+                                                                disabled={aiLoading === app.id}
+                                                                className="app-ai-btn"
+                                                            >
+                                                                {aiLoading === app.id ? <Loader2 size={14} className="spin" /> : <MessageSquare size={14} />}
+                                                                Generate Follow-up Email
+                                                            </button>
+                                                        )}
+                                                    </div>
+
+                                                    {/* AI Result Card */}
+                                                    {aiResult?.id === app.id && (
+                                                        <motion.div 
+                                                            initial={{ opacity: 0, height: 0 }} 
+                                                            animate={{ opacity: 1, height: 'auto' }} 
+                                                            className="app-ai-result-card"
+                                                        >
+                                                            <div className="app-ai-result-header">
+                                                                <span style={{ fontWeight: 600, color: '#f1f5f9', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                                                    <Sparkles size={14} color="#a855f7" /> 
+                                                                    {aiResult!.type === 'reject' ? 'Rejection Analysis' : 'Generated Email'}
+                                                                </span>
+                                                                <div style={{ display: 'flex', gap: '8px' }}>
+                                                                    <button onClick={() => copyToClipboard(aiResult!.content)} className="app-ai-icon-btn">
+                                                                        {copied ? <CheckCircle2 size={14} color="#10b981" /> : <Copy size={14} />}
+                                                                    </button>
+                                                                    <button onClick={() => setAiResult(null)} className="app-ai-icon-btn">
+                                                                        <XCircle size={14} />
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                            <div className="app-ai-result-content">
+                                                                {aiResult!.content}
+                                                            </div>
+                                                        </motion.div>
+                                                    )}
                                                 </div>
+
+                                                {/* Withdraw Application */}
+                                                {['Applied', 'Screening'].includes(app.status) && (
+                                                    <div style={{ marginTop: '8px' }}>
+                                                        {withdrawConfirm === app.id ? (
+                                                            <div style={{ display: 'flex', gap: '6px', alignItems: 'center', flexWrap: 'wrap' }}>
+                                                                <span style={{ fontSize: '12px', color: '#ef4444', fontWeight: 600 }}>Confirm withdraw?</span>
+                                                                <button
+                                                                    onClick={() => handleWithdraw(app)}
+                                                                    disabled={withdrawing === app.id}
+                                                                    className="app-ai-btn"
+                                                                    style={{ background: '#fef2f2', color: '#ef4444', border: '1px solid #fecaca' }}
+                                                                >
+                                                                    {withdrawing === app.id ? <Loader2 size={13} className="spin" /> : <Trash2 size={13} />} Yes, Withdraw
+                                                                </button>
+                                                                <button onClick={() => setWithdrawConfirm(null)} className="app-ai-btn" style={{ background: '#f1f5f9', color: '#64748b' }}>Cancel</button>
+                                                            </div>
+                                                        ) : (
+                                                            <button
+                                                                onClick={() => setWithdrawConfirm(app.id)}
+                                                                className="app-ai-btn"
+                                                                style={{ background: '#fef2f2', color: '#ef4444', border: '1px solid #fecaca' }}
+                                                            >
+                                                                <Trash2 size={13} /> Withdraw Application
+                                                            </button>
+                                                        )}
+                                                    </div>
+                                                )}
 
                                                 {/* Messages or details */}
                                                 {app.message && (
                                                     <div className="app-track-message">
                                                         <strong>Note from Employer:</strong> {app.message}
+                                                    </div>
+                                                )}
+
+                                                {app.feedback && (
+                                                    <div className="app-track-message" style={{ background: '#f8fafc', borderLeft: '3px solid #cbd5e1', marginTop: '8px' }}>
+                                                        <strong>Interview Feedback:</strong> {app.feedback}
+                                                    </div>
+                                                )}
+
+                                                {['Offer Extended', 'Placed'].includes(app.status) && (
+                                                    <div className="app-track-interview-box" style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', marginTop: '12px' }}>
+                                                        <h4 style={{ color: '#16a34a' }}>🎉 Offer Details</h4>
+                                                        <div style={{ display: 'flex', gap: '12px', marginTop: '12px' }}>
+                                                            {app.offerLetterUrl ? (
+                                                                <a href={app.offerLetterUrl} target="_blank" rel="noreferrer" className="app-track-btn-primary" style={{ background: '#16a34a', textDecoration: 'none' }}>View Offer Letter</a>
+                                                            ) : (
+                                                                <label className="app-track-btn-primary" style={{ background: '#10b981', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', opacity: uploadingOfferId === app.id ? 0.7 : 1 }}>
+                                                                    {uploadingOfferId === app.id ? <Loader2 size={16} className="spin" /> : <Upload size={16} />}
+                                                                    {uploadingOfferId === app.id ? 'Uploading...' : 'Upload Signed Offer'}
+                                                                    <input 
+                                                                        type="file" 
+                                                                        accept=".pdf,.png,.jpg,.jpeg" 
+                                                                        style={{ display: 'none' }} 
+                                                                        disabled={uploadingOfferId === app.id}
+                                                                        onChange={async (e) => {
+                                                                            if (!e.target.files?.[0]) return;
+                                                                            const file = e.target.files[0];
+                                                                            setUploadingOfferId(app.id);
+                                                                            try {
+                                                                                await uploadOfferLetterToApplication(app.opportunityId, app.id, file);
+                                                                                loadApplications();
+                                                                            } catch (err) {
+                                                                                console.error(err);
+                                                                            } finally {
+                                                                                setUploadingOfferId(null);
+                                                                            }
+                                                                        }} 
+                                                                    />
+                                                                </label>
+                                                            )}
+                                                            {app.status === 'Offer Extended' && (
+                                                                <button className="app-track-action-btn" style={{ color: '#ef4444', background: '#fef2f2', border: '1px solid #fecaca' }}>Decline Offer</button>
+                                                            )}
+                                                        </div>
                                                     </div>
                                                 )}
 

@@ -9,7 +9,7 @@ import type { UserCapability, UserProject } from '../../services/profileService'
 import { Loader2, Sparkles, FolderDot, AlertCircle, Plus, X, Code } from 'lucide-react';
 import './PortfolioPage.css';
 
-export default function PortfolioPage() {
+export default function PortfolioPage({ isEmbedded = false }: { isEmbedded?: boolean }) {
     const { user, dbUid, profile } = useAuth();
     const [capabilities, setCapabilities] = useState<UserCapability[]>([]);
     const [projects, setProjects] = useState<UserProject[]>([]);
@@ -62,7 +62,7 @@ export default function PortfolioPage() {
     if (loading) {
         return (
             <div className="portfolio-page flex items-center justify-center">
-                <FloatingNavbar variant="candidate" />
+                {!isEmbedded && <FloatingNavbar variant="candidate" />}
                 <Loader2 className="spin text-blue" size={32} />
             </div>
         );
@@ -80,8 +80,8 @@ export default function PortfolioPage() {
 
     return (
         <div className="portfolio-page">
-            <FloatingNavbar variant="candidate" />
-            <div className="portfolio-bg" />
+            {!isEmbedded && <FloatingNavbar variant="candidate" />}
+            {!isEmbedded && <div className="portfolio-bg" />}
 
             <main className="portfolio-main">
                 {/* Hero identity */}

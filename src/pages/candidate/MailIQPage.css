@@ -1,4 +1,4 @@
-.mailiq-page {
+﻿.mailiq-page {
     min-height: 100vh;
     background: #f8fafc;
     position: relative;
@@ -42,7 +42,7 @@
     color: var(--color-ink-400);
 }
 
-/* ─── Layout ─── */
+/* â”€â”€â”€ Layout â”€â”€â”€ */
 .mailiq-layout {
     display: grid;
     grid-template-columns: 280px 1fr;
@@ -50,7 +50,7 @@
     align-items: start;
 }
 
-/* ─── Sidebar ─── */
+/* â”€â”€â”€ Sidebar â”€â”€â”€ */
 .mailiq-sidebar {
     display: flex;
     flex-direction: column;
@@ -82,7 +82,7 @@
     border: none;
     text-align: left;
     width: 100%;
-    transition: all var(--duration-fast);
+    transition: opacity var(--duration-fast) var(--ease-out), background var(--duration-fast) var(--ease-out), color var(--duration-fast) var(--ease-out), border-color var(--duration-fast) var(--ease-out), box-shadow 200ms var(--ease-out), transform 80ms var(--ease-out);
 }
 
 .mailiq-cat-btn:hover {
@@ -181,7 +181,7 @@
     flex-shrink: 0;
 }
 
-/* ─── Detail ─── */
+/* â”€â”€â”€ Detail â”€â”€â”€ */
 .mailiq-detail {
     padding: var(--space-8);
     background: white;
@@ -268,7 +268,7 @@
     font-size: var(--text-sm);
     color: #374151;
     cursor: pointer;
-    transition: all var(--duration-fast);
+    transition: opacity var(--duration-fast) var(--ease-out), background var(--duration-fast) var(--ease-out), color var(--duration-fast) var(--ease-out), border-color var(--duration-fast) var(--ease-out), box-shadow 200ms var(--ease-out), transform 80ms var(--ease-out);
 }
 
 .mailiq-action-btn:hover {

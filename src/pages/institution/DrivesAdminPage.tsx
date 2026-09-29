@@ -11,7 +11,7 @@ import { FloatingNavbar } from '../../components/navigation/FloatingNavbar';
 import { useAuth } from '../../context/AuthContext';
 import {
     createPlacementDrive, getPlacementDrives, updateDriveStatus, getDriveRegistrations,
-    type PlacementDrive, type EligibilityCriteria, type DriveRegistration,
+    updateOfferStatus, type PlacementDrive, type EligibilityCriteria, type DriveRegistration,
 } from '../../services/eligibilityService';
 import {
     Plus, Search, Building2, Briefcase, Calendar, Users, ChevronDown, ChevronUp,
@@ -162,6 +162,33 @@ export default function DrivesAdminPage() {
             console.error('Failed to load registrations', e);
         } finally {
             setLoadingRegs(null);
+        }
+    };
+
+    const handleUpdateOfferStatus = async (driveId: string, uid: string, status: 'pending' | 'offered' | 'rejected') => {
+        try {
+            await updateOfferStatus(driveId, uid, status);
+            setDriveRegistrations(prev => ({
+                ...prev,
+                [driveId]: prev[driveId].map(r => r.uid === uid ? { ...r, offerStatus: status } : r)
+            }));
+        } catch (e) {
+            console.error('Failed to update offer status', e);
+        }
+    };
+
+    const handleUploadOfferLetter = async (driveId: string, uid: string) => {
+        const url = prompt('Enter Offer Letter URL (Google Drive / PDF link):');
+        if (url) {
+            try {
+                await updateOfferStatus(driveId, uid, 'offered', url);
+                setDriveRegistrations(prev => ({
+                    ...prev,
+                    [driveId]: prev[driveId].map(r => r.uid === uid ? { ...r, offerStatus: 'offered', offerLetterUrl: url } : r)
+                }));
+            } catch (e) {
+                console.error('Failed to upload offer letter', e);
+            }
         }
     };
 
@@ -333,10 +360,40 @@ export default function DrivesAdminPage() {
                                                         </div>
                                                     ) : (
                                                         <>
-                                                            <div className="regs-summary">
-                                                                <span><strong>{regs.length}</strong> registered</span>
-                                                                <span style={{ color: '#16a34a' }}><strong>{eligible}</strong> eligible</span>
-                                                                <span style={{ color: '#dc2626' }}><strong>{regs.length - eligible}</strong> ineligible</span>
+                                                            <div className="regs-summary" style={{ display: 'flex', flexDirection: 'column', gap: '16px', background: '#f8fafc', padding: '16px', borderRadius: '8px', marginBottom: '16px' }}>
+                                                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                                                    <div style={{ display: 'flex', gap: '16px' }}>
+                                                                        <span><strong>{regs.length}</strong> registered</span>
+                                                                        <span style={{ color: '#16a34a' }}><strong>{eligible}</strong> eligible</span>
+                                                                        <span style={{ color: '#dc2626' }}><strong>{regs.length - eligible}</strong> ineligible</span>
+                                                                    </div>
+                                                                    <div style={{ display: 'flex', gap: '8px' }}>
+                                                                        <button style={{ padding: '6px 12px', background: '#f1f5f9', border: '1px solid #cbd5e1', borderRadius: '6px', fontSize: '12px', cursor: 'pointer', color: '#0f172a', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                                                            View JD Archive
+                                                                        </button>
+                                                                        <button style={{ padding: '6px 12px', background: '#0f172a', border: 'none', borderRadius: '6px', fontSize: '12px', cursor: 'pointer', color: '#fff', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                                                            Export Shortlist (CSV)
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                                
+                                                                <div style={{ borderTop: '1px solid #e2e8f0', paddingTop: '16px' }}>
+                                                                    <div style={{ fontSize: '0.85rem', fontWeight: 600, color: '#334155', marginBottom: '12px' }}>Drive Day Toolkit</div>
+                                                                    <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+                                                                        <button style={{ padding: '8px 16px', background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: '8px', fontSize: '13px', cursor: 'pointer', color: '#1d4ed8', display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 500 }}>
+                                                                            <Users size={16} /> Open Walk-in Registration Desk
+                                                                        </button>
+                                                                        <button style={{ padding: '8px 16px', background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '8px', fontSize: '13px', cursor: 'pointer', color: '#15803d', display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 500 }}>
+                                                                            <MapPin size={16} /> Generate Check-in QR Code
+                                                                        </button>
+                                                                        <button style={{ padding: '8px 16px', background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '8px', fontSize: '13px', cursor: 'pointer', color: '#b91c1c', display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 500 }}>
+                                                                            <Edit3 size={16} /> Collect Digital Consent Forms
+                                                                        </button>
+                                                                        <button style={{ padding: '8px 16px', background: '#fef3c7', border: '1px solid #fde68a', borderRadius: '8px', fontSize: '13px', cursor: 'pointer', color: '#d97706', display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 500 }}>
+                                                                            <Calendar size={16} /> Manage Venue & Slots (Logistics)
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
                                                             </div>
                                                             {regs.length === 0 ? (
                                                                 <p style={{ color: '#94a3b8', fontSize: '0.85rem', textAlign: 'center', padding: '12px' }}>No student registrations yet.</p>
@@ -348,9 +405,9 @@ export default function DrivesAdminPage() {
                                                                                 <th>Student</th>
                                                                                 <th>CGPA</th>
                                                                                 <th>Branch</th>
-                                                                                <th>Backlogs</th>
                                                                                 <th>Eligible</th>
                                                                                 <th>Reason</th>
+                                                                                <th>Offer Status</th>
                                                                             </tr>
                                                                         </thead>
                                                                         <tbody>
@@ -362,7 +419,6 @@ export default function DrivesAdminPage() {
                                                                                     </td>
                                                                                     <td>{r.cgpa ?? '—'}</td>
                                                                                     <td>{r.branch ?? '—'}</td>
-                                                                                    <td>{r.backlogs ?? 0}</td>
                                                                                     <td>
                                                                                         {r.eligible
                                                                                             ? <span style={{ color: '#16a34a', fontWeight: 700 }}>✓ Yes</span>
@@ -370,6 +426,30 @@ export default function DrivesAdminPage() {
                                                                                     </td>
                                                                                     <td style={{ fontSize: '0.75rem', color: '#64748b', maxWidth: '200px' }}>
                                                                                         {r.eligibilityReasons?.join('; ') || '—'}
+                                                                                    </td>
+                                                                                    <td>
+                                                                                        {r.eligible ? (
+                                                                                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                                                                                <select 
+                                                                                                    value={r.offerStatus || 'pending'} 
+                                                                                                    onChange={(e) => handleUpdateOfferStatus(drive.id!, r.uid, e.target.value as any)}
+                                                                                                    style={{ padding: '4px', borderRadius: '4px', border: '1px solid #cbd5e1', fontSize: '0.8rem', background: r.offerStatus === 'offered' ? '#dcfce7' : r.offerStatus === 'rejected' ? '#fee2e2' : '#f1f5f9' }}
+                                                                                                >
+                                                                                                    <option value="pending">Pending</option>
+                                                                                                    <option value="offered">Offered</option>
+                                                                                                    <option value="rejected">Rejected</option>
+                                                                                                </select>
+                                                                                                {r.offerStatus === 'offered' && (
+                                                                                                    r.offerLetterUrl ? (
+                                                                                                        <a href={r.offerLetterUrl} target="_blank" rel="noreferrer" style={{ fontSize: '0.75rem', color: '#2563eb', textDecoration: 'underline' }}>View Letter</a>
+                                                                                                    ) : (
+                                                                                                        <button onClick={() => handleUploadOfferLetter(drive.id!, r.uid)} style={{ fontSize: '0.75rem', padding: '2px 6px', background: '#e2e8f0', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>Upload</button>
+                                                                                                    )
+                                                                                                )}
+                                                                                            </div>
+                                                                                        ) : (
+                                                                                            <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>N/A</span>
+                                                                                        )}
                                                                                     </td>
                                                                                 </tr>
                                                                             ))}

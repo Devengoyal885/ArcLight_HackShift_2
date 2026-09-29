@@ -11,6 +11,7 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { FloatingNavbar } from '../../components/navigation/FloatingNavbar';
 import { useAuth } from '../../context/AuthContext';
 import { getCandidateApplications, submitScheduledAssessment, type RoleApplication } from '../../services/employerService';
 import {
@@ -982,9 +983,10 @@ function ResultsView({ result, profileColor, profileLabel, onRetake, onDone }: R
 
 interface AssessmentPageProps {
     onIdeStateChange?: (isOpen: boolean) => void;
+    isEmbedded?: boolean;
 }
 
-export default function AssessmentPage({ onIdeStateChange }: AssessmentPageProps = {}) {
+export default function AssessmentPage({ onIdeStateChange, isEmbedded = false }: AssessmentPageProps = {}) {
     const [pageState, setPageState] = useState<PageState>('overview');
     const [profiles, setProfiles] = useState<DomainProfile[]>([]);
     const [selectedDomain, setSelectedDomain] = useState<AssessmentDomain | null>(null);
@@ -1246,9 +1248,9 @@ export default function AssessmentPage({ onIdeStateChange }: AssessmentPageProps
 
     const selectedProfile = profiles.find(p => p.domain === selectedDomain);
 
-    return (
-        <div className="asmt-page">
-            <main className="asmt-main">
+    const content = (
+        <div className="asmt-page" style={isEmbedded ? { background: 'transparent' } : {}}>
+            <main className="asmt-main" style={isEmbedded ? { paddingTop: 0 } : {}}>
                 {initialLoading ? (
                     <div className="asmt-loading">
                         <div className="asmt-loading-spinner" />
@@ -1341,5 +1343,14 @@ export default function AssessmentPage({ onIdeStateChange }: AssessmentPageProps
                 )}
             </main>
         </div>
+    );
+
+    if (isEmbedded) return content;
+
+    return (
+        <>
+            <FloatingNavbar variant="candidate" />
+            {content}
+        </>
     );
 }

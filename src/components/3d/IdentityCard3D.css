@@ -1,4 +1,4 @@
-/* =========================================================
+﻿/* =========================================================
    CAPABLE IDENTITY CARD (Premium Glassmorphism / Apple-Design)
    ========================================================= */
 
@@ -324,3 +324,9 @@
 }
 
 .id-card-light, .id-card-edge-highlight { display: none; }
+.id-card-verified-badge {
+    margin-left: 6px;
+    vertical-align: middle;
+    filter: drop-shadow(0 2px 4px rgba(59, 130, 246, 0.4));
+}
+

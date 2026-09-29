@@ -1,5 +1,6 @@
 import { motion, useMotionValue, useSpring, useTransform, useMotionTemplate } from 'framer-motion';
 import { useEffect, useRef } from 'react';
+import { BadgeCheck } from 'lucide-react';
 import logo from '../../assets/sihlogo.png';
 import './IdentityCard3D.css';
 
@@ -11,9 +12,10 @@ interface IdentityCard3DProps {
     verifiedEvidence: number;
     projectCount: number;
     photoURL?: string | null;
+    globalScore?: number;
 }
 
-export function IdentityCard3D({ name, role, initials, capabilityConfidence, verifiedEvidence, projectCount, photoURL }: IdentityCard3DProps) {
+export function IdentityCard3D({ name, role, initials, capabilityConfidence, verifiedEvidence, projectCount, photoURL, globalScore }: IdentityCard3DProps) {
     const cardRef = useRef<HTMLDivElement>(null);
     const rotateX = useMotionValue(0);
     const rotateY = useMotionValue(0);
@@ -138,7 +140,12 @@ export function IdentityCard3D({ name, role, initials, capabilityConfidence, ver
 
                     {/* Identity Details */}
                     <div className="id-card-identity">
-                        <h2 className="id-card-name">{name}</h2>
+                        <h2 className="id-card-name">
+                            {name}
+                            {globalScore && globalScore > 100 && (
+                                <BadgeCheck size={20} className="id-card-verified-badge" fill="#3B82F6" stroke="#fff" />
+                            )}
+                        </h2>
                         <p className="id-card-subtitle">{role}</p>
                     </div>
 
@@ -150,8 +157,8 @@ export function IdentityCard3D({ name, role, initials, capabilityConfidence, ver
                         </div>
                         <div className="id-card-stat-divider" />
                         <div className="id-card-stat">
-                            <span className="id-card-stat-val">{projectCount}</span>
-                            <span className="id-card-stat-lbl">PROJECTS<br/>&nbsp;</span>
+                            <span className="id-card-stat-val">{globalScore ?? projectCount}</span>
+                            <span className="id-card-stat-lbl">{globalScore !== undefined ? <>GLOBAL<br/>SCORE</> : <>PROJECTS<br/>&nbsp;</>}</span>
                         </div>
                         <div className="id-card-stat-divider" />
                         <div className="id-card-stat">

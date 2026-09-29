@@ -1,4 +1,4 @@
-.skill-gap {
+﻿.skill-gap {
     display: flex;
     flex-direction: column;
     gap: var(--space-2);

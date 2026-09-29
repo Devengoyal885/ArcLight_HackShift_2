@@ -1,4 +1,4 @@
-.cap-page {
+﻿.cap-page {
     min-height: 100vh;
     background: #f8fafc;
     position: relative;
@@ -98,7 +98,7 @@
     color: var(--color-ink-400);
 }
 
-/* ─── Capability Graph (node grid) ─── */
+/* â”€â”€â”€ Capability Graph (node grid) â”€â”€â”€ */
 .cap-graph {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -185,7 +185,7 @@
     color: var(--color-ink-400);
 }
 
-/* ─── Verification Strip ─── */
+/* â”€â”€â”€ Verification Strip â”€â”€â”€ */
 .cap-verification-strip {
     display: flex;
     gap: var(--space-6);
@@ -219,7 +219,7 @@
     }
 }
 
-/* ─── Loading & Empty States ─── */
+/* â”€â”€â”€ Loading & Empty States â”€â”€â”€ */
 .cap-loading,
 .cap-empty {
     display: flex;
@@ -247,7 +247,7 @@
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* ─── Inline AI Explanation Panel ─── */
+/* â”€â”€â”€ Inline AI Explanation Panel â”€â”€â”€ */
 .cap-ai-panel {
     display: flex;
     align-items: flex-start;
@@ -285,4 +285,4 @@
 
 .cap-ai-refresh:hover {
     background: #fef3c7;
-}
+}

@@ -1,12 +1,12 @@
-/* AssessmentPage.css
-   ─────────────────────────────────────────────────────────────────────────────
+﻿/* AssessmentPage.css
+   â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
    Fully aligned with the existing CapAble design system.
    Background: #f8fafc  |  Cards: white  |  Accent: #2563eb
    Typography: Inter, color: #111827 / #6b7280
    All tokens from tokens.css are used directly.
 */
 
-/* ── Page Shell ─────────────────────────────────────────────────────────────── */
+/* â”€â”€ Page Shell â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 .asmt-page {
     min-height: auto;
@@ -39,7 +39,7 @@
     gap: var(--space-8);
 }
 
-/* ── Loading ─────────────────────────────────────────────────────────────────── */
+/* â”€â”€ Loading â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 .asmt-loading {
     display: flex;
@@ -77,7 +77,7 @@
 .asmt-loading-dots span:nth-child(3) { animation-delay: 0.4s; }
 @keyframes asmt-dot-pulse { 0%,80%,100% { opacity: 0.25; } 40% { opacity: 1; } }
 
-/* ── Overview Header ─────────────────────────────────────────────────────────── */
+/* â”€â”€ Overview Header â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 .asmt-overview { display: flex; flex-direction: column; gap: var(--space-6); }
 
@@ -110,7 +110,7 @@
     line-height: var(--leading-relaxed);
 }
 
-/* ── Stats Row ───────────────────────────────────────────────────────────────── */
+/* â”€â”€ Stats Row â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 .asmt-stats-row {
     display: grid;
@@ -129,7 +129,7 @@
     align-items: center;
     gap: var(--space-4);
     box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.03), 0 0 3px rgba(0,0,0,0.02);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: opacity 200ms cubic-bezier(0.23, 1, 0.32, 1), background 200ms cubic-bezier(0.23, 1, 0.32, 1), color 200ms cubic-bezier(0.23, 1, 0.32, 1), border-color 200ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 220ms cubic-bezier(0.23, 1, 0.32, 1), transform 80ms cubic-bezier(0.23, 1, 0.32, 1) cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     overflow: hidden;
 }
@@ -144,7 +144,7 @@
 }
 
 .asmt-stat-card:hover { 
-    transform: translateY(-2px);
+    /* GPU layer only */
     box-shadow: 0 12px 24px -6px rgba(0, 0, 0, 0.06), 0 0 3px rgba(0,0,0,0.03);
     border-color: rgba(255, 255, 255, 1);
 }
@@ -170,7 +170,7 @@
 
 .asmt-stat-label { font-size: var(--text-xs); color: #64748b; font-weight: 500; position: relative; z-index: 1; }
 
-/* ── Role Selector ───────────────────────────────────────────────────────────── */
+/* â”€â”€ Role Selector â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 .asmt-role-selector {
     display: flex;
@@ -213,7 +213,7 @@
     font-weight: 600;
     padding: 8px 18px;
     cursor: pointer;
-    transition: all 0.25s ease;
+    transition: opacity 200ms cubic-bezier(0.23, 1, 0.32, 1), background 200ms cubic-bezier(0.23, 1, 0.32, 1), color 200ms cubic-bezier(0.23, 1, 0.32, 1), border-color 200ms cubic-bezier(0.23, 1, 0.32, 1), transform 80ms cubic-bezier(0.23, 1, 0.32, 1);
     font-family: var(--font-sans);
     letter-spacing: 0.03em;
 }
@@ -231,7 +231,7 @@
     font-weight: 700;
 }
 
-/* ── Skill Gap Strip ─────────────────────────────────────────────────────────── */
+/* â”€â”€ Skill Gap Strip â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 .asmt-gap-strip {
     background: rgba(255, 255, 255, 0.85);
@@ -336,7 +336,7 @@
 
 .asmt-gap-diff { color: #ef4444; font-size: 11px; margin-left: 4px; font-weight: 600; }
 
-/* ── Domain Grid ─────────────────────────────────────────────────────────────── */
+/* â”€â”€ Domain Grid â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 .asmt-domain-grid {
     display: grid;
@@ -356,7 +356,7 @@
     padding: var(--space-6);
     cursor: pointer;
     text-align: left;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: opacity 200ms cubic-bezier(0.23, 1, 0.32, 1), background 200ms cubic-bezier(0.23, 1, 0.32, 1), color 200ms cubic-bezier(0.23, 1, 0.32, 1), border-color 200ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 220ms cubic-bezier(0.23, 1, 0.32, 1), transform 80ms cubic-bezier(0.23, 1, 0.32, 1) cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     width: 100%;
     box-shadow: 0 4px 15px -3px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.8);
@@ -374,7 +374,7 @@
 }
 
 .asmt-domain-card:hover {
-    transform: translateY(-3px);
+    /* GPU layer only */
     box-shadow: 0 16px 32px -8px rgba(0, 0, 0, 0.08), 0 0 0 1px var(--accent), inset 0 1px 0 rgba(255, 255, 255, 0.8);
 }
 
@@ -481,7 +481,7 @@
     transform: translateX(3px);
 }
 
-/* ── Config View ─────────────────────────────────────────────────────────────── */
+/* â”€â”€ Config View â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 .asmt-config { max-width: 620px; margin: 0 auto; }
 
@@ -594,10 +594,10 @@
     transition: opacity var(--duration-fast), transform var(--duration-fast);
     font-family: var(--font-sans);
 }
-.asmt-start-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+.asmt-start-btn:hover { opacity: 0.9; transform: translateZ(0); /* GPU layer — Emil: no layout-triggering Y shifts on hover */ }
 .asmt-start-btn:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
 
-/* ── Mode Selector ──────────────────────────────────────────────────────────── */
+/* â”€â”€ Mode Selector â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 .asmt-mode-grid {
     display: grid;
@@ -613,7 +613,7 @@
     padding: var(--space-4);
     text-align: left;
     cursor: pointer;
-    transition: all var(--duration-normal) var(--ease-spring);
+    transition: opacity var(--duration-fast) var(--ease-out), background var(--duration-fast) var(--ease-out), color var(--duration-fast) var(--ease-out), border-color var(--duration-fast) var(--ease-out), box-shadow 200ms var(--ease-out), transform 80ms var(--ease-out)(--duration-normal) var(--ease-spring);
     display: flex;
     flex-direction: column;
     position: relative;
@@ -622,7 +622,7 @@
 
 .asmt-mode-card:hover {
     border-color: #cbd5e1;
-    transform: translateY(-2px);
+    /* GPU layer only */
     box-shadow: var(--shadow-md);
 }
 
@@ -714,7 +714,7 @@
     letter-spacing: 0.05em;
 }
 
-/* ── Quiz View ───────────────────────────────────────────────────────────────── */
+/* â”€â”€ Quiz View â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 .asmt-quiz { max-width: 680px; margin: 0 auto; }
 
@@ -815,7 +815,7 @@
     padding: var(--space-4) var(--space-4);
     cursor: pointer;
     text-align: left;
-    transition: all var(--duration-fast);
+    transition: opacity var(--duration-fast) var(--ease-out), background var(--duration-fast) var(--ease-out), color var(--duration-fast) var(--ease-out), border-color var(--duration-fast) var(--ease-out), box-shadow 200ms var(--ease-out), transform 80ms var(--ease-out);
     width: 100%;
     font-family: var(--font-sans);
 }
@@ -918,7 +918,7 @@
     font-weight: var(--weight-medium);
     color: #6b7280;
     cursor: pointer;
-    transition: all var(--duration-fast);
+    transition: opacity var(--duration-fast) var(--ease-out), background var(--duration-fast) var(--ease-out), color var(--duration-fast) var(--ease-out), border-color var(--duration-fast) var(--ease-out), box-shadow 200ms var(--ease-out), transform 80ms var(--ease-out);
     font-family: var(--font-sans);
 }
 .asmt-skip-btn:hover { border-color: #d1d5db; color: #374151; }
@@ -935,7 +935,7 @@
     font-weight: var(--weight-bold);
     color: white;
     cursor: pointer;
-    transition: all var(--duration-fast);
+    transition: opacity var(--duration-fast) var(--ease-out), background var(--duration-fast) var(--ease-out), color var(--duration-fast) var(--ease-out), border-color var(--duration-fast) var(--ease-out), box-shadow 200ms var(--ease-out), transform 80ms var(--ease-out);
     font-family: var(--font-sans);
 }
 .asmt-next-btn:hover { background: var(--color-electric-light); transform: translateX(2px); }
@@ -952,12 +952,12 @@
     height: 6px;
     border-radius: 50%;
     background: #e5e7eb;
-    transition: all 0.25s var(--ease-smooth);
+    transition: opacity 200ms var(--ease-smooth), background 200ms var(--ease-smooth), color 200ms var(--ease-smooth), box-shadow 200ms var(--ease-smooth), transform 80ms var(--ease-smooth);
 }
 .asmt-dot--done   { background: #bfdbfe; }
 .asmt-dot--active { background: #2563eb; width: 18px; border-radius: var(--radius-sm); }
 
-/* ── Results View ────────────────────────────────────────────────────────────── */
+/* â”€â”€ Results View â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 .asmt-results { max-width: 680px; margin: 0 auto; }
 
@@ -1102,7 +1102,7 @@
     border-radius: var(--radius-lg);
     padding: var(--space-4) var(--space-4);
     cursor: pointer;
-    transition: all var(--duration-fast);
+    transition: opacity var(--duration-fast) var(--ease-out), background var(--duration-fast) var(--ease-out), color var(--duration-fast) var(--ease-out), border-color var(--duration-fast) var(--ease-out), box-shadow 200ms var(--ease-out), transform 80ms var(--ease-out);
 }
 .asmt-rec-card:hover { border-color: #bfdbfe; background: #f0f4ff; }
 
@@ -1144,7 +1144,7 @@
     font-weight: var(--weight-semibold);
     color: #374151;
     cursor: pointer;
-    transition: all var(--duration-fast);
+    transition: opacity var(--duration-fast) var(--ease-out), background var(--duration-fast) var(--ease-out), color var(--duration-fast) var(--ease-out), border-color var(--duration-fast) var(--ease-out), box-shadow 200ms var(--ease-out), transform 80ms var(--ease-out);
     font-family: var(--font-sans);
 }
 .asmt-retake-btn:hover { border-color: #d1d5db; background: #f9fafb; }
@@ -1161,12 +1161,12 @@
     font-weight: var(--weight-bold);
     color: white;
     cursor: pointer;
-    transition: all var(--duration-fast);
+    transition: opacity var(--duration-fast) var(--ease-out), background var(--duration-fast) var(--ease-out), color var(--duration-fast) var(--ease-out), border-color var(--duration-fast) var(--ease-out), box-shadow 200ms var(--ease-out), transform 80ms var(--ease-out);
     font-family: var(--font-sans);
 }
 .asmt-done-btn:hover { background: var(--color-electric-light); }
 
-/* ── Responsive ──────────────────────────────────────────────────────────────── */
+/* â”€â”€ Responsive â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 @media (max-width: 700px) {
     .asmt-domain-grid { grid-template-columns: 1fr; }

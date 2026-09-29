@@ -8,6 +8,7 @@
 import { updateDoc, doc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import type { RoleApplication } from './employerService';
+import html2pdf from 'html2pdf.js';
 
 export type PipelineStage =
     | 'Applied'
@@ -208,9 +209,23 @@ export function generateOfferLetter(data: OfferLetterData): void {
 </html>
 `;
 
-    const win = window.open('', '_blank');
-    if (!win) { alert('Please allow pop-ups to generate the offer letter.'); return; }
-    win.document.write(html);
-    win.document.close();
-    setTimeout(() => win.print(), 600);
+    const element = document.createElement('div');
+    element.innerHTML = html;
+    
+    // We append it to the body temporarily (off-screen) so html2pdf can compute styles
+    element.style.position = 'absolute';
+    element.style.left = '-9999px';
+    document.body.appendChild(element);
+
+    const opt = {
+        margin:       0,
+        filename:     `Offer_Letter_${data.candidateName.replace(/\s+/g, '_')}.pdf`,
+        image:        { type: 'jpeg' as const, quality: 0.98 },
+        html2canvas:  { scale: 2, useCORS: true },
+        jsPDF:        { unit: 'in' as const, format: 'letter' as const, orientation: 'portrait' as const }
+    };
+
+    html2pdf().set(opt).from(element).save().then(() => {
+        document.body.removeChild(element);
+    });
 }
