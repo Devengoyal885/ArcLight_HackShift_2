@@ -123,9 +123,38 @@ ol {
     display: none !important;
 }
 
-.c-dash, .hub-page, .hub-layout, .onb-root {
+/* Theme-aware transparent overrides */
+.c-dash, .hub-page, .hub-layout {
     background: transparent !important;
 }
+
+/* Onboarding dark mode */
+body[data-theme="light"] .onb-root {
+    background: linear-gradient(135deg, #f0f4ff 0%, #fafbff 60%, #eef2ff 100%) !important;
+}
+body:not([data-theme="light"]) .onb-root {
+    background: linear-gradient(135deg, #070a0f 0%, #0a0f1a 60%, #060d1a 100%) !important;
+}
+body:not([data-theme="light"]) .onb-card {
+    background: rgba(15, 20, 30, 0.95) !important;
+    border-color: rgba(255, 255, 255, 0.08) !important;
+    color: #e2e8f0 !important;
+}
+body:not([data-theme="light"]) .onb-title { color: #f1f5f9 !important; }
+body:not([data-theme="light"]) .onb-sub { color: #94a3b8 !important; }
+body:not([data-theme="light"]) .onb-label { color: #cbd5e1 !important; }
+body:not([data-theme="light"]) .onb-input {
+    background: rgba(255,255,255,0.06) !important;
+    border-color: rgba(255,255,255,0.12) !important;
+    color: #f1f5f9 !important;
+}
+body:not([data-theme="light"]) .onb-input::placeholder { color: #4d5568 !important; }
+body:not([data-theme="light"]) .onb-resume-textarea {
+    background: rgba(255,255,255,0.04) !important;
+    border-color: rgba(255,255,255,0.10) !important;
+    color: #f1f5f9 !important;
+}
+body:not([data-theme="light"]) .onb-resume-textarea::placeholder { color: #4d5568 !important; }
 
 /* â”€â”€â”€ Page Layout â”€â”€â”€ */
 .page-wrapper {

@@ -1,10 +1,10 @@
-﻿/* â”€â”€â”€ CAPABLE PREMIUM DESIGN TOKENS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* ─── CAPABLE PREMIUM DESIGN TOKENS ────────────────────────────────────────── */
 
-/* Albert Sans â€” premium heading font from impeccable.style */
+/* Albert Sans — premium heading font from impeccable.style */
 @import url('https://fonts.googleapis.com/css2?family=Albert+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400&family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 :root {
-  /* â”€â”€â”€ Color Palette â”€â”€â”€ */
+  /* ─── Color Palette ─── */
   --color-ink-950: #08090c;
   --color-ink-900: #0f1117;
   --color-ink-800: #181b23;
@@ -22,18 +22,18 @@
   --color-cool-gray:  #f0f2f5;
   --color-surface:    #f8f9fc;
 
-  /* â”€â”€ Primary Electric Blue â”€â”€ */
+  /* ── Primary Electric Blue ── */
   --color-electric:       #2563eb;
   --color-electric-light: #3b82f6;
   --color-electric-dark:  #1d4ed8;
   --color-electric-dim:   rgba(37, 99, 235, 0.10);
   --color-electric-glow:  rgba(37, 99, 235, 0.25);
 
-  /* â”€â”€ Accent â”€â”€ */
+  /* ── Accent ── */
   --color-accent:     #2563eb;
   --color-accent-dim: rgba(37, 99, 235, 0.10);
 
-  /* â”€â”€ Status colors â”€â”€ */
+  /* ── Status colors ── */
   --color-success:     #10b981;
   --color-success-dim: rgba(16, 185, 129, 0.10);
   --color-warning:     #f59e0b;
@@ -60,7 +60,7 @@
   --color-predicted: var(--color-amber);
   --color-practised: var(--color-cyan);
 
-  /* â”€â”€â”€ Typography â”€â”€â”€ */
+  /* ─── Typography ─── */
   /* Albert Sans for headings (impeccable.style pattern) */
   --font-display: 'Albert Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --font-sans:    'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
@@ -100,7 +100,7 @@
   --tracking-wider:    0.1em;
   --tracking-widest:   0.2em;
 
-  /* â”€â”€â”€ Spacing â”€â”€â”€ */
+  /* ─── Spacing ─── */
   --space-1:  0.25rem;
   --space-2:  0.5rem;
   --space-3:  0.75rem;
@@ -115,7 +115,7 @@
   --space-24: 6rem;
   --space-32: 8rem;
 
-  /* â”€â”€â”€ Border Radius â”€â”€â”€ */
+  /* ─── Border Radius ─── */
   --radius-sm:   4px;
   --radius-md:   8px;
   --radius-lg:   12px;
@@ -124,7 +124,7 @@
   --radius-3xl:  24px;
   --radius-pill: 9999px;
 
-  /* â”€â”€â”€ Shadows â€” tasteskill & impeccable.style depth system â”€â”€â”€ */
+  /* ─── Shadows — tasteskill & impeccable.style depth system ─── */
   --shadow-xs:          0 1px 2px rgba(0,0,0,0.05), 0 1px 3px rgba(0,0,0,0.04);
   --shadow-sm:          0 2px 6px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.04), inset 0 1px 0 rgba(255,255,255,0.6);
   --shadow-md:          0 4px 14px rgba(0,0,0,0.08), 0 2px 6px rgba(0,0,0,0.05), inset 0 1px 0 rgba(255,255,255,0.8);
@@ -137,7 +137,7 @@
   --shadow-hover-lift:  0 14px 30px -8px rgba(15,15,15,0.28), 0 1px 2px rgba(0,0,0,0.04);
   --shadow-button-dark: 0 14px 32px -10px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.12);
 
-  /* â”€â”€â”€ Easing â€” Emil Kowalski's precise curves â”€â”€â”€ */
+  /* ─── Easing — Emil Kowalski's precise curves ─── */
   /* Strong ease-out: starts fast = feels responsive. Use for entering elements */
   --ease-out:     cubic-bezier(0.23, 1, 0.32, 1);
   /* Strong ease-in-out: natural arc. Use for on-screen movement */
@@ -149,20 +149,20 @@
   /* Gentle spring overshoot: decorative / playful only */
   --ease-spring:  cubic-bezier(0.34, 1.56, 0.64, 1);
 
-  /* Duration scale â€” UI animations MUST be under 300ms */
+  /* Duration scale — UI animations MUST be under 300ms */
   --duration-instant: 80ms;   /* button press feedback */
   --duration-fast:    150ms;  /* tooltips, small popovers */
   --duration-normal:  220ms;  /* dropdowns, selects */
   --duration-slow:    350ms;  /* modals, drawers */
   --duration-slower:  500ms;  /* marketing / onboarding only */
 
-  /* â”€â”€â”€ Layout â”€â”€â”€ */
+  /* ─── Layout ─── */
   --max-width:     1440px;
   --container-xl:  1280px;
   --container-lg:  1024px;
   --navbar-height: 64px;
 
-  /* â”€â”€â”€ Z-index â”€â”€â”€ */
+  /* ─── Z-index ─── */
   --z-below:   -1;
   --z-base:    0;
   --z-raise:   10;
@@ -170,4 +170,37 @@
   --z-overlay: 100;
   --z-modal:   200;
   --z-toast:   300;
+
+  /* --- SEMANTIC THEME TOKENS (Dark mode defaults) --- */
+  --color-bg-main:        #050505;
+  --color-bg-surface:     #0f1117;
+  --color-bg-card:        rgba(15, 17, 23, 0.85);
+  --color-bg-elevated:    rgba(24, 27, 35, 0.90);
+  --color-text-primary:   #e2e8f0;
+  --color-text-secondary: #94a3b8;
+  --color-text-muted:     #4d5568;
+  --color-text-inverted:  #0f1117;
+  --color-border:         rgba(255, 255, 255, 0.08);
+  --color-border-strong:  rgba(255, 255, 255, 0.15);
+  --color-input-bg:       rgba(255, 255, 255, 0.05);
+  --color-input-border:   rgba(255, 255, 255, 0.12);
+  --color-hover-overlay:  rgba(255, 255, 255, 0.05);
 }
+
+/* --- LIGHT MODE TOKEN OVERRIDES --- */
+body[data-theme="light"] {
+  --color-bg-main:        #fdfbf7;
+  --color-bg-surface:     #ffffff;
+  --color-bg-card:        #ffffff;
+  --color-bg-elevated:    #f8f9fc;
+  --color-text-primary:   #0f172a;
+  --color-text-secondary: #475569;
+  --color-text-muted:     #94a3b8;
+  --color-text-inverted:  #ffffff;
+  --color-border:         rgba(15, 23, 42, 0.08);
+  --color-border-strong:  rgba(15, 23, 42, 0.15);
+  --color-input-bg:       #ffffff;
+  --color-input-border:   rgba(15, 23, 42, 0.18);
+  --color-hover-overlay:  rgba(15, 23, 42, 0.04);
+}
+

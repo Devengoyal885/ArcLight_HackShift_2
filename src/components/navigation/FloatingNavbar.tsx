@@ -80,6 +80,7 @@ export function FloatingNavbar({ variant }: FloatingNavbarProps) {
 
     const handleSignOut = async () => {
         try {
+            localStorage.removeItem('capable_mock_login');
             await signOut(auth);
             navigate('/');
         } catch (error) {

@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-    Search, Briefcase, GraduationCap, Users, User, 
+import {
+    Search, Briefcase, GraduationCap, Users, User,
     Settings, MessageSquare, LayoutDashboard, FileText,
     TrendingUp, ShieldAlert, Award, Building2, Loader2
 } from 'lucide-react';
@@ -25,7 +25,7 @@ export default function CommandPalette({ isOpen, setIsOpen }: CommandPaletteProp
     useEffect(() => {
         const stored = localStorage.getItem('capable_recent_searches');
         if (stored) {
-            try { setRecentSearches(JSON.parse(stored)); } catch (e) {}
+            try { setRecentSearches(JSON.parse(stored)); } catch (e) { }
         }
     }, []);
 
@@ -79,15 +79,15 @@ export default function CommandPalette({ isOpen, setIsOpen }: CommandPaletteProp
         { icon: <LayoutDashboard />, label: 'Go to Community Hub', path: '/candidate/community', category: 'Navigation' },
         { icon: <Briefcase />, label: 'Go to Jobs & Opportunities', path: '/candidate/opportunities', category: 'Navigation' },
         { icon: <TrendingUp />, label: 'Go to Preparation Hub', path: '/candidate/preparation', category: 'Navigation' },
-        { icon: <User />, label: 'View My Profile', path: '/candidate/profile', category: 'Navigation' },
+        { icon: <User />, label: 'View My Profile', path: '/candidate/coding-profile', category: 'Navigation' },
         { icon: <FileText />, label: 'AI Resume Review', path: '/candidate/preparation?tab=resume', category: 'Actions' },
         { icon: <MessageSquare />, label: 'Start Mock Interview', path: '/candidate/communication/interview', category: 'Actions' },
         { icon: <Award />, label: 'View College Leaderboard', path: '/candidate/community?tab=leaderboard', category: 'Navigation' },
         { icon: <Settings />, label: 'Account Settings', path: '/candidate/settings', category: 'Preferences' }
     ];
 
-    const filteredCommands = commands.filter(cmd => 
-        cmd.label.toLowerCase().includes(search.toLowerCase()) || 
+    const filteredCommands = commands.filter(cmd =>
+        cmd.label.toLowerCase().includes(search.toLowerCase()) ||
         cmd.category.toLowerCase().includes(search.toLowerCase())
     );
 
@@ -97,7 +97,7 @@ export default function CommandPalette({ isOpen, setIsOpen }: CommandPaletteProp
         <AnimatePresence>
             {isOpen && (
                 <div className="cmd-backdrop" onClick={() => setIsOpen(false)}>
-                    <motion.div 
+                    <motion.div
                         className="cmd-palette"
                         initial={{ opacity: 0, scale: 0.95, y: -20 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -107,7 +107,7 @@ export default function CommandPalette({ isOpen, setIsOpen }: CommandPaletteProp
                     >
                         <div className="cmd-header">
                             <Search className="cmd-search-icon" size={20} />
-                            <input 
+                            <input
                                 ref={inputRef}
                                 type="text"
                                 className="cmd-input"
@@ -120,8 +120,8 @@ export default function CommandPalette({ isOpen, setIsOpen }: CommandPaletteProp
 
                         <div className="cmd-filters">
                             {['All', 'Jobs', 'Preparation', 'People'].map(f => (
-                                <button 
-                                    key={f} 
+                                <button
+                                    key={f}
                                     className={`cmd-filter-chip ${f === 'All' ? 'active' : ''}`}
                                 >
                                     {f}
@@ -165,8 +165,8 @@ export default function CommandPalette({ isOpen, setIsOpen }: CommandPaletteProp
                                         <div key={cat} className="cmd-group">
                                             <div className="cmd-group-label">{cat}</div>
                                             {filteredCommands.filter(c => c.category === cat).map((cmd, i) => (
-                                                <div 
-                                                    key={i} 
+                                                <div
+                                                    key={i}
                                                     className="cmd-item"
                                                     onClick={() => navigateTo(cmd.path)}
                                                 >
@@ -187,8 +187,8 @@ export default function CommandPalette({ isOpen, setIsOpen }: CommandPaletteProp
                                         <div className="cmd-group">
                                             <div className="cmd-group-label">Matching Jobs</div>
                                             {jobs.map(job => (
-                                                <div 
-                                                    key={job.id} 
+                                                <div
+                                                    key={job.id}
                                                     className="cmd-item"
                                                     onClick={() => {
                                                         addRecentSearch(search);

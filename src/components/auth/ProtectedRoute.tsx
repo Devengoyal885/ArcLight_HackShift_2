@@ -34,7 +34,7 @@ export default function ProtectedRoute({ children, allowedRoles }: ProtectedRout
 
     // Auth finished loading, user is not signed in — redirect to login
     if (!user) {
-        console.log('[ProtectedRoute] No user after loading finished, redirecting to /login');
+        console.error('[ProtectedRoute] Redirecting to /login! State:', { loading, profileLoading, hasUser: !!user, role });
         return <Navigate to="/login" replace />;
     }
 

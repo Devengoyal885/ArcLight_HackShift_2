@@ -82,6 +82,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
 
     useEffect(() => {
+        const isMock = localStorage.getItem('capable_mock_login') === 'true';
+        if (isMock) {
+            const savedRole = (localStorage.getItem('userRole') as UserRole) || 'candidate';
+            mockLogin(savedRole).then(() => setLoading(false));
+            return;
+        }
+
         const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
             console.log('[AuthContext] onAuthStateChanged fired, user:', currentUser?.uid ?? 'null');
             setUser(currentUser);
@@ -101,6 +108,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const mockLogin = async (mockRole: UserRole) => {
         setLoading(true);
         localStorage.setItem('userRole', mockRole);
+        localStorage.setItem('capable_mock_login', 'true');
         const mockUid = 'mockuser_123';
         const mockDbUid = `${mockUid}_${mockRole}`;
         

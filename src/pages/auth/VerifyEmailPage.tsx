@@ -45,6 +45,7 @@ export default function VerifyEmailPage() {
     };
 
     const handleSignOut = async () => {
+        localStorage.removeItem('capable_mock_login');
         await signOut(auth);
         navigate('/login');
     };

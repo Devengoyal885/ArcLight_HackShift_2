@@ -54,7 +54,7 @@ export default function ProfileNudgeBanner() {
                         </div>
 
                         <div className="profile-nudge-actions">
-                            <Link to="/candidate/profile" className="profile-nudge-btn">
+                            <Link to="/candidate/coding-profile" className="profile-nudge-btn">
                                 Complete Now <ChevronRight size={16} />
                             </Link>
                             <button className="profile-nudge-close" onClick={dismiss}>

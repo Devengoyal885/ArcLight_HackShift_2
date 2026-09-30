@@ -109,7 +109,7 @@ export default function OnboardingPage() {
         try {
             const parsed = await parseResume(resumeText);
             if (!parsed) {
-                setParseError('Could not parse resume. Please check your resume content and try again.');
+                setParseError('AI parsing failed — the result was empty. Please try again, or use the skip option to fill your profile manually.');
                 return;
             }
             setParsedResume(parsed);
@@ -118,8 +118,13 @@ export default function OnboardingPage() {
             if (parsed.profile.headline) setHeadline(parsed.profile.headline);
             if (parsed.profile.location) setLocation(parsed.profile.location);
             setStep(3);
-        } catch (err) {
-            setParseError('Network Error. Please try again later.');
+        } catch (err: any) {
+            const isNetworkErr = err?.message?.includes('Failed to fetch') || err?.message?.includes('NetworkError') || err?.message?.includes('ERR_CONNECTION_REFUSED');
+            if (isNetworkErr) {
+                setParseError('AI server is unreachable. You can skip this step and fill in your profile manually from your dashboard.');
+            } else {
+                setParseError(err?.message || 'Failed to parse resume. Please try again or skip.');
+            }
             console.error('[parseResume]', err);
         } finally {
             setParsing(false);
@@ -236,12 +241,15 @@ export default function OnboardingPage() {
                     const formData = new FormData();
                     formData.append('file', resumeFile);
                     formData.append('upload_preset', import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET || 'capable_uploads');
-                    const res = await fetch(
-                        `https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME || 'drcz7x71s'}/auto/upload`,
-                        { method: 'POST', body: formData }
-                    );
-                    const data = await res.json();
-                    if (data.secure_url) uploadedResumeUrl = data.secure_url;
+                    const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
+                    if (cloudName) {
+                        const res = await fetch(
+                            `https://api.cloudinary.com/v1_1/${cloudName}/auto/upload`,
+                            { method: 'POST', body: formData }
+                        );
+                        const data = await res.json();
+                        if (data.secure_url) uploadedResumeUrl = data.secure_url;
+                    }
                 } catch (e) {
                     console.warn('[onboarding] Cloudinary upload failed (non-critical):', e);
                 }

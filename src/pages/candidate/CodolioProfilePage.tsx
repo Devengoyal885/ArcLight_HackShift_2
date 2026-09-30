@@ -33,7 +33,7 @@ import './CodolioProfilePage.css';
 
 
 export default function CodolioProfilePage() {
-    const { user, dbUid, profile: ownProfile, role } = useAuth();
+    const { user, dbUid, profile: ownProfile, role, refreshProfile } = useAuth();
     const { uid: viewUid } = useParams<{ uid?: string }>();
 
     // If viewUid is present, we're in READ-ONLY mode viewing someone else's profile
@@ -133,7 +133,7 @@ export default function CodolioProfilePage() {
         try {
             await claimUsername(dbUid, usernameInput.trim());
             setUsernameClaimed(true);
-            setTimeout(() => window.location.reload(), 1000);
+            await refreshProfile();
         } catch (err: any) {
             setUsernameError(err.message || 'Failed to claim username');
         } finally {
@@ -311,9 +311,12 @@ export default function CodolioProfilePage() {
                         showPlatformModal === 'linkedin' ? 'linkedinUrl' : 'hackerrankUsername';
             
             await updateProfile(dbUid!, { [key]: platformUsername });
-            
-            // Reload page to fetch new stats (quickest way for hackathon)
-            window.location.reload();
+            // Update local platform stats so widget re-renders without reload
+            if (showPlatformModal === 'github') setGithubStats(null);
+            if (showPlatformModal === 'leetcode') setLeetcodeStats(null);
+            await refreshProfile();
+            setShowPlatformModal(null);
+            setPlatformUsername('');
         } catch (error) {
             console.error("Failed to connect platform", error);
         } finally {
@@ -330,7 +333,7 @@ export default function CodolioProfilePage() {
                 activeBacklogs: backlogsInput ? parseInt(backlogsInput) : undefined
             });
             setEditingAcademic(false);
-            window.location.reload();
+            await refreshProfile();
         } catch (e) {
             console.error(e);
         } finally {
@@ -360,7 +363,10 @@ export default function CodolioProfilePage() {
                         platform === 'leetcode' ? 'leetcodeUsername' : 
                         'linkedinUrl';
             await updateProfile(dbUid!, { [key]: null });
-            window.location.reload();
+            // Clear the relevant stats widget without reload
+            if (platform === 'github') setGithubStats(null);
+            if (platform === 'leetcode') setLeetcodeStats(null);
+            await refreshProfile();
         } catch (error) {
             console.error("Failed to disconnect platform", error);
         }
@@ -371,11 +377,29 @@ export default function CodolioProfilePage() {
         if (!file || !user || !dbUid) return;
         setUploadingResume(true);
         try {
-            const storageRef = ref(storage, `resumes/${dbUid}/${file.name}`);
-            await uploadBytes(storageRef, file);
-            const url = await getDownloadURL(storageRef);
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('upload_preset', import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET || 'capable_uploads');
+            
+            const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
+            if (!cloudName) {
+                throw new Error('Cloudinary is not configured.');
+            }
+            const uploadRes = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/auto/upload`, {
+                method: 'POST',
+                body: formData
+            });
+
+            if (!uploadRes.ok) {
+                const errData = await uploadRes.json().catch(() => ({}));
+                throw new Error(errData?.error?.message || 'Resume upload failed.');
+            }
+
+            const uploadData = await uploadRes.json();
+            const url = uploadData.secure_url;
+
             await updateProfile(dbUid, { resumeUrl: url });
-            window.location.reload();
+            await refreshProfile();
         } catch (err) {
             console.error("Failed to upload resume:", err);
             alert("Failed to upload resume. Please try again.");
@@ -418,21 +442,25 @@ export default function CodolioProfilePage() {
             formData.append('file', blob, `profile_${Date.now()}.jpg`);
             formData.append('upload_preset', import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET || 'capable_uploads');
             
-            const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME || 'drcz7x71s';
+            const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
+            if (!cloudName) {
+                throw new Error('Cloudinary is not configured. Please contact support.');
+            }
             const uploadRes = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
                 method: 'POST',
                 body: formData
             });
 
             if (!uploadRes.ok) {
-                throw new Error('Cloudinary upload failed');
+                const errData = await uploadRes.json().catch(() => ({}));
+                throw new Error(errData?.error?.message || 'Photo upload failed. Please try again.');
             }
 
             const uploadData = await uploadRes.json();
             const url = uploadData.secure_url;
 
             await updateProfile(dbUid, { avatar: url });
-            window.location.reload();
+            await refreshProfile();
         } catch (err) {
             console.error("Failed to upload avatar:", err);
             alert("Failed to upload photo. Please try again.");
@@ -449,8 +477,9 @@ export default function CodolioProfilePage() {
         try {
             const formData = new FormData();
             formData.append('file', file);
-            formData.append('upload_preset', 'capable_uploads'); 
-            const cloudName = 'drcz7x71s'; 
+            formData.append('upload_preset', import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET || 'capable_uploads');
+            const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
+            if (!cloudName) throw new Error('Cloudinary not configured.');
 
             const uploadRes = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
                 method: 'POST',
@@ -458,7 +487,8 @@ export default function CodolioProfilePage() {
             });
 
             if (!uploadRes.ok) {
-                throw new Error('Cloudinary upload failed');
+                const errData = await uploadRes.json().catch(() => ({}));
+                throw new Error(errData?.error?.message || 'Badge upload failed.');
             }
 
             const uploadData = await uploadRes.json();
@@ -475,12 +505,24 @@ export default function CodolioProfilePage() {
         const file = e.target.files?.[0];
         if (!file || !user || !dbUid) return;
 
+        // Validate file size (max 100MB for video)
+        if (file.size > 100 * 1024 * 1024) {
+            alert('Video must be under 100MB. Please trim or compress your video.');
+            return;
+        }
+
         setUploadingVideo(true);
         try {
+            const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
+            const uploadPreset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET || 'capable_uploads';
+            if (!cloudName) {
+                alert('Video upload is not configured. Please contact support.');
+                return;
+            }
+
             const formData = new FormData();
             formData.append('file', file);
-            formData.append('upload_preset', 'capable_uploads'); 
-            const cloudName = 'drcz7x71s'; 
+            formData.append('upload_preset', uploadPreset);
 
             const uploadRes = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/video/upload`, {
                 method: 'POST',
@@ -488,23 +530,16 @@ export default function CodolioProfilePage() {
             });
 
             if (!uploadRes.ok) {
-                console.warn('Cloudinary upload failed, using mock video for demo');
-                const mockVideoUrl = "https://www.w3schools.com/html/mov_bbb.mp4";
-                await updateProfile(dbUid, { videoPitchUrl: mockVideoUrl });
-                window.location.reload();
-                return;
+                const errData = await uploadRes.json().catch(() => ({}));
+                throw new Error(errData?.error?.message || 'Video upload failed. Please try again.');
             }
 
             const uploadData = await uploadRes.json();
             await updateProfile(dbUid, { videoPitchUrl: uploadData.secure_url });
-            window.location.reload();
-        } catch (err) {
-            console.warn("Cloudinary not configured or failed, using mock video for demo.");
-            const mockVideoUrl = "https://www.w3schools.com/html/mov_bbb.mp4";
-            if (dbUid) {
-                await updateProfile(dbUid, { videoPitchUrl: mockVideoUrl });
-                window.location.reload();
-            }
+            await refreshProfile();
+        } catch (err: any) {
+            console.error('Video upload failed:', err);
+            alert(err?.message || 'Failed to upload video. Please try again.');
         } finally {
             setUploadingVideo(false);
         }
@@ -515,10 +550,11 @@ export default function CodolioProfilePage() {
         if (!file || !user || !dbUid) return;
 
         try {
+            const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
+            if (!cloudName) throw new Error('Cloudinary not configured.');
             const formData = new FormData();
             formData.append('file', file);
-            formData.append('upload_preset', 'capable_uploads');
-            const cloudName = 'drcz7x71s';
+            formData.append('upload_preset', import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET || 'capable_uploads');
 
             const uploadRes = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
                 method: 'POST',
@@ -530,7 +566,8 @@ export default function CodolioProfilePage() {
             const uploadData = await uploadRes.json();
             
             await updateProject(dbUid, projectId, { screenshotUrl: uploadData.secure_url });
-            window.location.reload();
+            // Update local state so thumbnail shows immediately
+            setProjects(prev => prev.map(p => p.id === projectId ? { ...p, screenshotUrl: uploadData.secure_url } : p));
         } catch (err) {
             console.error(err);
             alert("Failed to upload screenshot.");
@@ -586,7 +623,7 @@ export default function CodolioProfilePage() {
                             @{profile?.name?.replace(/\s+/g, '').toLowerCase() || 'user'} 
                             <CheckCircle size={14} className="cp-verified-icon" />
                         </p>
-                        <p className="cp-bio">{profile?.headline || 'Software Engineer'}</p>
+                        {profile?.headline && <p className="cp-bio">{profile.headline}</p>}
 
                         {Boolean(profile?.updatedAt) && (
                             <p style={{ fontSize: '11px', color: '#94a3b8', marginTop: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
@@ -701,7 +738,7 @@ export default function CodolioProfilePage() {
                                             </span>
                                         </div>
                                         <button 
-                                            onClick={() => updateProfile(dbUid!, { visibility: profile?.visibility === 'private' ? 'public' : 'private' }).then(() => window.location.reload())}
+                                            onClick={() => updateProfile(dbUid!, { visibility: profile?.visibility === 'private' ? 'public' : 'private' }).then(() => refreshProfile())}
                                             style={{ background: 'none', border: 'none', color: '#2563eb', fontSize: '11px', fontWeight: 600, cursor: 'pointer', textDecoration: 'underline' }}
                                         >
                                             Toggle
@@ -970,7 +1007,7 @@ export default function CodolioProfilePage() {
                                                 onClick={async () => {
                                                     if(!dbUid) return;
                                                     await updateProfile(dbUid, { videoPitchUrl: undefined });
-                                                    window.location.reload();
+                                                    await refreshProfile();
                                                 }}
                                                 style={{ background: 'rgba(255,255,255,0.9)', padding: '6px 10px', borderRadius: '8px', fontSize: '12px', fontWeight: 600, color: '#ef4444', display: 'flex', alignItems: 'center', gap: '4px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}
                                             >

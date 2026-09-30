@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
 import { Briefcase, Mail, Lock, CheckSquare, User, GraduationCap, Building2, Sparkles } from 'lucide-react';
@@ -110,12 +110,17 @@ export default function LoginPage() {
     // Auth context
     const { mockLogin, user, loading, role } = useAuth();
     const navigate = useNavigate();
+    // Prevents double-navigation when Google redirect result triggers both
+    // the getRedirectResult useEffect AND the [user, loading] useEffect.
+    const redirectHandled = useRef(false);
 
     // If user is already authenticated, redirect them to their correct dashboard.
     // We use `role` from AuthContext which is derived from the profile, not stale localStorage.
     useEffect(() => {
         if (loading) return; // Wait for Firebase to resolve
         if (!user) return;   // Not logged in — stay on login page
+        // If Google redirect already handled navigation, don't double-navigate
+        if (redirectHandled.current) return;
 
         const resolvedRole = (role as RoleType) || (localStorage.getItem('userRole') as RoleType) || 'candidate';
         
@@ -227,14 +232,11 @@ export default function LoginPage() {
     useEffect(() => {
         // IMPORTANT: Do NOT call clearStaleAuthState() here.
         // getRedirectResult() reads from the same Firebase IndexedDB that
-        // clearStaleAuthState() deletes — calling both causes the
-        // "INTERNAL ASSERTION FAILED: Pending promise was never set" error.
+        // clearStaleAuthState() deletes. Calling it here breaks valid sessions.
         getRedirectResult(auth).then((result) => {
-            if (!result) {
-                // No pending redirect — safe to clear any truly stale state now
-                clearStaleAuthState();
-                return;
-            }
+            if (!result) return;
+            // Mark that we're handling navigation — prevents the [user] effect from double-navigating
+            redirectHandled.current = true;
             const additionalInfo = getAdditionalUserInfo(result);
             const savedRole = (localStorage.getItem('userRole') as RoleType) || 'candidate';
             if (additionalInfo?.isNewUser) {
@@ -245,9 +247,12 @@ export default function LoginPage() {
                     .then(p => navigate(p?.profileComplete ? dashboardFor(savedRole) : '/onboarding', { replace: true }))
                     .catch(() => navigate(dashboardFor(savedRole), { replace: true }));
             }
-        }).catch(() => {
-            // No redirect result — safe to clear stale state
-            clearStaleAuthState();
+        }).catch((err) => {
+            console.error("Redirect login error:", err);
+            // ONLY clear state if we specifically hit the Firebase internal assertion error
+            if (err?.message?.includes("Pending promise was never set")) {
+                clearStaleAuthState();
+            }
         });
     }, []);
 
@@ -273,7 +278,7 @@ export default function LoginPage() {
             }
         } catch (err: any) {
             const code: string = err?.code || '';
-            if (code === 'auth/popup-blocked' || code === 'auth/popup-closed-by-user' && false) {
+            if (code === 'auth/popup-blocked') {
                 // Popup blocked — automatically fall back to redirect flow
                 setError('');
                 await signInWithRedirect(auth, googleProvider);

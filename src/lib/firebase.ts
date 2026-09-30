@@ -9,22 +9,27 @@ import {
     sendPasswordResetEmail,
     sendEmailVerification,
     signOut,
-    getAdditionalUserInfo
+    getAdditionalUserInfo,
+    setPersistence,
+    browserLocalPersistence
 } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 
 const firebaseConfig = {
-    apiKey: "AIzaSyD6ZYSMF-uhdDdpxlJm-wBL3Szho4LvMu4",
-    authDomain: "wardrobe-app-adf6e.firebaseapp.com",
-    projectId: "wardrobe-app-adf6e",
-    storageBucket: "wardrobe-app-adf6e.appspot.com",
-    messagingSenderId: "920220901330",
-    appId: "1:920220901330:web:2367f33012d657e43e320b"
+    apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "AIzaSyD6ZYSMF-uhdDdpxlJm-wBL3Szho4LvMu4",
+    authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "wardrobe-app-adf6e.firebaseapp.com",
+    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "wardrobe-app-adf6e",
+    storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "wardrobe-app-adf6e.appspot.com",
+    messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "920220901330",
+    appId: import.meta.env.VITE_FIREBASE_APP_ID || "1:920220901330:web:2367f33012d657e43e320b"
 };
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+
+// Explicitly set persistence to LocalStorage/IndexedDB to fix random logouts on refresh
+setPersistence(auth, browserLocalPersistence).catch(console.error);
 
 const db = getFirestore(app);
 const storage = getStorage(app);
