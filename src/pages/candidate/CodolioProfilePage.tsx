@@ -28,7 +28,9 @@ import { storage } from '../../lib/firebase';
 import SkillRadarChart from '../../components/profile/SkillRadarChart';
 import { fetchLeetCodeStats, calculateCurrentStreak } from '../../services/leetcodeService';
 import { LeetCodeWidget, GitHubWidget, LinkedInWidget } from '../../components/profile/PlatformWidgets';
-import { getCodingStats, getResumeSkillVerification } from '../../services/profileService';
+import { getCodingStats, getResumeSkillVerification, saveProjects, saveCapabilities, addWorkExperience } from '../../services/profileService';
+import { extractTextFromPDF } from '../../utils/pdfParser';
+import { parseResume, inferCapabilitiesFromResume, parsedToProjects, inferencedToCapabilities } from '../../services/resumeParserService';
 import './CodolioProfilePage.css';
 
 
@@ -398,7 +400,60 @@ export default function CodolioProfilePage() {
             const uploadData = await uploadRes.json();
             const url = uploadData.secure_url;
 
-            await updateProfile(dbUid, { resumeUrl: url });
+            // ── PARSE RESUME CONTENT & POPULATE PROFILE ──
+            try {
+                let text = '';
+                if (file.name.endsWith('.pdf') || file.type === 'application/pdf') {
+                    text = await extractTextFromPDF(file);
+                } else if (file.name.endsWith('.txt') || file.type === 'text/plain') {
+                    text = await file.text();
+                }
+
+                if (text && text.trim().length > 50) {
+                    const parsed = await parseResume(text);
+                    if (parsed) {
+                        const updates: Partial<UserProfile> = { resumeUrl: url };
+                        if (parsed.education && parsed.education.length > 0) updates.education = parsed.education;
+                        if (parsed.profile.githubUsername && !profile?.githubUsername) updates.githubUsername = parsed.profile.githubUsername;
+                        if (parsed.profile.linkedinUrl && !profile?.linkedinUrl) updates.linkedinUrl = parsed.profile.linkedinUrl;
+                        if (parsed.profile.portfolioUrl && !profile?.portfolioUrl) updates.portfolioUrl = parsed.profile.portfolioUrl;
+                        if (parsed.profile.headline && !profile?.headline) updates.headline = parsed.profile.headline;
+                        if (parsed.profile.location && !profile?.location) updates.location = parsed.profile.location;
+
+                        await updateProfile(dbUid, updates);
+
+                        if (parsed.projects && parsed.projects.length > 0) {
+                            const projectsData = parsedToProjects(parsed);
+                            await saveProjects(dbUid, projectsData);
+                        }
+
+                        if (parsed.experience && parsed.experience.length > 0) {
+                            for (const exp of parsed.experience) {
+                                await addWorkExperience(dbUid, {
+                                    title: exp.role,
+                                    company: exp.company,
+                                    date: exp.duration || '',
+                                    description: exp.description || ''
+                                });
+                            }
+                        }
+
+                        const inferred = await inferCapabilitiesFromResume(parsed);
+                        if (inferred && inferred.length > 0) {
+                            const caps = inferencedToCapabilities(inferred);
+                            await saveCapabilities(dbUid, caps);
+                        }
+                    } else {
+                        await updateProfile(dbUid, { resumeUrl: url });
+                    }
+                } else {
+                    await updateProfile(dbUid, { resumeUrl: url });
+                }
+            } catch (parseErr) {
+                console.error("Resume uploaded but failed to parse:", parseErr);
+                await updateProfile(dbUid, { resumeUrl: url });
+            }
+            
             await refreshProfile();
         } catch (err) {
             console.error("Failed to upload resume:", err);

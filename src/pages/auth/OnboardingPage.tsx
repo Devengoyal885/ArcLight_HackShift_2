@@ -21,7 +21,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import {
-    createProfile, updateProfile, saveProjects, saveCapabilities
+    createProfile, updateProfile, saveProjects, saveCapabilities, addWorkExperience
 } from '../../services/profileService';
 import { saveEmployerProfile } from '../../services/employerService';
 import {
@@ -274,6 +274,7 @@ export default function OnboardingPage() {
                 profileComplete: true,
                 // Link candidate to their institution so faculty/admin can discover them
                 institutionCode: institutionCode.trim().toUpperCase() || undefined,
+                education: parsedResume?.education || undefined,
             };
 
             console.log('[onboarding] Saving profile for uid:', profileId);
@@ -288,6 +289,22 @@ export default function OnboardingPage() {
                     console.log('[onboarding] Projects saved ✓');
                 } catch (e) {
                     console.warn('[onboarding] saveProjects failed (non-critical):', e);
+                }
+            }
+
+            if (parsedResume?.experience?.length) {
+                try {
+                    for (const exp of parsedResume.experience) {
+                        await addWorkExperience(profileId, {
+                            title: exp.role,
+                            company: exp.company,
+                            date: exp.duration || '',
+                            description: exp.description || ''
+                        });
+                    }
+                    console.log('[onboarding] Work Experiences saved ✓');
+                } catch (e) {
+                    console.warn('[onboarding] addWorkExperience failed (non-critical):', e);
                 }
             }
 
