@@ -329,8 +329,8 @@ export default function CodolioProfilePage() {
         setSavingAcademic(true);
         try {
             await updateProfile(dbUid, { 
-                cgpa: cgpaInput ? parseFloat(cgpaInput) : undefined,
-                activeBacklogs: backlogsInput ? parseInt(backlogsInput) : undefined
+                cgpa: cgpaInput ? parseFloat(cgpaInput) : null as any,
+                activeBacklogs: backlogsInput ? parseInt(backlogsInput) : null as any
             });
             setEditingAcademic(false);
             await refreshProfile();
@@ -1006,7 +1006,7 @@ export default function CodolioProfilePage() {
                                             <button 
                                                 onClick={async () => {
                                                     if(!dbUid) return;
-                                                    await updateProfile(dbUid, { videoPitchUrl: undefined });
+                                                    await updateProfile(dbUid, { videoPitchUrl: null as any });
                                                     await refreshProfile();
                                                 }}
                                                 style={{ background: 'rgba(255,255,255,0.9)', padding: '6px 10px', borderRadius: '8px', fontSize: '12px', fontWeight: 600, color: '#ef4444', display: 'flex', alignItems: 'center', gap: '4px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}
