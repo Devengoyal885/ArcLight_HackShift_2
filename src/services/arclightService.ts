@@ -5,7 +5,10 @@
  * Implements all three ArcLight models + market intelligence endpoints.
  */
 
-const API_BASE = 'http://localhost:8000';
+const isLocalHost = typeof window !== 'undefined' && 
+  (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+
+const API_BASE = (import.meta.env.VITE_ARCLIGHT_API_URL as string) || (isLocalHost ? 'http://localhost:8000' : '');
 
 export interface TopRole { role: string; count: number }
 export interface SalaryBand { band: string; count: number; pct: number }
@@ -50,6 +53,9 @@ export interface ModelInfo {
 }
 
 async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
+  if (!API_BASE) {
+    throw new Error('ArcLight backend is offline or not configured for this domain.');
+  }
   const res = await fetch(`${API_BASE}${path}`, {
     headers: { 'Content-Type': 'application/json' },
     ...options,
@@ -132,5 +138,9 @@ export const predictSeniorSuccess = (data: SDSSuccessInput) =>
 export const getModelInfo = () =>
   apiFetch<{ models: ModelInfo[] }>('/api/model-info');
 
-export const checkHealth = () =>
-  apiFetch<{ status: string }>('/health');
+export const checkHealth = async (): Promise<{ status: string }> => {
+  if (!API_BASE) {
+    throw new Error('ArcLight backend is not running on this domain.');
+  }
+  return apiFetch<{ status: string }>('/health');
+};

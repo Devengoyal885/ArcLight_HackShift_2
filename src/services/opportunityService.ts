@@ -277,7 +277,7 @@ async function fetchEmployerPostedRoles(): Promise<OpportunityCard[]> {
             deadline: r.deadline,
         } as OpportunityCard));
     } catch (e) {
-        console.error('[opportunityService] Employer posted roles fetch failed:', e);
+        console.warn('[opportunityService] Employer posted roles fetch skipped or restricted:', e);
         return [];
     }
 }
