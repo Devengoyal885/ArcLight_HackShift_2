@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FloatingNavbar } from '../../components/navigation/FloatingNavbar';
@@ -13,11 +13,13 @@ import {
     Calendar, ExternalLink, ChevronDown, ChevronUp, MapPin, Building2,
     Briefcase, Search, Filter, Star, ChevronLeft, ChevronRight,
     Brain, TrendingUp, DollarSign, Target, AlertTriangle, X, Loader2,
-    BookmarkCheck, Bookmark, Zap, Sparkles, CheckCircle2, AlertCircle, User, Clock, SearchX
+    BookmarkCheck, Bookmark, Zap, Sparkles, CheckCircle2, AlertCircle, User, Clock, SearchX, Map as MapIcon, List as ListIcon
 } from 'lucide-react';
 import { CompanyReviewsModal } from '../../components/ui/CompanyReviewsModal';
 import { SkillGapModal } from '../../components/ui/SkillGapModal';
 import { EmptyState } from '../../components/ui/EmptyState';
+import JobFilters, { emptyFilters, applyJobFilters, type JobFilterState } from '../../components/jobs/JobFilters';
+import JobMapView, { type MapViewport } from '../../components/jobs/JobMapView';
 import './OpportunitiesPage.css';
 
 type MatchState = 'READY NOW' | 'NEAR MATCH' | 'SKILL-BUILDING' | 'ALL';
@@ -65,15 +67,21 @@ export default function OpportunitiesPage({ isEmbedded = false }: { isEmbedded?:
     const [appliedIds, setAppliedIds] = useState<Set<string>>(new Set());
     const [applying, setApplying] = useState<string | null>(null);
 
+    // View mode
+    const [viewMode, setViewMode] = useState<'list' | 'map'>('list');
+
     // Filters
-    const [filter, setFilter] = useState<MatchState>('ALL');
-    const [expanded, setExpanded] = useState<string | null>(null);
-    const [searchQuery, setSearchQuery] = useState('');
-    const [jobType, setJobType] = useState<'placement' | 'internship' | 'all'>('all');
-    const [remoteOnly, setRemoteOnly] = useState(false);
-    const [salaryMin, setSalaryMin] = useState<number | null>(null);
+    const [filters, setFilters] = useState<JobFilterState>(emptyFilters);
+    const [matchFilter, setMatchFilter] = useState<MatchState>('ALL');
     const [companySize, setCompanySize] = useState<'all' | 'startup' | 'mid' | 'enterprise'>('all');
-    const [showFilters, setShowFilters] = useState(false);
+    const [expanded, setExpanded] = useState<string | null>(null);
+    
+    // Map viewport — for deep search (re-filter to visible bounds on pan/zoom)
+    const [mapViewport, setMapViewport] = useState<MapViewport | null>(null);
+
+    const handleViewportChange = useCallback((v: MapViewport | null) => {
+        setMapViewport(v);
+    }, []);
     
     // Company Reviews Modal
     const [selectedCompany, setSelectedCompany] = useState<string | null>(null);
@@ -115,9 +123,11 @@ export default function OpportunitiesPage({ isEmbedded = false }: { isEmbedded?:
         setLoading(true);
         setError(false);
         const userSkills = capabilities.map(c => c.skill);
+        const userLocation = profile?.location || 'india';
 
-        getAllOpportunities().then(jobs => {
-            const scored = jobs.map(j => matchOpportunityToSkills(j, userSkills));
+        // Pass user skills to getAllOpportunities so Adzuna returns preference-relevant results
+        getAllOpportunities(userSkills, userLocation).then(jobs => {
+            const scored = jobs.map(j => matchOpportunityToSkills(j, userSkills, capabilities));
             const internal = scored.filter(j => j.isInternalPosting);
             const external = scored.filter(j => !j.isInternalPosting).sort((a, b) => (b.match || 0) - (a.match || 0));
             setOpportunities([...internal, ...external]);
@@ -152,49 +162,15 @@ export default function OpportunitiesPage({ isEmbedded = false }: { isEmbedded?:
         })();
     }, [pageTab, capsLoaded, capabilities]);
 
-    // Manual search
+    // Manual search (triggered only on 'Enter' for keyword if needed)
     const handleSearch = () => {
-        const userSkills = capabilities.map(c => c.skill);
-        setLoading(true);
-        setError(false);
-
-        if (!searchQuery.trim()) {
-            getAllOpportunities()
-                .then(jobs => {
-                    const scored = jobs.map(j => matchOpportunityToSkills(j, userSkills));
-                    scored.sort((a, b) => (b.match || 0) - (a.match || 0));
-                    setOpportunities(scored);
-                })
-                .catch(() => setError(true))
-                .finally(() => setLoading(false));
-        } else {
-            searchOpportunities({ query: searchQuery, skills: userSkills, remote: remoteOnly || undefined, type: jobType })
-                .then(jobs => {
-                    const scored = jobs.map(j => matchOpportunityToSkills(j, userSkills));
-                    scored.sort((a, b) => (b.match || 0) - (a.match || 0));
-                    setOpportunities(scored);
-                })
-                .catch(() => setError(true))
-                .finally(() => setLoading(false));
-        }
+        // Now handled client-side by applyJobFilters, keeping signature for input onKeyDown
     };
 
     // Client-side filters
-    let filtered = [...opportunities];
-    if (jobType === 'internship') filtered = filtered.filter(o => o.type === 'internship' || o.title.toLowerCase().includes('intern'));
-    if (jobType === 'placement')  filtered = filtered.filter(o => o.type !== 'internship' && !o.title.toLowerCase().includes('intern'));
-    if (remoteOnly) filtered = filtered.filter(o => o.remote);
-    if (filter !== 'ALL') filtered = filtered.filter(o => o.matchState === filter);
-    // Salary filter: extract leading number from salary strings like "6 LPA", "₹8–12 LPA"
-    if (salaryMin !== null) {
-        filtered = filtered.filter(o => {
-            const raw = (o as any).salary || (o as any).stipend || '';
-            if (!raw) return false;
-            const match = String(raw).replace(/[^0-9.]/g, ' ').trim().split(/\s+/)[0];
-            const num = parseFloat(match);
-            return !isNaN(num) && num >= salaryMin!;
-        });
-    }
+    let filtered = applyJobFilters(opportunities, filters);
+    
+    if (matchFilter !== 'ALL') filtered = filtered.filter(o => o.matchState === matchFilter);
     // Company size filter
     if (companySize !== 'all') {
         filtered = filtered.filter(o => {
@@ -205,6 +181,19 @@ export default function OpportunitiesPage({ isEmbedded = false }: { isEmbedded?:
             return true;
         });
     }
+
+    // ── DEEP SEARCH: Viewport-aware filtering (map mode only) ────────────────
+    // When the user pans/zooms the map, re-filter to only jobs whose geocoded
+    // location falls within the visible bounds — mirrors job-find's /api/pins.
+    const jobsInViewport = (viewMode === 'map' && mapViewport)
+        ? filtered.filter(job => {
+            let lng = job.longitude;
+            let lat = job.latitude;
+            if (lng == null || lat == null) return true; // keep un-geocoded in list
+            return lng >= mapViewport.minLng && lng <= mapViewport.maxLng
+                && lat >= mapViewport.minLat && lat <= mapViewport.maxLat;
+        })
+        : filtered;
 
     // Featured
     const featured = opportunities.filter(o => (o.match || 0) >= 75).slice(0, 4);
@@ -471,7 +460,10 @@ export default function OpportunitiesPage({ isEmbedded = false }: { isEmbedded?:
                                             <div key={`feat-${opp.id}`} className="featured-card">
                                                 <div className="feat-card-header">
                                                     <div className="feat-company-logo"><Building2 size={24} color="#64748b" /></div>
-                                                    <div className="feat-match-badge" style={{ color: stateColors[opp.matchState || 'SKILL-BUILDING'], background: (stateColors[opp.matchState || 'SKILL-BUILDING']) + '15' }}>
+                                                    <div className="feat-match-badge"
+                                                        style={{ color: stateColors[opp.matchState || 'SKILL-BUILDING'], background: (stateColors[opp.matchState || 'SKILL-BUILDING']) + '15', position: 'relative', cursor: 'help' }}
+                                                        title={opp.matchReason || `${opp.match}% of required skills match your profile`}
+                                                    >
                                                         <Zap size={14} /> {opp.match}% Match
                                                     </div>
                                                 </div>
@@ -515,83 +507,28 @@ export default function OpportunitiesPage({ isEmbedded = false }: { isEmbedded?:
                         <div className="opp-layout">
                             {/* Sidebar Filters */}
                             <motion.aside className="opp-sidebar" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }}>
-                                <div className="sidebar-widget">
-                                    <h3><Search size={16} /> Search Roles</h3>
-                                    <div className="search-input-wrapper">
-                                        <input
-                                            type="text"
-                                            placeholder="e.g. Frontend Developer"
-                                            value={searchQuery}
-                                            onChange={e => setSearchQuery(e.target.value)}
-                                            onKeyDown={e => e.key === 'Enter' && handleSearch()}
-                                        />
-                                    </div>
-                                    <button className="opp-search-btn" onClick={handleSearch}>Search</button>
-                                </div>
+                                <JobFilters 
+                                    filters={filters} 
+                                    onChange={setFilters} 
+                                    resultCount={filtered.length} 
+                                    suggestedSkills={capabilities.map(c => c.skill)} 
+                                />
 
-                                {/* Quick Filter Chips for Mobile/Fast Access */}
-                                <div className="quick-filter-chips">
-                                    <button 
-                                        className={`quick-chip ${filter === 'READY NOW' ? 'active' : ''}`}
-                                        onClick={() => setFilter(filter === 'READY NOW' ? 'ALL' : 'READY NOW')}
-                                    >
-                                        🔥 Ready Now
-                                    </button>
-                                    <button 
-                                        className={`quick-chip ${jobType === 'internship' ? 'active' : ''}`}
-                                        onClick={() => setJobType(jobType === 'internship' ? 'all' : 'internship')}
-                                    >
-                                        🎓 Internships
-                                    </button>
-                                    <button 
-                                        className={`quick-chip ${remoteOnly ? 'active' : ''}`}
-                                        onClick={() => setRemoteOnly(!remoteOnly)}
-                                    >
-                                        💻 Remote
-                                    </button>
-                                    <button 
-                                        className={`quick-chip ${salaryMin === 8 ? 'active' : ''}`}
-                                        onClick={() => setSalaryMin(salaryMin === 8 ? null : 8)}
-                                    >
-                                        💰 8+ LPA
-                                    </button>
-                                </div>
-
-                                <div className="sidebar-widget">
+                                <div className="sidebar-widget" style={{ marginTop: '20px' }}>
                                     <h3><Filter size={16} /> Match Level</h3>
                                     <div className="filter-options">
                                         {(['ALL', 'READY NOW', 'NEAR MATCH', 'SKILL-BUILDING'] as MatchState[]).map(f => (
                                             <button
                                                 key={f}
-                                                className={`sidebar-filter-btn ${filter === f ? 'active' : ''}`}
-                                                onClick={() => setFilter(f)}
+                                                className={`sidebar-filter-btn ${matchFilter === f ? 'active' : ''}`}
+                                                onClick={() => setMatchFilter(f)}
                                             >
                                                 {f !== 'ALL' && <span className="filter-dot" style={{ background: stateColors[f] }} />}
                                                 <span className="filter-label">{f}</span>
-                                                {filter === f && <span className="filter-check">✓</span>}
+                                                {matchFilter === f && <span className="filter-check">✓</span>}
                                             </button>
                                         ))}
                                     </div>
-                                </div>
-
-                                <div className="sidebar-widget">
-                                    <h3>Job Type</h3>
-                                    <div className="filter-options">
-                                        {(['all', 'placement', 'internship'] as const).map(t => (
-                                            <button key={t} className={`sidebar-filter-btn ${jobType === t ? 'active' : ''}`} onClick={() => setJobType(t)}>
-                                                <span className="filter-label">{t.charAt(0).toUpperCase() + t.slice(1)}</span>
-                                                {jobType === t && <span className="filter-check">✓</span>}
-                                            </button>
-                                        ))}
-                                    </div>
-                                </div>
-
-                                <div className="sidebar-widget">
-                                    <h3>Work Mode</h3>
-                                    <label className="custom-checkbox">
-                                        <input type="checkbox" checked={remoteOnly} onChange={e => setRemoteOnly(e.target.checked)} />
-                                        Remote only
-                                    </label>
                                 </div>
 
                                 <div className="sidebar-widget">
@@ -610,25 +547,8 @@ export default function OpportunitiesPage({ isEmbedded = false }: { isEmbedded?:
                                     </div>
                                 </div>
 
-                                {/* NEW: Salary filter */}
-                                <div className="sidebar-widget">
-                                    <h3><DollarSign size={16} /> Min Salary (LPA)</h3>
-                                    <div className="salary-range-opts">
-                                        {[null, 3, 5, 8, 12, 20].map(val => (
-                                            <button
-                                                key={String(val)}
-                                                className={`sidebar-filter-btn ${salaryMin === val ? 'active' : ''}`}
-                                                onClick={() => setSalaryMin(val)}
-                                            >
-                                                <span className="filter-label">{val === null ? 'Any' : `${val}+ LPA`}</span>
-                                                {salaryMin === val && <span className="filter-check">✓</span>}
-                                            </button>
-                                        ))}
-                                    </div>
-                                </div>
-
                                 <div className="sidebar-widget opp-source-badge">
-                                    <p>Sources: <strong>Remotive</strong> + <strong>Google Jobs</strong></p>
+                                    <p>Sources: <strong>Remotive</strong>, <strong>Adzuna</strong> & <strong>Google Jobs</strong></p>
                                     <p className="opp-source-note">Real listings, updated live</p>
                                 </div>
                             </motion.aside>
@@ -639,12 +559,28 @@ export default function OpportunitiesPage({ isEmbedded = false }: { isEmbedded?:
                                     <h2>
                                         {loading ? 'Loading opportunities...' : `Showing ${filtered.length} opportunities`}
                                     </h2>
-                                    <select className="feed-sort" onChange={e => {
-                                        if (e.target.value === 'match') setOpportunities(prev => [...prev].sort((a, b) => (b.match || 0) - (a.match || 0)));
-                                    }}>
-                                        <option value="match">Sort by: Match %</option>
-                                        <option value="newest">Sort by: Newest</option>
-                                    </select>
+                                    <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                                        <div className="view-toggle" style={{ display: 'flex', gap: '4px', background: '#f1f5f9', padding: '4px', borderRadius: '8px' }}>
+                                            <button 
+                                                style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 12px', borderRadius: '6px', border: 'none', background: viewMode === 'list' ? 'white' : 'transparent', boxShadow: viewMode === 'list' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none', cursor: 'pointer', fontWeight: 500, color: viewMode === 'list' ? '#0f172a' : '#64748b' }} 
+                                                onClick={() => setViewMode('list')}
+                                            >
+                                                <ListIcon size={14}/> List
+                                            </button>
+                                            <button 
+                                                style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 12px', borderRadius: '6px', border: 'none', background: viewMode === 'map' ? 'white' : 'transparent', boxShadow: viewMode === 'map' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none', cursor: 'pointer', fontWeight: 500, color: viewMode === 'map' ? '#0f172a' : '#64748b' }} 
+                                                onClick={() => setViewMode('map')}
+                                            >
+                                                <MapIcon size={14}/> Map
+                                            </button>
+                                        </div>
+                                        <select className="feed-sort" onChange={e => {
+                                            if (e.target.value === 'match') setOpportunities(prev => [...prev].sort((a, b) => (b.match || 0) - (a.match || 0)));
+                                        }}>
+                                            <option value="match">Sort by: Match %</option>
+                                            <option value="newest">Sort by: Newest</option>
+                                        </select>
+                                    </div>
                                 </div>
 
                                 {loading && (
@@ -669,8 +605,32 @@ export default function OpportunitiesPage({ isEmbedded = false }: { isEmbedded?:
                                     />
                                 )}
 
-                                {/* CapAble Exclusive Platform Postings */}
-                                {!loading && !error && filtered.some(o => o.isInternalPosting) && (
+                                {viewMode === 'map' && !loading && !error && (
+                                    <div style={{ height: '72vh', borderRadius: '12px', overflow: 'hidden', border: '1px solid rgba(59,130,246,0.2)', marginBottom: '32px', position: 'relative' }}>
+                                        <JobMapView
+                                            jobs={filtered}
+                                            onApply={handleApply}
+                                            onViewportChange={handleViewportChange}
+                                        />
+                                        {/* Viewport result count overlay */}
+                                        {mapViewport && (
+                                            <div style={{
+                                                position: 'absolute', bottom: 14, left: 14, zIndex: 10,
+                                                background: 'rgba(10,15,30,0.82)', backdropFilter: 'blur(8px)',
+                                                border: '1px solid rgba(59,130,246,0.3)', color: '#94a3b8',
+                                                fontSize: 12, fontWeight: 500, padding: '5px 12px', borderRadius: 20,
+                                                pointerEvents: 'none'
+                                            }}>
+                                                {jobsInViewport.length} role{jobsInViewport.length !== 1 ? 's' : ''} in view
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+
+                                {viewMode === 'list' && !loading && !error && filtered.length > 0 && (
+                                    <>
+                                        {/* CapAble Exclusive Platform Postings */}
+                                        {filtered.some(o => o.isInternalPosting) && (
                                     <div style={{ marginBottom: '16px' }}>
                                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
                                             <span style={{ fontSize: '13px', fontWeight: 700, color: '#1d4ed8', background: '#dbeafe', padding: '4px 12px', borderRadius: '20px' }}>✨ CapAble Platform Postings</span>
@@ -698,7 +658,11 @@ export default function OpportunitiesPage({ isEmbedded = false }: { isEmbedded?:
                                                                     <span style={{ background: '#1d4ed8', color: '#fff', fontSize: '11px', padding: '2px 8px', borderRadius: '12px', fontWeight: 600 }}>✨ CapAble Exclusive</span>
                                                                 </div>
                                                                 {opp.match !== undefined && (
-                                                                    <span className="opp-card-match" style={{ color: stateColors[opp.matchState || 'SKILL-BUILDING'], background: (stateColors[opp.matchState || 'SKILL-BUILDING']) + '15' }}>
+                                                                    <span
+                                                                        className="opp-card-match"
+                                                                        style={{ color: stateColors[opp.matchState || 'SKILL-BUILDING'], background: (stateColors[opp.matchState || 'SKILL-BUILDING']) + '15', cursor: 'help', whiteSpace: 'pre-line' }}
+                                                                        title={opp.matchReason || `${opp.match}% of required skills match your profile`}
+                                                                    >
                                                                         {opp.match}% Match
                                                                     </span>
                                                                 )}
@@ -786,7 +750,11 @@ export default function OpportunitiesPage({ isEmbedded = false }: { isEmbedded?:
                                                                     <h3 className="opp-card-title">{opp.title}</h3>
                                                                 </div>
                                                                 {opp.match !== undefined && (
-                                                                    <span className="opp-card-match" style={{ color: stateColors[opp.matchState || 'SKILL-BUILDING'], background: (stateColors[opp.matchState || 'SKILL-BUILDING']) + '15' }}>
+                                                                    <span
+                                                                        className="opp-card-match"
+                                                                        style={{ color: stateColors[opp.matchState || 'SKILL-BUILDING'], background: (stateColors[opp.matchState || 'SKILL-BUILDING']) + '15', cursor: 'help', whiteSpace: 'pre-line' }}
+                                                                        title={opp.matchReason || `${opp.match}% of required skills match your profile`}
+                                                                    >
                                                                         {opp.match}% Match
                                                                     </span>
                                                                 )}
@@ -805,6 +773,17 @@ export default function OpportunitiesPage({ isEmbedded = false }: { isEmbedded?:
                                                                 {opp.postedAt && <span><Calendar size={14} /> {new Date(opp.postedAt).toLocaleDateString()}</span>}
                                                                 {opp.applicantCount !== undefined && <span><User size={14} /> {opp.applicantCount} applicants</span>}
                                                                 {opp.deadline && <span><Clock size={14} /> Due: {new Date(opp.deadline).toLocaleDateString()}</span>}
+                                                                {opp.source && (
+                                                                    <span style={{ 
+                                                                        background: 'rgba(255,255,255,0.05)', 
+                                                                        padding: '2px 8px', 
+                                                                        borderRadius: '4px',
+                                                                        border: '1px solid rgba(255,255,255,0.1)',
+                                                                        textTransform: 'capitalize' 
+                                                                    }}>
+                                                                        via {opp.source}
+                                                                    </span>
+                                                                )}
                                                             </div>
                                                             <div className="opp-card-tags">
                                                                 {opp.tags.map(tag => <span key={tag} className="opp-tag">{tag}</span>)}
@@ -895,6 +874,8 @@ export default function OpportunitiesPage({ isEmbedded = false }: { isEmbedded?:
                                         })}
                                     </AnimatePresence>
                                 </div>
+                                    </>
+                                )}
                             </motion.div>
                         </div>
                     </>

@@ -4,6 +4,7 @@ import { FloatingNavbar } from '../../components/navigation/FloatingNavbar';
 import ProfileNudgeBanner from '../../components/ui/ProfileNudgeBanner';
 import { IdentityCard3D } from '../../components/3d/IdentityCard3D';
 import { JobSkeleton } from '../../components/ui/JobSkeleton';
+import { LottieBackground } from '../../components/ui/LottieBackground';
 import { Tooltip } from '../../components/ui/Tooltip';
 import { Link, useNavigate } from 'react-router-dom';
 import {
@@ -97,7 +98,7 @@ export default function CandidateDashboard() {
             setJobError(false);
             
             try {
-                const CACHE_KEY = `dashboard_jobs_v6_${dbUid!}_${activeTab}`;
+                const CACHE_KEY = `dashboard_jobs_v8_${dbUid!}_${activeTab}`;
                 const currentCapsHash = capabilities.map(c => `${c.skill}:${c.score}`).sort().join('|');
 
                 const cachedDataStr = localStorage.getItem(CACHE_KEY);
@@ -118,22 +119,30 @@ export default function CandidateDashboard() {
                     }
                 }
 
-                const jobs = await getAllOpportunities();
+                const userLocation = profile?.location || 'india';
+                const jobs = await getAllOpportunities(userSkills, userLocation);
+                
+                // Restore job type filtering so the activeTab (Placements vs Internships) matters
                 const typed = jobs.filter(j =>
                     jobType === 'internship'
                         ? j.type === 'internship' || j.title.toLowerCase().includes('intern')
                         : j.type !== 'internship' && !j.title.toLowerCase().includes('intern')
                 );
                 
-                const scored = typed.map(j => matchOpportunityToSkills(j, userSkills));
-                // Pin internal CapAble platform postings to the top, rest sorted by match %
-                const internalJobs = scored.filter(j => j.isInternalPosting);
-                const externalJobs = scored.filter(j => !j.isInternalPosting).sort((a, b) => (b.match || 0) - (a.match || 0));
+                const scored = typed.map(j => matchOpportunityToSkills(j, userSkills, capabilities));
+                
+                // Sort all jobs strictly by match %
+                const sortedAll = scored.sort((a, b) => (b.match || 0) - (a.match || 0));
+                
+                // Pin internal CapAble platform postings to the top, maintaining match% sort within each group
+                const internalJobs = sortedAll.filter(j => j.isInternalPosting);
+                const externalJobs = sortedAll.filter(j => !j.isInternalPosting);
                 const finalSorted = [...internalJobs, ...externalJobs];
+                
                 setOpportunities(finalSorted);
 
                 localStorage.setItem(CACHE_KEY, JSON.stringify({
-                    opportunities: scored,
+                    opportunities: finalSorted,
                     timestamp: Date.now(),
                     capsHash: currentCapsHash
                 }));
@@ -217,10 +226,15 @@ export default function CandidateDashboard() {
             <div className="c-job-footer-premium">
                 <div className="c-job-match-badge-premium">
                     {job.match !== undefined && (
-                        <span style={{ 
-                            color: stateColors[job.matchState || 'SKILL-BUILDING'].text,
-                            background: stateColors[job.matchState || 'SKILL-BUILDING'].bg
-                        }}>
+                        <span 
+                            style={{ 
+                                color: stateColors[job.matchState || 'SKILL-BUILDING'].text,
+                                background: stateColors[job.matchState || 'SKILL-BUILDING'].bg,
+                                cursor: 'help',
+                                whiteSpace: 'pre-line'
+                            }}
+                            title={job.matchReason || `${job.match}% of required skills match your profile`}
+                        >
                             <Target size={14} className="inline mr-1" />{job.match}% MATCH
                         </span>
                     )}
@@ -246,6 +260,7 @@ export default function CandidateDashboard() {
     return (
         <div className="c-dash">
             <FloatingNavbar variant="candidate" />
+            <LottieBackground animationPath="/employee-content.json" />
 
             <div className="c-dash-bg">
                 <svg width="0" height="0" style={{ position: 'absolute' }}>
@@ -274,11 +289,7 @@ export default function CandidateDashboard() {
                     >
                         <div className="c-dash-greeting">
                             <h1 className="c-dash-name">
-                                {greeting.split(' ')[0]} 
-                                <span className="c-dash-inline-pill">
-                                    <span className="c-dash-pulse-dot" /> {globalScore} IQ
-                                </span> 
-                                {greeting.split(' ')[1] ? greeting.split(' ')[1] : ''} <br/> 
+                                {greeting} <br/> 
                                 <span style={{ color: '#64748B' }}>{firstName}.</span>
                             </h1>
                             <p className="c-dash-time-label" style={{ marginTop: '16px' }}>

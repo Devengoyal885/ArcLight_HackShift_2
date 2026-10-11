@@ -430,9 +430,11 @@ export default function CodolioProfilePage() {
                         if (parsed.experience && parsed.experience.length > 0) {
                             for (const exp of parsed.experience) {
                                 await addWorkExperience(dbUid, {
-                                    title: exp.role,
+                                    role: exp.role || 'Contributor',
                                     company: exp.company,
-                                    date: exp.duration || '',
+                                    startDate: exp.duration || '',
+                                    current: false,
+                                    type: 'internship',
                                     description: exp.description || ''
                                 });
                             }
@@ -626,6 +628,18 @@ export default function CodolioProfilePage() {
         } catch (err) {
             console.error(err);
             alert("Failed to upload screenshot.");
+        }
+    };
+
+    // Task 2: Remove screenshot from a portfolio project
+    const handleRemoveScreenshot = async (projectId: string) => {
+        if (!dbUid) return;
+        try {
+            await updateProject(dbUid, projectId, { screenshotUrl: '' });
+            setProjects(prev => prev.map(p => p.id === projectId ? { ...p, screenshotUrl: undefined } : p));
+        } catch (err) {
+            console.error(err);
+            alert('Failed to remove screenshot.');
         }
     };
 
@@ -1449,8 +1463,23 @@ export default function CodolioProfilePage() {
                                             </div>
                                             
                                             {proj.screenshotUrl && (
-                                                <div style={{ width: '100%', height: '160px', borderRadius: '8px', overflow: 'hidden', marginBottom: '12px', background: '#f8fafc', border: '1px solid #e2e8f0' }}>
+                                                <div style={{ width: '100%', height: '160px', borderRadius: '8px', overflow: 'hidden', marginBottom: '12px', background: '#f8fafc', border: '1px solid #e2e8f0', position: 'relative' }}>
                                                     <img src={proj.screenshotUrl} alt={proj.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                                    {!isReadOnly && proj.id && (
+                                                        <button
+                                                            onClick={() => handleRemoveScreenshot(proj.id!)}
+                                                            title="Remove screenshot"
+                                                            style={{
+                                                                position: 'absolute', top: 6, right: 6,
+                                                                background: 'rgba(15,23,42,0.7)', backdropFilter: 'blur(4px)',
+                                                                color: 'white', border: 'none', borderRadius: '6px',
+                                                                padding: '4px 8px', fontSize: '11px', fontWeight: 600,
+                                                                cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4
+                                                            }}
+                                                        >
+                                                            ✕ Remove
+                                                        </button>
+                                                    )}
                                                 </div>
                                             )}
 
@@ -1459,7 +1488,7 @@ export default function CodolioProfilePage() {
                                                 {!isReadOnly && proj.id && (
                                                     <label style={{ cursor: 'pointer', fontSize: '11px', color: '#6366f1', background: '#eef2ff', padding: '4px 8px', borderRadius: '6px', fontWeight: 600 }}>
                                                         <input type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => handleProjectScreenshotUpload(proj.id!, e)} />
-                                                        + Screenshot
+                                                        {proj.screenshotUrl ? '🖼️ Replace' : '+ Screenshot'}
                                                     </label>
                                                 )}
                                             </h3>

@@ -7,6 +7,7 @@ import LearningPage from './LearningPage';
 import PortfolioPage from './PortfolioPage';
 import ResumeAIPage from './ResumeAIPage';
 import { Map, Target, BookOpen, FolderDot, FileText, ChevronRight } from 'lucide-react';
+import { LottieBackground } from '../../components/ui/LottieBackground';
 import './PreparationHubPage.css'; // reuse shared hub styles
 
 const TABS = [
@@ -57,6 +58,7 @@ export default function CareerHubPage() {
     return (
         <div className="hub-page">
             <FloatingNavbar variant="candidate" />
+            <LottieBackground />
 
             <div className="hub-layout">
                 {/* Sidebar */}

@@ -7,6 +7,19 @@ service cloud.firestore {
       allow write: if request.auth != null && request.auth.uid == uid.split('_')[0];
     }
     
+    // Allow collection group queries on 'profile' for getCandidatesByInstitution etc.
+    match /{path=**}/profile/{docId} {
+      allow read: if request.auth != null;
+    }
+
+    // Allow users to access their own notifications
+    match /notifications/{uid} {
+      allow read, write: if request.auth != null && request.auth.uid == uid.split('_')[0];
+      match /items/{itemId} {
+        allow read, write: if request.auth != null && request.auth.uid == uid.split('_')[0];
+      }
+    }
+    
     match /jobs/{jobId} {
       allow read: if true;
       allow write: if request.auth != null && (request.auth.token.role == 'employer' || request.auth.token.role == 'institution');
@@ -16,6 +29,48 @@ service cloud.firestore {
       allow read: if request.auth != null && (request.auth.uid == resource.data.candidateId || request.auth.uid == resource.data.employerId);
       allow write: if request.auth != null && request.auth.uid == request.resource.data.candidateId;
       allow update: if request.auth != null && request.auth.uid == resource.data.employerId;
+    }
+
+    match /global_jobs/{docId} {
+      allow read, write: if true;
+    }
+    
+    match /geocache/{docId} {
+      allow read, write: if true;
+    }
+
+    // Employer-posted roles — readable by all authenticated users (candidates discover jobs here)
+    match /postedRoles/{roleId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null;
+      match /applications/{appId} {
+        allow read: if request.auth != null;
+        allow write: if request.auth != null;
+      }
+    }
+
+    // Employer profile & subcollections
+    match /employers/{employerUid} {
+      allow read, write: if request.auth != null;
+      match /{subcollection}/{docId} {
+        allow read, write: if request.auth != null;
+        match /{subSubcollection}/{subDocId} {
+          allow read, write: if request.auth != null;
+        }
+      }
+    }
+
+    // User data — each user owns their own documents
+    match /users/{userId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && request.auth.uid == userId.split('_')[0];
+      match /{subcollection}/{docId} {
+        allow read: if request.auth != null;
+        allow write: if request.auth != null;
+        match /{subSubcollection}/{subDocId} {
+          allow read, write: if request.auth != null;
+        }
+      }
     }
 
     // Default deny for everything else

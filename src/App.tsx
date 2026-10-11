@@ -78,6 +78,7 @@ const EventsPage = lazy(() => import('./pages/candidate/EventsPage'));
 const OffCampusPage = lazy(() => import('./pages/candidate/OffCampusPage'));
 const CaseStudyPage = lazy(() => import('./pages/candidate/CaseStudyPage'));
 const GDTopicsPage = lazy(() => import('./pages/candidate/GDTopicsPage'));
+const ArcLightPage = lazy(() => import('./pages/candidate/ArcLightPage'));
 
 // Academician
 const AcademicianDashboard = lazy(() => import('./pages/academician/AcademicianDashboard'));
@@ -171,6 +172,7 @@ export default function App() {
           <Route path="/candidate/drive-calendar" element={<ProtectedRoute allowedRoles={['candidate']}><DriveCalendarPage /></ProtectedRoute>} />
           <Route path="/candidate/practice" element={<ProtectedRoute allowedRoles={['candidate']}><PracticePage /></ProtectedRoute>} />
           <Route path="/candidate/notification-settings" element={<ProtectedRoute allowedRoles={['candidate']}><NotificationSettingsPage /></ProtectedRoute>} />
+          <Route path="/candidate/insights" element={<ProtectedRoute allowedRoles={['candidate']}><ArcLightPage /></ProtectedRoute>} />
 
           {/* ─── Employer (Industry) ───────────────────────────────────────── */}
           <Route path="/employer" element={<ProtectedRoute allowedRoles={['employer']}><EmployerDashboard /></ProtectedRoute>} />

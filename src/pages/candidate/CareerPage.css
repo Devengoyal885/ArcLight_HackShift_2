@@ -1011,3 +1011,574 @@
         animation: none;
     }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   NEW CAREER PAGE ADDITIONS (v2 redesign)
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Hero layout ── */
+.career-hero {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 32px;
+    align-items: flex-start;
+}
+.career-hero-left {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+.career-hero-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-width: 280px;
+}
+.career-stat-pill {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(255,255,255,0.85);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(226,232,240,0.7);
+    border-radius: 14px;
+    padding: 12px 16px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.03);
+}
+.csp-icon {
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+}
+.csp-label {
+    display: block;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    color: #94A3B8;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+}
+.csp-value {
+    display: block;
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: #18181B;
+    letter-spacing: -0.01em;
+}
+
+/* ── Career mode toggle ── */
+.career-mode-toggle {
+    display: inline-flex;
+    gap: 6px;
+    background: rgba(244,244,245,0.8);
+    padding: 4px;
+    border-radius: 12px;
+    width: fit-content;
+}
+.career-mode-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: 9px;
+    border: none;
+    background: transparent;
+    color: #71717A;
+    font-family: inherit;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 200ms cubic-bezier(0.23,1,0.32,1);
+}
+.career-mode-btn.active {
+    background: white;
+    color: #18181B;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08), 0 0 0 1px rgba(226,232,240,0.6);
+}
+
+/* ── Trajectories section ── */
+.career-trajectories-section {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+.career-traj-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+.career-traj-header h2 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #18181B;
+    letter-spacing: -0.02em;
+    margin: 0;
+}
+.career-traj-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.career-roles-track-wrap {
+    overflow: hidden;
+    padding: 6px 0 8px;
+    mask-image: linear-gradient(to right, transparent 0%, black 3%, black 97%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 3%, black 97%, transparent 100%);
+}
+.career-roles-track {
+    display: flex;
+    gap: 16px;
+    transition: transform 480ms cubic-bezier(0.23,1,0.32,1);
+    width: max-content;
+}
+.career-role-card {
+    width: 300px;
+    flex-shrink: 0;
+    background: #fff;
+    border: 1px solid rgba(226,232,240,0.7);
+    border-radius: 20px;
+    padding: 20px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: box-shadow 220ms cubic-bezier(0.23,1,0.32,1), border-color 150ms cubic-bezier(0.23,1,0.32,1);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.03), 0 4px 8px rgba(0,0,0,0.03);
+}
+@media (hover: hover) and (pointer: fine) {
+    .career-role-card:hover {
+        box-shadow: 0 8px 24px -6px rgba(0,0,0,0.10);
+        border-color: rgba(203,213,225,0.9);
+    }
+}
+.role-card-accent-bar {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    border-radius: 0;
+}
+.role-card-meta {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin: 10px 0 12px;
+}
+.role-salary-chip {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #18181B;
+    background: rgba(24,24,27,0.06);
+    padding: 3px 10px;
+    border-radius: 9999px;
+}
+.role-demand-chip {
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 9999px;
+}
+.role-card-progress {
+    margin-top: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.role-card-progress-bar {
+    height: 4px;
+    background: rgba(226,232,240,0.8);
+    border-radius: 9999px;
+    overflow: hidden;
+}
+.role-card-progress-fill {
+    height: 100%;
+    border-radius: 9999px;
+    transition: width 600ms cubic-bezier(0.23,1,0.32,1);
+}
+.role-card-progress-label {
+    font-size: 0.6875rem;
+    color: #94A3B8;
+    font-weight: 500;
+}
+
+/* ── Analysis bento grid ── */
+.career-analysis-bento {
+    display: grid;
+    grid-template-columns: 380px 1fr;
+    grid-template-rows: auto auto;
+    gap: 16px;
+}
+.career-bento-role-overview {
+    grid-row: 1 / 2;
+    grid-column: 1 / 2;
+}
+.career-bento-roadmap {
+    grid-row: 1 / 2;
+    grid-column: 2 / 3;
+}
+.career-bento-path-arc {
+    grid-row: 2 / 3;
+    grid-column: 1 / 3;
+}
+
+/* ── Bento panel base ── */
+.bento-panel {
+    background: rgba(255,255,255,0.88);
+    backdrop-filter: blur(20px) saturate(150%);
+    -webkit-backdrop-filter: blur(20px) saturate(150%);
+    border: 1px solid rgba(255,255,255,0.85);
+    border-top-color: rgba(255,255,255,0.98);
+    border-radius: 22px;
+    padding: 24px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 8px 32px -8px rgba(0,0,0,0.07), inset 0 1px 0 rgba(255,255,255,0.95);
+    height: 100%;
+}
+.bento-panel-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 20px;
+}
+.bento-role-icon {
+    width: 44px; height: 44px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+}
+.bento-role-name {
+    font-size: 1.0625rem;
+    font-weight: 700;
+    color: #18181B;
+    letter-spacing: -0.02em;
+    margin: 0;
+}
+.bento-role-sub {
+    font-size: 0.75rem;
+    color: #94A3B8;
+    margin: 2px 0 0;
+}
+
+/* ── Role overview metrics grid ── */
+.role-overview-metrics {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: rgba(226,232,240,0.4);
+    border-radius: 14px;
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+.rom-item {
+    background: rgba(249,250,251,0.8);
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+.rom-label {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    color: #94A3B8;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+}
+.rom-value {
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: #18181B;
+    letter-spacing: -0.01em;
+}
+.rom-value em {
+    font-style: normal;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: #71717A;
+}
+
+/* ── Match arc SVG ── */
+.match-arc-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 16px;
+}
+.match-arc-svg {
+    width: 180px;
+    height: auto;
+    overflow: visible;
+}
+
+/* ── Skill requirements list ── */
+.skill-req-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.skill-req-item { display: flex; flex-direction: column; gap: 6px; }
+.sri-top { display: flex; justify-content: space-between; align-items: center; }
+.sri-name-row { display: flex; align-items: center; gap: 6px; }
+.sri-name { font-size: 0.875rem; font-weight: 600; color: #18181B; }
+.sri-scores { font-size: 0.8125rem; white-space: nowrap; }
+.sri-bar-track {
+    height: 6px;
+    background: rgba(226,232,240,0.6);
+    border-radius: 9999px;
+    position: relative;
+    overflow: hidden;
+}
+.sri-bar-req {
+    position: absolute;
+    top: 0; left: 0; bottom: 0;
+    background: rgba(226,232,240,0.9);
+    border-radius: 9999px;
+}
+.sri-bar-current {
+    position: absolute;
+    top: 0; left: 0; bottom: 0;
+    border-radius: 9999px;
+    transition: width 600ms cubic-bezier(0.23,1,0.32,1);
+}
+
+/* ── Roadmap panel ── */
+.roadmap-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 20px;
+}
+.roadmap-header h3 {
+    font-size: 1.0625rem; font-weight: 700; color: #18181B;
+    letter-spacing: -0.02em; margin: 0;
+}
+.steps-badge {
+    padding: 4px 12px;
+    border-radius: 9999px;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+.roadmap-complete-state {
+    text-align: center;
+    padding: 24px 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+.roadmap-complete-icon {
+    width: 56px; height: 56px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #10b981, #0ea5e9);
+    display: flex; align-items: center; justify-content: center;
+}
+.roadmap-complete-state h4 {
+    font-size: 1.125rem; font-weight: 700; color: #18181B;
+    margin: 0; letter-spacing: -0.02em;
+}
+.roadmap-complete-state p { font-size: 0.875rem; color: #71717A; margin: 0; }
+.roadmap-timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin-bottom: 20px;
+}
+.roadmap-item {
+    display: flex;
+    gap: 12px;
+    padding: 12px 0;
+}
+.roadmap-connector {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-shrink: 0;
+    padding-top: 2px;
+}
+.roadmap-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+.roadmap-dot.type-improve { background: #f59e0b; box-shadow: 0 0 0 3px rgba(245,158,11,0.15); }
+.roadmap-dot.type-learn   { background: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,0.15); animation: pulse-dot 2s ease-in-out infinite; }
+.roadmap-line {
+    width: 1px;
+    flex: 1;
+    background: linear-gradient(to bottom, rgba(203,213,225,0.6), transparent);
+    margin: 4px 0;
+    min-height: 16px;
+}
+.roadmap-content { flex: 1; min-width: 0; }
+.roadmap-item-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 4px;
+}
+.roadmap-type-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    border-radius: 9999px;
+    font-size: 0.625rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+.roadmap-type-badge.type-improve { background: rgba(245,158,11,0.1); color: #d97706; border: 1px solid rgba(245,158,11,0.2); }
+.roadmap-type-badge.type-learn   { background: rgba(37,99,235,0.08); color: #2563eb; border: 1px solid rgba(37,99,235,0.14); }
+.roadmap-effort { font-size: 0.6875rem; font-weight: 700; }
+.roadmap-step-title { font-size: 0.9375rem; font-weight: 700; color: #18181B; margin: 0 0 3px; letter-spacing: -0.01em; }
+.roadmap-step-desc  { font-size: 0.8125rem; color: #71717A; line-height: 1.5; margin: 0 0 8px; }
+.roadmap-mini-bar   { display: flex; align-items: center; gap: 8px; }
+.rmb-track {
+    flex: 1; height: 4px;
+    background: rgba(226,232,240,0.7);
+    border-radius: 9999px;
+    position: relative; overflow: hidden;
+}
+.rmb-req { position: absolute; top: 0; left: 0; bottom: 0; background: rgba(226,232,240,0.8); border-radius: 9999px; }
+.rmb-current { position: absolute; top: 0; left: 0; bottom: 0; border-radius: 9999px; transition: width 500ms cubic-bezier(0.23,1,0.32,1); }
+.rmb-label { font-size: 0.6875rem; color: #94A3B8; white-space: nowrap; }
+.roadmap-cta { padding-top: 8px; border-top: 1px solid rgba(226,232,240,0.4); }
+
+/* ── Career Arc panel ── */
+.path-arc-panel { padding: 24px 28px; }
+.path-arc-header { margin-bottom: 24px; }
+.path-arc-header h3 { font-size: 1.0625rem; font-weight: 700; color: #18181B; letter-spacing: -0.02em; margin: 0 0 4px; }
+.path-arc-stages {
+    display: flex;
+    gap: 0;
+    align-items: flex-start;
+    position: relative;
+}
+.path-stage {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    flex: 1;
+    gap: 8px;
+}
+.ps-top-row {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+.ps-node {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    border: 2px solid #E2E8F0;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    z-index: 1;
+    transition: background 300ms, border-color 300ms;
+}
+.ps-num { font-size: 0.6875rem; font-weight: 700; color: #94A3B8; }
+.ps-connector {
+    flex: 1;
+    height: 2px;
+    border-radius: 1px;
+    transition: background 400ms;
+}
+.ps-info { padding: 0 4px; }
+.ps-label-row { display: flex; align-items: center; gap: 6px; margin-bottom: 2px; }
+.ps-label { font-size: 0.8125rem; font-weight: 700; }
+.ps-you-tag {
+    font-size: 0.625rem; font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 9999px;
+}
+.ps-salary { display: block; font-size: 0.75rem; font-weight: 600; color: #18181B; }
+.ps-years  { display: block; font-size: 0.6875rem; color: #94A3B8; margin: 1px 0; }
+.ps-desc   { display: block; font-size: 0.6875rem; color: #71717A; line-height: 1.4; }
+.path-arc-note {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.75rem;
+    color: #94A3B8;
+    margin-top: 20px;
+    border-top: 1px solid rgba(226,232,240,0.5);
+    padding-top: 16px;
+}
+
+/* ── Action center ── */
+.career-action-center {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+.action-center-header { margin-bottom: 4px; }
+.action-center-header h2 { font-size: 1.25rem; font-weight: 700; color: #18181B; letter-spacing: -0.02em; margin: 0 0 4px; }
+.career-action-tiles {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+}
+.career-action-btn {
+    margin-top: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 9px 14px;
+    border-radius: 9px;
+    background: #F4F4F5;
+    border: none;
+    color: #18181B;
+    font-family: inherit;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 150ms cubic-bezier(0.23,1,0.32,1), transform 80ms;
+}
+@media (hover: hover) and (pointer: fine) {
+    .career-action-btn:hover { background: #E4E4E7; }
+}
+.career-action-btn:active { transform: scale(0.97); }
+
+/* ── Responsive for new layout ── */
+@media (max-width: 1100px) {
+    .career-analysis-bento {
+        grid-template-columns: 1fr 1fr;
+    }
+    .career-bento-path-arc {
+        grid-column: 1 / 3;
+    }
+    .career-action-tiles {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 900px) {
+    .career-hero {
+        grid-template-columns: 1fr;
+    }
+    .career-hero-stats {
+        min-width: 0;
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+    .career-stat-pill { flex: 1; min-width: 200px; }
+    .career-analysis-bento {
+        grid-template-columns: 1fr;
+    }
+    .career-bento-role-overview,
+    .career-bento-roadmap,
+    .career-bento-path-arc {
+        grid-column: 1 / 2;
+        grid-row: auto;
+    }
+    .path-arc-stages { flex-wrap: wrap; gap: 16px; }
+    .ps-connector { display: none; }
+    .path-stage { flex: 0 0 calc(50% - 8px); }
+}
+
+@media (max-width: 600px) {
+    .career-action-tiles { grid-template-columns: 1fr; }
+    .career-hero-stats { flex-direction: column; }
+    .career-stat-pill { min-width: 0; }
+    .path-stage { flex: 0 0 100%; }
+}
+
+.career-page.is-embedded { background: transparent; min-height: auto; }
+.career-page.is-embedded::before { display: none; }

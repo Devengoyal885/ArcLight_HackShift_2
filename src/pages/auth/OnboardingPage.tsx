@@ -296,9 +296,11 @@ export default function OnboardingPage() {
                 try {
                     for (const exp of parsedResume.experience) {
                         await addWorkExperience(profileId, {
-                            title: exp.role,
+                            role: exp.role || 'Contributor',
                             company: exp.company,
-                            date: exp.duration || '',
+                            startDate: exp.duration || '',
+                            current: false,
+                            type: 'internship',
                             description: exp.description || ''
                         });
                     }

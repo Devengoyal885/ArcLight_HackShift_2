@@ -1,0 +1,1603 @@
+reference_no,company_name,job_title,min_experience,avg_salary,min_salary,max_salary,num_of_jobs
+7834,TCS,Data Scientist,2,7.8L,4.5L,16.0L,841
+7862,Accenture,Data Scientist,2,12.8L,5.8L,23.0L,501
+5925,IBM,Data Scientist,2,13.4L,5.3L,25.0L,394
+7578,Cognizant,Data Scientist,2,9.8L,5.0L,18.0L,318
+7177,Capgemini,Data Scientist,2,8.6L,4.8L,14.6L,300
+4018,Infosys,Data Scientist,2,9.3L,4.5L,24.0L,228
+8562,Wipro,Data Scientist,2,9.7L,4.5L,18.2L,225
+6212,Tech Mahindra,Data Scientist,2,7.6L,4.1L,15.4L,218
+8334,Fractal Analytics,Data Scientist,2,15.9L,10.0L,23.0L,166
+3930,Deloitte,Data Scientist,2,14.2L,7.0L,25.0L,163
+5436,Ericsson,Data Scientist,3,14.6L,6.0L,26.9L,152
+7445,HCL Technologies,Data Scientist,2,9.8L,4.5L,20.3L,152
+4215,Amazon,Data Scientist,2,28.1L,9.5L,50.0L,140
+8777,UnitedHealth,Data Scientist,2,14.8L,8.3L,21.5L,120
+1347,Mu Sigma,Data Scientist,1,7.4L,5.0L,12.0L,116
+3097,Ab Inbev,Data Scientist,2,20.6L,15.0L,26.2L,116
+1322,L&T Infotech,Data Scientist,2,11.6L,6.5L,20.9L,102
+3990,Tiger Analytics,Data Scientist,2,14.8L,9.0L,20.0L,102
+8847,Optum,Data Scientist,2,16.6L,11.0L,22.5L,101
+3700,Ernst & Young,Data Scientist,2,12.4L,6.7L,20.0L,96
+8732,Mindtree,Data Scientist,2,10.6L,4.8L,18.7L,94
+5837,Walmart,Data Scientist,2,28.3L,17.8L,41.0L,85
+4163,DXC Technology,Data Scientist,2,10.0L,4.4L,15.5L,83
+1769,Microsoft Corporation,Data Scientist,1,32.1L,13.0L,60.0L,81
+3026,Genpact,Data Scientist,2,12.2L,5.5L,20.0L,74
+6255,Hewlett-Packard Enterprise,Data Scientist,2,16.6L,7.1L,26.5L,70
+8658,Ford Motor,Data Scientist,2,14.4L,10.0L,20.0L,64
+7508,Reliance jio,Data Scientist,1,15.6L,5.6L,30.0L,61
+6502,Verizon,Data Scientist,3,14.2L,9.9L,21.8L,58
+2075,IQVIA,Data Scientist,2,11.4L,6.9L,22.0L,58
+1093,Shell,Data Scientist,3,20.9L,13.5L,27.0L,57
+8466,PayPal,Data Scientist,3,27.7L,15.0L,45.0L,57
+1700,JP Morgan Chase,Data Scientist,2,20.5L,12.0L,31.0L,56
+2098,EXL Service,Data Scientist,1,14.0L,7.6L,21.0L,55
+1634,American Express,Data Scientist,2,17.7L,10.8L,26.0L,48
+2073,Vodafone Idea,Data Scientist,2,13.4L,6.0L,20.0L,45
+2884,HDFC Bank,Data Scientist,0,15.3L,9.0L,22.2L,44
+6527,Great Learning,Data Scientist,0,9.3L,7.0L,13.8L,44
+6308,Reliance Industries,Data Scientist,1,10.4L,6.0L,21.0L,42
+5241,ZS,Data Scientist,1,16.9L,10.0L,25.0L,42
+2744,Oracle,Data Scientist,2,16.3L,6.5L,39.0L,42
+7417,Novartis Healthcare,Data Scientist,2,21.9L,9.0L,36.0L,41
+5750,TheMathCompany,Data Scientist,2,10.5L,6.0L,16.0L,41
+8050,PwC,Data Scientist,2,12.6L,7.5L,20.0L,41
+5007,SAP,Data Scientist,2,17.4L,11.0L,26.0L,40
+1554,Legato Health Technologies,Data Scientist,1,14.3L,9.0L,21.0L,39
+1582,Impact Analytics,Data Scientist,0,9.0L,7.0L,13.0L,38
+6534,Innominds Software,Data Scientist,1,10.7L,6.5L,15.2L,37
+5702,Flipkart,Data Scientist,0,23.2L,14.7L,42.0L,37
+8479,Innodatatics,Data Scientist,0,4.5L,2.0L,7.0L,37
+6834,KPMG,Data Scientist,2,14.1L,9.0L,20.0L,36
+4726,NTT DATA,Data Scientist,2,7.7L,5.0L,17.2L,36
+6624,HSBC,Data Scientist,2,14.1L,8.5L,23.9L,36
+4409,Societe Generale,Data Scientist,1,18.2L,7.4L,26.0L,35
+4038,Mphasis,Data Scientist,2,8.9L,5.2L,15.0L,35
+7493,Mercedes-Benz Research & Development India,Data Scientist,2,14.1L,8.2L,21.0L,34
+6130,BEPEC Solutions,Data Scientist,1,4.9L,3.0L,7.0L,34
+8451,Brillio,Data Scientist,1,16.0L,9.0L,24.0L,33
+2580,ABC,Data Scientist,2,19.2L,6.5L,35.0L,32
+1232,WNS,Data Scientist,1,11.4L,7.2L,17.0L,32
+1843,Hexaware Technologies,Data Scientist,0,9.7L,4.5L,19.0L,32
+5007,International School of Engineering,Data Scientist,1,10.5L,5.4L,16.3L,31
+3353,Wells Fargo India,Data Scientist,2,15.4L,5.5L,31.2L,31
+1871,Kyndryl,Data Scientist,3,14.1L,6.0L,30.0L,31
+3678,eClerx,Data Scientist,2,9.3L,6.0L,16.7L,30
+1145,DBS Bank,Data Scientist,2,14.3L,9.0L,23.7L,30
+4465,Cyient,Data Scientist,2,10.4L,5.0L,18.5L,30
+6940,Nagarro,Data Scientist,1,12.1L,7.0L,18.0L,29
+2026,Freelancer.com,Data Scientist,1,7.1L,3.0L,15.0L,29
+1160,Cisco Systems,Data Scientist,2,19.0L,12.0L,32.5L,28
+5453,Bajaj Finserv,Data Scientist,1,11.9L,7.5L,19.4L,28
+7955,Dell,Data Scientist,1,17.0L,8.0L,27.0L,27
+2170,Dunnhumby,Data Scientist,1,12.9L,8.5L,18.0L,26
+4548,Honeywell Technology Solutions,Data Scientist,2,15.1L,8.5L,23.4L,26
+3997,Bristlecone,Data Scientist,1,9.0L,6.6L,11.5L,26
+3756,Sigmoid Analytics,Data Scientist,0,14.9L,11.0L,20.0L,26
+5538,Applied Materials,Data Scientist,2,14.2L,7.0L,22.0L,26
+6821,Citicorp,Data Scientist,2,19.2L,14.0L,23.5L,26
+1099,Siemens,Data Scientist,2,13.5L,7.8L,24.0L,26
+4945,MasterCard,Data Scientist,2,19.6L,12.1L,25.3L,26
+1930,Bosch Global Software Technologies,Data Scientist,2,11.9L,7.0L,16.6L,25
+2859,Wolters Kluwer,Data Scientist,0,12.5L,9.9L,17.6L,25
+1335,Birlasoft,Data Scientist,2,8.0L,4.0L,12.7L,25
+6721,Atos,Data Scientist,2,13.0L,5.0L,28.0L,25
+3168,Info Edge,Data Scientist,0,16.9L,12.0L,24.0L,25
+6267,VMware Software,Data Scientist,4,23.6L,11.5L,32.1L,25
+5215,Course5,Data Scientist,1,8.1L,4.0L,12.7L,25
+4062,Bridgei2i Analytics Solutions,Data Scientist,2,9.4L,6.0L,14.4L,24
+8614,Larsen & Toubro Limited,Data Scientist,1,9.4L,4.5L,23.0L,24
+7202,iNeuron.ai,Data Scientist,0,5.1L,3.0L,8.0L,24
+4119,Tredence,Data Scientist,2,14.4L,8.0L,19.0L,23
+6033,Enquero,Data Scientist,0,11.5L,5.0L,16.2L,23
+5746,R Systems International,Data Scientist,2,16.2L,7.5L,24.4L,23
+3004,UST,Data Scientist,3,9.8L,6.5L,15.0L,23
+4787,Cgi Group,Data Scientist,2,8.2L,4.2L,14.0L,23
+2749,Bank of America,Data Scientist,2,22.8L,13.2L,30.3L,23
+3684,Axis Bank,Data Scientist,1,11.7L,7.9L,18.0L,23
+7892,Ganit Business Solutions,Data Scientist,3,12.6L,8.5L,16.0L,23
+4651,Virtusa Consulting Services,Data Scientist,1,9.7L,4.8L,15.6L,22
+2352,ITC Infotech India,Data Scientist,2,10.9L,4.1L,20.5L,22
+4307,Gramener,Data Scientist,1,9.8L,7.5L,14.0L,22
+1185,Subex,Data Scientist,1,10.8L,8.2L,13.7L,22
+7236,Xoriant,Data Scientist,2,10.4L,5.3L,17.6L,22
+5318,Caterpillar Inc,Data Scientist,2,12.8L,7.7L,18.0L,21
+3508,ICICI Bank,Data Scientist,0,11.9L,5.0L,20.0L,21
+8321,Freelance Consultants,Data Scientist,1,10.2L,3.2L,24.0L,21
+4710,Sutherland Global Services,Data Scientist,1,8.5L,5.1L,12.3L,21
+2597,Prodapt Solutions,Data Scientist,1,6.9L,3.3L,16.0L,21
+5388,Rubixe,Data Scientist,0,4.7L,2.4L,9.0L,21
+4757,NDS InfoServ,Data Scientist,0,9.1L,5.0L,12.0L,20
+7722,Zensar Technologies,Data Scientist,1,8.2L,4.2L,15.5L,20
+4470,Fidelity National Information Services,Data Scientist,3,10.9L,7.3L,18.6L,20
+4941,KPIT Technologies,Data Scientist,1,7.7L,4.5L,15.0L,20
+3365,Citibank,Data Scientist,2,17.3L,10.0L,24.2L,20
+4013,ValueLabs,Data Scientist,2,14.6L,7.0L,22.5L,20
+3653,ABB Group,Data Scientist,2,13.0L,8.3L,19.0L,20
+2520,L&T Financial Services,Data Scientist,1,9.3L,8.2L,12.5L,20
+2087,Value c Consulting India,Data Scientist,2,5.2L,4.2L,6.0L,20
+2584,Lumiq.ai,Data Scientist,0,8.3L,6.0L,13.0L,20
+7885,Flip Robo Technologies,Data Scientist,1,4.7L,3.0L,7.9L,20
+8008,Philips,Data Scientist,3,17.9L,11.2L,30.0L,19
+1973,Nokia,Data Scientist,2,13.0L,6.2L,24.0L,19
+1317,Confidential,Data Scientist,1,8.5L,4.1L,18.5L,19
+6614,Tata Technologies,Data Scientist,0,6.6L,4.8L,9.2L,19
+3712,Nielsen,Data Scientist,1,7.0L,6.0L,10.0L,19
+8220,Kantar,Data Scientist,3,11.5L,6.4L,18.0L,19
+3175,Persistent Systems,Data Scientist,2,10.5L,5.8L,17.0L,19
+5745,Exl India,Data Scientist,1,14.0L,10.0L,18.0L,19
+1389,Blue Yonder,Data Scientist,3,20.6L,15.1L,26.0L,19
+8933,Brane Enterprises,Data Scientist,1,14.0L,8.0L,22.5L,19
+4768,Micron Technology,Data Scientist,0,16.4L,11.4L,25.0L,19
+4243,Indegene,Data Scientist,0,9.6L,8.0L,14.5L,18
+8862,CARS24.com,Data Scientist,1,20.3L,14.5L,24.0L,18
+5418,GlobalLogic,Data Scientist,2,14.6L,4.0L,26.0L,18
+4598,Maersk,Data Scientist,4,20.9L,14.0L,31.0L,18
+5705,Barclays,Data Scientist,2,18.2L,13.6L,25.0L,18
+7811,Indium Software,Data Scientist,1,7.9L,5.0L,12.0L,18
+1171,Celebal Technologies,Data Scientist,0,8.6L,5.7L,13.0L,18
+2793,Affine Analytics,Data Scientist,1,9.7L,6.3L,18.0L,18
+3797,Fidelity Investment,Data Scientist,3,23.4L,13.8L,36.0L,18
+3373,Jio Platforms,Data Scientist,2,13.9L,7.0L,23.0L,18
+7971,Happiest Minds Technologies,Data Scientist,1,8.7L,5.2L,14.0L,17
+5151,Adobe,Data Scientist,3,29.4L,20.0L,44.0L,17
+7118,CitiusTech,Data Scientist,2,10.4L,5.8L,17.5L,17
+5497,Scienaptic Systems,Data Scientist,0,14.6L,8.0L,19.0L,17
+2525,Boeing,Data Scientist,1,19.4L,13.5L,35.0L,17
+2394,Citigroup,Data Scientist,1,18.4L,13.5L,27.5L,17
+1823,Marlabs,Data Scientist,0,9.3L,5.5L,20.6L,16
+1326,TransOrg Analytics,Data Scientist,1,9.4L,7.0L,13.5L,16
+7642,T-Systems,Data Scientist,3,14.1L,7.8L,24.0L,16
+6985,Sopra Steria,Data Scientist,3,12.1L,8.0L,19.7L,16
+7237,Apexon,Data Scientist,2,7.5L,4.9L,10.8L,16
+6915,Embibe,Data Scientist,0,16.6L,12.0L,21.0L,16
+7668,Quest Global,Data Scientist,2,6.7L,4.8L,8.5L,16
+4290,Harman Connected Services,Data Scientist,3,13.6L,7.0L,26.5L,16
+2938,Exxon Mobil,Data Scientist,2,23.2L,14.0L,30.1L,16
+3809,Ugam Solution,Data Scientist,0,9.8L,5.0L,15.0L,16
+4986,L&T Technology Services,Data Scientist,1,8.7L,4.3L,18.0L,16
+6053,Credit Suisse,Data Scientist,2,17.4L,11.0L,26.0L,16
+8474,Iris Software,Data Scientist,5,18.5L,11.5L,25.8L,16
+8125,Delhivery,Data Scientist,1,15.6L,10.0L,20.8L,16
+3506,Abzooba India Infotech,Data Scientist,1,15.0L,8.5L,20.1L,16
+2246,Sonata Software,Data Scientist,1,8.1L,4.8L,12.0L,15
+2368,Incedo,Data Scientist,1,12.2L,7.0L,20.0L,15
+5896,Go-Jek,Data Scientist,3,30.5L,16.5L,44.0L,15
+8893,GE,Data Scientist,2,14.3L,8.4L,24.0L,15
+8061,Fiserv,Data Scientist,3,12.1L,8.0L,17.0L,15
+1973,UBS,Data Scientist,2,15.2L,10.2L,22.0L,15
+7863,Quantiphi Analytics Solutions,Data Scientist,0,9.8L,7.0L,16.0L,15
+1415,Amdocs,Data Scientist,2,8.5L,6.0L,12.0L,15
+5973,Apple,Data Scientist,2,33.6L,8.2L,74.5L,15
+7248,Oyo Rooms,Data Scientist,0,14.7L,10.0L,20.5L,14
+4274,iOPEX Technologies,Data Scientist,1,7.9L,3.5L,12.0L,14
+6032,Yash Technologies,Data Scientist,2,11.2L,7.5L,16.0L,14
+5813,Franklin Templeton Investments,Data Scientist,3,27.7L,15.0L,45.0L,14
+8498,N+A,Data Scientist,0,8.6L,2.4L,15.0L,14
+4553,ICICI Lombard General Insurance Company,Data Scientist,0,12.1L,7.4L,15.4L,14
+3091,Reserve Bank Information Technology,Data Scientist,2,15.9L,8.0L,23.5L,14
+5037,o9 Solutions,Data Scientist,1,13.8L,11.0L,17.5L,14
+8979,HTC Global Services,Data Scientist,1,6.4L,3.6L,10.0L,13
+2289,Accolite Digital,Data Scientist,0,14.5L,6.0L,19.5L,13
+8250,Wipro Digital,Data Scientist,1,11.1L,7.0L,17.5L,13
+6861,CSS Corp,Data Scientist,0,10.2L,7.0L,14.5L,13
+6434,Morgan Stanley,Data Scientist,2,18.1L,10.5L,23.6L,13
+2855,Zee Entertainment Enterprises,Data Scientist,1,16.7L,13.2L,23.0L,13
+6737,Ola Cabs,Data Scientist,1,21.9L,13.0L,30.0L,13
+3242,NatWest Markets,Data Scientist,1,16.0L,11.0L,26.0L,13
+7193,Myntra,Data Scientist,2,16.9L,8.3L,33.0L,13
+4991,TCS,Business Analyst,2,6.9L,3.0L,12.0L,4200
+5052,Accenture,Business Analyst,1,7.0L,2.7L,14.7L,1900
+4079,Genpact,Business Analyst,1,6.4L,4.5L,9.0L,1700
+2938,Wipro,Business Analyst,2,8.6L,4.2L,15.5L,1200
+8747,Cognizant,Business Analyst,1,8.6L,4.5L,14.0L,1100
+2705,Deloitte,Business Analyst,1,7.8L,5.0L,12.0L,991
+5065,HCL Technologies,Business Analyst,1,6.6L,2.3L,14.2L,714
+6400,Evalueserve,Business Analyst,1,6.5L,4.7L,8.5L,693
+5084,Infosys,Business Analyst,1,8.9L,4.4L,16.5L,692
+3139,IBM,Business Analyst,2,8.3L,4.0L,16.0L,662
+3059,DXC Technology,Business Analyst,2,7.7L,4.1L,13.0L,580
+7033,Tech Mahindra,Business Analyst,2,7.6L,3.8L,15.0L,575
+4422,American Express,Business Analyst,1,8.3L,3.0L,19.0L,539
+3828,Capgemini,Business Analyst,2,9.1L,4.3L,15.0L,531
+3430,Societe Generale,Business Analyst,3,13.5L,7.6L,21.0L,514
+8905,EXL Service,Business Analyst,0,6.2L,4.5L,8.5L,476
+2779,Amazon,Business Analyst,2,11.3L,4.8L,20.0L,445
+1062,HSBC,Business Analyst,2,12.1L,5.0L,21.0L,382
+3008,ICICI Bank,Business Analyst,1,6.7L,4.0L,12.6L,326
+4230,JP Morgan Chase,Business Analyst,2,12.4L,5.7L,21.7L,323
+8110,Zomato,Business Analyst,1,10.7L,8.3L,12.0L,274
+2571,L&T Infotech,Business Analyst,2,9.7L,4.5L,16.6L,271
+3742,Shell,Business Analyst,4,19.5L,12.0L,30.0L,258
+8882,Barclays,Business Analyst,2,12.3L,5.5L,19.4L,255
+5353,Cgi Group,Business Analyst,2,6.9L,4.7L,11.0L,252
+6214,Oracle,Business Analyst,1,5.5L,3.4L,10.0L,243
+2810,Amdocs,Business Analyst,4,12.1L,6.8L,20.0L,236
+6444,Conduent,Business Analyst,2,6.1L,4.0L,9.4L,225
+4340,Fidelity National Information Services,Business Analyst,3,10.8L,5.8L,18.0L,214
+8629,HDFC Bank,Business Analyst,2,7.9L,4.1L,12.0L,208
+8282,Novo Nordisk,Business Analyst,4,11.5L,8.0L,15.2L,207
+5935,Axis Bank,Business Analyst,1,9.7L,4.2L,15.0L,199
+6202,Ernst & Young,Business Analyst,1,8.8L,4.0L,20.0L,198
+3346,Credit Suisse,Business Analyst,2,15.2L,10.0L,23.0L,179
+5309,Hewlett-Packard Enterprise,Business Analyst,2,6.7L,3.6L,11.5L,175
+4779,CG Foods,Business Analyst,0,4.8L,2.0L,10.0L,175
+1279,Quantiphi Analytics Solutions,Business Analyst,0,8.9L,6.5L,13.0L,167
+8859,NetCracker,Business Analyst,5,18.7L,12.0L,28.0L,159
+7549,Oyo Rooms,Business Analyst,0,10.2L,6.0L,14.0L,153
+1356,VMware Software,Business Analyst,3,9.8L,6.0L,15.0L,153
+8080,Mphasis,Business Analyst,1,10.0L,3.5L,19.0L,151
+1024,Exl India,Business Analyst,0,6.3L,4.5L,8.6L,147
+1469,Mindtree,Business Analyst,2,9.5L,5.5L,15.0L,144
+6070,Newgen Software Technologies,Business Analyst,2,9.3L,7.0L,11.5L,138
+7204,NTT DATA,Business Analyst,2,7.3L,4.5L,14.0L,133
+2033,Hexaware Technologies,Business Analyst,2,10.0L,4.2L,16.8L,131
+3208,Temenos,Business Analyst,2,8.8L,5.6L,12.2L,128
+8095,Wells Fargo India,Business Analyst,3,12.0L,6.2L,20.8L,128
+7113,Barclays Shared Services,Business Analyst,1,8.3L,3.8L,14.2L,127
+6065,Bridgei2i Analytics Solutions,Business Analyst,0,6.0L,5.0L,8.0L,124
+4560,Tata Technologies,Business Analyst,3,6.4L,4.3L,8.9L,119
+4770,Standard Chartered Bank,Business Analyst,2,12.0L,6.0L,20.0L,117
+6767,Mu Sigma,Business Analyst,1,6.9L,5.5L,9.0L,116
+1792,Virtusa Consulting Services,Business Analyst,2,10.6L,5.0L,18.5L,111
+7720,Allianz Technology,Business Analyst,3,8.2L,5.1L,12.0L,110
+8920,Kotak Mahindra Bank,Business Analyst,1,7.5L,3.0L,15.5L,106
+4868,Citicorp,Business Analyst,2,15.6L,7.8L,21.3L,106
+6540,BNP Paribas,Business Analyst,3,10.7L,6.7L,16.3L,105
+5094,UST,Business Analyst,3,11.1L,5.5L,17.5L,103
+2991,Flipkart,Business Analyst,1,12.3L,4.7L,18.9L,103
+2187,Barclays Global Service Centre,Business Analyst,1,11.7L,4.5L,21.6L,102
+1495,BNY Mellon,Business Analyst,3,8.5L,4.5L,17.5L,101
+4249,Optum,Business Analyst,2,8.6L,4.8L,17.1L,100
+1651,Ola Cabs,Business Analyst,0,11.3L,7.7L,15.0L,99
+5470,UBS,Business Analyst,2,14.5L,7.5L,23.5L,97
+6625,Odessa,Business Analyst,1,11.0L,8.4L,13.0L,96
+3764,bnp paribas india solutions,Business Analyst,3,10.2L,6.5L,15.0L,96
+4233,UnitedHealth,Business Analyst,2,8.3L,5.0L,13.0L,95
+4270,HCL Technologies BPO Services,Business Analyst,1,2.3L,1.6L,4.0L,95
+5516,Ramco Systems,Business Analyst,1,7.6L,4.5L,10.5L,94
+3290,Tredence,Business Analyst,0,6.9L,6.1L,8.5L,92
+4802,Novartis Healthcare,Business Analyst,1,10.0L,7.0L,14.2L,92
+1167,Atos Syntel,Business Analyst,2,7.6L,4.0L,13.0L,92
+2387,Cisco Systems,Business Analyst,2,12.5L,6.0L,20.5L,90
+6351,ITC Infotech India,Business Analyst,1,7.8L,4.5L,14.0L,90
+5121,Deutsche Bank,Business Analyst,2,9.1L,3.3L,19.0L,89
+8507,Dell,Business Analyst,2,7.0L,4.6L,10.2L,89
+5516,Paytm,Business Analyst,1,7.7L,3.9L,15.0L,89
+1192,3i Infotech,Business Analyst,1,6.1L,3.9L,8.8L,88
+1140,KPMG,Business Analyst,1,8.2L,3.6L,16.0L,87
+6905,Fiserv,Business Analyst,3,11.6L,7.0L,20.0L,86
+5289,Zensar Technologies,Business Analyst,2,6.7L,4.1L,14.5L,85
+6445,Legato Health Technologies,Business Analyst,3,8.0L,5.0L,14.0L,85
+5643,Swiggy,Business Analyst,1,13.2L,8.0L,16.5L,85
+2750,GEP Worldwide,Business Analyst,0,6.4L,5.0L,8.5L,84
+3854,Intellect Design Arena,Business Analyst,2,11.2L,5.8L,16.7L,83
+8135,Standard Chartered Global Business Services,Business Analyst,2,12.7L,5.6L,23.2L,81
+8247,ZS,Business Analyst,1,9.6L,7.0L,12.8L,80
+8221,Concentrix Corporation,Business Analyst,1,5.4L,2.8L,12.0L,80
+1921,Reliance jio,Business Analyst,1,6.8L,3.6L,15.0L,79
+3848,NatWest Group,Business Analyst,2,9.5L,3.5L,18.8L,79
+2691,IQVIA,Business Analyst,1,8.3L,4.5L,16.7L,78
+4898,PwC,Business Analyst,1,9.9L,4.5L,17.5L,77
+5810,ValueMomentum,Business Analyst,1,6.1L,3.8L,9.5L,75
+8392,ADP Solutions,Business Analyst,3,8.2L,5.3L,15.1L,74
+8346,Provana,Business Analyst,1,4.8L,3.5L,6.5L,73
+7378,ANR Software,Business Analyst,1,4.5L,3.1L,7.0L,71
+5916,WNS,Business Analyst,1,6.8L,3.8L,12.0L,69
+4347,Oracle Financial Services Software,Business Analyst,3,10.2L,5.6L,16.5L,69
+2581,RevGurus Info India,Business Analyst,0,8.3L,5.8L,11.0L,68
+5789,Sapiens,Business Analyst,2,12.5L,8.0L,16.7L,67
+4982,Etech Global Services,Business Analyst,1,6.4L,4.4L,8.4L,67
+4049,Citibank,Business Analyst,2,16.7L,8.0L,24.3L,66
+6179,Coforge,Business Analyst,5,16.1L,8.3L,24.0L,66
+6543,ABC,Business Analyst,3,13.6L,5.2L,25.0L,63
+6658,Merkle Sokrati,Business Analyst,0,4.5L,4.2L,5.0L,61
+7891,First Source,Business Analyst,1,4.4L,2.7L,7.0L,60
+3364,Meesho,Business Analyst,0,14.0L,8.5L,18.0L,60
+3070,Ebix Software India,Business Analyst,2,7.0L,4.5L,11.5L,60
+3864,Indus Valley Partners,Business Analyst,1,17.0L,14.0L,20.0L,60
+7264,Schlumberger,Business Analyst,3,14.5L,9.0L,21.0L,59
+5586,Capita,Business Analyst,1,5.9L,2.3L,13.0L,58
+4648,CRMnext,Business Analyst,1,6.6L,5.0L,8.0L,58
+1910,NeoSoft Technologies,Business Analyst,1,6.9L,3.1L,10.0L,57
+4406,NSE.IT,Business Analyst,1,6.8L,3.5L,12.5L,56
+8516,Nokia,Business Analyst,2,9.3L,5.5L,16.6L,56
+8166,Capco Technologies,Business Analyst,3,13.9L,6.0L,22.0L,56
+6012,eClerx,Business Analyst,1,3.7L,2.3L,9.3L,55
+7955,Affine Analytics,Business Analyst,0,6.8L,6.0L,8.3L,55
+6869,Exela Technologies,Business Analyst,3,8.3L,5.1L,12.0L,54
+8158,Analytics Quotient,Business Analyst,1,5.3L,4.0L,6.8L,53
+6463,NIIT Technologies,Business Analyst,3,11.1L,7.0L,17.8L,53
+6317,QualityKiosk Technologies,Business Analyst,2,7.7L,3.6L,13.0L,53
+3504,Fidelity Investment,Business Analyst,2,9.9L,6.8L,16.0L,53
+8269,Altisource,Business Analyst,2,5.5L,3.3L,9.0L,52
+6308,Polestar Solutions & Services India,Business Analyst,0,6.1L,4.2L,8.8L,52
+1955,Veeraraghavan & Company,Business Analyst,0,1.7L,1.2L,2.3L,52
+1490,Verizon,Business Analyst,3,10.5L,6.3L,16.3L,51
+3225,BYJU'S,Business Analyst,1,7.7L,4.0L,13.0L,51
+8151,Bank of America,Business Analyst,3,14.1L,8.1L,21.5L,51
+4840,Better.com,Business Analyst,1,7.8L,6.0L,11.2L,51
+2920,KJ System,Business Analyst,1,2.9L,2.4L,3.6L,50
+3477,ValueLabs,Business Analyst,4,11.3L,6.1L,18.5L,50
+7643,Xyz Company,Business Analyst,3,12.3L,4.4L,23.0L,50
+6286,IndusInd Bank,Business Analyst,2,8.0L,4.0L,14.3L,49
+3570,Vinculum Solutions,Business Analyst,1,8.8L,6.0L,13.0L,49
+6981,Confidential,Business Analyst,1,8.3L,4.2L,16.0L,49
+7654,Infosys BPM,Business Analyst,0,6.0L,2.5L,13.0L,49
+2332,General Mills,Business Analyst,2,9.7L,7.0L,12.0L,48
+6733,Yash Technologies,Business Analyst,4,8.9L,6.1L,12.3L,48
+8293,Shipco Transport,Business Analyst,1,3.4L,2.1L,5.0L,48
+4542,Aon,Business Analyst,2,5.4L,3.5L,9.6L,48
+3305,Persistent Systems,Business Analyst,4,12.5L,8.5L,18.4L,48
+5723,Unisys,Business Analyst,2,7.7L,4.0L,12.0L,48
+8884,Azentio,Business Analyst,0,7.1L,4.3L,11.0L,47
+5848,Synechron,Business Analyst,4,16.4L,9.9L,22.0L,46
+5704,Ford Motor,Business Analyst,2,8.1L,2.9L,14.0L,46
+6202,Birlasoft,Business Analyst,2,8.5L,4.5L,15.0L,45
+5757,Cybage,Business Analyst,5,14.6L,10.1L,20.0L,45
+7343,Lentra AI,Business Analyst,1,6.8L,4.1L,11.0L,45
+5725,N+A,Business Analyst,1,6.3L,2.5L,11.0L,44
+5330,IVY Comptech,Business Analyst,4,14.6L,8.5L,20.0L,44
+6304,S&P Global,Business Analyst,3,11.1L,7.5L,17.0L,44
+8355,Gartner,Business Analyst,1,14.2L,10.0L,19.0L,44
+5784,Acidaes Solutions,Business Analyst,2,7.0L,5.0L,10.0L,43
+1805,Udaan,Business Analyst,1,11.6L,4.8L,18.0L,43
+5597,Reliance Industries,Business Analyst,2,8.1L,4.9L,14.4L,43
+6864,Dell EMC,Business Analyst,2,6.6L,3.8L,10.1L,43
+1260,GlobalLogic,Business Analyst,2,9.0L,2.5L,20.0L,43
+4239,eClinicalWorks,Business Analyst,2,5.3L,3.8L,8.3L,43
+8383,ThoughtWorks,Business Analyst,2,14.7L,8.5L,26.0L,43
+8983,Landmark Group,Business Analyst,2,11.6L,7.5L,15.0L,43
+5379,Merilytics,Business Analyst,0,7.0L,5.5L,8.0L,42
+2570,Care Health Insurance,Business Analyst,0,5.9L,3.3L,8.4L,42
+8704,Epsilon,Business Analyst,2,9.7L,6.0L,16.5L,41
+8052,Gartner India Research and Advisory Services,Business Analyst,2,15.4L,10.0L,20.0L,41
+4612,Globant,Business Analyst,3,13.3L,9.0L,20.9L,41
+8989,Franklin Templeton Investments,Business Analyst,4,8.2L,4.7L,12.5L,40
+7073,Atidiv,Business Analyst,1,3.0L,2.2L,4.0L,40
+2955,Maersk,Business Analyst,4,8.9L,5.0L,16.0L,40
+5049,Pboplus Consulting Services,Business Analyst,0,4.0L,3.0L,5.2L,40
+3691,Reliance Retail,Business Analyst,1,7.0L,3.5L,13.0L,40
+5111,Larsen & Toubro Limited,Business Analyst,0,8.5L,3.8L,14.0L,40
+8570,TEKsystems,Business Analyst,3,12.0L,7.1L,18.5L,40
+5275,Hindustan Unilever,Business Analyst,2,7.1L,3.4L,10.7L,39
+7690,Tata Communications,Business Analyst,1,5.0L,2.9L,9.2L,39
+5978,Ameriprise Financial,Business Analyst,1,5.9L,3.9L,9.3L,39
+5323,Goldman Sachs,Business Analyst,0,14.9L,6.5L,30.0L,39
+5204,Factspan Analytics,Business Analyst,1,8.1L,6.5L,10.0L,39
+6064,MSC Technology India,Business Analyst,1,4.3L,2.9L,5.7L,39
+3744,Simplify Healthcare,Business Analyst,1,5.8L,4.0L,9.5L,39
+6436,CMS Computers Limited (INDIA),Business Analyst,1,4.0L,2.6L,6.0L,39
+1909,Fluentgrid,Business Analyst,2,5.5L,3.2L,8.8L,38
+6352,Bajaj Finserv,Business Analyst,1,9.0L,3.8L,13.0L,38
+7099,Ericsson,Business Analyst,3,9.7L,5.1L,16.0L,38
+4181,Sonata Software,Business Analyst,1,7.8L,5.0L,11.5L,37
+8230,CitiusTech,Business Analyst,2,9.0L,6.4L,12.1L,37
+7723,R1 RCM,Business Analyst,1,3.8L,2.7L,6.7L,37
+1525,TCS,Data Analyst,1,4.7L,2.4L,8.9L,1600
+5783,Cognizant,Data Analyst,1,5.5L,2.9L,8.3L,1200
+3384,Accenture,Data Analyst,1,5.2L,2.3L,11.0L,1100
+3229,Capgemini,Data Analyst,0,4.6L,3.0L,9.0L,485
+3865,Wipro,Data Analyst,1,4.8L,2.2L,9.0L,475
+4313,GlobalLogic,Data Analyst,1,2.5L,2.0L,3.5L,415
+7435,Tech Mahindra,Data Analyst,1,4.6L,2.2L,7.5L,397
+7620,Amazon,Data Analyst,1,5.2L,2.5L,15.3L,380
+5722,Infosys,Data Analyst,1,5.7L,3.4L,12.0L,323
+4754,HCL Technologies,Data Analyst,1,4.5L,2.4L,9.5L,320
+8750,eClerx,Data Analyst,0,2.5L,2.0L,3.9L,302
+5265,IBM,Data Analyst,2,7.6L,4.0L,15.5L,297
+1932,Ernst & Young,Data Analyst,1,5.8L,3.4L,10.5L,297
+7089,Flipkart,Data Analyst,1,5.9L,3.2L,12.0L,241
+1715,Genpact,Data Analyst,1,4.7L,2.5L,9.0L,228
+7423,Optum,Data Analyst,2,12.8L,6.0L,19.0L,219
+5924,Concentrix Corporation,Data Analyst,1,3.9L,2.4L,6.3L,209
+1495,Deloitte,Data Analyst,1,7.6L,4.3L,13.0L,202
+7677,Zen3 Info Solutions,Data Analyst,1,3.1L,2.2L,4.2L,188
+7125,Unilog Content Solutions ( P),Data Analyst,1,2.5L,2.0L,3.2L,181
+4866,Cogencis Information Services,Data Analyst,1,1.7L,1.2L,2.6L,175
+5305,UnitedHealth,Data Analyst,2,10.7L,3.3L,18.0L,171
+4292,Qualsquad Infotech,Data Analyst,0,2.0L,1.1L,3.0L,149
+2746,NTT DATA,Data Analyst,1,4.3L,2.1L,8.0L,138
+7855,InnovAccer,Data Analyst,0,9.2L,5.0L,13.0L,137
+8565,Teleperformance,Data Analyst,1,2.4L,1.8L,4.4L,132
+1372,Mindtree,Data Analyst,1,5.6L,4.0L,9.6L,132
+4169,Ericsson,Data Analyst,2,5.8L,4.0L,10.0L,126
+8066,Apex CoVantage,Data Analyst,0,1.8L,1.1L,3.0L,123
+8119,Tiger Analytics,Data Analyst,0,8.8L,7.5L,12.0L,120
+6492,Cyient,Data Analyst,1,3.4L,1.8L,6.7L,119
+6332,Urjanet Energy Solutions,Data Analyst,1,2.7L,2.0L,4.2L,118
+8641,HSBC,Data Analyst,1,8.0L,3.4L,12.4L,117
+4076,DXC Technology,Data Analyst,1,5.4L,3.7L,10.2L,109
+8361,QUADRANT RESOURCE LLC,Data Analyst,1,3.0L,1.5L,4.0L,109
+4918,PwC,Data Analyst,0,6.3L,3.2L,12.0L,108
+2323,LatentView Analytics,Data Analyst,0,6.3L,5.0L,9.0L,104
+7136,EXL Service,Data Analyst,1,5.0L,2.2L,9.1L,102
+1520,KPMG,Data Analyst,1,6.7L,3.0L,12.0L,100
+3875,WNS,Data Analyst,1,5.2L,2.0L,8.9L,98
+7181,Myntra,Data Analyst,1,9.6L,4.8L,14.0L,98
+7233,IQVIA,Data Analyst,1,7.3L,4.1L,12.0L,96
+4383,Ugam Solution,Data Analyst,0,4.6L,1.8L,8.0L,92
+6109,Bharti Airtel,Data Analyst,1,4.6L,2.6L,11.0L,90
+6498,ICICI Bank,Data Analyst,1,4.9L,2.5L,10.0L,82
+8086,Walmart,Data Analyst,1,13.9L,3.8L,30.0L,81
+1929,JP Morgan Chase,Data Analyst,2,10.0L,4.1L,20.0L,81
+8720,Kantar,Data Analyst,1,4.2L,3.0L,5.7L,79
+6312,S&P Global,Data Analyst,1,4.4L,3.1L,8.0L,79
+2787,Axtria,Data Analyst,0,8.8L,6.0L,13.5L,77
+7507,L&T Infotech,Data Analyst,1,6.6L,3.8L,14.5L,77
+8608,Nielsen,Data Analyst,1,4.0L,2.4L,7.3L,75
+1390,Citicorp,Data Analyst,1,12.2L,8.5L,17.1L,75
+3695,Morningstar,Data Analyst,0,3.6L,3.0L,4.8L,74
+7277,TheMathCompany,Data Analyst,0,5.2L,4.5L,8.0L,73
+2940,Hewlett-Packard Enterprise,Data Analyst,2,6.6L,3.5L,10.0L,72
+1814,Datamatics Global Services,Data Analyst,0,2.1L,1.0L,5.4L,72
+6717,HERE Technologies,Data Analyst,0,2.6L,2.0L,4.0L,72
+4960,HDFC Bank,Data Analyst,1,4.6L,2.0L,10.3L,69
+5694,Nvidia,Data Analyst,1,3.3L,2.5L,4.1L,69
+4017,Dell,Data Analyst,1,5.8L,2.5L,12.0L,68
+8562,Zensar Technologies,Data Analyst,1,4.4L,2.9L,6.5L,67
+2088,Vodafone Idea,Data Analyst,2,5.7L,3.0L,11.0L,67
+1519,Ardem Data Services,Data Analyst,0,1.9L,1.1L,3.0L,67
+2675,Fiserv,Data Analyst,2,11.5L,6.0L,17.0L,66
+1742,Verificient Technologies,Data Analyst,0,2.2L,1.8L,3.3L,65
+3495,CRG Solutions,Data Analyst,1,5.8L,3.7L,9.0L,64
+6385,Oracle,Data Analyst,1,5.8L,3.1L,13.9L,64
+2623,Google,Data Analyst,1,15.5L,2.6L,50.0L,63
+3511,Swiggy,Data Analyst,1,4.4L,3.1L,7.3L,62
+7027,Kriya It,Data Analyst,0,1.6L,1.0L,2.5L,61
+3379,Reliance jio,Data Analyst,1,5.6L,3.5L,10.5L,58
+8651,Mphasis,Data Analyst,1,5.1L,2.1L,9.5L,58
+6454,Wells Fargo India,Data Analyst,1,10.3L,3.1L,20.0L,55
+6466,FE fundinfo,Data Analyst,0,3.3L,2.5L,4.0L,55
+7278,Oyo Rooms,Data Analyst,1,6.5L,3.4L,11.5L,54
+4321,Competent Software,Data Analyst,1,3.1L,2.0L,4.1L,54
+4323,Udaan,Data Analyst,1,5.0L,3.0L,9.0L,53
+3482,Continental Automotive Components,Data Analyst,1,2.6L,2.2L,3.5L,53
+1322,E2OPEN,Data Analyst,2,4.1L,3.2L,5.7L,53
+8508,IHS Markit,Data Analyst,1,5.8L,3.5L,9.5L,52
+2174,Fidelity National Financial,Data Analyst,0,3.3L,1.9L,4.2L,51
+4312,Proziod Analytics,Data Analyst,1,3.5L,3.0L,4.5L,51
+3373,American Express,Data Analyst,1,9.5L,3.2L,18.0L,50
+8817,Bajaj Finserv,Data Analyst,0,6.5L,2.0L,12.0L,49
+7371,Optimint Solutions,Data Analyst,0,2.2L,1.7L,3.0L,49
+2803,Mu Sigma,Data Analyst,1,7.8L,5.0L,14.5L,48
+5713,Course5,Data Analyst,0,3.5L,3.0L,5.1L,48
+6753,Paytm,Data Analyst,2,6.0L,3.0L,12.5L,48
+1911,Straive,Data Analyst,0,2.4L,1.8L,3.0L,48
+6918,Honeywell Technology Solutions,Data Analyst,2,9.4L,5.0L,13.0L,47
+8649,Intelligent Image Management Inc,Data Analyst,0,1.4L,0.2L,2.0L,47
+1980,UnitedLex,Data Analyst,1,3.1L,2.5L,4.2L,47
+1325,Fidelity National Information Services,Data Analyst,1,5.0L,2.7L,8.1L,46
+6689,Barclays,Data Analyst,1,11.2L,6.5L,19.0L,46
+4277,Novartis Healthcare,Data Analyst,2,10.3L,6.7L,14.2L,46
+7627,R1 RCM,Data Analyst,1,3.4L,2.3L,5.5L,45
+2597,Nokia,Data Analyst,0,4.2L,2.2L,8.0L,45
+6775,Bahar Infocons,Data Analyst,1,2.2L,1.4L,3.1L,45
+6616,Axis Bank,Data Analyst,0,8.2L,4.0L,14.0L,45
+4686,Freelancer.com,Data Analyst,1,3.7L,1.5L,7.0L,45
+6510,Virtusa Consulting Services,Data Analyst,1,4.2L,2.2L,8.8L,44
+2584,Aon,Data Analyst,0,4.6L,2.9L,8.5L,43
+3365,Conduent,Data Analyst,1,3.9L,1.6L,6.4L,42
+1396,Schneider Electric,Data Analyst,1,6.3L,3.0L,12.1L,42
+5831,Citibank,Data Analyst,0,10.4L,4.1L,15.8L,42
+7248,Sphera Solutions,Data Analyst,0,3.4L,3.2L,3.8L,42
+5005,Systech Solutions,Data Analyst,0,4.7L,3.8L,7.5L,41
+6589,Ford Motor,Data Analyst,1,9.6L,5.0L,13.1L,41
+6564,First Source,Data Analyst,1,2.7L,1.5L,4.9L,40
+6582,S&P Global Market Intelligence,Data Analyst,1,4.1L,3.0L,6.1L,40
+5579,UST,Data Analyst,2,7.4L,3.8L,12.0L,40
+4728,SG Analytics,Data Analyst,1,4.6L,3.0L,6.3L,39
+3255,Indegene,Data Analyst,1,9.0L,7.5L,10.9L,38
+5864,Cisco Systems,Data Analyst,3,9.0L,4.0L,21.7L,38
+6388,Huawei Technologies,Data Analyst,2,4.3L,3.3L,5.8L,38
+6701,Data Entry,Data Analyst,0,1.7L,0.2L,3.4L,38
+6586,Shell,Data Analyst,2,13.3L,6.0L,21.7L,37
+6619,Harman Connected Services,Data Analyst,2,6.0L,3.5L,12.6L,37
+1330,Johnson & Johnson,Data Analyst,1,5.0L,3.0L,10.5L,37
+6816,InSync Analytics,Data Analyst,1,2.5L,1.9L,3.3L,37
+1981,Larsen & Toubro Limited,Data Analyst,1,5.0L,2.0L,9.0L,37
+4580,Yardi Systems,Data Analyst,2,3.7L,2.7L,4.6L,36
+8679,Freelance Consultants,Data Analyst,1,3.8L,1.8L,6.1L,36
+5865,Brillio,Data Analyst,0,5.8L,4.0L,11.0L,36
+8908,Yodlee,Data Analyst,1,5.5L,3.9L,8.6L,35
+8921,ABC,Data Analyst,1,9.6L,3.0L,24.0L,35
+2886,JLL,Data Analyst,1,5.4L,3.5L,9.2L,35
+4670,Sapient Corporation,Data Analyst,2,7.9L,5.0L,12.0L,35
+2895,ZS,Data Analyst,1,10.6L,7.0L,16.0L,35
+7987,Uber,Data Analyst,1,13.0L,6.5L,30.0L,35
+6360,Numeratr,Data Analyst,0,3.0L,2.0L,4.4L,35
+5656,Yukthi Datasoft,Data Analyst,1,2.1L,1.5L,2.9L,34
+8307,Infosys BPM,Data Analyst,1,3.8L,2.1L,7.8L,34
+5134,Hexaware Technologies,Data Analyst,1,6.4L,0.2L,14.0L,33
+6855,Ganit Business Solutions,Data Analyst,0,6.0L,6.0L,6.0L,33
+3763,Fractal Analytics,Data Analyst,1,9.9L,4.9L,17.5L,33
+6545,CAMP Systems,Data Analyst,1,3.8L,3.0L,4.6L,32
+1608,Indium Software,Data Analyst,0,7.0L,4.0L,11.0L,32
+6180,Data Gyan,Data Analyst,0,1.8L,1.5L,2.0L,32
+7886,Randstad,Data Analyst,1,4.2L,2.5L,8.0L,31
+8564,Epsilon,Data Analyst,1,9.9L,5.5L,16.1L,31
+8288,N+A,Data Analyst,0,3.7L,2.1L,6.0L,31
+4018,The Smart Cube,Data Analyst,0,7.7L,6.3L,9.0L,31
+1826,Dataction Analytics,Data Analyst,0,2.6L,1.9L,3.5L,31
+7748,TSWRDC WOMEN'S DEGREE COLLEGE,Data Analyst,0,2.5L,2.0L,3.5L,31
+2819,LiquidHub,Data Analyst,0,2.6L,1.4L,5.0L,30
+6902,Sutherland Global Services,Data Analyst,1,4.8L,2.8L,7.3L,30
+3067,ValueLabs,Data Analyst,1,5.1L,2.4L,13.8L,30
+1755,HCL Technologies BPO Services,Data Analyst,1,2.9L,1.9L,5.0L,30
+1130,HUDL,Data Analyst,0,2.9L,2.0L,3.8L,30
+8971,Mercedes-Benz Research & Development India,Data Analyst,1,10.2L,7.5L,15.0L,30
+3174,Whitehat jr,Data Analyst,1,5.9L,4.3L,8.0L,30
+3254,Caterpillar Inc,Data Analyst,1,6.2L,3.6L,10.5L,29
+8159,General Mills,Data Analyst,0,7.0L,5.3L,9.2L,29
+1298,BYJU'S,Data Analyst,1,7.0L,5.0L,15.4L,29
+8425,Hinduja Global Solutions,Data Analyst,1,3.7L,2.0L,6.5L,29
+8410,Mercer,Data Analyst,0,4.8L,2.3L,8.5L,29
+8838,Bridgei2i Analytics Solutions,Data Analyst,0,5.3L,4.5L,7.8L,29
+4586,Annalect,Data Analyst,0,5.6L,3.6L,7.5L,29
+8212,Verizon,Data Analyst,1,11.4L,6.4L,17.8L,28
+6087,McKinsey & Company,Data Analyst,1,15.3L,9.0L,20.0L,28
+6301,ITC Infotech India,Data Analyst,0,7.9L,3.7L,16.0L,28
+6455,Vaco Binary Semantics,Data Analyst,0,3.7L,2.4L,6.0L,28
+4568,FedEx Express,Data Analyst,0,7.4L,3.3L,12.0L,28
+8142,Galytix Analytics,Data Analyst,0,6.0L,6.0L,6.0L,28
+3409,VeeTechnologies,Data Analyst,1,1.9L,1.2L,2.4L,28
+3897,APA Engineering,Data Analyst,0,2.0L,1.5L,3.1L,27
+3711,Tesco,Data Analyst,1,5.5L,3.9L,8.9L,27
+7589,UBS,Data Analyst,1,9.4L,6.0L,15.5L,27
+8738,BCG,Data Analyst,2,11.9L,6.0L,19.4L,27
+4827,Reliance Industries,Data Analyst,1,6.3L,2.2L,9.0L,26
+7494,Collegedunia,Data Analyst,1,4.0L,3.0L,5.4L,26
+5794,Thomson Reuters,Data Analyst,1,4.1L,2.1L,6.9L,26
+7130,Tata Communications,Data Analyst,0,3.9L,2.1L,5.1L,26
+6799,Cerner,Data Analyst,1,7.3L,5.2L,10.5L,26
+6934,Sandcube Analytics,Data Analyst,0,2.3L,1.1L,3.6L,26
+5734,Bank of America,Data Analyst,2,13.9L,5.5L,20.0L,26
+3953,Stats Systems India,Data Analyst,0,2.1L,1.5L,3.1L,26
+5479,Objectways Technologies,Data Analyst,0,1.5L,1.2L,2.0L,26
+2634,Target,Data Analyst,1,8.8L,2.9L,13.0L,25
+2135,PayPal,Data Analyst,1,17.2L,8.0L,30.0L,25
+2650,NISC Export Services,Data Analyst,1,3.2L,2.3L,5.0L,25
+2214,ANZ Banking Group,Data Analyst,2,9.8L,4.4L,15.6L,25
+1609,Hive,Data Analyst,0,4.2L,3.5L,5.8L,25
+5913,Crif High Mark Credit Information Services,Data Analyst,2,5.5L,3.8L,8.0L,25
+4584,Pacecom Technologies,Data Analyst,0,2.1L,2.0L,2.6L,25
+5403,TCS,Data Engineer,1,5.8L,3.9L,10.1L,819
+5985,IBM,Data Engineer,1,10.4L,4.8L,18.0L,727
+6440,L&T Infotech,Data Engineer,1,5.7L,4.1L,9.0L,420
+1403,Accenture,Data Engineer,1,9.0L,5.0L,16.8L,332
+8967,Cognizant,Data Engineer,1,7.5L,4.5L,13.3L,292
+3793,EC-Mobility,Data Engineer,1,2.1L,1.8L,2.6L,259
+4299,Capgemini,Data Engineer,1,7.4L,4.0L,13.5L,231
+8920,Infosys,Data Engineer,1,5.5L,3.6L,10.0L,196
+8265,Fractal Analytics,Data Engineer,2,11.8L,8.0L,18.0L,184
+2453,Wipro,Data Engineer,1,6.6L,4.0L,14.5L,175
+4338,Amazon,Data Engineer,2,22.0L,11.0L,40.0L,166
+1944,Quantiphi Analytics Solutions,Data Engineer,0,10.4L,6.5L,15.0L,140
+5805,Tech Mahindra,Data Engineer,2,6.5L,4.2L,13.0L,130
+4495,Mindtree,Data Engineer,1,6.0L,3.9L,9.9L,124
+4021,DXC Technology,Data Engineer,1,6.6L,3.8L,12.0L,122
+7790,Deloitte,Data Engineer,1,11.8L,6.0L,18.0L,116
+5491,Walmart,Data Engineer,3,22.1L,15.0L,31.9L,88
+8350,Optum,Data Engineer,2,11.1L,7.9L,16.8L,80
+4667,Shell,Data Engineer,1,17.2L,8.0L,24.0L,79
+1550,HCL Technologies,Data Engineer,1,9.0L,3.5L,18.0L,79
+2614,Futurense Technologies,Data Engineer,1,9.5L,7.0L,12.0L,72
+5818,Tiger Analytics,Data Engineer,1,14.0L,7.0L,21.0L,69
+3148,Teradata,Data Engineer,3,13.6L,8.8L,17.5L,68
+1885,Altimetrik,Data Engineer,1,12.6L,6.5L,22.0L,59
+4189,Ernst & Young,Data Engineer,2,12.8L,5.2L,20.0L,59
+3776,Maersk,Data Engineer,2,17.0L,7.8L,27.8L,55
+2933,UnitedHealth,Data Engineer,2,10.3L,6.3L,17.3L,53
+5233,Genpact,Data Engineer,1,6.8L,3.2L,14.0L,47
+6910,PayPal,Data Engineer,4,21.6L,12.8L,31.0L,44
+6103,Enquero,Data Engineer,1,9.5L,6.2L,15.0L,41
+4869,DataMetica,Data Engineer,0,6.4L,4.0L,10.7L,41
+2846,Ericsson,Data Engineer,2,10.6L,5.3L,17.5L,40
+1308,GE,Data Engineer,3,12.8L,9.6L,16.0L,39
+8734,Target,Data Engineer,0,12.9L,10.0L,17.7L,38
+6343,Brillio,Data Engineer,0,7.7L,4.5L,13.3L,38
+6891,ZS,Data Engineer,1,11.7L,9.0L,16.0L,37
+2537,Hewlett-Packard Enterprise,Data Engineer,2,8.4L,4.5L,18.0L,36
+2809,Reliance jio,Data Engineer,1,8.2L,4.5L,13.0L,35
+5224,Sapient Corporation,Data Engineer,2,13.5L,9.2L,17.0L,34
+8736,Larsen & Toubro Limited,Data Engineer,1,5.8L,4.0L,10.5L,34
+2516,JP Morgan Chase,Data Engineer,4,18.7L,8.0L,29.0L,32
+5049,Societe Generale,Data Engineer,2,16.8L,9.6L,23.0L,31
+3209,Bajaj Finserv,Data Engineer,0,10.9L,8.0L,12.5L,30
+4795,Bharti Airtel,Data Engineer,2,4.0L,3.0L,7.5L,30
+1567,Bank of America,Data Engineer,2,15.1L,8.1L,22.0L,30
+2911,Mphasis,Data Engineer,1,10.1L,4.2L,19.0L,30
+8199,Fragma Data Systems,Data Engineer,0,5.5L,3.5L,11.9L,30
+5796,NTT DATA,Data Engineer,2,10.4L,4.1L,25.0L,29
+7031,PwC,Data Engineer,1,10.0L,5.5L,16.5L,29
+4222,KPMG,Data Engineer,2,12.3L,7.0L,18.0L,28
+7442,UST,Data Engineer,1,9.8L,3.5L,17.0L,27
+6201,Virtusa Consulting Services,Data Engineer,1,9.0L,4.2L,20.0L,27
+2469,DBS Bank,Data Engineer,2,13.6L,9.1L,24.0L,27
+6026,Koch Business Solutions,Data Engineer,4,23.6L,12.0L,34.0L,27
+7134,Lowe's,Data Engineer,1,12.1L,10.0L,14.3L,26
+1593,BA Continuum,Data Engineer,4,16.5L,12.0L,22.8L,26
+1677,Dell,Data Engineer,1,12.8L,5.5L,20.0L,26
+2478,Data Semantics,Data Engineer,3,8.9L,4.5L,15.5L,25
+4168,BlazeClan Technologies,Data Engineer,0,5.5L,3.2L,9.6L,24
+1045,Microsoft Corporation,Data Engineer,3,25.1L,13.0L,40.1L,24
+6418,DataWeave,Data Engineer,1,8.2L,5.5L,12.0L,23
+6158,Celebal Technologies,Data Engineer,0,5.5L,4.5L,10.0L,23
+8377,SpringML,Data Engineer,1,9.7L,5.5L,14.0L,23
+6914,TEKsystems,Data Engineer,1,9.7L,6.0L,18.0L,23
+6104,NatWest Group,Data Engineer,2,20.4L,11.1L,32.0L,23
+4956,Saama Technologies,Data Engineer,2,9.7L,6.0L,14.5L,22
+5474,GE Aviation,Data Engineer,2,12.2L,9.0L,16.0L,22
+8043,Affine Analytics,Data Engineer,0,7.7L,6.0L,12.0L,22
+6322,Wells Fargo India,Data Engineer,3,15.2L,10.1L,22.0L,21
+6759,EXL Service,Data Engineer,2,10.3L,6.0L,14.1L,20
+8459,McKinsey & Company,Data Engineer,2,18.5L,10.0L,25.0L,20
+2298,Cisco Systems,Data Engineer,3,19.3L,12.0L,28.0L,20
+8618,IDFC FIRST Bank,Data Engineer,1,15.4L,8.5L,21.9L,20
+4803,ValueLabs,Data Engineer,1,10.3L,5.0L,23.5L,20
+3443,Paytm,Data Engineer,2,13.9L,5.8L,23.0L,20
+7148,Blackbuck Insights,Data Engineer,0,4.2L,2.5L,8.5L,20
+7078,Lumen Technologies,Data Engineer,1,6.6L,4.5L,9.2L,20
+7409,Micron Technology,Data Engineer,3,12.9L,8.4L,18.0L,20
+7952,GE Healthcare,Data Engineer,3,12.3L,10.0L,17.0L,19
+2176,IQVIA,Data Engineer,2,10.5L,5.5L,15.0L,19
+3333,SG Analytics,Data Engineer,0,7.3L,5.2L,12.0L,19
+7965,Wavicle Data Solutions,Data Engineer,2,5.1L,3.5L,7.2L,19
+8186,Mercedes-Benz Research & Development India,Data Engineer,1,13.1L,7.0L,19.0L,19
+6312,LatentView Analytics,Data Engineer,0,7.2L,5.3L,12.0L,19
+4369,Schlumberger,Data Engineer,2,13.7L,6.5L,22.5L,19
+2757,Adobe,Data Engineer,3,23.7L,14.0L,34.0L,18
+7274,Commonwealth Bank of Australia,Data Engineer,2,19.9L,9.9L,28.8L,18
+4142,NCR Corporation,Data Engineer,1,9.5L,6.2L,13.5L,18
+8181,ITC Infotech India,Data Engineer,1,6.8L,4.1L,13.0L,18
+6615,Novartis Healthcare,Data Engineer,2,15.0L,9.5L,19.5L,18
+4764,Legato Health Technologies,Data Engineer,2,10.8L,8.3L,13.5L,18
+4104,Honeywell Technology Solutions,Data Engineer,0,11.2L,5.0L,26.0L,17
+1687,Hexaware Technologies,Data Engineer,1,11.7L,3.5L,23.5L,17
+8621,Impetus Technologies,Data Engineer,1,13.1L,11.5L,16.0L,17
+5920,Bridgei2i Analytics Solutions,Data Engineer,0,6.7L,5.0L,10.0L,17
+7597,Verizon,Data Engineer,1,10.5L,5.6L,15.5L,16
+8623,Systech Solutions,Data Engineer,0,4.1L,3.3L,4.5L,16
+1809,Ab Inbev,Data Engineer,4,16.5L,8.2L,24.0L,16
+5226,Neal Analytics,Data Engineer,1,10.5L,6.8L,16.0L,16
+8074,TheMathCompany,Data Engineer,2,9.3L,7.0L,13.2L,16
+8440,Atos Syntel,Data Engineer,2,7.3L,3.8L,12.0L,16
+5617,Lumiq.ai,Data Engineer,0,8.1L,6.0L,9.5L,16
+2078,Axis Bank,Data Engineer,0,11.1L,7.7L,14.7L,16
+4409,Google,Data Engineer,3,45.3L,16.5L,93.5L,16
+7858,Maersk Line,Data Engineer,2,12.8L,8.0L,21.0L,15
+5289,AstraZeneca,Data Engineer,1,9.3L,6.8L,13.5L,15
+2629,Amdocs,Data Engineer,0,8.9L,6.1L,13.0L,15
+5215,MasterCard,Data Engineer,0,15.1L,13.0L,18.0L,15
+3322,Morgan Stanley,Data Engineer,3,20.5L,11.0L,26.0L,14
+3308,Tavant Technologies,Data Engineer,1,10.1L,5.8L,20.0L,14
+3842,Flipkart,Data Engineer,2,17.5L,9.5L,25.0L,14
+3417,Michelin,Data Engineer,0,9.8L,7.7L,11.3L,14
+4914,Concentrix Corporation,Data Engineer,1,3.7L,2.6L,4.5L,14
+7726,Siemens,Data Engineer,1,12.9L,6.8L,16.0L,14
+8755,Mu Sigma,Data Engineer,1,8.4L,5.5L,12.0L,13
+2147,Expedia,Data Engineer,4,27.6L,20.0L,40.0L,13
+2567,Decision Point,Data Engineer,0,5.9L,4.8L,7.0L,13
+8059,Adidas,Data Engineer,1,23.0L,14.5L,34.0L,13
+5990,Nokia,Data Engineer,1,10.7L,3.6L,24.5L,13
+5708,Oil Field Instrumentation,Data Engineer,6,6.9L,1.2L,11.1L,13
+5566,Atos,Data Engineer,2,8.5L,3.7L,17.8L,13
+5427,Bitwise Solutions,Data Engineer,0,6.1L,3.8L,9.0L,13
+8208,Ford Motor,Data Engineer,0,10.1L,5.7L,15.9L,13
+4158,Persistent Systems,Data Engineer,1,11.6L,4.2L,20.4L,13
+3401,Indium Software,Data Engineer,0,6.8L,3.6L,11.5L,13
+8353,Citicorp,Data Engineer,2,17.9L,13.5L,20.0L,13
+5406,The Data Team,Data Engineer,1,11.5L,8.5L,15.0L,13
+2086,Cittabase Solutions,Data Engineer,3,7.9L,5.0L,10.3L,13
+3700,NIKE,Data Engineer,3,21.3L,14.1L,29.0L,13
+1105,Kyndryl,Data Engineer,2,12.8L,8.5L,16.0L,13
+2377,Dunnhumby,Data Engineer,1,12.3L,8.7L,18.5L,12
+7558,Advance Auto Parts,Data Engineer,3,13.3L,10.2L,15.5L,12
+1092,Rackspace,Data Engineer,3,16.3L,11.0L,21.6L,12
+3271,Tredence,Data Engineer,2,11.4L,7.0L,16.0L,12
+4433,Expert Global Solutions,Data Engineer,0,2.1L,1.1L,3.1L,12
+2256,Cerner,Data Engineer,2,9.9L,6.0L,14.0L,12
+3995,Searce Cosourcing Services,Data Engineer,1,7.4L,5.0L,12.5L,12
+7725,Eli Lilly and Company,Data Engineer,3,18.4L,16.0L,22.0L,12
+4723,ValueMomentum,Data Engineer,1,10.6L,4.5L,21.3L,12
+4253,InfoStretch,Data Engineer,1,10.5L,4.2L,18.0L,12
+4383,Nagarro,Data Engineer,2,13.1L,7.0L,25.0L,12
+3800,KPI Partners,Data Engineer,1,12.0L,5.0L,22.0L,12
+6560,HSBC,Data Engineer,1,9.7L,6.5L,18.0L,12
+4334,Bosch Global Software Technologies,Data Engineer,1,7.1L,3.8L,14.0L,11
+5251,Axtria,Data Engineer,1,11.4L,7.5L,15.3L,11
+8444,Visa,Data Engineer,1,28.7L,16.5L,37.0L,11
+2213,Happiest Minds Technologies,Data Engineer,0,8.0L,4.0L,14.8L,11
+4178,BYJU'S,Data Engineer,1,9.7L,4.5L,19.5L,11
+4306,Yash Technologies,Data Engineer,0,5.3L,3.2L,8.0L,11
+5751,GE Digital,Data Engineer,4,12.6L,8.3L,18.3L,11
+4373,GSK Pharmaceuticals,Data Engineer,5,23.1L,19.0L,27.0L,11
+3072,Rakuten,Data Engineer,0,13.3L,8.5L,18.5L,11
+8897,InnovAccer,Data Engineer,1,8.2L,5.0L,15.0L,11
+7854,nThrive Global Solutions,Data Engineer,2,11.8L,7.8L,17.6L,11
+7944,AI Touch,Data Engineer,0,2.3L,2.0L,3.0L,11
+8022,Autodesk,Data Engineer,0,26.5L,6.4L,40.0L,11
+6985,Knoema IT Solutions,Data Engineer,0,3.3L,2.0L,4.1L,11
+5736,Ecolab Digital Center,Data Engineer,2,11.5L,8.5L,18.0L,11
+7251,Apple,Data Engineer,3,25.0L,17.0L,35.0L,11
+6029,AVASOFT,Data Engineer,0,4.0L,3.5L,4.9L,10
+8998,i2e Consulting,Data Engineer,2,13.1L,9.0L,16.5L,10
+2834,Birlasoft,Data Engineer,2,11.1L,5.2L,20.1L,10
+5859,EPAM Systems,Data Engineer,4,17.3L,8.8L,24.0L,10
+5390,Xyz Company,Data Engineer,1,12.3L,6.0L,21.0L,10
+2744,Colgate Palmolive,Data Engineer,1,10.7L,6.0L,15.0L,10
+7828,BCG,Data Engineer,2,17.2L,14.5L,19.5L,10
+5835,Apisero,Data Engineer,1,13.5L,8.0L,18.0L,10
+5599,Fidelity Investment,Data Engineer,1,13.3L,11.0L,16.7L,10
+7336,Oracle,Data Engineer,2,14.6L,7.0L,25.0L,10
+2072,Accion Labs,Data Engineer,3,18.1L,8.0L,30.0L,9
+5169,Dun & Bradstreet,Data Engineer,3,11.4L,8.6L,15.4L,9
+6912,Webhelp,Data Engineer,3,10.7L,8.5L,14.0L,9
+5376,Ags Infotech,Data Engineer,2,5.0L,4.4L,5.5L,9
+6069,Synechron,Data Engineer,4,17.3L,12.5L,24.0L,9
+4641,GEP Worldwide,Data Engineer,2,13.0L,10.1L,15.0L,9
+4668,Principal Global Services,Data Engineer,1,10.2L,9.5L,11.1L,9
+3137,Algonomy,Data Engineer,1,7.5L,5.0L,13.6L,9
+5165,Sigmoid Analytics,Data Engineer,1,15.0L,12.8L,18.5L,9
+5935,Vodafone Idea,Data Engineer,1,11.2L,2.1L,18.0L,9
+5048,Clairvoyant India,Data Engineer,2,10.5L,5.0L,17.0L,9
+7774,Aktrix Technologies,Data Engineer,0,4.1L,3.0L,5.5L,9
+6283,ThoughtWorks,Data Engineer,1,15.7L,10.0L,19.4L,9
+8752,DUNNHUMBY IT SERVICES INDIA,Data Engineer,1,11.9L,9.0L,14.9L,9
+8937,Baker Hughes,Data Engineer,3,14.8L,12.0L,16.5L,9
+1144,Denodo Technologies,Data Engineer,0,8.0L,6.0L,10.5L,9
+8625,Hashedin By Deloitte,Data Engineer,2,15.0L,11.1L,19.0L,9
+5240,Red Hat,Data Engineer,2,12.4L,4.5L,17.6L,8
+3833,HDFC Bank,Data Engineer,2,9.0L,6.5L,12.5L,8
+4637,Accenture,Senior Data Scientist,3,18.9L,10.5L,30.5L,80
+6847,TCS,Senior Data Scientist,4,16.7L,8.6L,30.0L,79
+8996,Cognizant,Senior Data Scientist,4,17.9L,12.0L,25.2L,57
+5663,Fractal Analytics,Senior Data Scientist,4,25.6L,18.0L,32.0L,47
+6528,Ab Inbev,Senior Data Scientist,3,28.0L,22.0L,35.0L,44
+1748,Wipro,Senior Data Scientist,4,16.1L,8.0L,30.0L,43
+6043,Deloitte,Senior Data Scientist,5,21.2L,14.0L,35.0L,42
+6193,Walmart,Senior Data Scientist,5,43.0L,30.0L,65.0L,32
+2608,Amazon,Senior Data Scientist,5,41.5L,26.0L,75.0L,30
+3673,UnitedHealth,Senior Data Scientist,4,23.0L,15.6L,30.5L,30
+4333,Ernst & Young,Senior Data Scientist,4,21.4L,15.0L,30.0L,29
+2627,Optum,Senior Data Scientist,5,26.2L,18.0L,36.0L,28
+3051,Impact Analytics,Senior Data Scientist,2,13.4L,9.0L,19.0L,28
+1513,Incedo,Senior Data Scientist,3,18.9L,15.0L,25.0L,26
+5422,IBM,Senior Data Scientist,5,24.4L,14.0L,36.0L,25
+2450,Target,Senior Data Scientist,2,23.8L,15.5L,30.0L,25
+7062,Infosys,Senior Data Scientist,4,18.1L,9.0L,30.0L,25
+5031,TVS Credit Services,Senior Data Scientist,4,14.7L,11.5L,21.0L,24
+6880,Ericsson,Senior Data Scientist,7,30.2L,14.2L,50.6L,22
+4852,Microsoft Corporation,Senior Data Scientist,4,56.4L,30.0L,100.0L,22
+2822,HCL Technologies,Senior Data Scientist,4,19.3L,14.4L,25.0L,22
+1796,Capgemini,Senior Data Scientist,4,16.8L,11.5L,26.0L,22
+4469,Dunnhumby,Senior Data Scientist,3,15.4L,12.0L,22.0L,21
+1406,Birlasoft,Senior Data Scientist,3,14.3L,8.0L,22.3L,20
+2826,Tech Mahindra,Senior Data Scientist,4,16.4L,7.1L,25.0L,20
+5305,Affine Analytics,Senior Data Scientist,1,9.9L,7.6L,16.0L,20
+4608,Wolters Kluwer,Senior Data Scientist,6,23.7L,18.0L,30.0L,19
+1636,Harman Connected Services,Senior Data Scientist,4,16.0L,11.5L,22.0L,19
+4035,L&T Infotech,Senior Data Scientist,2,20.0L,12.3L,28.0L,19
+4536,Reliance jio,Senior Data Scientist,4,30.0L,18.5L,46.0L,18
+7545,Sapient Corporation,Senior Data Scientist,2,21.1L,14.2L,28.5L,18
+4871,Coforge,Senior Data Scientist,4,15.0L,15.0L,15.2L,18
+3769,Lowe's,Senior Data Scientist,4,25.0L,16.0L,33.0L,17
+5206,Blue Yonder,Senior Data Scientist,2,31.6L,18.0L,50.0L,17
+2399,Bosch Global Software Technologies,Senior Data Scientist,2,24.1L,16.1L,30.0L,16
+5977,Nielsen,Senior Data Scientist,2,9.9L,7.9L,13.7L,16
+8313,Oracle,Senior Data Scientist,3,25.2L,20.0L,37.0L,16
+1048,Happiest Minds Technologies,Senior Data Scientist,5,16.4L,9.0L,26.0L,15
+6876,DXC Technology,Senior Data Scientist,7,17.1L,11.0L,25.0L,15
+8746,PayPal,Senior Data Scientist,6,40.7L,30.0L,45.0L,15
+3412,Citibank,Senior Data Scientist,4,22.8L,16.0L,30.0L,15
+3232,Innominds Software,Senior Data Scientist,4,18.6L,13.5L,27.5L,14
+7628,Bajaj Finserv,Senior Data Scientist,1,17.6L,10.0L,27.8L,14
+6757,Honeywell Technology Solutions,Senior Data Scientist,2,18.4L,10.0L,35.0L,14
+8691,eClerx,Senior Data Scientist,2,15.3L,11.0L,21.6L,14
+2056,VMware Software,Senior Data Scientist,2,23.1L,16.0L,36.5L,14
+3305,PwC,Senior Data Scientist,4,21.2L,13.0L,30.0L,14
+3024,EXL Service,Senior Data Scientist,3,19.5L,14.5L,30.0L,13
+6387,Mercedes-Benz Research & Development India,Senior Data Scientist,3,18.0L,10.0L,35.0L,13
+3184,Mindtree,Senior Data Scientist,5,17.8L,9.0L,28.1L,13
+2768,Wells Fargo India,Senior Data Scientist,5,23.1L,14.0L,30.0L,13
+8216,Genpact,Senior Data Scientist,4,24.2L,10.0L,35.0L,12
+7790,Course5,Senior Data Scientist,3,11.7L,9.0L,17.0L,12
+6413,JP Morgan Chase,Senior Data Scientist,5,27.7L,14.0L,51.0L,12
+5608,MasterCard,Senior Data Scientist,2,25.5L,18.2L,36.0L,12
+3133,GE Healthcare,Senior Data Scientist,3,28.0L,24.0L,33.0L,11
+6009,IHS Markit,Senior Data Scientist,5,22.5L,16.0L,29.0L,11
+5677,NIIT Technologies,Senior Data Scientist,2,15.3L,15.0L,16.0L,11
+8520,Gramener,Senior Data Scientist,2,14.4L,10.0L,20.8L,11
+8214,Ford Motor,Senior Data Scientist,4,17.6L,16.4L,19.5L,11
+5154,TheMathCompany,Senior Data Scientist,4,14.8L,12.0L,18.0L,11
+8311,Legato Health Technologies,Senior Data Scientist,4,21.2L,15.6L,26.0L,11
+4278,Dell,Senior Data Scientist,3,23.2L,15.0L,32.0L,11
+7282,Great Learning,Senior Data Scientist,3,12.3L,11.0L,14.0L,11
+1989,Morningstar,Senior Data Scientist,4,19.7L,16.2L,24.6L,10
+8572,Hewlett-Packard Enterprise,Senior Data Scientist,3,20.7L,17.0L,30.0L,10
+7915,Tredence,Senior Data Scientist,3,18.4L,12.4L,26.0L,10
+1971,UST,Senior Data Scientist,3,12.1L,10.3L,16.0L,10
+2856,ValueLabs,Senior Data Scientist,3,21.1L,10.3L,26.5L,10
+8839,Novartis Healthcare,Senior Data Scientist,5,30.5L,16.0L,51.0L,10
+7769,Vodafone Idea,Senior Data Scientist,4,22.7L,13.1L,32.7L,10
+7832,Nagarro,Senior Data Scientist,2,18.0L,14.3L,25.0L,10
+8202,HERE Technologies,Senior Data Scientist,6,27.1L,22.5L,30.0L,9
+1426,Globant,Senior Data Scientist,2,17.8L,13.0L,26.0L,9
+4581,Baker Hughes,Senior Data Scientist,3,27.4L,23.0L,32.0L,9
+7782,Tiger Analytics,Senior Data Scientist,5,22.2L,18.0L,27.5L,9
+6515,Epsilon,Senior Data Scientist,4,23.2L,19.0L,26.0L,8
+7872,AntWorks,Senior Data Scientist,3,20.6L,14.0L,30.0L,8
+5128,Altimetrik,Senior Data Scientist,4,18.3L,12.0L,26.0L,8
+8414,Info Edge,Senior Data Scientist,1,30.9L,21.0L,37.0L,8
+8715,Sigmoid Analytics,Senior Data Scientist,2,22.5L,15.0L,30.0L,8
+4765,Eli Lilly and Company,Senior Data Scientist,4,26.8L,22.5L,32.0L,8
+1857,Lam Research,Senior Data Scientist,3,16.5L,13.9L,20.0L,8
+2400,GE Aviation,Senior Data Scientist,5,22.1L,14.5L,29.0L,8
+5007,Iris Software,Senior Data Scientist,6,23.0L,17.0L,27.0L,8
+1303,Claim Genius,Senior Data Scientist,3,21.4L,18.4L,27.0L,8
+6735,ZS,Senior Data Scientist,1,18.0L,14.5L,24.0L,8
+7619,Mphasis,Senior Data Scientist,2,13.3L,11.0L,15.4L,8
+8261,NielsenIQ,Senior Data Scientist,3,8.7L,8.0L,9.4L,8
+1570,Mu Sigma,Senior Data Scientist,3,14.5L,12.3L,15.0L,7
+6276,BNY Mellon,Senior Data Scientist,1,16.9L,5.2L,25.0L,7
+3583,Yash Technologies,Senior Data Scientist,5,18.4L,12.1L,23.5L,7
+8310,Franklin Templeton Investments,Senior Data Scientist,7,27.3L,22.0L,32.0L,7
+5918,Philips,Senior Data Scientist,5,22.6L,19.0L,25.9L,7
+8828,DBS Bank,Senior Data Scientist,4,20.6L,16.5L,25.0L,7
+5587,International School of Engineering,Senior Data Scientist,9,20.2L,15.0L,25.0L,7
+4169,Johnson Controls,Senior Data Scientist,4,25.1L,18.5L,32.0L,7
+1175,Bajaj Finance,Senior Data Scientist,1,20.0L,16.0L,30.0L,7
+4121,Ganit Business Solutions,Senior Data Scientist,5,18.9L,15.5L,21.5L,7
+2917,Xoriant,Senior Data Scientist,6,18.6L,15.0L,23.5L,7
+1792,o9 Solutions,Senior Data Scientist,4,21.5L,13.5L,28.0L,7
+8525,Verizon,Senior Data Scientist,7,26.7L,11.0L,37.0L,6
+7251,Shell,Senior Data Scientist,6,29.8L,22.0L,35.5L,6
+7877,Zensar Technologies,Senior Data Scientist,4,18.2L,14.0L,22.0L,6
+3689,McKinsey & Company,Senior Data Scientist,6,18.2L,1.0L,31.0L,6
+6252,Apexon,Senior Data Scientist,4,10.3L,9.0L,11.1L,6
+4268,GE,Senior Data Scientist,4,23.1L,16.0L,30.0L,6
+5440,Johnson & Johnson,Senior Data Scientist,5,24.1L,17.0L,35.0L,6
+1127,Cerner,Senior Data Scientist,6,28.9L,23.7L,35.8L,6
+1233,Algonomy,Senior Data Scientist,2,28.3L,23.0L,32.0L,6
+2330,Ecolab Food Safety & Hygiene Solutions,Senior Data Scientist,4,13.9L,11.5L,18.0L,6
+6063,L&T Technology Services,Senior Data Scientist,4,15.2L,9.0L,24.0L,6
+3956,American Express,Senior Data Scientist,3,23.3L,22.0L,25.1L,6
+4716,Yum!,Senior Data Scientist,2,15.3L,11.0L,17.8L,6
+8277,Indium Software,Senior Data Scientist,2,14.5L,8.8L,20.0L,6
+6415,Cummins,Senior Data Scientist,3,23.2L,17.8L,29.9L,6
+5071,Eversana,Senior Data Scientist,4,14.3L,12.0L,17.8L,6
+3850,Paytm,Senior Data Scientist,3,31.6L,27.0L,40.0L,6
+5470,Citicorp,Senior Data Scientist,6,28.3L,21.0L,35.0L,6
+4053,Quantium Analytics,Senior Data Scientist,5,25.0L,24.0L,27.0L,6
+1323,MKS Vision,Senior Data Scientist,7,18.1L,15.0L,22.0L,6
+7743,Oyo Rooms,Senior Data Scientist,3,31.0L,20.0L,42.0L,5
+1930,Yodlee,Senior Data Scientist,2,32.1L,27.0L,36.0L,5
+6013,CitiusTech,Senior Data Scientist,7,17.8L,15.0L,19.5L,5
+6927,SAP,Senior Data Scientist,7,36.6L,17.2L,51.0L,5
+5030,Teleperformance,Senior Data Scientist,3,16.2L,10.0L,20.0L,5
+2427,V2 Solutions,Senior Data Scientist,2,8.5L,8.5L,8.6L,5
+8211,Dun & Bradstreet,Senior Data Scientist,2,11.9L,9.5L,13.5L,5
+7934,Nvidia,Senior Data Scientist,2,21.3L,10.0L,28.0L,5
+5531,AlgoAnalytics Financial Consultancy,Senior Data Scientist,3,18.9L,16.5L,20.7L,5
+8873,Reliance Industries,Senior Data Scientist,5,10.0L,9.0L,11.0L,5
+3536,Scienaptic Systems,Senior Data Scientist,6,19.7L,15.0L,23.5L,5
+8710,Freelance Consultants,Senior Data Scientist,7,31.7L,18.6L,42.0L,5
+1576,Decision Point,Senior Data Scientist,3,22.4L,19.0L,25.0L,5
+7203,IDFC FIRST Bank,Senior Data Scientist,4,20.8L,14.0L,26.0L,5
+8637,Thomson Reuters,Senior Data Scientist,4,18.4L,10.0L,27.5L,5
+6054,Synechron,Senior Data Scientist,3,12.0L,9.5L,16.0L,5
+5117,Akamai Technologies,Senior Data Scientist,4,27.3L,22.5L,34.0L,5
+2993,Quest Global,Senior Data Scientist,4,22.8L,14.0L,41.0L,5
+7783,GEP Worldwide,Senior Data Scientist,6,24.4L,22.0L,32.0L,5
+7361,Hinduja Global Solutions,Senior Data Scientist,3,15.6L,4.0L,24.7L,5
+7586,ACL Digital,Senior Data Scientist,3,18.8L,10.7L,25.0L,5
+7673,Innova Solutions,Senior Data Scientist,4,39.7L,6.0L,97.0L,5
+8988,Automatic Data Processing,Senior Data Scientist,9,34.4L,27.0L,39.4L,5
+3559,Brillio,Senior Data Scientist,4,21.2L,12.0L,34.0L,5
+8533,Boeing,Senior Data Scientist,8,27.6L,25.2L,30.0L,5
+3530,Flipkart,Senior Data Scientist,5,82.0L,55.0L,100.0L,5
+7995,ITC Infotech India,Senior Data Scientist,3,14.9L,12.0L,18.5L,5
+7241,Decision Minds,Senior Data Scientist,5,19.0L,13.0L,22.4L,5
+8716,Neal Analytics,Senior Data Scientist,4,23.6L,21.0L,29.0L,5
+1258,HALODOC,Senior Data Scientist,2,27.4L,18.0L,38.0L,5
+7097,Samsung Research,Senior Data Scientist,2,31.7L,20.5L,40.0L,5
+6705,Neewee Analytics,Senior Data Scientist,3,14.9L,12.1L,21.5L,5
+1953,Subex,Senior Data Scientist,4,25.2L,11.8L,37.0L,5
+6860,BCG,Senior Data Scientist,3,20.2L,19.8L,21.5L,5
+8110,Hitachi Vantara,Senior Data Scientist,7,24.6L,18.7L,35.0L,5
+5292,ZF Group,Senior Data Scientist,2,16.8L,14.5L,20.3L,5
+1651,DUNNHUMBY IT SERVICES INDIA,Senior Data Scientist,2,12.3L,11.0L,15.0L,5
+7071,Decimal Point Analytics,Senior Data Scientist,2,20.2L,12.2L,24.0L,5
+5831,Koch Business Solutions,Senior Data Scientist,4,39.6L,23.0L,51.0L,5
+8995,Noodle.Ai,Senior Data Scientist,2,21.7L,18.0L,26.0L,5
+2410,Publicis,Senior Data Scientist,5,18.0L,15.0L,28.0L,5
+3485,Ecolab Digital Center,Senior Data Scientist,4,22.7L,19.3L,26.1L,5
+6779,PepsiCo,Senior Data Scientist,8,29.5L,19.0L,39.5L,5
+8055,TEKsystems,Senior Data Scientist,3,18.2L,9.0L,23.0L,5
+6706,Chubb Group,Senior Data Scientist,4,16.6L,13.5L,21.0L,5
+4224,Amnet Digital,Senior Data Scientist,2,11.8L,1.0L,18.0L,5
+7913,Blend360,Senior Data Scientist,5,30.4L,26.3L,35.0L,5
+2607,Kyndryl,Senior Data Scientist,3,44.4L,11.6L,93.0L,5
+6579,HSBC,Senior Data Scientist,0,24.6L,22.0L,28.0L,5
+6967,Chegg,Senior Data Scientist,3,32.2L,29.9L,35.0L,5
+1872,First Source,Senior Data Scientist,10,29.0L,28.0L,30.0L,4
+5957,Caterpillar Inc,Senior Data Scientist,9,22.8L,20.3L,24.0L,4
+2963,Pitney Bowes,Senior Data Scientist,3,17.5L,14.1L,22.0L,4
+5691,MSCI,Senior Data Scientist,6,38.4L,35.4L,42.0L,4
+7698,Accolite Digital,Senior Data Scientist,2,12.8L,11.0L,14.0L,4
+1187,Adobe,Senior Data Scientist,8,40.0L,30.0L,50.0L,4
+5430,Omega Healthcare,Senior Data Scientist,7,14.1L,10.8L,15.8L,4
+4444,Western Union,Senior Data Scientist,4,22.2L,20.0L,25.0L,4
+3757,HDFC Bank,Senior Data Scientist,6,25.1L,15.2L,33.0L,4
+5615,Tata Motors,Senior Data Scientist,4,11.5L,5.8L,14.0L,4
+1099,EdgeVerve Systems,Senior Data Scientist,5,20.4L,12.0L,27.5L,4
+3183,Aditya Birla Group,Senior Data Scientist,7,28.0L,26.0L,30.0L,4
+1012,Commonwealth Bank of Australia,Senior Data Scientist,4,31.8L,27.0L,35.0L,4
+7529,Swiss Re,Senior Data Scientist,5,26.9L,11.9L,34.5L,4
+3314,TCS,Senior Business Analyst,3,7.7L,3.5L,14.0L,1100
+5537,Accenture,Senior Business Analyst,3,10.3L,5.5L,15.4L,1100
+5680,Evalueserve,Senior Business Analyst,2,9.8L,7.1L,13.8L,1000
+2340,Cognizant,Senior Business Analyst,2,13.9L,9.0L,18.7L,616
+3264,HCL Technologies,Senior Business Analyst,4,11.9L,6.4L,18.5L,384
+7302,Tech Mahindra,Senior Business Analyst,4,9.9L,5.5L,16.5L,382
+4176,EXL Service,Senior Business Analyst,2,8.8L,6.2L,12.0L,308
+8782,Wipro,Senior Business Analyst,4,12.8L,6.1L,22.0L,280
+4282,Fidelity National Information Services,Senior Business Analyst,4,15.0L,6.5L,22.0L,267
+8284,Cgi Group,Senior Business Analyst,5,10.7L,7.2L,15.0L,225
+4066,L&T Infotech,Senior Business Analyst,3,11.7L,7.0L,17.3L,223
+5476,HSBC,Senior Business Analyst,6,17.1L,9.2L,24.0L,219
+3490,Capgemini,Senior Business Analyst,2,11.6L,4.5L,20.0L,213
+6916,Newgen Software Technologies,Senior Business Analyst,3,11.1L,9.0L,14.4L,170
+5322,IBM,Senior Business Analyst,3,12.4L,5.1L,22.0L,158
+2591,Quantiphi Analytics Solutions,Senior Business Analyst,2,15.0L,11.3L,19.0L,152
+4115,Tredence,Senior Business Analyst,2,11.2L,9.0L,14.0L,150
+6000,Conduent,Senior Business Analyst,4,8.8L,6.0L,13.0L,146
+3354,Temenos,Senior Business Analyst,5,13.2L,9.5L,17.1L,145
+6839,Amadeus,Senior Business Analyst,4,14.8L,12.0L,18.5L,128
+7669,Infosys,Senior Business Analyst,4,12.9L,7.0L,21.0L,128
+8148,American Express,Senior Business Analyst,2,9.2L,5.0L,18.5L,118
+2355,Deloitte,Senior Business Analyst,3,11.5L,6.8L,20.0L,118
+5271,DXC Technology,Senior Business Analyst,5,12.0L,7.0L,19.0L,117
+2420,Ernst & Young,Senior Business Analyst,3,14.1L,6.3L,22.7L,110
+1879,Exl India,Senior Business Analyst,1,9.0L,6.8L,12.0L,109
+2579,bnp paribas india solutions,Senior Business Analyst,6,14.6L,8.6L,21.0L,94
+5015,VMware Software,Senior Business Analyst,6,18.5L,11.7L,24.8L,92
+4510,Zensar Technologies,Senior Business Analyst,5,12.1L,7.5L,19.5L,91
+1740,Ramco Systems,Senior Business Analyst,3,12.7L,8.7L,18.0L,90
+3672,Dell,Senior Business Analyst,2,11.6L,8.5L,15.5L,84
+2044,JP Morgan Chase,Senior Business Analyst,4,12.3L,5.1L,23.0L,84
+4426,UnitedHealth,Senior Business Analyst,3,12.5L,7.0L,19.2L,83
+6237,BNP Paribas,Senior Business Analyst,6,15.8L,9.5L,24.0L,82
+8896,NTT DATA,Senior Business Analyst,4,10.9L,6.1L,19.0L,80
+5686,Flipkart,Senior Business Analyst,3,20.4L,14.0L,27.5L,79
+8628,Oracle,Senior Business Analyst,4,10.2L,5.1L,22.0L,79
+8681,Merkle Sokrati,Senior Business Analyst,1,7.0L,6.2L,8.4L,76
+7222,Societe Generale,Senior Business Analyst,5,15.2L,7.1L,22.5L,74
+3712,NatWest Group,Senior Business Analyst,3,11.1L,4.3L,23.2L,71
+5392,Allianz Technology,Senior Business Analyst,5,11.9L,8.0L,16.0L,69
+6869,Hexaware Technologies,Senior Business Analyst,4,9.7L,4.0L,19.0L,68
+5065,Amazon,Senior Business Analyst,3,20.1L,4.5L,30.0L,67
+4438,EPAM Systems,Senior Business Analyst,7,21.9L,17.0L,25.5L,64
+7547,Deutsche Bank,Senior Business Analyst,4,7.2L,5.0L,12.5L,64
+5261,BNY Mellon,Senior Business Analyst,4,8.7L,5.1L,15.0L,63
+7279,Legato Health Technologies,Senior Business Analyst,5,14.6L,9.4L,20.0L,63
+8217,Iris Software,Senior Business Analyst,7,20.5L,15.5L,27.0L,63
+8704,NetCracker,Senior Business Analyst,10,28.0L,21.0L,36.0L,62
+7026,Globant,Senior Business Analyst,5,16.7L,12.7L,20.8L,62
+6295,Genpact,Senior Business Analyst,3,8.0L,4.1L,16.4L,62
+6209,Broadridge Financial Solutions,Senior Business Analyst,3,10.8L,7.2L,16.0L,62
+6702,Credit Suisse,Senior Business Analyst,4,16.3L,10.0L,23.4L,62
+1245,Tiger Analytics,Senior Business Analyst,2,13.8L,11.5L,15.0L,61
+4222,Novartis Healthcare,Senior Business Analyst,3,13.0L,9.5L,18.0L,58
+6565,Standard Chartered Bank,Senior Business Analyst,3,15.0L,4.1L,30.0L,56
+5672,Wells Fargo India,Senior Business Analyst,5,15.5L,8.5L,23.6L,55
+8626,Shell,Senior Business Analyst,7,25.6L,15.5L,35.2L,53
+4665,Synechron,Senior Business Analyst,6,17.6L,9.8L,25.0L,53
+5949,GEP Worldwide,Senior Business Analyst,2,10.3L,6.8L,12.3L,52
+2936,3i Infotech,Senior Business Analyst,4,10.8L,6.9L,16.1L,51
+3550,ValueMomentum,Senior Business Analyst,4,12.0L,8.5L,18.5L,50
+1297,Mphasis,Senior Business Analyst,3,12.6L,4.2L,20.0L,50
+5028,Capita,Senior Business Analyst,5,12.6L,7.0L,17.0L,49
+6966,UST,Senior Business Analyst,5,13.4L,9.0L,20.0L,49
+5855,Citicorp,Senior Business Analyst,3,15.7L,6.0L,25.0L,49
+8478,Optum,Senior Business Analyst,4,13.3L,5.5L,19.8L,47
+2785,Barclays,Senior Business Analyst,3,14.2L,7.1L,22.7L,47
+4269,IQVIA,Senior Business Analyst,5,17.7L,11.3L,26.5L,47
+1209,Epsilon,Senior Business Analyst,5,14.5L,10.0L,18.2L,46
+4031,Etech Global Services,Senior Business Analyst,3,9.2L,7.0L,12.1L,46
+2872,Sapiens,Senior Business Analyst,5,18.0L,13.8L,22.7L,44
+8625,Concentrix Corporation,Senior Business Analyst,2,3.7L,2.7L,6.2L,43
+4805,IBS Software Services,Senior Business Analyst,2,6.2L,4.3L,8.3L,42
+5531,Hewlett-Packard Enterprise,Senior Business Analyst,3,7.9L,3.6L,16.0L,42
+7625,WNS,Senior Business Analyst,2,6.5L,3.0L,13.6L,42
+3384,eClerx,Senior Business Analyst,2,4.2L,3.2L,6.0L,42
+3526,Citibank,Senior Business Analyst,3,19.5L,8.2L,25.5L,42
+1317,Odessa,Senior Business Analyst,3,16.2L,12.3L,24.0L,41
+7098,Fidelity International,Senior Business Analyst,5,15.9L,13.5L,19.0L,40
+5556,Ameriprise Financial,Senior Business Analyst,4,9.6L,6.2L,16.3L,40
+2399,Tsys Card Tech Services,Senior Business Analyst,6,15.7L,12.5L,18.9L,40
+5975,Merilytics,Senior Business Analyst,0,7.8L,6.5L,9.5L,40
+7350,Barclays Global Service Centre,Senior Business Analyst,3,12.5L,5.0L,22.9L,40
+5270,Unisys,Senior Business Analyst,5,12.7L,8.0L,17.3L,39
+2018,Photon Interactive,Senior Business Analyst,4,9.9L,6.3L,15.0L,38
+7004,Tata Technologies,Senior Business Analyst,4,8.7L,6.2L,14.0L,37
+8937,Virtusa Consulting Services,Senior Business Analyst,5,15.8L,11.0L,22.5L,36
+4665,Xceedance,Senior Business Analyst,5,13.4L,9.5L,18.6L,36
+8147,Uber,Senior Business Analyst,2,13.4L,10.0L,19.0L,36
+6091,CitiusTech,Senior Business Analyst,4,14.4L,9.5L,18.0L,35
+2314,MetLife,Senior Business Analyst,0,6.0L,4.0L,9.3L,35
+5942,eMids Technologies,Senior Business Analyst,5,15.3L,10.0L,21.0L,35
+4161,Standard Chartered Global Business Services,Senior Business Analyst,7,18.4L,11.0L,29.9L,35
+3593,D Cube Analytics,Senior Business Analyst,2,11.7L,9.2L,14.0L,35
+1187,Novo Nordisk,Senior Business Analyst,6,15.7L,10.3L,21.0L,34
+1860,Affine Analytics,Senior Business Analyst,1,10.0L,8.0L,13.6L,34
+7981,Altisource,Senior Business Analyst,4,8.5L,5.2L,15.0L,33
+4330,Mu Sigma,Senior Business Analyst,1,8.6L,6.3L,13.0L,32
+8053,Meesho,Senior Business Analyst,2,19.3L,16.0L,23.0L,32
+8227,Gartner,Senior Business Analyst,2,18.7L,12.5L,24.0L,32
+4919,LearningMate Solutions,Senior Business Analyst,3,10.5L,6.4L,14.0L,31
+8784,R1 RCM,Senior Business Analyst,2,4.3L,3.5L,5.9L,31
+1596,Sopra Steria,Senior Business Analyst,3,14.6L,10.0L,18.5L,31
+2028,Fiserv,Senior Business Analyst,8,18.0L,11.0L,29.8L,31
+1514,Harman Connected Services,Senior Business Analyst,3,12.3L,6.6L,20.0L,31
+4027,Principal Global Services,Senior Business Analyst,4,13.3L,5.8L,17.5L,31
+6835,Danske IT,Senior Business Analyst,7,18.7L,14.3L,24.1L,31
+5675,Amdocs,Senior Business Analyst,6,17.6L,11.1L,24.9L,31
+8110,Allscripts,Senior Business Analyst,5,13.9L,11.0L,17.7L,30
+7386,Collabera Technologies,Senior Business Analyst,4,11.7L,8.0L,20.0L,30
+7112,Swiggy,Senior Business Analyst,2,18.4L,13.8L,22.0L,30
+8914,Birlasoft,Senior Business Analyst,3,9.8L,6.0L,19.0L,29
+1333,ValueLabs,Senior Business Analyst,6,14.9L,10.0L,20.0L,29
+6451,Orange Business Services,Senior Business Analyst,5,12.8L,7.0L,20.0L,28
+1417,Maersk,Senior Business Analyst,6,10.9L,5.0L,23.0L,28
+7979,Gartner India Research and Advisory Services,Senior Business Analyst,3,20.4L,13.8L,26.0L,28
+1282,First Source,Senior Business Analyst,2,5.1L,3.4L,6.6L,27
+3226,Barclays Shared Services,Senior Business Analyst,2,7.1L,4.0L,14.0L,27
+3033,ICICI Bank,Senior Business Analyst,5,12.3L,5.3L,21.0L,27
+4774,CES,Senior Business Analyst,5,7.4L,5.2L,9.5L,27
+2098,Mercer,Senior Business Analyst,2,5.5L,2.8L,17.0L,27
+8736,NatWest Markets,Senior Business Analyst,5,13.4L,5.0L,22.0L,27
+8335,Xoriant,Senior Business Analyst,6,17.5L,11.5L,21.7L,27
+5735,PwC,Senior Business Analyst,4,12.6L,6.0L,22.0L,27
+6311,Statestreet HCL Services,Senior Business Analyst,1,3.0L,2.4L,3.6L,27
+3786,First American Corporation,Senior Business Analyst,5,13.4L,5.9L,18.5L,26
+3274,MindGate Solutions,Senior Business Analyst,5,12.5L,8.0L,18.0L,26
+2422,Mindtree,Senior Business Analyst,4,16.9L,12.0L,22.0L,25
+1590,TEKsystems,Senior Business Analyst,5,15.6L,11.7L,20.5L,25
+5347,Decision Point,Senior Business Analyst,1,11.8L,10.0L,16.0L,24
+5252,Thomson Reuters,Senior Business Analyst,4,11.7L,5.0L,19.5L,24
+2685,Eurofins It Solutions,Senior Business Analyst,7,22.0L,16.0L,24.8L,24
+4404,Capco Technologies,Senior Business Analyst,7,18.2L,15.0L,20.2L,24
+8792,Hsbc Technology,Senior Business Analyst,6,18.7L,13.0L,25.0L,24
+2962,S&P Global,Senior Business Analyst,5,13.7L,9.0L,20.0L,24
+5537,General Mills,Senior Business Analyst,4,13.4L,11.0L,16.0L,23
+5757,Intellect Design Arena,Senior Business Analyst,6,17.2L,11.7L,22.5L,23
+4924,Dell EMC,Senior Business Analyst,3,10.5L,8.5L,13.0L,23
+5818,Ebix Software India,Senior Business Analyst,4,9.8L,6.5L,13.5L,23
+3649,Northern Trust Operating Services,Senior Business Analyst,3,6.2L,4.9L,9.5L,23
+4989,IVY Comptech,Senior Business Analyst,7,20.7L,16.2L,25.0L,23
+1799,Atos Syntel,Senior Business Analyst,6,13.8L,7.0L,22.8L,23
+6750,Provana,Senior Business Analyst,1,7.9L,5.5L,11.5L,23
+5492,Coforge,Senior Business Analyst,6,17.1L,11.2L,23.0L,23
+5608,HDFC Bank,Senior Business Analyst,4,13.2L,7.1L,20.0L,22
+5791,Commonwealth Bank of Australia,Senior Business Analyst,5,28.3L,21.0L,38.0L,22
+5759,Volante Technologies,Senior Business Analyst,9,22.3L,15.0L,28.0L,22
+4916,Hinduja Global Solutions,Senior Business Analyst,2,3.3L,2.4L,4.3L,22
+2169,Tavant Technologies,Senior Business Analyst,3,10.0L,8.0L,14.0L,22
+3261,Jocata Financial Advisory and Technology,Senior Business Analyst,6,14.3L,9.0L,23.0L,22
+4122,Persistent Systems,Senior Business Analyst,7,22.5L,15.0L,30.5L,22
+4421,Axis Bank,Senior Business Analyst,3,14.4L,9.3L,22.0L,22
+2329,Sabre,Senior Business Analyst,6,20.1L,13.8L,28.0L,22
+2905,MResult Services,Senior Business Analyst,4,8.2L,5.5L,12.0L,21
+3244,Franklin Templeton Investments,Senior Business Analyst,5,12.1L,6.8L,17.1L,21
+4133,Allsec Technologies,Senior Business Analyst,3,6.1L,5.2L,7.5L,21
+4626,MSC Technology India,Senior Business Analyst,3,6.7L,4.9L,8.7L,21
+8416,Sopra Banking Software,Senior Business Analyst,6,16.3L,10.2L,25.0L,21
+5397,Colgate Global Business Services,Senior Business Analyst,7,15.2L,13.2L,17.5L,21
+3523,Azentio,Senior Business Analyst,3,13.4L,9.5L,17.0L,21
+7533,Mastek,Senior Business Analyst,7,13.6L,9.7L,17.5L,20
+3325,Springer Nature,Senior Business Analyst,6,17.0L,13.0L,21.9L,20
+7848,Honeywell Technology Solutions,Senior Business Analyst,5,15.9L,10.0L,23.8L,20
+5543,Thryve Digital,Senior Business Analyst,5,10.0L,7.1L,14.0L,20
+6254,UBS,Senior Business Analyst,7,22.9L,10.8L,33.0L,20
+1616,Zomato,Senior Business Analyst,2,15.7L,10.0L,22.0L,20
+5932,Cybage,Senior Business Analyst,8,18.0L,15.5L,23.0L,20
+4379,Larsen & Toubro Limited,Senior Business Analyst,4,11.3L,8.5L,14.5L,20
+5971,Royal Bank of Scotland International,Senior Business Analyst,3,5.7L,4.1L,10.5L,19
+5097,Indegene,Senior Business Analyst,2,14.0L,10.2L,21.0L,19
+5650,Accion Labs,Senior Business Analyst,7,17.5L,11.0L,25.2L,19
+2257,Infor Global Solution,Senior Business Analyst,6,16.8L,13.5L,20.0L,19
+8565,Cygnet Infotech,Senior Business Analyst,4,8.6L,5.5L,11.0L,19
+8572,Oracle Financial Services Software,Senior Business Analyst,6,14.2L,8.4L,24.1L,19
+6917,ThoughtWorks,Senior Business Analyst,5,20.2L,15.8L,25.0L,19
+1278,Citigroup,Senior Business Analyst,3,15.6L,9.2L,21.1L,19
+2849,Unacademy,Senior Business Analyst,0,13.0L,4.0L,25.0L,18
+5592,State Street Corporation,Senior Business Analyst,2,10.7L,3.5L,22.0L,18
+7436,HCL Infosystems,Senior Business Analyst,3,9.0L,3.4L,15.0L,18
+6983,Ocwen Financial Solutions,Senior Business Analyst,4,9.9L,5.9L,13.3L,18
+7170,Vedantu,Senior Business Analyst,2,16.9L,6.6L,21.0L,18
+5884,Infinite Computer Solutions,Senior Business Analyst,4,9.3L,6.0L,13.0L,17
+3977,Clover Infotech,Senior Business Analyst,3,9.1L,6.5L,12.5L,17
+1557,BYJU'S,Senior Business Analyst,0,9.4L,6.0L,17.0L,17
+7265,Majesco,Senior Business Analyst,5,13.6L,9.0L,18.0L,17
+5991,R Systems International,Senior Business Analyst,6,14.8L,9.9L,20.0L,17
+8501,Accenture,Senior Data Analyst,3,9.9L,6.5L,14.6L,213
+6459,Capgemini,Senior Data Analyst,1,4.7L,3.8L,7.1L,129
+3846,TCS,Senior Data Analyst,3,6.0L,2.9L,11.2L,118
+1105,Unilog Content Solutions ( P),Senior Data Analyst,3,3.2L,2.8L,3.8L,110
+7697,Cognizant,Senior Data Analyst,2,6.2L,3.0L,15.2L,109
+4343,eClerx,Senior Data Analyst,1,4.3L,3.0L,7.2L,90
+3967,Concentrix Corporation,Senior Data Analyst,2,4.6L,3.1L,7.5L,85
+1680,Ernst & Young,Senior Data Analyst,3,9.5L,6.0L,15.3L,71
+8717,Flipkart,Senior Data Analyst,3,11.8L,6.0L,17.6L,66
+7328,Wipro,Senior Data Analyst,2,7.1L,3.0L,11.7L,54
+6097,Tech Mahindra,Senior Data Analyst,2,7.1L,4.0L,13.0L,53
+5640,HCL Technologies,Senior Data Analyst,2,6.2L,3.0L,10.0L,53
+1220,Ugam Solution,Senior Data Analyst,2,6.5L,3.5L,10.5L,52
+6880,Cerner,Senior Data Analyst,2,6.1L,3.0L,15.4L,52
+4824,Optum,Senior Data Analyst,5,16.2L,11.0L,21.5L,51
+6901,InnovAccer,Senior Data Analyst,2,15.2L,9.3L,22.0L,50
+2968,GlobalLogic,Senior Data Analyst,2,3.5L,2.5L,5.0L,46
+4671,Infosys,Senior Data Analyst,3,9.9L,5.3L,15.0L,45
+5317,Tiger Analytics,Senior Data Analyst,1,11.3L,9.0L,15.0L,45
+1637,UnitedHealth,Senior Data Analyst,5,17.2L,8.0L,26.0L,44
+2806,IBM,Senior Data Analyst,3,11.1L,6.3L,19.0L,43
+4559,Cyient,Senior Data Analyst,4,3.6L,2.5L,5.3L,43
+4699,Urjanet Energy Solutions,Senior Data Analyst,2,3.8L,3.1L,5.0L,42
+4171,Deloitte,Senior Data Analyst,3,10.2L,6.2L,14.9L,39
+5714,Epsilon,Senior Data Analyst,4,17.4L,10.0L,24.5L,38
+7137,Morningstar,Senior Data Analyst,2,5.0L,3.8L,6.3L,37
+5732,BCG,Senior Data Analyst,5,19.7L,16.0L,24.0L,36
+8414,Dell,Senior Data Analyst,3,11.7L,9.0L,18.0L,33
+7115,Walmart,Senior Data Analyst,4,29.0L,16.5L,40.0L,32
+2005,Course5,Senior Data Analyst,3,7.4L,5.1L,12.9L,29
+1024,IHS Markit,Senior Data Analyst,4,11.1L,6.1L,18.5L,28
+5862,Bharti Airtel,Senior Data Analyst,3,16.6L,5.9L,22.0L,28
+3606,L&T Infotech,Senior Data Analyst,3,12.2L,7.3L,19.0L,28
+7888,Wells Fargo India,Senior Data Analyst,3,13.7L,7.8L,23.0L,28
+5172,Axa XL,Senior Data Analyst,2,9.9L,6.1L,15.0L,28
+1063,Zen3 Info Solutions,Senior Data Analyst,3,4.3L,3.4L,5.5L,27
+5443,Honeywell Technology Solutions,Senior Data Analyst,4,14.6L,6.0L,22.0L,26
+4401,LiquidHub,Senior Data Analyst,2,3.5L,2.5L,4.8L,25
+2190,Proziod Analytics,Senior Data Analyst,3,4.9L,3.6L,6.3L,25
+4858,LatentView Analytics,Senior Data Analyst,2,10.8L,9.2L,12.5L,25
+6950,The Smart Cube,Senior Data Analyst,1,9.6L,7.0L,12.0L,23
+6552,Indium Software,Senior Data Analyst,3,14.4L,10.0L,20.0L,23
+3317,Citicorp,Senior Data Analyst,2,16.1L,11.5L,20.9L,23
+8970,Harman Connected Services,Senior Data Analyst,4,10.0L,6.0L,19.0L,22
+8306,Toluna,Senior Data Analyst,3,7.1L,5.4L,9.0L,22
+5415,FE fundinfo,Senior Data Analyst,2,4.8L,4.0L,5.4L,21
+3379,McKinsey & Company,Senior Data Analyst,3,20.7L,12.9L,27.2L,20
+4641,Amazon,Senior Data Analyst,2,8.6L,3.9L,25.5L,19
+1081,Ford Motor,Senior Data Analyst,2,15.0L,11.6L,18.9L,19
+2153,Subex,Senior Data Analyst,1,8.0L,5.5L,11.0L,19
+3447,Mindtree,Senior Data Analyst,2,8.0L,6.0L,12.6L,19
+2787,S&P Global,Senior Data Analyst,3,8.0L,5.7L,11.0L,19
+4479,EXL Service,Senior Data Analyst,2,7.6L,4.0L,12.0L,18
+4358,DXC Technology,Senior Data Analyst,5,14.0L,6.9L,20.0L,18
+8492,R1 RCM,Senior Data Analyst,3,5.4L,3.9L,6.9L,18
+4027,KPMG,Senior Data Analyst,1,8.0L,4.2L,11.8L,18
+2961,Zensar Technologies,Senior Data Analyst,4,6.3L,4.0L,10.6L,17
+6135,Schneider Electric,Senior Data Analyst,2,9.6L,6.0L,17.0L,17
+1093,WNS,Senior Data Analyst,2,6.1L,4.0L,8.0L,17
+1411,Genpact,Senior Data Analyst,3,6.2L,4.3L,11.0L,17
+2218,NTT DATA,Senior Data Analyst,2,7.2L,4.0L,11.5L,17
+2895,Ganit Business Solutions,Senior Data Analyst,0,7.4L,5.2L,10.5L,17
+6411,HSBC,Senior Data Analyst,2,11.9L,7.1L,16.0L,17
+2308,Synchrony,Senior Data Analyst,2,7.5L,5.0L,12.5L,16
+1297,Kantar,Senior Data Analyst,2,6.0L,4.5L,8.4L,16
+3421,Unire Business Solutions,Senior Data Analyst,0,1.9L,1.4L,2.5L,16
+4208,JP Morgan Chase,Senior Data Analyst,3,12.8L,7.4L,18.0L,16
+3301,Dynata,Senior Data Analyst,4,8.8L,7.5L,10.3L,16
+8877,PwC,Senior Data Analyst,3,11.1L,5.8L,20.0L,16
+8777,Indegene,Senior Data Analyst,2,15.6L,11.4L,20.5L,15
+3852,Lowe's,Senior Data Analyst,1,17.4L,10.4L,20.0L,15
+2247,Ameriprise Financial,Senior Data Analyst,3,14.2L,10.0L,18.1L,15
+8570,Barclays,Senior Data Analyst,3,13.8L,9.0L,19.4L,15
+2476,Continental Automotive Components,Senior Data Analyst,2,2.9L,2.5L,3.5L,15
+7033,Johnson & Johnson,Senior Data Analyst,4,12.0L,5.8L,20.0L,15
+4336,JLL,Senior Data Analyst,3,6.3L,4.5L,13.0L,15
+3427,Paytm,Senior Data Analyst,3,7.6L,5.0L,11.0L,15
+4910,Oracle,Senior Data Analyst,3,7.7L,4.2L,15.0L,15
+7892,HERE Technologies,Senior Data Analyst,4,5.1L,4.5L,6.5L,14
+6583,CAMP Systems,Senior Data Analyst,4,5.1L,3.8L,6.2L,14
+5259,Ericsson,Senior Data Analyst,2,8.9L,5.0L,13.0L,14
+5472,Novartis Healthcare,Senior Data Analyst,2,12.8L,6.0L,19.0L,14
+2329,E2OPEN,Senior Data Analyst,5,6.1L,4.9L,8.3L,14
+8387,Bank of America,Senior Data Analyst,5,19.2L,11.7L,26.0L,14
+6131,Nielsen,Senior Data Analyst,2,5.9L,3.1L,9.5L,14
+2089,VASTA BIO-INFORMATICS,Senior Data Analyst,1,3.6L,3.3L,4.3L,14
+4580,VeeTechnologies,Senior Data Analyst,2,3.0L,2.0L,4.0L,14
+7439,Nailbiter Research,Senior Data Analyst,0,4.7L,4.2L,5.2L,14
+5055,Hewlett-Packard Enterprise,Senior Data Analyst,3,8.8L,5.0L,17.7L,13
+6547,S&P Global Market Intelligence,Senior Data Analyst,5,6.9L,4.9L,9.5L,13
+6894,MakeMyTrip,Senior Data Analyst,4,7.5L,6.0L,9.0L,12
+2874,Advantmed,Senior Data Analyst,3,7.1L,4.0L,12.0L,12
+7732,Sutherland Global Services,Senior Data Analyst,2,6.6L,5.0L,8.5L,12
+3909,Citibank,Senior Data Analyst,2,17.4L,16.0L,19.5L,12
+8266,Mercer,Senior Data Analyst,1,4.6L,3.0L,6.5L,12
+2127,American Express,Senior Data Analyst,2,14.7L,6.1L,25.0L,12
+3740,Shadowfax Technologies,Senior Data Analyst,0,7.7L,6.3L,10.0L,11
+5129,Resilinc,Senior Data Analyst,4,5.8L,5.0L,7.0L,11
+2873,Bluemind Solutions,Senior Data Analyst,4,3.1L,2.8L,3.5L,11
+8466,Denave,Senior Data Analyst,2,6.7L,3.5L,9.8L,11
+8702,Cross-tab Marketing Services,Senior Data Analyst,0,5.0L,3.5L,7.0L,11
+3783,Wissend,Senior Data Analyst,0,1.9L,1.4L,2.2L,11
+1165,Infosys BPM,Senior Data Analyst,2,8.9L,3.8L,17.0L,11
+5574,Adobe,Senior Data Analyst,5,14.5L,9.8L,20.0L,10
+3044,BNY Mellon,Senior Data Analyst,3,10.4L,4.9L,13.5L,10
+3959,Shell,Senior Data Analyst,4,12.4L,7.9L,20.0L,10
+8834,Target,Senior Data Analyst,2,13.7L,9.9L,18.0L,10
+4600,Dell EMC,Senior Data Analyst,3,9.4L,8.5L,11.1L,10
+5638,comScore,Senior Data Analyst,5,19.7L,13.5L,24.0L,10
+1405,Fedby Information Services,Senior Data Analyst,3,4.6L,4.0L,5.5L,10
+3851,Experis IT,Senior Data Analyst,5,8.2L,6.6L,9.8L,10
+8688,Phoenix American Sales Focus Solutions India,Senior Data Analyst,3,5.7L,5.0L,7.0L,10
+7670,Collabera Technologies,Senior Data Analyst,2,8.7L,7.5L,10.5L,10
+4624,SG Analytics,Senior Data Analyst,3,7.0L,6.0L,8.3L,10
+4417,Mobikwik,Senior Data Analyst,3,13.9L,11.0L,17.0L,10
+4174,Ecolab Digital Center,Senior Data Analyst,6,17.6L,11.2L,22.3L,10
+4429,Oyo Rooms,Senior Data Analyst,4,11.4L,7.0L,16.0L,9
+5522,Randstad,Senior Data Analyst,3,6.9L,2.5L,12.0L,9
+5253,Clarivate Analytics,Senior Data Analyst,1,17.7L,10.0L,26.5L,9
+8400,Rapido,Senior Data Analyst,2,14.9L,6.5L,20.4L,9
+4517,Standard Chartered Bank,Senior Data Analyst,2,12.7L,5.0L,30.0L,9
+2578,Equifax,Senior Data Analyst,3,6.2L,3.5L,8.5L,9
+4573,Tesco,Senior Data Analyst,1,10.3L,5.8L,15.5L,9
+7253,QL2 Software,Senior Data Analyst,4,3.4L,2.7L,5.5L,9
+2554,Vodafone Idea,Senior Data Analyst,3,10.2L,5.2L,15.8L,9
+2846,IQVIA,Senior Data Analyst,3,12.4L,8.0L,15.3L,9
+5485,InSync Analytics,Senior Data Analyst,4,3.6L,3.1L,4.0L,9
+4068,Landis+Gyr,Senior Data Analyst,5,15.0L,12.6L,17.5L,9
+2815,DecisionTree Analytics & Services,Senior Data Analyst,3,12.8L,9.0L,17.0L,9
+6072,Yodlee,Senior Data Analyst,4,7.4L,5.0L,9.0L,8
+7667,Yash Technologies,Senior Data Analyst,7,5.8L,4.6L,7.5L,8
+8439,Teleperformance,Senior Data Analyst,2,3.0L,2.0L,4.4L,8
+1863,Wunderman,Senior Data Analyst,2,5.7L,4.5L,7.4L,8
+5802,Xiaomi,Senior Data Analyst,5,9.5L,8.1L,10.5L,8
+7827,Sentieo,Senior Data Analyst,2,5.9L,5.0L,7.0L,8
+1596,Fidelity National Information Services,Senior Data Analyst,4,9.7L,6.5L,14.0L,8
+4609,Thomson Reuters,Senior Data Analyst,3,10.5L,8.0L,15.0L,8
+1159,Maersk,Senior Data Analyst,3,7.1L,5.0L,9.0L,8
+1241,Home Credit Finance,Senior Data Analyst,3,7.6L,4.8L,10.0L,8
+8814,Standard Chartered Global Business Services,Senior Data Analyst,4,18.5L,10.5L,27.4L,8
+6111,Mr Cooper,Senior Data Analyst,2,13.0L,11.0L,15.0L,8
+8388,Hudson's bay Company,Senior Data Analyst,3,15.7L,13.2L,18.9L,8
+5385,S&P Capital IQ,Senior Data Analyst,3,6.4L,5.0L,9.2L,8
+6368,Merkle Sokrati,Senior Data Analyst,1,9.1L,7.8L,12.3L,8
+7373,Games24x7,Senior Data Analyst,5,17.9L,11.5L,23.1L,8
+4583,Iris Software,Senior Data Analyst,5,14.4L,10.0L,20.0L,8
+7974,Axis Bank,Senior Data Analyst,0,7.0L,5.0L,8.3L,8
+7078,Mphasis,Senior Data Analyst,4,10.3L,9.0L,11.5L,8
+3586,Whitehat jr,Senior Data Analyst,2,12.6L,8.0L,17.0L,8
+1069,Blinkit,Senior Data Analyst,1,16.7L,13.5L,23.0L,8
+3651,BUDDI.AI,Senior Data Analyst,3,4.2L,4.0L,5.0L,8
+5685,Cartesian Consulting,Senior Data Analyst,1,7.5L,5.6L,11.0L,7
+5674,Fuel Intelligence,Senior Data Analyst,2,4.5L,4.0L,5.0L,7
+8174,General Mills,Senior Data Analyst,4,12.2L,9.0L,15.5L,7
+1548,Cisco Systems,Senior Data Analyst,7,15.3L,13.2L,20.3L,7
+2289,TIAA Global Business Services,Senior Data Analyst,6,15.5L,12.0L,21.5L,7
+6765,Nailbiter,Senior Data Analyst,1,4.9L,4.5L,5.2L,7
+3141,Aon,Senior Data Analyst,2,7.0L,3.8L,12.2L,7
+5717,Aakash Institute,Senior Data Analyst,1,5.3L,3.8L,6.5L,7
+3920,D2L Pharma Research Solutions,Senior Data Analyst,4,4.3L,3.4L,5.2L,7
+1699,HARMAN,Senior Data Analyst,5,9.4L,6.5L,12.2L,7
+7242,Vaco Binary Semantics,Senior Data Analyst,1,5.0L,3.5L,6.8L,7
+1250,B3Intelligence,Senior Data Analyst,3,6.8L,4.0L,8.5L,7
+8278,Sapient Corporation,Senior Data Analyst,3,12.1L,5.1L,20.8L,7
+3960,Legato Health Technologies,Senior Data Analyst,6,14.3L,11.7L,21.0L,7
+3800,Fidelity National Financial,Senior Data Analyst,2,4.9L,3.5L,6.2L,7
+4574,Zomato,Senior Data Analyst,0,6.2L,5.5L,7.3L,7
+6952,Symphony Retail AI,Senior Data Analyst,3,10.5L,10.0L,11.0L,7
+2082,Myntra,Senior Data Analyst,5,11.9L,7.5L,23.0L,7
+2160,KPI Partners,Senior Data Analyst,6,13.9L,11.0L,16.0L,7
+6774,Reliance Retail,Senior Data Analyst,2,6.0L,4.5L,6.8L,7
+8484,Publicis,Senior Data Analyst,3,14.9L,7.5L,20.0L,7
+5173,TEKsystems,Senior Data Analyst,4,12.2L,10.0L,13.5L,7
+5395,Mobile Premier League,Senior Data Analyst,1,25.2L,20.0L,28.0L,7
+4791,Citigroup,Senior Data Analyst,2,17.0L,14.0L,21.0L,7
+1331,LearningMate Solutions,Senior Data Analyst,4,9.1L,8.0L,10.8L,6
+7095,Encore Capital Group,Senior Data Analyst,3,8.5L,7.5L,9.1L,6
+8186,MResult Services,Senior Data Analyst,5,8.4L,7.0L,9.0L,6
+7897,XL Catlin,Senior Data Analyst,3,14.9L,11.8L,17.4L,6
+8636,Williams Lea Tag,Senior Data Analyst,5,6.6L,5.0L,9.0L,6
+3326,Ninjacart,Senior Data Analyst,2,6.7L,6.0L,9.5L,6
+6243,Bajaj Finserv,Senior Data Analyst,3,11.4L,9.4L,15.0L,6
+7539,Collegedunia,Senior Data Analyst,1,4.3L,3.6L,5.0L,6
+8127,Arthur J. Gallagher & Co,Senior Data Analyst,3,5.5L,5.0L,6.6L,6
+4568,Athenahealth Technology,Senior Data Analyst,6,6.1L,5.6L,6.6L,6
+8924,ADP Solutions,Senior Data Analyst,3,10.0L,4.5L,17.5L,6
+2900,UST,Senior Data Analyst,5,10.4L,6.0L,12.0L,6
+1261,L&T Infotech,Senior Data Engineer,2,11.0L,6.0L,17.0L,729
+6075,Quantiphi Analytics Solutions,Senior Data Engineer,2,15.0L,9.5L,22.5L,137
+3355,IBM,Senior Data Engineer,3,16.9L,10.0L,25.0L,112
+2019,Maersk,Senior Data Engineer,5,21.1L,13.4L,31.0L,110
+5441,Optum,Senior Data Engineer,5,16.5L,11.9L,21.0L,83
+7401,Accenture,Senior Data Engineer,3,14.3L,9.5L,22.9L,83
+7834,TCS,Senior Data Engineer,5,13.3L,7.9L,20.9L,65
+5687,Wells Fargo India,Senior Data Engineer,7,21.9L,16.9L,31.5L,64
+3153,Altimetrik,Senior Data Engineer,4,15.2L,9.5L,21.1L,56
+3909,Coforge,Senior Data Engineer,4,15.3L,12.0L,18.6L,53
+2794,Cognizant,Senior Data Engineer,4,15.1L,9.0L,23.0L,51
+5391,Sapient Corporation,Senior Data Engineer,4,19.4L,15.0L,26.0L,51
+3669,Fractal Analytics,Senior Data Engineer,4,21.8L,16.0L,30.0L,49
+1037,Enquero,Senior Data Engineer,2,15.8L,11.5L,20.0L,46
+3471,Walmart,Senior Data Engineer,6,35.7L,23.0L,49.3L,44
+5772,Shell,Senior Data Engineer,3,23.3L,11.2L,36.0L,42
+4234,UnitedHealth,Senior Data Engineer,5,16.1L,12.2L,25.0L,42
+8386,Wipro,Senior Data Engineer,4,13.1L,8.0L,20.0L,40
+4606,Larsen & Toubro Limited,Senior Data Engineer,2,10.4L,6.5L,16.0L,40
+6867,Mindtree,Senior Data Engineer,2,6.7L,5.8L,10.0L,36
+2016,Capgemini,Senior Data Engineer,3,16.4L,6.8L,23.5L,35
+1684,Teradata,Senior Data Engineer,5,13.5L,10.0L,18.6L,34
+5605,Visa,Senior Data Engineer,3,27.3L,20.0L,32.6L,31
+6184,Ernst & Young,Senior Data Engineer,3,18.5L,12.0L,28.5L,30
+3549,Concentrix Corporation,Senior Data Engineer,2,5.4L,4.2L,6.6L,28
+3017,HCL Technologies,Senior Data Engineer,4,18.0L,5.0L,30.0L,28
+2181,Lowe's,Senior Data Engineer,5,18.9L,16.0L,25.0L,26
+3474,Indium Software,Senior Data Engineer,3,15.5L,9.0L,22.0L,26
+5978,Target,Senior Data Engineer,3,22.1L,15.5L,30.0L,25
+8174,Tech Mahindra,Senior Data Engineer,4,14.3L,7.3L,27.0L,23
+4095,Deloitte,Senior Data Engineer,4,16.3L,10.5L,22.0L,23
+4217,Amazon,Senior Data Engineer,6,32.0L,18.0L,45.0L,19
+3206,DXC Technology,Senior Data Engineer,5,14.7L,9.6L,24.2L,19
+8759,Tiger Analytics,Senior Data Engineer,5,22.1L,15.0L,28.0L,19
+3293,GE Healthcare,Senior Data Engineer,5,17.8L,13.0L,24.8L,18
+1825,Morgan Stanley,Senior Data Engineer,6,28.8L,20.0L,36.5L,18
+5572,EPAM Systems,Senior Data Engineer,4,23.1L,17.0L,27.0L,18
+8874,NIIT Technologies,Senior Data Engineer,2,15.0L,14.5L,15.5L,17
+2545,GE,Senior Data Engineer,4,19.3L,14.0L,25.2L,16
+8403,JLL,Senior Data Engineer,4,23.5L,16.5L,33.0L,16
+3114,Nagarro,Senior Data Engineer,3,24.1L,17.0L,32.0L,16
+3013,NIKE,Senior Data Engineer,5,31.0L,27.0L,35.0L,16
+6927,Micron Technology,Senior Data Engineer,5,19.8L,12.5L,29.0L,16
+4999,Nokia,Senior Data Engineer,5,17.5L,13.5L,25.0L,14
+6789,UST,Senior Data Engineer,4,14.5L,9.3L,21.0L,14
+3935,Wavicle Data Solutions,Senior Data Engineer,0,11.8L,9.0L,15.6L,14
+5076,KPI Partners,Senior Data Engineer,4,17.1L,13.5L,22.3L,14
+8837,Happiest Minds Technologies,Senior Data Engineer,5,16.3L,9.5L,24.5L,13
+2545,BCG,Senior Data Engineer,4,24.7L,20.1L,28.0L,13
+3755,Infosys,Senior Data Engineer,2,8.7L,4.5L,15.5L,13
+4023,JP Morgan Chase,Senior Data Engineer,5,22.3L,11.9L,28.0L,13
+4444,Philips,Senior Data Engineer,2,17.5L,15.0L,22.0L,12
+2606,Innova Solutions,Senior Data Engineer,7,27.1L,16.0L,40.0L,12
+8804,Legato Health Technologies,Senior Data Engineer,4,16.9L,11.0L,22.0L,12
+5376,DUNNHUMBY IT SERVICES INDIA,Senior Data Engineer,2,13.2L,11.0L,18.0L,12
+7827,Ecolab Digital Center,Senior Data Engineer,5,17.1L,12.3L,19.8L,12
+5349,Bosch Global Software Technologies,Senior Data Engineer,2,13.8L,9.0L,22.0L,11
+7599,Maersk Line,Senior Data Engineer,4,21.5L,16.2L,29.5L,11
+6436,Commonwealth Bank of Australia,Senior Data Engineer,7,31.7L,20.8L,43.1L,11
+8010,Cisco Systems,Senior Data Engineer,10,25.9L,22.0L,32.0L,11
+8941,Tredence,Senior Data Engineer,1,10.7L,8.0L,15.0L,11
+6194,Oracle,Senior Data Engineer,5,29.2L,15.0L,51.0L,11
+6057,Lenovo,Senior Data Engineer,4,13.5L,12.0L,17.0L,10
+5326,Photon Interactive,Senior Data Engineer,4,8.1L,6.4L,10.0L,10
+4934,Intersoft Data Labs,Senior Data Engineer,3,29.2L,20.0L,37.8L,10
+5877,Lumiq.ai,Senior Data Engineer,3,14.0L,10.0L,17.5L,10
+3237,Dell,Senior Data Engineer,2,13.2L,9.2L,18.0L,10
+8163,SpringML,Senior Data Engineer,2,11.1L,8.5L,16.5L,10
+7150,Verizon,Senior Data Engineer,4,17.6L,10.0L,30.2L,9
+4732,Dunnhumby,Senior Data Engineer,2,13.6L,10.0L,18.0L,9
+5197,Hewlett-Packard Enterprise,Senior Data Engineer,3,24.9L,9.0L,35.0L,9
+8559,Bajaj Finserv,Senior Data Engineer,1,14.4L,9.7L,19.0L,9
+6218,Ab Inbev,Senior Data Engineer,8,26.4L,20.0L,35.0L,9
+2133,Collabera Technologies,Senior Data Engineer,4,15.1L,11.0L,25.0L,9
+3370,GE Aviation,Senior Data Engineer,8,18.7L,16.0L,24.0L,9
+4061,News Technology Services,Senior Data Engineer,5,17.4L,12.3L,21.0L,9
+4700,ZS,Senior Data Engineer,2,18.6L,15.0L,23.0L,9
+3212,NTT DATA,Senior Data Engineer,2,19.9L,11.0L,28.6L,9
+8450,Koch Business Solutions,Senior Data Engineer,7,29.5L,23.0L,37.0L,9
+6502,PwC,Senior Data Engineer,4,17.0L,11.4L,24.0L,9
+2330,McKinsey & Company,Senior Data Engineer,5,26.6L,19.0L,33.0L,8
+2302,Indegene,Senior Data Engineer,3,15.7L,10.0L,18.8L,8
+3901,Johnson & Johnson,Senior Data Engineer,4,16.4L,12.0L,21.0L,8
+1393,Optum Global Solutions,Senior Data Engineer,7,18.5L,14.5L,23.5L,8
+5905,DBS Bank,Senior Data Engineer,5,20.4L,14.0L,30.0L,8
+3309,Bank of America,Senior Data Engineer,4,16.1L,13.5L,19.3L,8
+3917,American Express,Senior Data Engineer,7,28.6L,22.0L,40.0L,8
+5663,Nisum Technologies,Senior Data Engineer,3,20.1L,18.0L,24.0L,8
+7159,Mphasis,Senior Data Engineer,5,13.8L,8.7L,20.0L,8
+5587,Samsung,Senior Data Engineer,4,15.2L,10.0L,21.0L,8
+7396,MakeMyTrip,Senior Data Engineer,3,26.4L,17.0L,37.0L,7
+7499,Saama Technologies,Senior Data Engineer,4,16.5L,13.7L,21.2L,7
+6005,TO THE NEW,Senior Data Engineer,4,18.9L,18.0L,20.0L,7
+5448,PayPal,Senior Data Engineer,6,23.7L,19.0L,28.0L,7
+8883,Harman Connected Services,Senior Data Engineer,5,19.8L,14.0L,32.0L,7
+7936,ITC Infotech India,Senior Data Engineer,4,16.8L,10.6L,21.5L,7
+7355,IQVIA,Senior Data Engineer,4,17.3L,13.0L,21.5L,7
+3402,Luxoft,Senior Data Engineer,5,19.5L,15.0L,23.0L,7
+6249,Paytm,Senior Data Engineer,4,25.9L,20.0L,33.0L,7
+8302,Citicorp,Senior Data Engineer,4,23.1L,18.8L,28.0L,7
+8836,Axa XL,Senior Data Engineer,4,7.7L,7.0L,9.2L,7
+3856,TEKsystems,Senior Data Engineer,5,16.4L,10.5L,26.0L,7
+5649,HSBC,Senior Data Engineer,5,16.1L,12.0L,20.0L,7
+2135,AstraZeneca,Senior Data Engineer,9,14.0L,11.0L,19.0L,6
+2299,BlazeClan Technologies,Senior Data Engineer,4,10.0L,7.3L,11.7L,6
+7892,Data Semantics,Senior Data Engineer,7,15.4L,11.0L,17.4L,6
+8906,Birlasoft,Senior Data Engineer,4,12.0L,8.8L,13.5L,6
+3042,Xpo Logistics,Senior Data Engineer,6,16.3L,14.0L,18.0L,6
+7012,Renault Nissan Technology & Business Centre India,Senior Data Engineer,5,8.2L,7.7L,9.1L,6
+3802,DataWeave,Senior Data Engineer,3,13.5L,11.3L,16.0L,6
+5650,Eli Lilly and Company,Senior Data Engineer,7,25.4L,17.4L,32.0L,6
+1056,DataMetica,Senior Data Engineer,4,13.3L,7.5L,23.0L,6
+1048,InfoStretch,Senior Data Engineer,4,16.8L,10.7L,23.0L,6
+3863,GE Transportation,Senior Data Engineer,8,22.2L,21.0L,23.0L,6
+3918,Baker Hughes,Senior Data Engineer,8,21.4L,16.0L,27.1L,6
+1765,Intuit,Senior Data Engineer,8,39.0L,26.0L,47.0L,5
+2816,Expedia,Senior Data Engineer,6,34.8L,30.0L,41.3L,5
+6860,Yash Technologies,Senior Data Engineer,5,14.5L,10.0L,16.0L,5
+2110,IHS Markit,Senior Data Engineer,6,24.0L,19.0L,27.0L,5
+1264,Swiss Re,Senior Data Engineer,6,20.2L,17.0L,25.0L,5
+4668,Dun & Bradstreet,Senior Data Engineer,7,18.0L,14.2L,23.0L,5
+1613,Siemens Healthineers,Senior Data Engineer,4,20.0L,14.0L,24.0L,5
+1188,Apar Technologies,Senior Data Engineer,8,24.5L,21.5L,28.0L,5
+7288,GE Digital,Senior Data Engineer,7,16.9L,15.0L,19.9L,5
+2903,Riskonnect,Senior Data Engineer,4,8.5L,7.0L,9.8L,5
+3356,T-Systems,Senior Data Engineer,7,21.2L,17.5L,23.5L,5
+8414,NCR Corporation,Senior Data Engineer,4,16.0L,11.3L,22.6L,5
+3343,BA Continuum,Senior Data Engineer,7,19.6L,17.4L,21.0L,5
+2769,Softcrylic Technology Solutions,Senior Data Engineer,4,18.6L,10.0L,29.5L,5
+2156,Rakuten,Senior Data Engineer,5,23.2L,16.6L,30.9L,5
+1141,Honeywell Technology Solutions,Senior Data Engineer,2,22.5L,20.1L,24.0L,5
+5628,GlobalLogic,Senior Data Engineer,3,17.3L,10.4L,23.1L,5
+1241,Emirates Airlines,Senior Data Engineer,6,68.3L,20.0L,94.0L,5
+2007,ValueLabs,Senior Data Engineer,5,19.5L,15.0L,21.7L,5
+7656,GEP Worldwide,Senior Data Engineer,4,15.5L,13.5L,17.5L,5
+6282,Ameriprise Financial,Senior Data Engineer,3,11.7L,10.0L,15.0L,5
+5450,Gartner India Research and Advisory Services,Senior Data Engineer,3,20.0L,16.5L,24.5L,5
+5772,Information Evolution,Senior Data Engineer,3,3.4L,2.5L,4.3L,5
+1207,Alliance Data,Senior Data Engineer,4,16.9L,14.5L,19.0L,5
+1241,Franklin Templeton International Services,Senior Data Engineer,5,18.7L,14.2L,23.5L,5
+7539,Boeing,Senior Data Engineer,7,22.2L,14.0L,27.0L,5
+6365,Kloud 9,Senior Data Engineer,7,29.9L,24.0L,39.0L,5
+4492,Algonomy,Senior Data Engineer,8,15.2L,13.5L,16.3L,5
+3633,Tavant Technologies,Senior Data Engineer,4,13.7L,10.5L,16.5L,5
+2090,Cgi Group,Senior Data Engineer,5,12.0L,6.5L,15.4L,5
+6487,Societe Generale,Senior Data Engineer,7,21.9L,12.5L,34.5L,5
+8400,Mr Cooper,Senior Data Engineer,4,13.8L,9.0L,17.0L,5
+6787,ValueMomentum,Senior Data Engineer,4,19.4L,12.0L,27.0L,5
+4075,Clairvoyant India,Senior Data Engineer,5,16.1L,12.0L,20.0L,5
+3862,Mercedes-Benz Research & Development India,Senior Data Engineer,3,26.2L,11.5L,60.0L,5
+8290,Knoema IT Solutions,Senior Data Engineer,4,8.9L,5.3L,13.0L,5
+7450,Evalueserve,Senior Data Engineer,4,12.5L,10.4L,17.4L,5
+2029,Uber,Senior Data Engineer,7,66.3L,34.5L,93.0L,5
+4983,GGK Technologies,Senior Data Engineer,5,11.2L,9.0L,14.5L,5
+2232,Anju Software,Senior Data Engineer,4,16.9L,6.8L,20.0L,5
+2936,phData,Senior Data Engineer,4,20.0L,16.0L,25.0L,5
+3616,ACS Solution,Senior Data Engineer,3,15.2L,13.8L,16.4L,5
+6775,MassMutual,Senior Data Engineer,6,19.3L,18.3L,21.0L,5
+7634,ConcertAI,Senior Data Engineer,5,28.2L,22.0L,32.0L,5
+1776,Onepoint IT Consulting,Senior Data Engineer,4,10.3L,9.6L,10.8L,4
+1784,Sapient Global Markets,Senior Data Engineer,5,19.9L,15.0L,25.0L,4
+3278,Marlabs,Senior Data Engineer,2,14.2L,6.7L,20.0L,4
+4124,Red Hat,Senior Data Engineer,2,18.9L,11.8L,26.0L,4
+1076,EXL Service,Senior Data Engineer,3,18.7L,13.0L,23.6L,4
+3422,Advance Auto Parts,Senior Data Engineer,7,25.7L,24.0L,28.9L,4
+1583,Telstra,Senior Data Engineer,7,27.6L,18.0L,32.0L,4
+4777,GE Power,Senior Data Engineer,8,15.4L,11.0L,22.0L,4
+5784,Epsilon,Senior Data Engineer,8,23.8L,16.5L,26.8L,4
+7490,Cimpress,Senior Data Engineer,4,20.5L,15.0L,23.0L,4
+3262,Senvion,Senior Data Engineer,4,12.7L,9.0L,16.0L,4
+4343,USEReady,Senior Data Engineer,4,14.3L,9.4L,18.4L,4
+4731,Milliman,Senior Data Engineer,5,19.5L,14.1L,25.0L,4
+4942,Blackhawk Network,Senior Data Engineer,5,21.8L,16.4L,25.0L,4
+8937,Wabtec,Senior Data Engineer,9,20.0L,19.0L,21.0L,4
+8506,KrazyBee,Senior Data Engineer,3,10.3L,8.5L,15.7L,4
+3916,Roche Diagnostics,Senior Data Engineer,5,33.1L,23.5L,43.0L,4
+3081,Fidelity National Information Services,Senior Data Engineer,6,20.1L,12.0L,23.8L,4
+6757,XL Health,Senior Data Engineer,4,9.9L,8.5L,12.0L,4
+4714,ADP Solutions,Senior Data Engineer,4,14.3L,11.6L,19.0L,4
+8979,Hexaware Technologies,Senior Data Engineer,8,18.4L,13.0L,22.8L,4
+3261,Citibank,Senior Data Engineer,6,18.2L,14.0L,20.0L,4
+2509,Akamai Technologies,Senior Data Engineer,5,24.1L,21.8L,25.1L,4
+5427,Quest Global,Senior Data Engineer,8,20.3L,17.0L,24.0L,4
+8730,TCS,Machine Learning Engineer,1,5.8L,4.0L,9.3L,193
+7970,Quantiphi Analytics Solutions,Machine Learning Engineer,1,11.2L,7.4L,15.0L,174
+3670,Accenture,Machine Learning Engineer,2,9.9L,5.4L,15.2L,61
+5039,Wipro,Machine Learning Engineer,1,5.9L,3.5L,13.0L,45
+4623,Tiger Analytics,Machine Learning Engineer,0,13.6L,9.0L,22.0L,37
+6359,Capgemini,Machine Learning Engineer,2,6.3L,4.5L,12.1L,29
+3690,Infosys,Machine Learning Engineer,2,6.7L,4.3L,14.7L,28
+5388,Cognizant,Machine Learning Engineer,1,8.0L,4.0L,15.2L,28
+8641,HCL Technologies,Machine Learning Engineer,0,8.3L,4.2L,14.0L,21
+7359,Tech Mahindra,Machine Learning Engineer,1,7.3L,3.9L,16.2L,20
+8279,IBM,Machine Learning Engineer,3,9.3L,4.5L,13.2L,18
+5845,Deloitte,Machine Learning Engineer,2,13.7L,8.3L,21.0L,14
+8614,Amazon,Machine Learning Engineer,1,12.5L,4.2L,28.5L,13
+5078,Qualcomm,Machine Learning Engineer,0,19.4L,12.0L,29.8L,12
+1639,OptiSol Business Solutions,Machine Learning Engineer,0,5.6L,3.5L,8.5L,11
+5795,Mindtree,Machine Learning Engineer,1,5.3L,3.5L,7.0L,10
+2328,Virtusa Consulting Services,Machine Learning Engineer,0,5.1L,4.0L,9.0L,9
+5245,Ford Motor,Machine Learning Engineer,2,11.8L,7.5L,16.0L,9
+4868,Samsung Research,Machine Learning Engineer,1,17.4L,11.0L,25.0L,9
+7490,DXC Technology,Machine Learning Engineer,2,7.3L,4.0L,11.0L,8
+5325,UST,Machine Learning Engineer,2,6.7L,5.0L,9.0L,8
+6058,Reliance jio,Machine Learning Engineer,2,9.2L,5.5L,15.0L,8
+6517,Straive,Machine Learning Engineer,3,9.3L,4.5L,13.5L,8
+2325,e-Zest,Machine Learning Engineer,0,4.5L,2.1L,7.0L,7
+6763,Trantor,Machine Learning Engineer,1,9.4L,7.0L,16.5L,7
+5830,JP Morgan Chase,Machine Learning Engineer,3,16.9L,13.0L,22.0L,7
+8422,Freelancer.com,Machine Learning Engineer,0,5.1L,2.0L,8.4L,7
+5862,Jio Platforms,Machine Learning Engineer,0,10.9L,6.7L,16.8L,7
+3105,Monsoon CreditTech,Machine Learning Engineer,0,9.6L,7.0L,12.0L,6
+3086,L&T Technology Services,Machine Learning Engineer,1,5.3L,4.4L,7.0L,6
+3394,Sysark,Machine Learning Engineer,1,3.7L,3.1L,4.5L,6
+7499,Lucida Technologies,Machine Learning Engineer,1,3.6L,3.3L,4.3L,6
+7243,Ignitarium Technology Solutions,Machine Learning Engineer,0,5.8L,5.0L,7.0L,6
+2489,Oracle,Machine Learning Engineer,1,20.7L,20.0L,22.0L,6
+6012,Samsung,Machine Learning Engineer,0,16.8L,14.0L,21.5L,6
+8657,Sri Ayyan Kendra Vidyalaya International School,Machine Learning Engineer,1,6.1L,2.3L,10.0L,5
+6584,Reflections Info Systems,Machine Learning Engineer,1,3.6L,3.0L,4.5L,5
+6406,Qualitas Technologies,Machine Learning Engineer,1,4.7L,2.8L,7.0L,5
+3804,Allstate,Machine Learning Engineer,5,12.1L,11.2L,13.0L,5
+1576,Barclays,Machine Learning Engineer,3,19.4L,9.0L,29.1L,5
+2744,Ericsson,Machine Learning Engineer,2,11.9L,6.2L,18.5L,5
+5013,Confidential,Machine Learning Engineer,1,7.4L,5.9L,9.0L,5
+3456,Taglr Technologies,Machine Learning Engineer,0,6.3L,4.5L,10.0L,5
+6525,Takvaviya Analytics,Machine Learning Engineer,1,4.8L,4.2L,5.3L,5
+1304,AAIC Technologies,Machine Learning Engineer,0,9.1L,6.0L,14.8L,5
+2171,CIMCON Software,Machine Learning Engineer,2,6.6L,3.0L,10.0L,5
+6484,Siemens,Machine Learning Engineer,3,11.7L,6.0L,16.0L,5
+1122,Fractal Analytics,Machine Learning Engineer,4,19.4L,15.0L,25.0L,5
+6142,Metagogy Learning Systems,Machine Learning Engineer,0,3.7L,3.0L,4.2L,5
+1869,EEGRAB,Machine Learning Engineer,1,5.1L,3.5L,7.2L,5
+7698,Digitalmain,Machine Learning Engineer,1,4.4L,3.0L,5.8L,5
+5256,Danaher,Machine Learning Engineer,6,24.8L,24.0L,26.0L,5
+1064,Phenom,Machine Learning Engineer,1,12.6L,9.0L,16.0L,5
+4348,Orange Business Services,Machine Learning Engineer,5,16.1L,15.0L,18.0L,4
+5584,Calsoft,Machine Learning Engineer,1,10.9L,6.0L,25.0L,4
+1151,Hewlett-Packard Enterprise,Machine Learning Engineer,2,23.3L,7.0L,40.0L,4
+5171,Datamatics Global Services,Machine Learning Engineer,1,5.1L,3.1L,8.0L,4
+4016,Techolution,Machine Learning Engineer,4,10.0L,7.0L,14.0L,4
+8875,Intel,Machine Learning Engineer,1,14.4L,10.5L,16.1L,4
+6274,Accenture,Data Architect,8,24.6L,15.8L,33.0L,55
+6618,TCS,Data Architect,8,19.9L,13.0L,30.0L,49
+2337,Fiserv,Data Architect,3,11.2L,8.4L,18.4L,47
+2022,IBM,Data Architect,10,19.6L,13.5L,29.0L,44
+4135,Cognizant,Data Architect,10,19.6L,15.0L,25.5L,42
+3034,Wipro,Data Architect,8,20.2L,13.0L,27.5L,29
+6142,Globant,Data Architect,4,21.2L,15.5L,32.0L,21
+1839,Capgemini,Data Architect,10,22.6L,16.0L,32.0L,19
+3084,Tech Mahindra,Data Architect,13,17.3L,11.2L,25.0L,12
+8450,HCL Technologies,Data Architect,13,23.1L,16.6L,31.0L,10
+8451,UST,Data Architect,9,26.8L,16.0L,45.0L,9
+1314,Adobe,Data Architect,9,32.6L,30.0L,37.0L,8
+2672,Cgi Group,Data Architect,8,23.9L,17.0L,30.6L,8
+7853,Infosys,Data Architect,13,19.8L,11.9L,32.0L,8
+1848,JP Morgan Chase,Data Architect,8,35.1L,27.0L,45.0L,8
+8820,Genpact,Data Architect,7,26.1L,15.0L,37.0L,7
+8211,Ernst & Young,Data Architect,8,23.5L,20.0L,27.7L,6
+3608,Deloitte,Data Architect,11,27.6L,21.2L,32.3L,6
+2239,PepsiCo,Data Architect,10,33.6L,26.1L,49.0L,6
+3202,Anthology,Data Architect,11,25.5L,25.0L,26.3L,6
+1941,DXC Technology,Data Architect,14,19.8L,15.5L,24.0L,5
+4478,Atos,Data Architect,12,22.8L,17.2L,35.7L,5
+8902,ValueLabs,Data Architect,9,22.5L,21.0L,26.7L,5
+4813,Barclays,Data Architect,15,30.4L,30.0L,30.7L,5
+2588,Ericsson,Data Architect,8,17.5L,12.8L,26.5L,5
+7967,Vodafone Idea,Data Architect,10,25.8L,21.3L,30.0L,5
+6303,IQVIA,Data Architect,8,28.6L,25.0L,34.0L,5
+3861,Amdocs,Data Architect,5,12.5L,9.9L,16.1L,5
+7616,Mindtree,Data Architect,10,20.5L,17.5L,23.0L,5
+7678,Mphasis,Data Architect,13,20.9L,14.0L,32.0L,5
+1377,PwC,Data Architect,8,21.6L,13.0L,32.0L,5
+5109,Happiest Minds Technologies,Data Architect,12,27.6L,26.5L,29.0L,4
+5994,Shell,Data Architect,14,35.7L,33.6L,38.0L,4
+6714,Fidelity International,Data Architect,8,50.6L,23.4L,93.0L,4
+2842,Maveric Systems,Data Architect,9,19.0L,19.0L,19.0L,4
+5485,Webhelp,Data Architect,5,12.0L,7.5L,18.0L,4
+3847,Bajaj Finserv,Data Architect,6,33.1L,19.0L,42.5L,4
+1379,GlobalLogic,Data Architect,10,25.5L,22.7L,28.5L,4
+1999,L&T Infotech,Data Architect,11,24.8L,20.5L,33.5L,4
+7143,Ab Inbev,Data Architect,14,29.8L,26.1L,31.0L,4
+1125,Automatic Data Processing,Data Architect,7,36.5L,14.0L,102.0L,4
+5862,Brillio,Data Architect,14,28.3L,25.0L,38.0L,4
+3083,Whishworks It Consulting,Data Architect,13,29.8L,20.0L,37.0L,4
+1459,ITC Infotech India,Data Architect,12,29.0L,19.8L,40.0L,4
+8528,IVY Comptech,Data Architect,12,21.8L,17.0L,29.0L,4
+3456,Collabera Technologies,Data Architect,8,17.0L,12.0L,23.1L,4
+7737,Coforge,Data Architect,7,27.1L,18.5L,39.0L,4
+5920,Hitachi,Data Architect,21,40.0L,25.0L,50.0L,3
+8388,GE Power,Data Architect,7,16.7L,14.9L,19.0L,3
+1385,T-Systems,Data Architect,16,33.3L,33.0L,34.0L,3

@@ -10,6 +10,8 @@
 
 import { collection, collectionGroup, getDocs } from 'firebase/firestore';
 import { db } from '../lib/firebase';
+import { deduplicateJobs } from '../utils/jobDedup';
+import { extractSkills, classifyWorkType } from '../utils/skillExtractor';
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL || 'http://localhost:5000';
 
@@ -35,11 +37,16 @@ export interface OpportunityCard {
     matchState?: 'READY NOW' | 'NEAR MATCH' | 'SKILL-BUILDING';
     matchingSkills?: string[];
     missingSkills?: string[];
+    // Rich match explanation shown on hover (§Task 3)
+    matchReason?: string;
     // Internal platform postings (from employers)
     isInternalPosting?: boolean;
     internalRoleId?: string;
     applicantCount?: number;
     deadline?: string;
+    // Map Coordinates
+    latitude?: number;
+    longitude?: number;
 }
 
 export interface OpportunitySearchParams {
@@ -94,6 +101,55 @@ async function fetchRemotiveJobs(query?: string): Promise<OpportunityCard[]> {
         }));
     } catch (e) {
         console.error('Remotive fetch error:', e);
+        return [];
+    }
+}
+
+// ── Adzuna API (India jobs, key-based but has a free tier) ───────────────────────────
+
+async function fetchAdzunaJobs(keywords?: string[], preferredLocation?: string): Promise<OpportunityCard[]> {
+    const appId = import.meta.env.VITE_ADZUNA_APP_ID;
+    const appKey = import.meta.env.VITE_ADZUNA_APP_KEY;
+
+    if (!appId || !appKey) {
+        console.warn('[Adzuna] Skipped — VITE_ADZUNA_APP_ID and VITE_ADZUNA_APP_KEY not set in .env');
+        return [];
+    }
+
+    try {
+        // Use top skill keywords to make results relevant to user preferences
+        const searchQuery = keywords && keywords.length > 0
+            ? keywords.slice(0, 3).join(' ')  // e.g. "React TypeScript Node.js"
+            : 'software developer';
+
+        const location = preferredLocation || 'india';
+        const url = `https://api.adzuna.com/v1/api/jobs/in/search/1?app_id=${appId}&app_key=${appKey}&results_per_page=30&what=${encodeURIComponent(searchQuery)}&where=${encodeURIComponent(location)}&content-type=application/json&sort_by=date`;
+
+        const res = await fetch(url);
+        if (!res.ok) throw new Error(`Adzuna ${res.status}`);
+        const data = await res.json();
+        const results: any[] = data.results ?? [];
+
+        return results.map((j, idx) => ({
+            id: `adzuna-${j.id || idx}`,
+            source: 'adzuna',
+            title: j.title,
+            company: j.company?.display_name || 'Unknown Company',
+            location: j.location?.display_name || location,
+            remote: j.title?.toLowerCase().includes('remote') || false,
+            type: normalizeJobType(j.contract_type || j.title || 'full-time'),
+            url: j.redirect_url || '',
+            description: (j.description || '').slice(0, 400),
+            tags: extractTagsFromDescription(j.title + ' ' + (j.description || '')),
+            salary: j.salary_min && j.salary_max
+                ? `₹${Math.round(j.salary_min / 1000)}k – ₹${Math.round(j.salary_max / 1000)}k`
+                : undefined,
+            postedAt: j.created,
+            latitude: j.latitude,
+            longitude: j.longitude,
+        }));
+    } catch (e) {
+        console.error('[Adzuna] Fetch error:', e);
         return [];
     }
 }
@@ -203,7 +259,9 @@ async function fetchEmployerPostedRoles(): Promise<OpportunityCard[]> {
 
         return validDocs.map(r => ({
             id: `posted-${r._docId || r.id}`,
-            source: r.companyName || 'CapAble Portal',
+            // §3.8: Self-posted roles always carry source='CapAble Portal'
+            // This is the formalized self-post path, distinct from ingestion.
+            source: 'CapAble Portal',
             title: r.title,
             company: r.companyName || 'Company',
             location: r.location || 'India',
@@ -225,55 +283,80 @@ async function fetchEmployerPostedRoles(): Promise<OpportunityCard[]> {
 }
 
 let globalJobsCache: { data: OpportunityCard[], timestamp: number } | null = null;
+// Internal jobs are always fresh (no cache) so employer posts show up immediately
+let externalJobsCache: { data: OpportunityCard[], timestamp: number } | null = null;
 
-export async function getAllOpportunities(): Promise<OpportunityCard[]> {
-    // Return cache if it's less than 2 minutes old (120,000 ms)
-    if (globalJobsCache && (Date.now() - globalJobsCache.timestamp < 120000)) {
-        console.log('[opportunityService] Returning 2-minute cached opportunities instantly.');
-        return globalJobsCache.data;
-    }
-
+export async function getAllOpportunities(userSkillKeywords?: string[], userLocation?: string): Promise<OpportunityCard[]> {
     const all: OpportunityCard[] = [];
 
-    // Step 1: Always fetch internal platform roles first (fast Firestore read)
+    // Step 1: ALWAYS fetch internal platform roles fresh (fast Firestore read, no cache)
+    // This ensures employer-posted jobs show up immediately for candidates
     try {
         const internal = await fetchEmployerPostedRoles();
         all.push(...internal);
-        console.log(`[opportunityService] ${internal.length} platform-posted roles loaded.`);
+        console.log(`[opportunityService] ${internal.length} platform-posted roles loaded (fresh).`);
     } catch (e) {
         console.error('[opportunityService] Internal roles fetch failed:', e);
     }
 
-    // Step 2: Fetch global_jobs collection
-    try {
-        const globalSnap = await getDocs(collection(db, 'global_jobs'));
-        if (!globalSnap.empty) {
-            all.push(...globalSnap.docs.map(d => d.data() as OpportunityCard));
-        }
-    } catch (e) {
-        console.warn('[opportunityService] global_jobs fetch failed:', e);
-    }
+    // Step 2: Check external jobs cache (2-minute cache for rate-limited APIs)
+    const externalCacheValid = externalJobsCache && (Date.now() - externalJobsCache.timestamp < 120000);
+    
+    if (externalCacheValid && externalJobsCache) {
+        console.log('[opportunityService] Returning cached external opportunities.');
+        all.push(...externalJobsCache.data);
+    } else {
+        const externalJobs: OpportunityCard[] = [];
 
-    // Step 3: Live external jobs with 10s timeout so the page never hangs
-    try {
-        const liveJobs = await Promise.race([
-            fetchLiveJobs(),
-            new Promise<OpportunityCard[]>(resolve => setTimeout(() => resolve([]), 10_000))
-        ]);
-        all.push(...liveJobs);
-    } catch (e) {
-        console.warn('[opportunityService] Live jobs fetch failed:', e);
+        // Step 2a: Fetch global_jobs collection (from ingestion script)
+        try {
+            const globalJobsData = (await import('../data/global_jobs.json')).default as OpportunityCard[];
+            externalJobs.push(...globalJobsData);
+        } catch (e) {
+            console.warn('[opportunityService] Failed to load global_jobs.json:', e);
+        }
+
+        // Step 2b: Adzuna API — preference-aware, fresh India jobs
+        try {
+            const adzunaJobs = await fetchAdzunaJobs(userSkillKeywords, userLocation);
+            externalJobs.push(...adzunaJobs);
+            console.log(`[opportunityService] Adzuna: ${adzunaJobs.length} jobs loaded.`);
+        } catch (e) {
+            console.warn('[opportunityService] Adzuna fetch failed:', e);
+        }
+
+        // Update external cache
+        externalJobsCache = { data: externalJobs, timestamp: Date.now() };
+        all.push(...externalJobs);
     }
 
     // Remove duplicates by ID
-    const unique = Array.from(new Map(all.map(item => [item.id, item])).values());
-    console.log(`[opportunityService] Total: ${unique.length} opportunities.`);
+    const uniqueById = Array.from(new Map(all.map(item => [item.id, item])).values());
     
-    // Update memory cache
-    globalJobsCache = { data: unique, timestamp: Date.now() };
+    // Deep semantic deduplication
+    const semanticUnique = deduplicateJobs(uniqueById);
     
-    return unique;
+    // Enrich with Skill Mining
+    const enriched = semanticUnique.map(job => {
+        const text = `${job.title} ${job.description || ''} ${job.tags.join(' ')}`;
+        const minedSkills = extractSkills(job.title, job.description || '');
+        
+        // Ensure remote flags are accurate if our AI detects "wfh/remote"
+        const workType = classifyWorkType(text + ' ' + job.location);
+        const isRemote = job.remote || workType === 'remote';
+
+        return {
+            ...job,
+            remote: isRemote,
+            tags: Array.from(new Set([...job.tags, ...minedSkills]))
+        };
+    });
+
+    console.log(`[opportunityService] Total: ${enriched.length} opportunities (after deduplication).`);
+    
+    return enriched;
 }
+
 
 async function fetchLiveJobs(): Promise<OpportunityCard[]> {
     try {
@@ -414,27 +497,75 @@ export async function searchOpportunities(params: OpportunitySearchParams): Prom
 }
 
 // ─── Capability-based Opportunity Matching ────────────────────────────────────
+//
+// Produces an EXPLAINED match score — not a random number.
+// Each point of the score is backed by a concrete reason:
+//  - Skill matches: specific skills in the job description that match yours
+//  - Title boost: job title aligns with your strongest skill area
+//  - Penalty: required tech detected in the job that you haven't listed
+//
+// The matchReason string is displayed in a tooltip on hover (§Task 3).
 
 export function matchOpportunityToSkills(
     opp: OpportunityCard,
-    userSkills: string[]  // list of skill names the user has
+    userSkills: string[],
+    userCapabilities?: { skill: string; score: number }[]
 ): OpportunityCard {
     const descLower = `${opp.title} ${opp.description || ''} ${opp.tags.join(' ')}`.toLowerCase();
     const userSkillsLower = userSkills.map(s => s.toLowerCase());
 
+    // Skills from user profile that appear in this job
     const matchingSkills = userSkills.filter(s => descLower.includes(s.toLowerCase()));
-    const commonTechTerms = ['javascript', 'python', 'react', 'node', 'java', 'c++', 'sql', 'aws', 'docker', 'kubernetes', 'typescript', 'golang', 'rust'];
-    const missingSkills = commonTechTerms.filter(t => descLower.includes(t) && !userSkillsLower.includes(t));
 
-    const matchRatio = userSkillsLower.length > 0
-        ? matchingSkills.length / Math.min(userSkillsLower.length, Math.max(1, matchingSkills.length + missingSkills.length))
-        : 0;
+    // Common tech skills the job requires but the user doesn't have
+    const commonTechTerms = [
+        'javascript', 'python', 'react', 'node', 'java', 'c++', 'sql', 'aws',
+        'docker', 'kubernetes', 'typescript', 'golang', 'rust', 'flutter', 'swift',
+        'graphql', 'redis', 'kafka', 'terraform', 'pytorch', 'tensorflow'
+    ];
+    const missingSkills = commonTechTerms.filter(t =>
+        descLower.includes(t) && !userSkillsLower.includes(t)
+    );
 
-    const match = Math.min(Math.round(40 + matchRatio * 55), 98);
+    // — Score calculation —
+    // Base 30 pts for having a profile; skill matches add up to 55 pts; missing skills penalise
+    const totalRequired = Math.max(1, matchingSkills.length + missingSkills.length);
+    const skillScore = matchingSkills.length / totalRequired;
+    const matchPts = Math.round(30 + skillScore * 55);
+    const penalty = Math.min(missingSkills.length * 4, 20);
+    const match = Math.max(20, Math.min(matchPts - penalty, 98));
 
     const matchState: OpportunityCard['matchState'] =
         match >= 80 ? 'READY NOW' :
         match >= 60 ? 'NEAR MATCH' : 'SKILL-BUILDING';
+
+    // — Build human-readable breakdown for tooltip —
+    const reasons: string[] = [];
+
+    if (matchingSkills.length > 0) {
+        const topMatches = matchingSkills.slice(0, 3);
+        const strongMatches = topMatches.filter(skill => {
+            const cap = userCapabilities?.find(c => c.skill.toLowerCase() === skill.toLowerCase());
+            return cap && cap.score >= 70;
+        });
+        if (strongMatches.length > 0)
+            reasons.push(`✓ Strong in ${strongMatches.join(', ')} — a core requirement here`);
+        const otherMatches = topMatches.filter(s => !strongMatches.includes(s));
+        if (otherMatches.length > 0)
+            reasons.push(`✓ ${otherMatches.join(', ')} found in your profile & this job`);
+    } else {
+        reasons.push('⚠ No listed skills matched this job description');
+    }
+
+    if (missingSkills.length > 0)
+        reasons.push(`✗ Missing: ${missingSkills.slice(0, 2).join(', ')} (required by role)`);
+
+    if (matchState === 'READY NOW')
+        reasons.push('★ Your profile closely aligns with this role\'s requirements');
+    else if (matchState === 'NEAR MATCH')
+        reasons.push('○ You can likely qualify with minor upskilling');
+    else
+        reasons.push('△ Use Learning Path to close the skill gaps');
 
     return {
         ...opp,
@@ -442,8 +573,10 @@ export function matchOpportunityToSkills(
         matchState,
         matchingSkills,
         missingSkills: missingSkills.slice(0, 3),
+        matchReason: reasons.join('\n'),
     };
 }
+
 
 // ─── Utilities ────────────────────────────────────────────────────────────────
 

@@ -193,9 +193,17 @@ export async function postRole(employerUid: string, role: Omit<PostedRole, 'id' 
     const col = collection(db, 'employers', employerUid, 'postedRoles');
     let docRef;
     
+    // §3.8 — Self-post path: always tag with source and postingPath
+    // This separates employer-direct posts from any future ingestion pipeline.
+    const enrichedRole = {
+        ...role,
+        source: 'CapAble Portal',        // §3.7 source attribution
+        postingPath: 'self-post',          // §3.8 explicit path tag
+    };
+    
     try {
         docRef = await addDoc(col, {
-            ...role,
+            ...enrichedRole,
             employerUid,
             applicantCount: 0,
             postedAt: serverTimestamp(),
@@ -209,7 +217,7 @@ export async function postRole(employerUid: string, role: Omit<PostedRole, 'id' 
     try {
         // Mirror to top-level for student discovery
         await setDoc(doc(db, 'postedRoles', docRef.id), {
-            ...role,
+            ...enrichedRole,
             id: docRef.id,
             employerUid,
             applicantCount: 0,
@@ -218,8 +226,6 @@ export async function postRole(employerUid: string, role: Omit<PostedRole, 'id' 
         });
     } catch (e: any) {
         console.error("Permission error on global postedRoles collection:", e);
-        // We won't throw here to at least let the employer see it, but we log it.
-        // Actually, if it fails here, the student won't see it.
         throw new Error("Failed to publish to student feed: " + e.message);
     }
     

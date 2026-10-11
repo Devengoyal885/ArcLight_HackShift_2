@@ -1,0 +1,248 @@
+.jf-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color, #e5e7eb);
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.jf-toggle:hover {
+    background: var(--bg-hover, #f3f4f6);
+}
+
+.jf-panel {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color, #e5e7eb);
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.jf-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border-color, #e5e7eb);
+    background: var(--bg-primary);
+}
+
+.jf-header-left, .jf-header-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.jf-title {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--text-primary);
+}
+
+.jf-count {
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+.jf-loading-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--primary-color, #2563eb);
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 0.5; }
+    50% { opacity: 1; }
+    100% { opacity: 0.5; }
+}
+
+.jf-clear {
+    background: none;
+    border: none;
+    color: var(--primary-color, #2563eb);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.jf-clear:hover {
+    text-decoration: underline;
+}
+
+.jf-close {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+}
+
+.jf-close:hover {
+    background: var(--bg-hover, #f3f4f6);
+}
+
+.jf-body {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    max-height: calc(100vh - 200px);
+    overflow-y: auto;
+}
+
+.jf-field-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.jf-input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid var(--border-color, #e5e7eb);
+    border-radius: 6px;
+    background: var(--bg-input, #fff);
+    color: var(--text-primary);
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.jf-input:focus {
+    border-color: var(--primary-color, #2563eb);
+}
+
+/* Skills */
+.jf-skill-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 8px;
+}
+
+.jf-skill-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 8px;
+    background: var(--bg-hover, #f3f4f6);
+    border: 1px solid var(--border-color, #e5e7eb);
+    border-radius: 16px;
+    font-size: 12px;
+    color: var(--text-primary);
+}
+
+.jf-skill-chip button {
+    background: none;
+    border: none;
+    padding: 0;
+    color: var(--text-secondary);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.jf-skill-chip button:hover {
+    color: var(--error-color, #ef4444);
+}
+
+.jf-skill-input-wrap {
+    position: relative;
+}
+
+.jf-suggestions {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--bg-card, #fff);
+    border: 1px solid var(--border-color, #e5e7eb);
+    border-radius: 6px;
+    margin-top: 4px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+    max-height: 150px;
+    overflow-y: auto;
+}
+
+.jf-suggestion-item {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 8px 12px;
+    background: none;
+    border: none;
+    font-size: 14px;
+    color: var(--text-primary);
+    cursor: pointer;
+}
+
+.jf-suggestion-item:hover {
+    background: var(--bg-hover, #f3f4f6);
+}
+
+/* Chips */
+.jf-chip-row {
+    display: flex;
+    gap: 8px;
+}
+
+.jf-chip-wrap {
+    flex-wrap: wrap;
+}
+
+.jf-chip {
+    padding: 6px 12px;
+    background: var(--bg-primary, #fff);
+    border: 1px solid var(--border-color, #e5e7eb);
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.jf-chip:hover {
+    border-color: var(--primary-color, #2563eb);
+}
+
+.jf-chip.active {
+    background: var(--primary-color, #2563eb);
+    color: white;
+    border-color: var(--primary-color, #2563eb);
+}
+
+/* Slider */
+.jf-slider {
+    width: 100%;
+    margin-bottom: 8px;
+    accent-color: var(--primary-color, #2563eb);
+}
+
+.jf-slider-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--text-secondary);
+}

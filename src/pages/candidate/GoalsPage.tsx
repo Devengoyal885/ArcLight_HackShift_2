@@ -258,9 +258,7 @@ export default function GoalsPage({ isEmbedded = false }: { isEmbedded?: boolean
                         <div className="goals-empty-icon">🎯</div>
                         <h3>No goals yet</h3>
                         <p>Set your first career goal to stay focused and motivated</p>
-                        <button className="goals-add-btn" onClick={openCreate}>
-                            <Plus size={16} /> Create Goal
-                        </button>
+                        <p style={{ fontSize: '13px', color: '#94a3b8', marginTop: 4 }}>Use the <strong>+ New Goal</strong> button above to get started.</p>
                     </motion.div>
                 ) : (
                     <div className="goals-list">

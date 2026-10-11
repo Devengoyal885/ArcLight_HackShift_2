@@ -10,8 +10,21 @@
 
 import type { CodingProblem, SupportedLanguage, TestCase, TestResult } from '../types/domain';
 
-const JUDGE0_API = 'https://ce.judge0.com/submissions?base64_encoded=false&wait=true';
+const JUDGE0_API = 'https://ce.judge0.com/submissions?base64_encoded=true&wait=true';
 const TIMEOUT_MS = 15_000;
+
+function encodeBase64(str: string): string {
+    return btoa(unescape(encodeURIComponent(str)));
+}
+
+function decodeBase64(str: string | null | undefined): string {
+    if (!str) return '';
+    try {
+        return decodeURIComponent(escape(atob(str)));
+    } catch {
+        return atob(str);
+    }
+}
 
 // ── Language configs for Judge0 CE ──────────────────────────────────────────
 
@@ -60,9 +73,9 @@ export async function executeCode(
             headers: { 'Content-Type': 'application/json' },
             signal: controller.signal,
             body: JSON.stringify({
-                source_code: code,
+                source_code: encodeBase64(code),
                 language_id: cfg.id,
-                stdin: stdin,
+                stdin: encodeBase64(stdin),
             }),
         });
 
@@ -76,21 +89,24 @@ export async function executeCode(
 
         // Judge0 Status IDs: 3 = Accepted, 6 = Compile Error, >3 = Error
         if (data.status?.id === 6) {
+            const cmpErr = decodeBase64(data.compile_output);
             return {
                 stdout: '',
-                stderr: data.compile_output || 'Compilation error',
+                stderr: cmpErr || 'Compilation error',
                 exitCode: 1,
                 executionTimeMs: performance.now() - start,
-                error: 'Compilation failed: ' + (data.compile_output || ''),
+                error: 'Compilation failed: ' + (cmpErr || ''),
             };
         }
 
         const isError = data.status?.id > 3;
         const memKb = data.memory ? Math.round(data.memory) : undefined;
+        const outStr = decodeBase64(data.stdout);
+        const errStr = decodeBase64(data.stderr) || decodeBase64(data.compile_output) || decodeBase64(data.message);
 
         return {
-            stdout: (data.stdout || '').trimEnd(),
-            stderr: (data.stderr || data.compile_output || data.message || '').trimEnd(),
+            stdout: outStr.trimEnd(),
+            stderr: errStr.trimEnd(),
             exitCode: isError ? 1 : 0,
             executionTimeMs: performance.now() - start,
             memoryUsedKb: memKb,

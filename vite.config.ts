@@ -36,6 +36,12 @@ export default defineConfig({
       }
     })
   ],
+  // MapLibre uses Web Workers internally; Vite's dep optimizer rewrites
+  // the worker URL and breaks it. Excluding it forces Vite to load the
+  // package as-is from node_modules, which preserves the worker path.
+  optimizeDeps: {
+    exclude: ['maplibre-gl'],
+  },
   server: {
     headers: {
       'Cross-Origin-Opener-Policy': 'same-origin-allow-popups',

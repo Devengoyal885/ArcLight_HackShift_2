@@ -7,6 +7,7 @@ import CaseStudyPage from './CaseStudyPage';
 import GDTopicsPage from './GDTopicsPage';
 import CommunicationHubPage from './CommunicationHubPage';
 import { Target, Code2, Briefcase, Users, MessageSquare, ChevronRight } from 'lucide-react';
+import { LottieBackground } from '../../components/ui/LottieBackground';
 import './PreparationHubPage.css';
 
 const TABS = [
@@ -57,6 +58,7 @@ export default function PreparationHubPage() {
     return (
         <div className="hub-page">
             <FloatingNavbar variant="candidate" />
+            <LottieBackground />
 
             <div className="hub-layout">
                 {/* Sidebar */}

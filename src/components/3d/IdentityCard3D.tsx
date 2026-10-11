@@ -80,9 +80,31 @@ export function IdentityCard3D({ name, role, initials, capabilityConfidence, ver
 
                 {/* Front Image Cover (fades on hover) */}
                 <div className="id-card-image-cover">
-                    <img 
-                        src={photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=0F172A&color=fff&size=512`} 
-                        alt={name} 
+                    <div 
+                        className="id-card-lottie-avatar"
+                        ref={(el) => {
+                            if (el && !el.hasAttribute('data-lottie-loaded')) {
+                                el.setAttribute('data-lottie-loaded', 'true');
+                                fetch('/child-avatar.json')
+                                    .then(res => res.json())
+                                    .then(data => {
+                                        import('lottie-web').then((lottie) => {
+                                            lottie.default.loadAnimation({
+                                                container: el,
+                                                renderer: 'svg',
+                                                loop: true,
+                                                autoplay: true,
+                                                animationData: data,
+                                                rendererSettings: {
+                                                    preserveAspectRatio: 'xMidYMid slice',
+                                                }
+                                            });
+                                        });
+                                    })
+                                    .catch(console.error);
+                            }
+                        }}
+                        style={{ width: '100%', height: '100%' }}
                     />
                     <div className="id-card-image-overlay" />
                     <div className="id-card-image-name">{name}</div>

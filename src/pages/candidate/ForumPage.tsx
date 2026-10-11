@@ -406,9 +406,7 @@ export default function ForumPage({ isEmbedded = false }: { isEmbedded?: boolean
                         <div className="forum-empty-icon">💬</div>
                         <h3>No posts yet</h3>
                         <p>Be the first to start a discussion in this category!</p>
-                        <button className="forum-create-btn" onClick={() => setShowCreateModal(true)}>
-                            <Plus size={16} /> Start Discussion
-                        </button>
+                        <p style={{ fontSize: '13px', color: '#94a3b8', marginTop: 4 }}>Click <strong>+ New Post</strong> at the top to share your thoughts.</p>
                     </div>
                 ) : (
                     <div className="forum-posts-list">

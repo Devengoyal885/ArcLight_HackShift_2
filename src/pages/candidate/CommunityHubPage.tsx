@@ -5,6 +5,7 @@ import ForumPage from './ForumPage';
 import EventsPage from './EventsPage';
 import LeaderboardPage from './LeaderboardPage';
 import { MessageSquare, Calendar, ChevronRight, Trophy } from 'lucide-react';
+import { LottieBackground } from '../../components/ui/LottieBackground';
 import './PreparationHubPage.css'; // reuse shared hub styles
 
 const TABS = [
@@ -43,6 +44,7 @@ export default function CommunityHubPage() {
     return (
         <div className="hub-page">
             <FloatingNavbar variant="candidate" />
+            <LottieBackground />
 
             <div className="hub-layout">
                 {/* Sidebar */}

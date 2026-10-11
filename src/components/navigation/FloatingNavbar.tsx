@@ -1,6 +1,6 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Briefcase, GraduationCap, Building2, ArrowRight, LogOut, Search, BadgeCheck, Sun, Moon, Settings2, Home, Compass, Users } from 'lucide-react';
+import { Briefcase, GraduationCap, Building2, ArrowRight, LogOut, Search, BadgeCheck, Sun, Moon, Settings2, Home, Compass, Users, BarChart2 } from 'lucide-react';
 import { signOut } from 'firebase/auth';
 import { auth } from '../../lib/firebase';
 import { useAuth } from '../../context/AuthContext';
@@ -25,7 +25,8 @@ const candidateLinks: NavLink[] = [
     { to: '/candidate/career', label: 'Career', icon: <Compass size={18} /> },
     { to: '/candidate/jobs', label: 'Jobs', icon: <Briefcase size={18} /> },
     { to: '/candidate/preparation', label: 'Preparation', icon: <GraduationCap size={18} /> },
-    { to: '/candidate/community', label: 'Community', icon: <Users size={18} /> }
+    { to: '/candidate/community', label: 'Community', icon: <Users size={18} /> },
+    { to: '/candidate/insights', label: 'Insights', icon: <BarChart2 size={18} /> },
 ];
 const employerLinks: NavLink[] = [
     { to: '/employer', label: 'Home' },
@@ -88,44 +89,83 @@ export function FloatingNavbar({ variant }: FloatingNavbarProps) {
         }
     };
 
+    const userControls = (
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <div className="navbar-avatar" title={user?.displayName || 'User'}>{initials}</div>
+            <Link
+                to="/settings"
+                className="navbar-profile-btn"
+                style={{ padding: '8px', border: 'none', background: 'transparent', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                title="Settings"
+            >
+                <Settings2 size={16} color="var(--color-ink-400)" />
+            </Link>
+            <button
+                onClick={toggleTheme}
+                className="navbar-profile-btn"
+                style={{ padding: '8px', border: 'none', background: 'transparent', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                title="Toggle Theme"
+            >
+                {theme === 'dark' ? <Sun size={16} color="#e2e8f0" /> : <Moon size={16} color="#475569" />}
+            </button>
+            <button
+                onClick={handleSignOut}
+                className="navbar-profile-btn"
+                style={{ padding: '8px', border: 'none', background: 'transparent', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                title="Sign Out"
+            >
+                <LogOut size={16} color="#ef4444" />
+            </button>
+        </div>
+    );
+
     const rightAction = () => {
         switch (variant) {
             case 'employer':
                 return (
-                    <Link to="/employer/talent" className="navbar-cta-link">
-                        <LiquidMetalButton
-                            variant="primary"
-                            size="sm"
-                            leftIcon={<Briefcase size={13} />}
-                            rightIcon={<ArrowRight size={12} />}
-                        >
-                            Employer Console
-                        </LiquidMetalButton>
-                    </Link>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <Link to="/employer/talent" className="navbar-cta-link">
+                            <LiquidMetalButton
+                                variant="primary"
+                                size="sm"
+                                leftIcon={<Briefcase size={13} />}
+                                rightIcon={<ArrowRight size={12} />}
+                            >
+                                Employer Console
+                            </LiquidMetalButton>
+                        </Link>
+                        {userControls}
+                    </div>
                 );
             case 'academician':
                 return (
-                    <Link to="/academician" className="navbar-cta-link">
-                        <LiquidMetalButton
-                            variant="primary"
-                            size="sm"
-                            leftIcon={<GraduationCap size={13} />}
-                        >
-                            Faculty
-                        </LiquidMetalButton>
-                    </Link>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <Link to="/academician" className="navbar-cta-link">
+                            <LiquidMetalButton
+                                variant="primary"
+                                size="sm"
+                                leftIcon={<GraduationCap size={13} />}
+                            >
+                                Faculty
+                            </LiquidMetalButton>
+                        </Link>
+                        {userControls}
+                    </div>
                 );
             case 'institution':
                 return (
-                    <Link to="/institution" className="navbar-cta-link">
-                        <LiquidMetalButton
-                            variant="primary"
-                            size="sm"
-                            leftIcon={<Building2 size={13} />}
-                        >
-                            Admin
-                        </LiquidMetalButton>
-                    </Link>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <Link to="/institution" className="navbar-cta-link">
+                            <LiquidMetalButton
+                                variant="primary"
+                                size="sm"
+                                leftIcon={<Building2 size={13} />}
+                            >
+                                Admin
+                            </LiquidMetalButton>
+                        </Link>
+                        {userControls}
+                    </div>
                 );
             default:
                 return (
@@ -136,7 +176,7 @@ export function FloatingNavbar({ variant }: FloatingNavbarProps) {
                                 Profile <BadgeCheck size={14} color="#3b82f6" fill="#eff6ff" />
                             </span>
                         </Link>
-                        <Link 
+                        <Link
                             to="/settings"
                             className="navbar-profile-btn"
                             style={{ padding: '8px', border: 'none', background: 'transparent', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
@@ -144,7 +184,7 @@ export function FloatingNavbar({ variant }: FloatingNavbarProps) {
                         >
                             <Settings2 size={16} color="var(--color-ink-400)" />
                         </Link>
-                        <button 
+                        <button
                             onClick={toggleTheme}
                             className="navbar-profile-btn"
                             style={{ padding: '8px', border: 'none', background: 'transparent', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
@@ -152,7 +192,7 @@ export function FloatingNavbar({ variant }: FloatingNavbarProps) {
                         >
                             {theme === 'dark' ? <Sun size={16} color="#e2e8f0" /> : <Moon size={16} color="#475569" />}
                         </button>
-                        <button 
+                        <button
                             onClick={handleSignOut}
                             className="navbar-profile-btn"
                             style={{ padding: '8px', border: 'none', background: 'transparent', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}

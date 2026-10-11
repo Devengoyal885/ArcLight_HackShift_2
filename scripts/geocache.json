@@ -1,0 +1,10 @@
+{
+  "usa": {
+    "latitude": 39.7837304,
+    "longitude": -100.445882
+  },
+  "europe": {
+    "latitude": 51,
+    "longitude": 10
+  }
+}

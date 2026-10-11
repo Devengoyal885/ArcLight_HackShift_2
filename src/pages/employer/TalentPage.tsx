@@ -11,8 +11,9 @@ import { Link } from "react-router-dom";
 import {
     Eye, Users, Loader2, Briefcase, Search, Globe, Filter,
     AlertTriangle, RotateCcw, CheckCircle2, XCircle,
-    SlidersHorizontal, X, Star, GitCompare, Download, CalendarClock, PenTool
+    SlidersHorizontal, X, Star, GitCompare, Download, CalendarClock, PenTool, Map as MapIcon, List as ListIcon
 } from "lucide-react";
+import TalentMapView, { type TalentPin } from "../../components/jobs/TalentMapView";
 import "./TalentPage.css";
 
 type ApplicationStatus = RoleApplication["status"];
@@ -64,6 +65,7 @@ export default function TalentPage() {
     const [globalGradYear, setGlobalGradYear] = useState("all");
     const [globalInstitution, setGlobalInstitution] = useState("all");
     const [showGlobalFilters, setShowGlobalFilters] = useState(false);
+    const [globalViewMode, setGlobalViewMode] = useState<"list" | "map">("list");
     const [updatingId, setUpdatingId] = useState<string | null>(null);
     const [shortlistSet, setShortlistSet] = useState<Set<string>>(new Set());
     const [shortlistLoading, setShortlistLoading] = useState<string | null>(null);
@@ -446,6 +448,20 @@ export default function TalentPage() {
                                     <SlidersHorizontal size={14}/> Adv. Filters
                                     {(globalMinCgpa || globalBranch!=="all" || globalGradYear!=="all") && <span className="talent-filter-dot"/>}
                                 </button>
+                                <div style={{ display: 'flex', background: 'rgba(255,255,255,0.05)', padding: 2, borderRadius: 8 }}>
+                                    <button
+                                        onClick={() => setGlobalViewMode('list')}
+                                        style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '6px 12px', border: 'none', background: globalViewMode === 'list' ? 'rgba(59,130,246,0.15)' : 'transparent', color: globalViewMode === 'list' ? '#60a5fa' : '#94a3b8', borderRadius: 6, fontSize: 13, fontWeight: 500, cursor: 'pointer', transition: 'all 0.2s' }}
+                                    >
+                                        <ListIcon size={14} /> List
+                                    </button>
+                                    <button
+                                        onClick={() => setGlobalViewMode('map')}
+                                        style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '6px 12px', border: 'none', background: globalViewMode === 'map' ? 'rgba(59,130,246,0.15)' : 'transparent', color: globalViewMode === 'map' ? '#60a5fa' : '#94a3b8', borderRadius: 6, fontSize: 13, fontWeight: 500, cursor: 'pointer', transition: 'all 0.2s' }}
+                                    >
+                                        <MapIcon size={14} /> Map
+                                    </button>
+                                </div>
                             </div>
                             
                             <AnimatePresence>
@@ -498,7 +514,7 @@ export default function TalentPage() {
                             {globalPhase==="success" && filteredGlobal.length===0 && (
                                 <div className="talent-empty"><Globe size={36} color="#94a3b8"/><p>{globalSearch?"No candidates match your search.":"No candidates available in the pool yet."}</p>{globalSearch&&<button className="talent-retry-btn" onClick={()=>setGlobalSearch("")}>Clear Search</button>}</div>
                             )}
-                            {globalPhase==="success" && filteredGlobal.length>0 && (
+                            {globalPhase==="success" && filteredGlobal.length>0 && globalViewMode==="list" && (
                                 <div className="talent-global-grid">
                                     {filteredGlobal.map((candidate,i) => (
                                         <motion.div key={candidate.id} className="talent-global-card" initial={{ opacity:0, y:8 }} animate={{ opacity:1, y:0 }} transition={{ delay: Math.min(i*0.04,0.4) }}>
@@ -520,6 +536,20 @@ export default function TalentPage() {
                                             </div>
                                         </motion.div>
                                     ))}
+                                </div>
+                            )}
+                            {globalPhase==="success" && filteredGlobal.length>0 && globalViewMode==="map" && (
+                                <div style={{ height: '70vh', borderRadius: '12px', overflow: 'hidden', border: '1px solid rgba(59,130,246,0.2)', marginBottom: '32px' }}>
+                                    <TalentMapView
+                                        candidates={filteredGlobal.map(c => ({
+                                            id: c.id!,
+                                            name: c.name || 'Anonymous',
+                                            city: c.location || c.city || 'Bangalore', // Use mock locations if missing for demo
+                                            skills: c.skills || [],
+                                            matchScore: c.matchScore || Math.floor(Math.random() * 60) + 40, // Mock score for demo
+                                            headline: c.headline || c.email
+                                        }))}
+                                    />
                                 </div>
                             )}
                             {globalPhase==="idle" && <div className="talent-loading"><Loader2 size={24} className="spin"/> Initializing...</div>}

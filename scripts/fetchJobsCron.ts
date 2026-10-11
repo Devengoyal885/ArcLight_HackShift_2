@@ -116,6 +116,52 @@ async function fetchSerperJobs(query: string): Promise<OpportunityCard[]> {
     }
 }
 
+async function fetchAdzunaCronJobs(country: string = 'in'): Promise<OpportunityCard[]> {
+    const appId = process.env.VITE_ADZUNA_APP_ID;
+    const appKey = process.env.VITE_ADZUNA_APP_KEY;
+    if (!appId || !appKey) {
+        console.warn('  ✗ Adzuna skipped — no API key');
+        return [];
+    }
+    
+    try {
+        const queries = ['software developer', 'frontend', 'backend', 'data analyst', 'intern'];
+        const allFetched: OpportunityCard[] = [];
+        
+        for (const query of queries) {
+            const url = `https://api.adzuna.com/v1/api/jobs/${country}/search/1?app_id=${appId}&app_key=${appKey}&results_per_page=50&what=${encodeURIComponent(query)}&content-type=application/json`;
+            const res = await fetch(url);
+            if (!res.ok) throw new Error(`Adzuna ${res.status}`);
+            
+            const data = await res.json() as any;
+            const results = data.results || [];
+            
+            const mapped = results.map((j: any) => ({
+                id: `adzuna-${j.id}`,
+                source: 'adzuna' as const,
+                title: j.title,
+                company: j.company?.display_name || 'Unknown',
+                location: j.location?.display_name || 'India',
+                remote: j.title?.toLowerCase().includes('remote') || false,
+                type: inferType(j.contract_type || j.title),
+                url: j.redirect_url,
+                description: stripHtml(j.description || '').slice(0, 400),
+                tags: extractTags(j.description || j.title),
+                salary: j.salary_min ? `$${j.salary_min}+` : undefined,
+                postedAt: j.created,
+                latitude: j.latitude,
+                longitude: j.longitude
+            }));
+            
+            allFetched.push(...mapped);
+        }
+        return allFetched;
+    } catch (e) {
+        console.error(`  ✗ Adzuna error:`, e);
+        return [];
+    }
+}
+
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
 function inferType(s: string): OpportunityCard['type'] {
@@ -171,6 +217,12 @@ async function runCron() {
         console.log(`  ✓ "${q}": ${jobs.length} jobs`);
         allJobs.push(...jobs);
     }
+
+    // 3. Adzuna Job Board
+    console.log('\n💼 Fetching Adzuna Jobs...');
+    const adzunaJobs = await fetchAdzunaCronJobs('in');
+    console.log(`  ✓ Adzuna: ${adzunaJobs.length} jobs`);
+    allJobs.push(...adzunaJobs);
 
     // 3. Deduplicate by title+company
     const seen = new Set<string>();

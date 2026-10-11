@@ -29,3 +29,10 @@ serviceAccountKey.json
 .env
 .env.local
 .env.production
+
+# External reference clones
+job-find-main/
+Access-Hire-main/
+*.log
+tsc_errors.txt
+build_err.log

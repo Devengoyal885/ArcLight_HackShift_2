@@ -1,4 +1,4 @@
-﻿/* â”€â”€â”€ Shared Hub Architecture Styles â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* â”€â”€â”€ Shared Hub Architecture Styles â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 /* Used by PreparationHubPage, JobsHubPage, CareerHubPage, CommunityHubPage  */
 
 .hub-page {
@@ -12,6 +12,8 @@
     display: flex;
     min-height: 100vh;
     padding-top: var(--navbar-height, 72px);
+    position: relative;
+    z-index: 1;
 }
 
 /* â”€â”€â”€ Sidebar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
@@ -190,3 +192,6 @@
 /* Old prep-hub classes kept for backwards compat */
 .prep-hub-page { display: none; }
 
+
+.hub-content > div { background: transparent !important; }
+.hub-content > div::before { display: none !important; }

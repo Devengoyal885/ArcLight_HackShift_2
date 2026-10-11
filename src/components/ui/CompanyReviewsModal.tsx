@@ -88,7 +88,7 @@ Make it sound like Glassdoor reviews.`;
                             <h2 className="company-modal-title">{companyName}</h2>
                             <div className="company-modal-subtitle">
                                 <span className="company-rating">
-                                    4.2 <Star size={14} fill="#f59e0b" color="#f59e0b" />
+                                    N/A <Star size={14} fill="#94a3b8" color="#94a3b8" />
                                 </span>
                                 <span>Based on AI synthesis</span>
                             </div>

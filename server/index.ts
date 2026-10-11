@@ -15,6 +15,35 @@ app.use(express.urlencoded({ extended: true }));
 
 import { spawn } from 'child_process';
 import path from 'path';
+import cron from 'node-cron';
+import rateLimit from 'express-rate-limit';
+
+// ── Rate Limiting (§3.9) ───────────────────────────────────────────────────────
+// Protects endpoints from abusive traffic, preserving API quotas.
+const apiLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
+    standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+    legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+    message: { error: 'Too many requests from this IP, please try again after 15 minutes.' }
+});
+
+// Apply rate limiting to all /api routes
+app.use('/api/', apiLimiter);
+
+// ── Background Job Queue / Scheduled Ingestion (§3.11) ───────────────────────
+// Mirrors job-find's Asynq queue. Runs the heavy fetchJobsCron script off the 
+// request path, ensuring users are never blocked by API syncs.
+cron.schedule('0 */12 * * *', () => { // Run every 12 hours
+    console.log('[Cron] Starting scheduled background job ingestion...');
+    const ingestProcess = spawn('npm', ['run', 'cron:fetch-jobs'], { shell: true });
+
+    ingestProcess.stdout.on('data', (data) => console.log(`[Ingest] ${data}`));
+    ingestProcess.stderr.on('data', (data) => console.error(`[Ingest Error] ${data}`));
+    ingestProcess.on('close', (code) => {
+        console.log(`[Cron] Background ingestion finished with code ${code}`);
+    });
+});
 
 // ── Health Check ───────────────────────────────────────────────────────────────
 app.get('/api/health', (_req, res) => {
