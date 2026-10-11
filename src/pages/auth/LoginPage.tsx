@@ -232,11 +232,8 @@ export default function LoginPage() {
         const isRedirectPending = sessionStorage.getItem('google_redirect_pending') === 'true';
 
         getRedirectResult(auth).then((result) => {
-            if (!result) return;
-            // Only navigate if this was an actual redirect flow — not a manual /login visit
-            if (!isRedirectPending) return;
+            if (!result || !result.user) return;
             sessionStorage.removeItem('google_redirect_pending');
-            // Mark that we're handling navigation
             redirectHandled.current = true;
             const additionalInfo = getAdditionalUserInfo(result);
             const savedRole = (localStorage.getItem('userRole') as RoleType) || 'candidate';
@@ -251,7 +248,12 @@ export default function LoginPage() {
         }).catch((err) => {
             console.error("Redirect login error:", err);
             sessionStorage.removeItem('google_redirect_pending');
-            // ONLY clear state if we specifically hit the Firebase internal assertion error
+            const code: string = err?.code || '';
+            if (code === 'auth/unauthorized-domain') {
+                setError(`Domain unauthorized: Please add "${window.location.hostname}" to Firebase Console > Authentication > Settings > Authorized Domains. Or use Demo Mode.`);
+            } else if (code) {
+                setError(`Sign in failed (${code}). Please try again or use Demo Mode.`);
+            }
             if (err?.message?.includes("Pending promise was never set")) {
                 clearStaleAuthState();
             }
