@@ -13,7 +13,6 @@ interface AuthContextType {
     loading: boolean;
     profileLoading: boolean;
     refreshProfile: () => Promise<void>;
-    mockLogin: (role: UserRole) => void;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -24,7 +23,6 @@ const AuthContext = createContext<AuthContextType>({
     loading: true,
     profileLoading: false,
     refreshProfile: async () => {},
-    mockLogin: () => {},
 });
 
 export const useAuth = () => useContext(AuthContext);
@@ -82,12 +80,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
 
     useEffect(() => {
-        const isMock = localStorage.getItem('capable_mock_login') === 'true';
-        if (isMock) {
-            const savedRole = (localStorage.getItem('userRole') as UserRole) || 'candidate';
-            mockLogin(savedRole).then(() => setLoading(false));
-            return;
-        }
+        // Purge any legacy mock login keys from local storage
+        localStorage.removeItem('capable_mock_login');
 
         const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
             console.log('[AuthContext] onAuthStateChanged fired, user:', currentUser?.uid ?? 'null');
@@ -104,28 +98,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return unsubscribe;
     }, []);
 
-    // ── Bypass Firebase for local dev / blocked network ───────────────────
-    const mockLogin = async (mockRole: UserRole) => {
-        setLoading(true);
-        localStorage.setItem('userRole', mockRole);
-        localStorage.setItem('capable_mock_login', 'true');
-        const mockUid = 'mockuser_123';
-        const mockDbUid = `${mockUid}_${mockRole}`;
-        
-        const mockUser = {
-            uid: mockUid,
-            email: 'dev@capable.app',
-            displayName: 'Local Dev User',
-            emailVerified: true,
-        } as User;
-        
-        setUser(mockUser);
-        await loadProfile(mockUser, mockDbUid);
-        setLoading(false);
-    };
-
     return (
-        <AuthContext.Provider value={{ user, dbUid, profile, role, loading, profileLoading, refreshProfile, mockLogin }}>
+        <AuthContext.Provider value={{ user, dbUid, profile, role, loading, profileLoading, refreshProfile }}>
             {children}
         </AuthContext.Provider>
     );

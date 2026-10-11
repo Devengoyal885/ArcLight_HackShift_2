@@ -11,7 +11,6 @@ import {
     sendPasswordResetEmail, sendEmailVerification
 } from '../../lib/firebase';
 import { getProfile } from '../../services/profileService';
-import { useAuth } from '../../context/AuthContext';
 import './LoginPage.css';
 
 // All possible auth steps for 4 roles
@@ -107,7 +106,6 @@ export default function LoginPage() {
     const [error, setError] = useState('');
     const [infoMsg, setInfoMsg] = useState('');
     
-    const { mockLogin } = useAuth();
     const navigate = useNavigate();
     // Prevents double-navigation when Google redirect result triggers both
     // the getRedirectResult useEffect AND the [user, loading] useEffect.
@@ -229,8 +227,6 @@ export default function LoginPage() {
     // just before signInWithRedirect was called). Without this guard, getRedirectResult
     // would redirect the user away EVERY time they intentionally visit /login.
     useEffect(() => {
-        const isRedirectPending = sessionStorage.getItem('google_redirect_pending') === 'true';
-
         getRedirectResult(auth).then((result) => {
             if (!result || !result.user) return;
             sessionStorage.removeItem('google_redirect_pending');
@@ -250,9 +246,9 @@ export default function LoginPage() {
             sessionStorage.removeItem('google_redirect_pending');
             const code: string = err?.code || '';
             if (code === 'auth/unauthorized-domain') {
-                setError(`Domain unauthorized: Please add "${window.location.hostname}" to Firebase Console > Authentication > Settings > Authorized Domains. Or use Demo Mode.`);
+                setError(`Domain unauthorized: Please add "${window.location.hostname}" to Firebase Console > Authentication > Settings > Authorized Domains.`);
             } else if (code) {
-                setError(`Sign in failed (${code}). Please try again or use Demo Mode.`);
+                setError(`Sign in failed (${code}). Please try again.`);
             }
             if (err?.message?.includes("Pending promise was never set")) {
                 clearStaleAuthState();
@@ -289,7 +285,7 @@ export default function LoginPage() {
                 await signInWithRedirect(auth, googleProvider);
             } else if (code === 'auth/unauthorized-domain') {
                 setError(
-                    `⚠️ Domain Unauthorized (${window.location.hostname}): In Firebase Console > Authentication > Settings > Authorized Domains, add "${window.location.hostname}". Or click "Bypass & Enter in Demo Mode" below.`
+                    `⚠️ Domain Unauthorized (${window.location.hostname}): In Firebase Console > Authentication > Settings > Authorized Domains, add "${window.location.hostname}".`
                 );
             } else if (code === 'auth/popup-closed-by-user' || code === 'auth/cancelled-popup-request') {
                 // User manually closed popup — do nothing
@@ -297,7 +293,7 @@ export default function LoginPage() {
                 setError('An account already exists with this email. Please use email/password to sign in.');
             } else {
                 console.error('[Google Auth Error]', err);
-                setError(`Sign in failed (${code || 'unknown error'}). Please try again, or use Demo Mode.`);
+                setError(`Sign in failed (${code || 'unknown error'}). Please try again.`);
             }
         }
     };
@@ -354,37 +350,12 @@ export default function LoginPage() {
                                     {panel.title}<em>{panel.titleEm}</em>
                                 </h2>
                                 <p className="login-select-desc">{panel.desc}</p>
-                                <div style={{ display: 'flex', gap: '8px', marginTop: '12px' }}>
-                                    <button
-                                        className="login-btn-primary"
-                                        style={{ flex: 1 }}
-                                        onClick={() => goToStep(`${panel.role}-login` as AuthStep)}
-                                    >
-                                        Login
-                                    </button>
-                                    <button
-                                        type="button"
-                                        style={{
-                                            background: 'rgba(255, 255, 255, 0.08)',
-                                            border: '1px solid rgba(255, 255, 255, 0.18)',
-                                            color: '#e2e8f0',
-                                            fontSize: '0.8rem',
-                                            padding: '8px 12px',
-                                            borderRadius: '8px',
-                                            cursor: 'pointer',
-                                            fontWeight: 600,
-                                            whiteSpace: 'nowrap'
-                                        }}
-                                        title="Instant Access: Explore this portal without signing in"
-                                        onClick={async () => {
-                                            localStorage.setItem('userRole', panel.role);
-                                            await mockLogin(panel.role);
-                                            navigate(dashboardFor(panel.role), { replace: true });
-                                        }}
-                                    >
-                                        ⚡ Demo
-                                    </button>
-                                </div>
+                                <button
+                                    className="login-btn-primary"
+                                    onClick={() => goToStep(`${panel.role}-login` as AuthStep)}
+                                >
+                                    Login
+                                </button>
                                 <p className="login-select-footer">
                                     Don't have an account?{' '}
                                     <button
@@ -511,20 +482,8 @@ export default function LoginPage() {
 
                         <form className="login-form" onSubmit={handleEmailAuth}>
                             {error && (
-                                <div className="login-error-banner" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                <div className="login-error-banner">
                                     <span>{error}</span>
-                                    <button 
-                                        type="button"
-                                        onClick={(e) => {
-                                            e.preventDefault();
-                                            mockLogin(currentRole);
-                                            navigate(dashboardFor(currentRole), { replace: true });
-                                        }}
-                                        className="login-btn-primary"
-                                        style={{ background: '#f59e0b', color: '#000', fontSize: '0.8rem', padding: '8px', fontWeight: 600, marginTop: '4px' }}
-                                    >
-                                        ⚡ Bypass &amp; Enter in Demo Mode ({currentRole})
-                                    </button>
                                 </div>
                             )}
 
@@ -592,36 +551,13 @@ export default function LoginPage() {
 
                         <div className="login-divider"><span>or continue with</span></div>
 
-                        <div className="login-socials" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                        <div className="login-socials">
                             <button
                                 type="button"
                                 className="login-social-btn login-social-btn--google"
                                 onClick={handleGoogleAuth}
                             >
                                 <i>G</i> Continue with Google
-                            </button>
-                            <button
-                                type="button"
-                                onClick={async () => {
-                                    localStorage.setItem('userRole', currentRole);
-                                    await mockLogin(currentRole);
-                                    navigate(dashboardFor(currentRole), { replace: true });
-                                }}
-                                className="login-social-btn"
-                                style={{
-                                    background: 'rgba(255, 255, 255, 0.05)',
-                                    border: '1px dashed rgba(255, 255, 255, 0.25)',
-                                    color: '#e2e8f0',
-                                    fontSize: '0.85rem',
-                                    padding: '10px 16px',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    gap: '8px',
-                                    cursor: 'pointer'
-                                }}
-                            >
-                                <Sparkles size={16} color="#f59e0b" /> Instant Demo / Guest Access ({panel.badge})
                             </button>
                         </div>
 
