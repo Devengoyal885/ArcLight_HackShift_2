@@ -1,0 +1,301 @@
+capability_id,capability
+CAP-0001,team leadership
+CAP-0002,team management
+CAP-0003,people management
+CAP-0004,staff management
+CAP-0005,manage a team
+CAP-0006,lead a team
+CAP-0007,leadership
+CAP-0008,supervision
+CAP-0009,employee supervision
+CAP-0010,workforce management
+CAP-0011,volunteer coordination
+CAP-0012,manage volunteers
+CAP-0013,staff coordination
+CAP-0014,team coordination
+CAP-0015,stakeholder coordination
+CAP-0016,stakeholder management
+CAP-0017,community engagement
+CAP-0018,community coordination
+CAP-0019,project management
+CAP-0020,perform project management
+CAP-0021,project planning
+CAP-0022,project coordination
+CAP-0023,project scheduling
+CAP-0024,project execution
+CAP-0025,operations management
+CAP-0026,operations planning
+CAP-0027,business operations
+CAP-0028,process management
+CAP-0029,process improvement
+CAP-0030,workflow management
+CAP-0031,resource management
+CAP-0032,manage resources
+CAP-0033,resource allocation
+CAP-0034,capacity planning
+CAP-0035,event management
+CAP-0036,event planning
+CAP-0037,plan events
+CAP-0038,event coordination
+CAP-0039,event organization
+CAP-0040,carry out event management
+CAP-0041,festival management
+CAP-0042,conference management
+CAP-0043,event logistics
+CAP-0044,event scheduling
+CAP-0045,venue management
+CAP-0046,event staff supervision
+CAP-0047,logistics
+CAP-0048,manage logistics
+CAP-0049,logistics management
+CAP-0050,logistics planning
+CAP-0051,transportation management
+CAP-0052,supply chain management
+CAP-0053,supplier management
+CAP-0054,vendor management
+CAP-0055,vendor coordination
+CAP-0056,supplier coordination
+CAP-0057,procurement
+CAP-0058,procurement management
+CAP-0059,purchasing
+CAP-0060,inventory management
+CAP-0061,stock management
+CAP-0062,warehouse management
+CAP-0063,distribution management
+CAP-0064,delivery management
+CAP-0065,budget management
+CAP-0066,manage budgets
+CAP-0067,budget planning
+CAP-0068,budget preparation
+CAP-0069,budget control
+CAP-0070,financial management
+CAP-0071,financial planning
+CAP-0072,financial analysis
+CAP-0073,cost management
+CAP-0074,cost control
+CAP-0075,cost analysis
+CAP-0076,expense management
+CAP-0077,control of expenses
+CAP-0078,accounting
+CAP-0079,bookkeeping
+CAP-0080,cash management
+CAP-0081,financial reporting
+CAP-0082,resource budgeting
+CAP-0083,communication
+CAP-0084,written communication
+CAP-0085,verbal communication
+CAP-0086,public speaking
+CAP-0087,public presentation
+CAP-0088,conduct public presentations
+CAP-0089,presentation skills
+CAP-0090,professional communication
+CAP-0091,interpersonal communication
+CAP-0092,active listening
+CAP-0093,negotiation
+CAP-0094,negotiation skills
+CAP-0095,conflict management
+CAP-0096,conflict resolution
+CAP-0097,mediation
+CAP-0098,persuasion
+CAP-0099,stakeholder communication
+CAP-0100,customer service
+CAP-0101,customer relationship management
+CAP-0102,customer support
+CAP-0103,client management
+CAP-0104,client communication
+CAP-0105,community outreach
+CAP-0106,community education
+CAP-0107,community development
+CAP-0108,community needs analysis
+CAP-0109,social engagement
+CAP-0110,public relations
+CAP-0111,relationship management
+CAP-0112,sales
+CAP-0113,sales management
+CAP-0114,sales planning
+CAP-0115,business development
+CAP-0116,business planning
+CAP-0117,market research
+CAP-0118,marketing
+CAP-0119,digital marketing
+CAP-0120,content marketing
+CAP-0121,product management
+CAP-0122,account management
+CAP-0123,partnership management
+CAP-0124,business strategy
+CAP-0125,strategic planning
+CAP-0126,human resource management
+CAP-0127,recruitment
+CAP-0128,employee recruitment
+CAP-0129,talent management
+CAP-0130,employee onboarding
+CAP-0131,training employees
+CAP-0132,employee development
+CAP-0133,performance management
+CAP-0134,workforce planning
+CAP-0135,staff scheduling
+CAP-0136,software development
+CAP-0137,web development
+CAP-0138,frontend development
+CAP-0139,backend development
+CAP-0140,full stack development
+CAP-0141,application development
+CAP-0142,mobile application development
+CAP-0143,database management
+CAP-0144,database development
+CAP-0145,data management
+CAP-0146,data analysis
+CAP-0147,data visualization
+CAP-0148,data processing
+CAP-0149,machine learning
+CAP-0150,artificial intelligence
+CAP-0151,natural language processing
+CAP-0152,cloud computing
+CAP-0153,cloud management
+CAP-0154,cybersecurity
+CAP-0155,network management
+CAP-0156,IT support
+CAP-0157,technical support
+CAP-0158,system administration
+CAP-0159,API development
+CAP-0160,API integration
+CAP-0161,software testing
+CAP-0162,debugging
+CAP-0163,version control
+CAP-0164,Git
+CAP-0165,DevOps
+CAP-0166,containerization
+CAP-0167,Docker
+CAP-0168,Kubernetes
+CAP-0169,planning
+CAP-0170,operational planning
+CAP-0171,schedule planning
+CAP-0172,time management
+CAP-0173,task management
+CAP-0174,organization
+CAP-0175,coordination
+CAP-0176,administrative management
+CAP-0177,administration
+CAP-0178,record keeping
+CAP-0179,documentation
+CAP-0180,information management
+CAP-0181,manage project information
+CAP-0182,decision making
+CAP-0183,problem solving
+CAP-0184,critical thinking
+CAP-0185,analytical thinking
+CAP-0186,research
+CAP-0187,action research
+CAP-0188,data collection
+CAP-0189,qualitative research
+CAP-0190,quantitative research
+CAP-0191,survey design
+CAP-0192,data interpretation
+CAP-0193,requirements analysis
+CAP-0194,business analysis
+CAP-0195,risk analysis
+CAP-0196,risk management
+CAP-0197,teaching
+CAP-0198,training
+CAP-0199,coaching
+CAP-0200,mentoring
+CAP-0201,instruction
+CAP-0202,knowledge sharing
+CAP-0203,curriculum development
+CAP-0204,workshop facilitation
+CAP-0205,public education
+CAP-0206,creative thinking
+CAP-0207,creative problem solving
+CAP-0208,content creation
+CAP-0209,graphic design
+CAP-0210,visual design
+CAP-0211,user interface design
+CAP-0212,user experience design
+CAP-0213,copywriting
+CAP-0214,technical writing
+CAP-0215,editing
+CAP-0216,photography
+CAP-0217,video production
+CAP-0218,quality management
+CAP-0219,quality assurance
+CAP-0220,quality control
+CAP-0221,compliance management
+CAP-0222,regulatory compliance
+CAP-0223,policy implementation
+CAP-0224,policy management
+CAP-0225,safety management
+CAP-0226,risk assessment
+CAP-0227,teamwork
+CAP-0228,teamwork principles
+CAP-0229,collaboration
+CAP-0230,adaptability
+CAP-0231,flexibility
+CAP-0232,initiative
+CAP-0233,responsibility
+CAP-0234,reliability
+CAP-0235,attention to detail
+CAP-0236,self management
+CAP-0237,organizational skills
+CAP-0238,leadership skills
+CAP-0239,interpersonal skills
+CAP-0240,social skills
+CAP-0241,emotional intelligence
+CAP-0242,professionalism
+CAP-0243,hospitality management
+CAP-0244,hospitality service
+CAP-0245,food service management
+CAP-0246,customer experience
+CAP-0247,facility management
+CAP-0248,facilities management
+CAP-0249,venue operations
+CAP-0250,guest management
+CAP-0251,service management
+CAP-0252,resource coordination
+CAP-0253,material management
+CAP-0254,equipment management
+CAP-0255,facility operations
+CAP-0256,maintenance management
+CAP-0257,schedule management
+CAP-0258,meeting management
+CAP-0259,meeting coordination
+CAP-0260,agenda planning
+CAP-0261,report preparation
+CAP-0262,report writing
+CAP-0263,record management
+CAP-0264,document management
+CAP-0265,email communication
+CAP-0266,digital literacy
+CAP-0267,computer literacy
+CAP-0268,online collaboration
+CAP-0269,remote collaboration
+CAP-0270,multitasking
+CAP-0271,prioritization
+CAP-0272,deadline management
+CAP-0273,decision support
+CAP-0274,strategic decision making
+CAP-0275,operational decision making
+CAP-0276,change management
+CAP-0277,innovation management
+CAP-0278,continuous improvement
+CAP-0279,performance analysis
+CAP-0280,performance monitoring
+CAP-0281,resource monitoring
+CAP-0282,expense monitoring
+CAP-0283,budget monitoring
+CAP-0284,project monitoring
+CAP-0285,quality monitoring
+CAP-0286,social responsibility
+CAP-0287,social impact
+CAP-0288,civic engagement
+CAP-0289,participate actively in civic life
+CAP-0290,social service coordination
+CAP-0291,stakeholder engagement
+CAP-0292,participatory decision making
+CAP-0293,community organizing
+CAP-0294,community leadership
+CAP-0295,entrepreneurship
+CAP-0296,startup management
+CAP-0297,market analysis
+CAP-0298,opportunity identification
+CAP-0299,innovation
+CAP-0300,entrepreneurial thinking

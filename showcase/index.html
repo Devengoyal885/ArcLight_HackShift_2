@@ -1,147 +1,33 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>CapAble: See Capability. Prove Potential. Enable Transition.</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&display=swap" rel="stylesheet">
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CapAble — Team ArcLight · Hackshift, IIIT Delhi</title>
 <style>
-:root{--bg:#f4f7fc;--surface:#fff;--ink:#0c1f3d;--mute:#51627f;--line:#d9e2f1;--blue:#2354d6;--navy:#0c1f3d;--teal:#0f9d8a;--soft:#e4edfc;
-box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0a1424;--surface:#12213a;--ink:#eaf1ff;--mute:#a3b4d0;--line:#223756;--blue:#6e98ff;--soft:#172c4d;--teal:#3ccbb5}}
-:root[data-theme="dark"]{--bg:#0a1424;--surface:#12213a;--ink:#eaf1ff;--mute:#a3b4d0;--line:#223756;--blue:#6e98ff;--soft:#172c4d;--teal:#3ccbb5}
-*,*::before,*::after{box-sizing:border-box}
-html{scroll-padding-top:env(safe-area-inset-top,0px);scroll-behavior:smooth}
-body{margin:0;background:var(--bg);color:var(--ink);font:400 17px/1.6 Manrope,system-ui,-apple-system,"Segoe UI",sans-serif}
-a{color:inherit}
-.wrap{max-width:1120px;margin:0 auto;padding:0 22px}
-header{display:flex;justify-content:space-between;align-items:center;padding:20px 0}
-.logo{font-weight:800;font-size:22px;letter-spacing:-.02em;text-decoration:none}
-nav a{margin-left:22px;text-decoration:none;color:var(--mute);font-weight:600;font-size:15px}
-nav a:hover{color:var(--blue)}
-@media(max-width:620px){nav a:not(:last-child){display:none}}
-.hero{padding:56px 0 40px;max-width:760px}
-h1{font-size:clamp(40px,7vw,72px);line-height:1.02;letter-spacing:-.035em;margin:0 0 18px;font-weight:800}
-.lead{font-size:clamp(18px,2.2vw,21px);color:var(--mute);margin:0 0 28px;max-width:62ch}
-.btns{display:flex;flex-wrap:wrap;gap:12px}
-.btn{display:inline-block;padding:13px 22px;border-radius:10px;font-weight:700;text-decoration:none;border:1.5px solid var(--blue);transition:transform .15s,box-shadow .15s}
-.btn.p{background:var(--blue);color:#fff}.btn.s{color:var(--blue)}
-.btn:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(35,84,214,.22)}
-:focus-visible{outline:3px solid var(--teal);outline-offset:3px}
-section{padding:56px 0}
-h2{font-size:clamp(28px,4vw,40px);letter-spacing:-.025em;line-height:1.15;margin:0 0 10px}
-.sub{color:var(--mute);margin:0 0 30px;max-width:60ch}
-.video{background:var(--navy);color:#fff;border-radius:24px;padding:clamp(18px,4vw,44px)}
-.video h2{color:#fff}.video .sub{color:#b9c8e6}
-.player{position:relative;aspect-ratio:16/9;border-radius:16px;overflow:hidden;background:#071125;box-shadow:0 24px 60px rgba(0,0,0,.4)}
-.player button,.player iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
-.player button{cursor:pointer;padding:0;background:none}
-.player svg{width:100%;height:100%;display:block}
-.play{transition:transform .2s;transform-origin:center;transform-box:fill-box}
-.player button:hover .play{transform:scale(1.08)}
-.vmeta{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;margin-top:18px;color:#b9c8e6;font-size:15px}
-.vmeta a{color:#fff;font-weight:700}
-.gal{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px}
-figure{margin:0;background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden}
-figure svg{display:block;width:100%;height:auto}
-figcaption{padding:14px 16px 16px}
-figcaption b{display:block;margin-bottom:2px}
-figcaption span{color:var(--mute);font-size:15px}
-.note{margin-top:16px;color:var(--mute);font-size:14px}
-.res{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:16px}
-.card{display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px;transition:border-color .15s,box-shadow .15s}
-.card:hover{border-color:var(--blue);box-shadow:0 10px 26px rgba(12,31,61,.1)}
-.ic{width:42px;height:42px;border-radius:10px;background:var(--soft);color:var(--blue);display:grid;place-items:center;margin-bottom:14px}
-.card h3{margin:0 0 6px;font-size:18px}
-.card p{margin:0 0 16px;color:var(--mute);font-size:15px;flex:1}
-.card a{font-weight:700;color:var(--blue);text-decoration:none}
-.card a:hover{text-decoration:underline}
-footer{border-top:1px solid var(--line);padding:30px 0 40px;color:var(--mute);font-size:15px}
-footer a{margin-right:16px;font-weight:600}
-@media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
-</style>
-</head>
-<body>
-<svg width="0" height="0" style="position:absolute" aria-hidden="true">
-<symbol id="p" viewBox="0 0 40 80"><circle cx="20" cy="14" r="11"/><path d="M4 80V48a16 16 0 0 1 16-16 16 16 0 0 1 16 16v32z"/></symbol>
-</svg>
-<div class="wrap">
-<header><a class="logo" href="#top">CapAble</a>
-<nav><a href="#video">Demo</a><a href="#gallery">Gallery</a><a href="#resources">Resources</a><a href="https://capable-alpha.vercel.app" target="_blank" rel="noopener noreferrer">Live prototype</a></nav></header>
-
-<main id="top">
-<div class="hero">
-<h1>See capability. Prove potential. Enable transition.</h1>
-<p class="lead">CapAble turns evidence of what people can actually do into a living Capability Twin, so hiring and career moves rest on capability, not pedigree. Built by Team Arc Light for SAP Hackfest 2026, Theme 2: Inclusive Workforce.</p>
-<div class="btns">
-<a class="btn p" href="https://capable-alpha.vercel.app" target="_blank" rel="noopener noreferrer">Explore live prototype</a>
-<a class="btn s" href="#video">Watch project demo</a>
+:root{--bg:#f6f8fc;--ink:#0c1f3d;--card:#fff;--blue:#2354d6;--teal:#0f9d8a;--muted:#5b6b86}
+@media (prefers-color-scheme:dark){:root{--bg:#0a1424;--ink:#eaf0fb;--card:#101e36;--muted:#9fb0cc}}
+*{box-sizing:border-box}body{margin:0;font:16px/1.6 system-ui,sans-serif;background:var(--bg);color:var(--ink)}
+main{max-width:1000px;margin:auto;padding:24px}img{max-width:100%;border-radius:14px}
+.links{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0}.links a{background:var(--blue);color:#fff;text-decoration:none;padding:10px 16px;border-radius:999px;font-weight:600}
+.links a.alt{background:var(--teal)}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin:20px 0}
+.card{background:var(--card);padding:16px;border-radius:14px;border:1px solid #d4dbea55}.card b{font-size:1.8rem;display:block;color:var(--blue)}.card span{color:var(--muted);font-size:.9rem}
+h2{margin-top:36px}
+</style></head><body><main>
+<img src="../assets/diagrams/banner.png" alt="CapAble banner">
+<div class="links">
+<a href="https://capable-alpha.vercel.app">Live prototype</a>
+<a class="alt" href="https://www.youtube.com/watch?v=InX9qLdTvsY">Demo video</a>
+<a href="https://github.com/Devengoyal885/Access-Hire">Frontend repo</a>
+<a href="https://github.com/Devengoyal885/accesshireml">ML repo</a>
+<a class="alt" href="https://huggingface.co/Devengoyal/accesshire-mpnet-final">Model</a>
 </div>
+<div class="grid">
+<div class="card"><b>469</b><span>capabilities in the taxonomy</span></div>
+<div class="card"><b>6</b><span>dimensions per capability</span></div>
+<div class="card"><b>4</b><span>AI agent routes</span></div>
+<div class="card"><b>4</b><span>stakeholder portals</span></div>
 </div>
-
-<section id="video" style="padding-top:20px">
-<div class="video">
-<h2>See CapAble in action</h2>
-<p class="sub">A walkthrough of the prototype, recorded by Team Arc Light.</p>
-<div class="player" id="player">
-<button type="button" id="playbtn" aria-label="Play CapAble project demo video">
-<svg viewBox="0 0 640 360" role="img" aria-label="Video poster for the CapAble project demo">
-<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#15337a"/><stop offset="1" stop-color="#071125"/></linearGradient></defs>
-<rect width="640" height="360" fill="url(#g)"/>
-<g fill="none" stroke="#6e98ff" stroke-opacity=".25"><path d="M0 280h640M0 220h640M0 160h640"/></g>
-<polyline points="40,300 140,250 230,270 330,190 440,210 560,110 610,90" fill="none" stroke="#3ccbb5" stroke-width="4" stroke-linejoin="round"/>
-<g fill="#6e98ff" fill-opacity=".5"><rect x="60" y="30" width="150" height="14" rx="7"/><rect x="60" y="56" width="90" height="10" rx="5"/></g>
-<g class="play"><circle cx="320" cy="180" r="46" fill="#fff"/><path d="M308 158l36 22-36 22z" fill="#2354d6"/></g>
-<text x="320" y="268" text-anchor="middle" fill="#fff" font-family="Manrope,system-ui,sans-serif" font-size="22" font-weight="800">CapAble project demo</text>
-</svg></button>
-</div>
-<div class="vmeta"><span>Plays in the page with YouTube’s privacy-enhanced player. No autoplay.</span>
-<a href="https://www.youtube.com/watch?v=InX9qLdTvsY" target="_blank" rel="noopener noreferrer">Watch on YouTube</a></div>
-</div>
-</section>
-
-<section id="gallery">
-<h2>Who CapAble is built for</h2>
-<p class="sub">Candidates, institutions and employers around one capability record.</p>
-<div class="gal">
-<figure><svg viewBox="0 0 400 260" role="img" aria-label="Illustration: trainees seated in a classroom facing a board with a bar chart"><rect width="400" height="260" fill="#dbe8fb"/><rect x="90" y="24" width="220" height="100" rx="8" fill="#fff"/><g fill="#2354d6"><rect x="120" y="84" width="22" height="26"/><rect x="156" y="66" width="22" height="44"/><rect x="192" y="76" width="22" height="34"/><rect x="228" y="48" width="22" height="62" fill="#0f9d8a"/></g><rect y="220" width="400" height="40" fill="#b9cff2"/><use href="#p" x="50" y="150" width="40" height="80" fill="#0c1f3d"/><use href="#p" x="130" y="150" width="40" height="80" fill="#2354d6"/><use href="#p" x="210" y="150" width="40" height="80" fill="#0f9d8a"/><use href="#p" x="290" y="150" width="40" height="80" fill="#5b7bc4"/></svg>
-<figcaption><b>Training and certification</b><span>Learners build skills in classrooms and workshops.</span></figcaption></figure>
-<figure><svg viewBox="0 0 400 260" role="img" aria-label="Illustration: two students standing in front of a campus building with a placement drive banner"><rect width="400" height="260" fill="#e6f5f1"/><rect x="60" y="50" width="170" height="170" fill="#fff" stroke="#9fd8cc" stroke-width="2"/><g fill="#9fd8cc"><rect x="80" y="70" width="28" height="28"/><rect x="126" y="70" width="28" height="28"/><rect x="172" y="70" width="28" height="28"/><rect x="80" y="116" width="28" height="28"/><rect x="172" y="116" width="28" height="28"/></g><rect x="125" y="160" width="40" height="60" fill="#0f9d8a"/><rect x="40" y="26" width="210" height="22" rx="4" fill="#0c1f3d"/><rect y="220" width="400" height="40" fill="#c4e8e0"/><use href="#p" x="260" y="145" width="40" height="80" fill="#2354d6"/><use href="#p" x="315" y="145" width="40" height="80" fill="#0c1f3d"/></svg>
-<figcaption><b>Campus placement drives</b><span>Institutions connect students with hiring companies.</span></figcaption></figure>
-<figure><svg viewBox="0 0 400 260" role="img" aria-label="Illustration: a candidate and an employer facing each other across a desk during an interview"><rect width="400" height="260" fill="#e9e6fa"/><rect x="40" y="170" width="320" height="16" rx="6" fill="#7b6fd0"/><rect y="220" width="400" height="40" fill="#d2cdf1"/><use href="#p" x="90" y="90" width="48" height="96" fill="#0c1f3d"/><use href="#p" x="262" y="90" width="48" height="96" fill="#2354d6"/><circle cx="200" cy="90" r="30" fill="#0f9d8a"/><path d="M186 90l10 10 18-20" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-<figcaption><b>Employer verification</b><span>Employers confirm roles and outcomes.</span></figcaption></figure>
-<figure><svg viewBox="0 0 400 260" role="img" aria-label="Illustration: an administrator beside a large screen showing a rising line chart"><rect width="400" height="260" fill="#fdf0dd"/><rect x="40" y="30" width="250" height="150" rx="10" fill="#fff"/><polyline points="62,150 110,128 150,138 200,92 245,100 272,60" fill="none" stroke="#0f9d8a" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/><g fill="#2354d6" opacity=".25"><rect x="62" y="162" width="40" height="8"/><rect x="112" y="162" width="40" height="8"/><rect x="162" y="162" width="40" height="8"/></g><rect y="220" width="400" height="40" fill="#f5dfbc"/><use href="#p" x="320" y="140" width="46" height="90" fill="#0c1f3d"/></svg>
-<figcaption><b>Impact analytics</b><span>Programme teams review outcomes and gaps.</span></figcaption></figure>
-</div>
-<p class="note">These are illustrations, not screenshots of the app. Open the live prototype to see the real screens.</p>
-</section>
-
-<section id="resources">
-<h2>Explore the technology behind CapAble</h2>
-<p class="sub">The prototype, code, trained model and dataset.</p>
-<div class="res" id="res"></div>
-</section>
-</main>
-
-<footer><div class="wrap" style="padding:0">
-<p><b>CapAble</b> | Adaptive Capability Twin for an Inclusive Workforce<br>Team Arc Light | SAP Hackfest 2026, Theme 2</p>
-<p><a href="https://capable-alpha.vercel.app" target="_blank" rel="noopener noreferrer">Prototype</a><a href="https://www.youtube.com/watch?v=InX9qLdTvsY" target="_blank" rel="noopener noreferrer">Demo video</a><a href="https://github.com/Devengoyal885/Access-Hire" target="_blank" rel="noopener noreferrer">Frontend code</a><a href="https://github.com/Devengoyal885/accesshireml" target="_blank" rel="noopener noreferrer">ML code</a></p>
-</div></footer>
-</div>
-
-<script>
-const R=[
-["Live prototype","Campus placement and career readiness for students, institutions and employers.","Launch prototype","https://capable-alpha.vercel.app","M3 5h18v14H3zM3 9h18"],
-["Frontend repository","The Next.js and TypeScript web app on GitHub.","View frontend code","https://github.com/Devengoyal885/Access-Hire","M9 19c-4 1-4-2-6-2m12 4v-3a3 3 0 0 0-1-2c3 0 6-1 6-6a5 5 0 0 0-1-3 5 5 0 0 0 0-3s-1 0-3 1a10 10 0 0 0-6 0C8 4 7 4 7 4a5 5 0 0 0 0 3 5 5 0 0 0-1 3c0 5 3 6 6 6a3 3 0 0 0-1 2v3"],
-["Machine learning","The machine learning code repository. See its README for exactly what it includes.","Explore ML repository","https://github.com/Devengoyal885/accesshireml","M12 3v4M12 17v4M3 12h4M17 12h4M6 6l3 3M15 15l3 3M18 6l-3 3M9 15l-3 3"],
-["Trained model","The MPNet-based model on Hugging Face. Read the model card for details.","View model","https://huggingface.co/Devengoyal/accesshire-mpnet-final","M12 3l8 4.5v9L12 21l-8-4.5v-9zM12 12l8-4.5M12 12v9M12 12L4 7.5"],
-["Dataset","A Google Drive folder. You may need to request access.","Explore dataset","https://drive.google.com/drive/folders/17lZrwG7Z14cZZMHHAoW76IvVGWXqVab2","M4 6c0-1.7 3.6-3 8-3s8 1.3 8 3-3.6 3-8 3-8-1.3-8-3zM4 6v12c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"]];
-document.getElementById('res').innerHTML=R.map(r=>`<article class="card"><div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${r[4]}"/></svg></div><h3>${r[0]}</h3><p>${r[1]}</p><a href="${r[3]}" target="_blank" rel="noopener noreferrer" aria-label="${r[2]} (opens in a new tab)">${r[2]}</a></article>`).join('');
-document.getElementById('playbtn').addEventListener('click',()=>{
-const p=document.getElementById('player');
-p.innerHTML='<iframe src="https://www.youtube-nocookie.com/embed/InX9qLdTvsY" title="CapAble project demo" allow="accelerometer; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>';
-});
-</script>
-</body>
-</html>
+<h2>How it works</h2><img src="../assets/diagrams/workflow.png" alt="Workflow">
+<h2>The Capability Twin loop</h2><img src="../assets/diagrams/capability_loop.png" alt="Capability loop">
+<h2>Architecture</h2><img src="../assets/diagrams/architecture.png" alt="Architecture">
+<h2>Honest status</h2><img src="../assets/diagrams/feature_audit.png" alt="Feature audit">
+<p style="color:var(--muted)">Team ArcLight — Deven, Aditya Singh, Rishabh Verma, Divya Verma · Hackshift, IIIT Delhi</p>
+</main></body></html>

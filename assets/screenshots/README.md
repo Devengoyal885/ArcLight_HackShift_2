@@ -1,10 +1,11 @@
 # Screenshots
 
-Drop real screenshots of the live prototype here (PNG, about 1600 px wide), then reference them from the main README, for example:
+Drop real screenshots of the live prototype (https://capable-alpha.vercel.app) here, for example:
 
-```markdown
-![Institution dashboard](assets/screenshots/institution-dashboard.png)
-```
+- `dashboard.png` – Candidate dashboard with the Capability Twin
+- `skill-gap.png` – Role-specific skill gap and learning path
+- `talent-radar.png` – Employer capability-based search
+- `placement-dashboard.png` – Institution dashboard and NAAC report
+- `synapse-mode.png` – OpenDyslexic / high-contrast mode
 
-Suggested shots: landing page, career path and skill gap, institution placement dashboard, employer pipeline, NAAC report, voice mock interview.
-Do not include real student names, emails or other personal data.
+Then add them to the Gallery section of the root `README.md`.
