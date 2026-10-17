@@ -291,6 +291,8 @@ export default function LoginPage() {
                 // User manually closed popup — do nothing
             } else if (code === 'auth/account-exists-with-different-credential') {
                 setError('An account already exists with this email. Please use email/password to sign in.');
+            } else if (code === 'auth/network-request-failed') {
+                setError('Google sign-in was blocked by your browser. Please disable your AdBlocker / Brave Shields for localhost, or create an account using Email & Password below.');
             } else {
                 console.error('[Google Auth Error]', err);
                 setError(`Sign in failed (${code || 'unknown error'}). Please try again.`);

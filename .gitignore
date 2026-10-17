@@ -36,3 +36,7 @@ Access-Hire-main/
 *.log
 tsc_errors.txt
 build_err.log
+
+.venv/
+__pycache__/
+*.pyc
