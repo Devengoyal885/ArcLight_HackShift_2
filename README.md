@@ -1,25 +1,24 @@
 <p align="center">
-  <img src="assets/diagrams/banner.png" alt="CapAble: From Training to Real Opportunities" width="100%">
+  <img src="assets/diagrams/banner.png" alt="CapAble: See Capability. Prove Potential. Enable Transition." width="100%">
 </p>
 
 <p align="center">
   <a href="https://capable-alpha.vercel.app"><img alt="Live prototype" src="https://img.shields.io/badge/Live%20prototype-capable--alpha.vercel.app-2354d6"></a>
   <a href="https://www.youtube.com/watch?v=InX9qLdTvsY"><img alt="Demo video" src="https://img.shields.io/badge/Demo-YouTube-c4302b"></a>
-  <img alt="SIH26135" src="https://img.shields.io/badge/SIH-26135-0f9d8a">
+  <img alt="SAP Hackfest 2026" src="https://img.shields.io/badge/SAP%20Hackfest-2026-0070f3">
+  <img alt="Theme 2" src="https://img.shields.io/badge/Theme%202-Inclusive%20Workforce-0f9d8a">
   <img alt="Team" src="https://img.shields.io/badge/Team-Arc%20Light-0c1f3d">
 </p>
 
-# CapAble
+# CapAble: Adaptive Capability Twin for an Inclusive Workforce
 
-**Longitudinal Skilling Outcome & Impact Intelligence Platform**
+> A résumé is a claim. A Capability Twin is a record.
 
-> Training completion is not the finish line. CapAble is built to measure what happens next.
-
-CapAble is our response to **SIH26135: difficulties in tracking employment outcomes, skill gaps, and the impact of skilling initiatives.** It connects students, training institutions and employers around one evidence-based record of capability, so programmes can see which skills turn into real opportunities and where the gaps are.
+CapAble is Team Arc Light's entry for **SAP Hackfest 2026 (IIIT Delhi), Theme 2: Inclusive Workforce.** It makes what a person can actually do visible, checks it through practical work, and keeps that record up to date, so hiring and career moves are decided on capability instead of pedigree, degree titles or career gaps.
 
 ## Contents
 
-[Quick links](#quick-links) · [Problem](#the-problem) · [Approach](#our-approach) · [Demo](#demo-video) · [Status](#project-status-what-is-built-and-what-is-not) · [Capability engine](#the-capability-twin-engine) · [Architecture](#architecture) · [ML service](#ml-service) · [Run locally](#run-the-frontend-locally) · [Gallery](#gallery) · [Roadmap](#roadmap) · [Privacy](#privacy-and-responsible-use) · [Team](#team)
+[Quick links](#quick-links) · [Problem](#the-problem) · [Solution](#our-solution) · [Demo](#demo-video) · [Theme 2 fit](#how-capable-fits-theme-2) · [Status](#project-status-what-is-built-and-what-is-not) · [Capability engine](#the-capability-twin-engine) · [Architecture](#architecture) · [ML service](#ml-service) · [Run locally](#run-the-frontend-locally) · [Gallery](#gallery) · [Roadmap](#roadmap) · [Responsible AI](#responsible-ai-and-privacy) · [Team](#team)
 
 ## Quick links
 
@@ -35,29 +34,28 @@ CapAble is our response to **SIH26135: difficulties in tracking employment outco
 
 ## The problem
 
-Skilling programmes report how many people completed training. Few can say what happened afterwards: who found work, who kept the job, whose wages grew, and which missing skills held people back. Without that follow-up data, institutions cannot improve courses and administrators cannot compare programmes fairly.
+Talent is not scarce, but capability is often hidden. Static résumés, degree and employer-name filters, self-declared skills and career gaps push capable people out of the funnel. Employers, in turn, cannot easily verify what a candidate can do, and institutions cannot see the real skill picture of their students.
 
-<p align="center"><img src="assets/diagrams/stakeholders.png" alt="One platform serving trainees, training providers, employers and programme administrators" width="90%"></p>
+<p align="center"><img src="assets/diagrams/stakeholders.png" alt="One capability record serving candidates, institutions, employers and human reviewers" width="90%"></p>
 
-## Our approach
+## Our solution
 
-CapAble follows a five-step loop. Each step feeds the next, and the last step feeds back into the first.
+CapAble replaces the static résumé with a **living Capability Twin** and moves each person through one loop: understand evidence, translate it to capabilities, find the gap to a target role, verify with practical work, and match fairly.
 
-<p align="center"><img src="assets/diagrams/workflow.png" alt="Track, verify, analyze, act and re-measure workflow with a feedback loop" width="100%"></p>
+<p align="center"><img src="assets/diagrams/workflow.png" alt="Understand, translate, find the gap, verify, match fairly, with a feedback loop to the Capability Twin" width="100%"></p>
 
 ```mermaid
 flowchart LR
-  A[Training and certification] --> B[Consent-based trainee record]
-  B --> C[Follow-ups and outcome collection]
-  C --> D[Employer confirmation]
-  D --> E[Longitudinal analysis]
-  E --> F[Skill-gap findings]
-  F --> G[Targeted intervention]
-  G --> H[Re-measurement]
-  H -.-> C
+  A[Evidence: resume, projects, work] --> B[Capability Translator]
+  B --> C[Capability Twin]
+  C --> D[Role-specific skill gap]
+  D --> E[Shortest learning path]
+  D --> F[Practical verification]
+  F --> G[Verified evidence]
+  G --> C
+  C --> H[Opportunity match + bias audit]
+  H --> I[Human decision]
 ```
-
-This is the target workflow for SIH26135. The [status section](#project-status-what-is-built-and-what-is-not) says which parts exist today.
 
 ## Demo video
 
@@ -65,37 +63,56 @@ This is the target workflow for SIH26135. The [status section](#project-status-w
 
 Click the image to watch the demo on YouTube.
 
+## How CapAble fits Theme 2
+
+SAP's Hackfest 2026 page describes the Inclusive Workforce theme as designing systems where fairness is an architectural principle, and it expects solutions where each agent has a clear role and explicit handoffs to humans. The table maps our work to that, based on a read of the code in the linked repositories.
+
+| Theme 2 idea | What CapAble does | Status |
+|---|---|---|
+| Make skills visible beyond a résumé | Capability Translator: FastAPI service with an `all-mpnet-base-v2`-based model against a 469-capability taxonomy, with an explainability breakdown | In the repositories |
+| Learning and reskilling | Learning-pathway agent (Gemini) and a data file of SAP Learning Hub courses | In the repositories |
+| Fair matching | Opportunity-match agent, with an evidence trail for each match | In the repositories |
+| Fairness as architecture | Bias-audit agent (Gemini) and an enterprise workforce console; AI recommends and a human decides | Bias-audit route in the repositories; broader fairness agents planned |
+| Accessibility | Synapse UI toggle for OpenDyslexic type and high-contrast reading modes | In the repositories |
+| Proof of capability | 4-step practical verification flow shown in the Action Center | Prototype flow; automatic task generation and scoring not built |
+| People and skills data | Demo personas in `lib/mockData.ts` | Demo data only |
+
+> Note for the team: we could not open SAP's full theme brief, only its public summary. Paste the exact Theme 2 problem statement into this section so the wording matches what judges will read.
+
 ## Project status: what is built and what is not
 
-We would rather be exact than impressive. The numbers below come from our internal codebase audit dated 2026-09-25.
+We would rather be exact than impressive.
+
+**In the frontend and ML repositories (verified by reading the code):**
+- Next.js app with dashboard, capability, opportunities, resume, actions, workspace, workforce, profile and roadmap pages.
+- Four server-side agent routes: `translate-capability`, `learning-pathway`, `opportunity-match`, `bias-audit`.
+- FastAPI ML service with four endpoints and precomputed capability embeddings.
+- Synapse UI accessibility toggle.
+- Demo data uses sample personas, not real people.
+
+**Deployed prototype (capable-alpha.vercel.app):** an internal audit dated 2026-09-25 found **40 of 137 audited features fully built, 13 partial or new, and 84 not built.**
 
 <p align="center"><img src="assets/diagrams/feature_audit.png" alt="Stacked bar chart of fully built, partial and not-built features across nine areas, 40 of 137 fully built" width="90%"></p>
 
-**40 of 137 audited features are fully built, 13 are partial or newly added, and 84 are not built yet.** The prototype covers:
-
 | Area | Working today |
 |---|---|
-| Candidate career | AI career-path mapping, skill-gap analysis, personalised learning paths, QR-linked verifiable certificates, public profile, portfolio with GitHub sync, resume tailoring, ATS score |
-| Interview prep | AI voice mock interview, session history and statistics, live filler-word counter |
-| Institution (TPO) | Placement dashboard, bulk CSV student invite, NAAC/NIRF report, faculty dashboard, CSV skill-matrix export |
+| Candidate career | AI career-path mapping, skill-gap analysis, personalised learning paths, QR-linked certificates, public profile, portfolio with GitHub sync, resume tailoring, ATS score |
+| Interview prep | AI voice mock interview, session history and statistics, filler-word counter |
+| Institution | Placement dashboard, bulk CSV invite, NAAC/NIRF report, faculty dashboard, skill-matrix export |
 | Employer | Role posting, candidate pipeline, offer-letter generation, interview scheduling |
-| Platform | Role-based Firestore security rules, in-app notifications, dark mode |
+| Platform | Role-based security rules, in-app notifications, dark mode |
 
-**SIH26135-specific features that are not built yet** (see [Roadmap](#roadmap)): automated trainee follow-ups, employer confirmation of employment and retention, longitudinal wage and attrition analytics, and outcome-driven intervention tracking. The existing institution dashboard, pipeline and skill-gap analysis are the foundation these will build on.
-
-Full detail: [`docs/FEATURE_AUDIT.md`](docs/FEATURE_AUDIT.md).
+**Not built yet:** equity-nudge and job-fairness agents, automated bias-audit reports in the deployed app, auto-scored practical tasks, WCAG compliance, mobile app. Details: [`docs/FEATURE_AUDIT.md`](docs/FEATURE_AUDIT.md).
 
 ## The Capability Twin engine
 
-The repositories linked above implement the AccessHire **Adaptive Capability Twin**, the skills-intelligence layer behind CapAble. A résumé is a claim; a Capability Twin is a record that is updated whenever new evidence arrives.
-
 <p align="center"><img src="assets/diagrams/capability_loop.png" alt="Closed loop: evidence to Capability Twin to skill gap to practical task to evaluation to verified evidence and back to the Twin" width="90%"></p>
 
-A Twin describes six dimensions of each capability: **proficiency, context, evidence, confidence, recency and autonomy.** Capabilities are inferred from free text using an `all-mpnet-base-v2`-based model against a 469-capability taxonomy, then shown with an explainability breakdown (semantic similarity, keyword overlap, evidence weighting).
+A Twin describes six dimensions of each capability: **proficiency, context, evidence, confidence, recency and autonomy.** The loop is the core idea: new work becomes new evidence, which updates the Twin and improves future matching. Verification is a flow in the prototype today; the automated scoring step is planned.
 
 ## Architecture
 
-<p align="center"><img src="assets/diagrams/architecture.png" alt="Layered system architecture: users, Next.js web app, AI and data services, planned outcome-tracking services, outputs" width="100%"></p>
+<p align="center"><img src="assets/diagrams/architecture.png" alt="Layered system architecture: users, Next.js web app, AI and data services, inclusive-workforce layer, outputs" width="100%"></p>
 
 Solid boxes exist in the repositories. Dashed boxes are planned.
 
@@ -104,22 +121,23 @@ Solid boxes exist in the repositories. Dashed boxes are planned.
 | Web app | Next.js 16.3.1, React 19, TypeScript, Tailwind CSS 4, Framer Motion, Recharts, Zustand, lucide-react | `Access-Hire/package.json` |
 | Server API routes | `translate-capability`, `learning-pathway`, `opportunity-match`, `bias-audit` | `Access-Hire/app/api/agents/` |
 | ML inference | FastAPI, sentence-transformers, PyTorch 2.3.1 (CPU), scikit-learn, pandas | `accesshireml/requirements.txt`, `Dockerfile` |
-| Generative agents | Google Gemini | `Access-Hire/lib/gemini.ts` |
+| Generative agents | Google Gemini Flash | `Access-Hire/lib/gemini.ts` |
 | Authentication | Supabase (see `.env.example`) | `Access-Hire/.env.example` |
+| Accessibility | Synapse context (OpenDyslexic, high contrast) | `Access-Hire/lib/synapse-context.tsx` |
 | Deployment | Frontend on Vercel; ML service ships with a Dockerfile | live prototype, `accesshireml/Dockerfile` |
 
-The live prototype's feature audit also lists Firestore, a Vapi-based voice interview and Firebase email triggers. Those belong to the deployed CapAble application, so treat the table above as the stack of the two linked repositories, and check the deployed app's own code for the rest.
+The deployed prototype's audit also mentions Firestore, a Vapi voice interview and Firebase email triggers. Those belong to the deployed app, so check its own code for them.
 
 ## ML service
 
-The `accesshireml` repository is a FastAPI service with a precomputed capability-embedding file (`capability_embeddings.npy`), the capability list (`capability_names.json`) and a CSV in `data/`. Its endpoints, from `app/main.py`:
+The `accesshireml` repository is a FastAPI service with a precomputed embedding file (`capability_embeddings.npy`), a capability list (`capability_names.json`) and a CSV in `data/`.
 
 | Method | Path | Purpose |
 |---|---|---|
 | GET | `/` | Service info |
 | GET | `/health` | Health check |
 | GET | `/capabilities` | List known capabilities |
-| POST | `/infer-capabilities` | Infer capabilities from free text (`text`, optional `top_k` from 1 to 20, default 8) |
+| POST | `/infer-capabilities` | Infer capabilities from free text (`text`, optional `top_k` 1 to 20, default 8) |
 
 ```bash
 git clone https://github.com/Devengoyal885/accesshireml.git
@@ -129,10 +147,10 @@ uvicorn app.main:app --host 0.0.0.0 --port 8000
 
 curl -X POST http://localhost:8000/infer-capabilities \
   -H "Content-Type: application/json" \
-  -d '{"text": "Managed a community workshop and built a budgeting spreadsheet", "top_k": 5}'
+  -d '{"text": "Led a volunteer team and built a budgeting spreadsheet", "top_k": 5}'
 ```
 
-The repository has no README of its own, and we have not published accuracy figures. Read the [model card](https://huggingface.co/Devengoyal/accesshire-mpnet-final) for what it documents.
+The repository has no README and we publish no accuracy figures. See the [model card](https://huggingface.co/Devengoyal/accesshire-mpnet-final) for what it documents.
 
 ## Run the frontend locally
 
@@ -146,55 +164,51 @@ cp .env.example .env.local     # then fill in your own values
 npm run dev                    # http://localhost:3000
 ```
 
-Environment variables (from `.env.example`):
-
 | Variable | Used for |
 |---|---|
 | `GOOGLE_GEMINI_API_KEY` | Server-side Gemini calls |
-| `NEXT_PUBLIC_GEMINI_API_KEY` | Exposed to the browser. Avoid this in production and use only the server-side key |
+| `NEXT_PUBLIC_GEMINI_API_KEY` | Exposed to the browser. Avoid in production; use the server-side key |
 | `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase authentication |
 | `ACCESSHIRE_ML_API_URL` | URL of the running ML service |
 
-Never commit real keys. Other scripts: `npm run build`, `npm run start`, `npm run lint`. This repository's `AGENTS.md` notes that Next.js 16 has breaking changes, so read the docs in `node_modules/next/dist/docs/` before changing framework-level code.
+Never commit real keys. Other scripts: `npm run build`, `npm run start`, `npm run lint`. The repository's `AGENTS.md` warns that Next.js 16 has breaking changes, so read `node_modules/next/dist/docs/` before framework-level changes.
 
 ## Gallery
 
-The images below are illustrations, not screenshots of the app. Add real screenshots in [`assets/screenshots/`](assets/screenshots/README.md).
+These are illustrations, not screenshots. Add real screenshots in [`assets/screenshots/`](assets/screenshots/README.md).
 
 <table>
   <tr>
-    <td align="center"><img src="assets/illustrations/training.png" alt="Trainees in a classroom facing a bar chart" width="320"><br><sub>Training and certification</sub></td>
-    <td align="center"><img src="assets/illustrations/placement-drive.png" alt="Students outside a campus building with a placement banner" width="320"><br><sub>Campus placement drives</sub></td>
+    <td align="center"><img src="assets/illustrations/training.png" alt="Learners in a classroom facing a bar chart" width="320"><br><sub>Learning and upskilling</sub></td>
+    <td align="center"><img src="assets/illustrations/placement-drive.png" alt="Students outside a campus building with a placement banner" width="320"><br><sub>Institutions and placements</sub></td>
   </tr>
   <tr>
-    <td align="center"><img src="assets/illustrations/employer-verification.png" alt="Candidate and employer across a desk with a check mark" width="320"><br><sub>Employer verification</sub></td>
-    <td align="center"><img src="assets/illustrations/impact-analytics.png" alt="Administrator beside a screen with a rising line chart" width="320"><br><sub>Impact analytics</sub></td>
+    <td align="center"><img src="assets/illustrations/employer-verification.png" alt="Candidate and employer across a desk with a check mark" width="320"><br><sub>Verified capability</sub></td>
+    <td align="center"><img src="assets/illustrations/impact-analytics.png" alt="Reviewer beside a screen with a rising line chart" width="320"><br><sub>Workforce insight</sub></td>
   </tr>
 </table>
 
 ## Roadmap
 
-From our audit's prioritised list, plus the SIH26135 outcome-tracking work.
-
 | Phase | Work |
 |---|---|
-| Now: fix first | Move the Gemini key behind a backend (it is exposed in the frontend today), install the Firebase "Trigger Email" extension so queued emails send, add the institution drive-management admin UI, show job recommendations in the opportunities page |
-| Next: outcome tracking | Trainee follow-up scheduler, employer confirmation of status, role and retention, longitudinal store by cohort and course, wage, retention and attrition analytics |
-| Then: assessment and polish | Larger question bank, randomised order and review flags, automated shortlisting rules, employer funnel analytics, campus drive calendar |
-| Later: scale | PWA and browser push notifications, WhatsApp alerts, ERP/LMS integration, multilingual support, WCAG accessibility work |
+| Before the final | Move the Gemini key behind a backend, replace the demo-data paths with one clean flow, record a short demo of the loop end to end |
+| Next | Auto-generated and auto-scored practical tasks, equity-nudge and job-fairness agents, bias-audit reports in the deployed app |
+| Then | Institution drive-management admin UI, job recommendations in the opportunities page, employer funnel analytics |
+| Later | PWA and notifications, WCAG accessibility work, multilingual support, enterprise HR integrations |
 
-## Privacy and responsible use
+## Responsible AI and privacy
 
-- Trainee records are intended to be **consent-based**, with **role-based access** (Firestore security rules are in place in the prototype).
-- Reported and verified outcomes must stay clearly separate once outcome tracking is built.
-- Capability and outcome scores support human decisions and do not replace them.
-- We make no legal-compliance claims. Do not load real personal data into the prototype or share datasets without permission.
+- AI recommends and a human decides. Match and bias-audit outputs are meant for human review.
+- Every capability carries evidence and an explanation, so a result can be questioned.
+- Role-based security rules protect data in the deployed prototype.
+- We make no compliance claims. Keep real personal data out of the demo and share datasets only with permission.
 
 ## Team
 
 **Arc Light** — Deven, Rishabh Verma, Aditya Singh, V. Naveen Shankar, Ansh Chaudhary, Parkhee Jha.
 
-Smart India Hackathon, problem statement **SIH26135**.
+SAP Hackfest 2026, IIIT Delhi, Theme 2: Inclusive Workforce.
 
 ## License
 

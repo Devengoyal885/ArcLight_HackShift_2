@@ -1,6 +1,6 @@
 # CapAble feature audit (summary)
 
-Source: internal codebase inspection, 2026-09-25. Legend: built = component, service and route exist and work; partial = incomplete or UI-only; new = added recently and needs testing; not built = does not exist.
+Source: internal inspection of the deployed CapAble prototype (capable-alpha.vercel.app), 2026-09-25. This audit covers the deployed app, not the Access-Hire and accesshireml repositories. Legend: built = component, service and route exist and work; partial = incomplete or UI-only; new = added recently and needs testing; not built = does not exist.
 
 | Area | Total | Built | Partial / new | Not built |
 |---|---:|---:|---:|---:|
