@@ -159,17 +159,7 @@ onet_capabilities["description"] = (
 
 onet_capabilities["source"] = "O*NET"
 
-master_capabilities = pd.concat(
-    [
-        esco_capabilities[
-            ["source_id", "capability", "description", "category", "source"]
-        ],
-        onet_capabilities[
-            ["source_id", "capability", "description", "category", "source"]
-        ]
-    ],
-    ignore_index=True
-)
+
 
 master_capabilities["capability"] = (
     master_capabilities["capability"]
