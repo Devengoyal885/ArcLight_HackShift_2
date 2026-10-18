@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import type { UserRole } from '../../services/profileService';
@@ -19,16 +20,21 @@ const Spinner = () => (
 
 export default function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) {
     const { user, role, loading, profileLoading } = useAuth();
+    const [timedOut, setTimedOut] = useState(false);
 
-    // Always wait for Firebase auth to finish initializing.
-    // loading=true means onAuthStateChanged hasn't fired yet — NEVER redirect during this time.
-    if (loading) {
+    useEffect(() => {
+        const timer = setTimeout(() => setTimedOut(true), 2500);
+        return () => clearTimeout(timer);
+    }, []);
+
+    // Always wait for Firebase auth to finish initializing (up to 2.5s max)
+    if (loading && !timedOut) {
         console.log('[ProtectedRoute] Auth still loading, showing spinner');
         return <Spinner />;
     }
 
-    // Profile is loading — show spinner
-    if (profileLoading) {
+    // Profile is loading — show spinner (up to 2.5s max)
+    if (profileLoading && !timedOut) {
         return <Spinner />;
     }
 

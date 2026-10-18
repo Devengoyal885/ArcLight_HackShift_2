@@ -27,6 +27,13 @@ const AuthContext = createContext<AuthContextType>({
 
 export const useAuth = () => useContext(AuthContext);
 
+const withTimeout = <T,>(promise: Promise<T>, ms: number, fallback: T): Promise<T> => {
+    return Promise.race([
+        promise,
+        new Promise<T>((resolve) => setTimeout(() => resolve(fallback), ms))
+    ]);
+};
+
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [user, setUser] = useState<User | null>(null);
     const [profile, setProfile] = useState<UserProfile | null>(null);
@@ -39,37 +46,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     const loadProfile = async (u: User, currentDbUid: string) => {
         setProfileLoading(true);
+        const fallbackProfile: UserProfile = {
+            uid: currentDbUid,
+            name: u.displayName || u.email?.split('@')[0] || 'User',
+            email: u.email || '',
+            avatar: u.photoURL || undefined,
+            profileComplete: false,
+        };
         try {
-            let p = await getProfile(currentDbUid);
+            let p = await withTimeout(getProfile(currentDbUid), 2500, null);
             if (!p) {
                 try {
-                    await createProfile(currentDbUid, {
-                        uid: currentDbUid,
-                        name: u.displayName || '',
-                        email: u.email || '',
-                        avatar: u.photoURL || undefined,
-                        profileComplete: false,
-                    });
-                    p = await getProfile(currentDbUid);
+                    await withTimeout(createProfile(currentDbUid, fallbackProfile), 2000, null);
+                    p = await withTimeout(getProfile(currentDbUid), 2000, fallbackProfile);
                 } catch {
-                    p = {
-                        uid: currentDbUid,
-                        name: u.displayName || '',
-                        email: u.email || '',
-                        avatar: u.photoURL || undefined,
-                        profileComplete: false,
-                    };
+                    p = fallbackProfile;
                 }
             }
-            setProfile(p);
+            setProfile(p || fallbackProfile);
         } catch {
-            setProfile({
-                uid: currentDbUid,
-                name: u.displayName || '',
-                email: u.email || '',
-                avatar: u.photoURL || undefined,
-                profileComplete: false,
-            });
+            setProfile(fallbackProfile);
         } finally {
             setProfileLoading(false);
         }
@@ -83,19 +79,31 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         // Purge any legacy mock login keys from local storage
         localStorage.removeItem('capable_mock_login');
 
+        // Safety watchdog: Auth loading state must NEVER hang for more than 3 seconds
+        const watchdog = setTimeout(() => {
+            setLoading(false);
+            setProfileLoading(false);
+        }, 3000);
+
         const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
             console.log('[AuthContext] onAuthStateChanged fired, user:', currentUser?.uid ?? 'null');
+            clearTimeout(watchdog);
             setUser(currentUser);
+            setLoading(false); // Firebase auth state is resolved! Never block loading on Firestore
+
             if (currentUser) {
                 const activeRole = (localStorage.getItem('userRole') as UserRole | null) || 'candidate';
                 const currentDbUid = `${currentUser.uid}_${activeRole}`;
                 await loadProfile(currentUser, currentDbUid);
             } else {
                 setProfile(null);
+                setProfileLoading(false);
             }
-            setLoading(false);
         });
-        return unsubscribe;
+        return () => {
+            clearTimeout(watchdog);
+            unsubscribe();
+        };
     }, []);
 
     return (
