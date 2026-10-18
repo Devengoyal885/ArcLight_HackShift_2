@@ -7,7 +7,7 @@ import {
     MapPin, Loader2, ChevronRight, CheckCircle2, TrendingUp,
     AlertTriangle, RotateCcw, Bell, CalendarCheck, Gift,
     ClipboardList, ArrowRight, Sparkles, Target, Building2, XCircle, DollarSign,
-    PieChart, BarChart2
+    PieChart, BarChart2, Rocket
 } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import {
@@ -109,6 +109,8 @@ export default function EmployerDashboard() {
     };
 
     const activeRoles         = postedRoles.filter(r => r.status === "active");
+    const startupRoles        = postedRoles.filter(r => r.isStartupRole);
+    const isStartup           = profile?.orgType === 'startup' || startupRoles.length > 0;
     const needsReview         = allApps.filter(a => a.status === "Applied").length;
     const scheduledInterviews = allApps.filter(a => a.status === "Interview Scheduled").length;
     const offersCount         = allApps.filter(a => a.status === "Offer Extended").length;
@@ -184,28 +186,113 @@ export default function EmployerDashboard() {
 
                 {/* Header */}
                 <motion.div className="emp-dash-header" initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
-                    <p className="emp-dash-greeting">{greeting},</p>
-                    <h1 className="emp-dash-org">{companyName}</h1>
-                    <p className="emp-dash-sub">{summary}</p>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
+                        <div>
+                            <p className="emp-dash-greeting">{greeting},</p>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+                                <h1 className="emp-dash-org" style={{ margin: 0 }}>{companyName}</h1>
+                                {profile?.orgType && (
+                                    <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                                        <span style={{
+                                            fontSize: '11px',
+                                            fontWeight: 700,
+                                            padding: '3px 10px',
+                                            borderRadius: '6px',
+                                            background: profile.orgType === 'startup' ? '#f5f3ff' : '#eff6ff',
+                                            color: profile.orgType === 'startup' ? '#7c3aed' : '#2563eb',
+                                            border: `1px solid ${profile.orgType === 'startup' ? '#ddd6fe' : '#bfdbfe'}`,
+                                            display: 'inline-flex',
+                                            alignItems: 'center',
+                                            gap: '4px'
+                                        }}>
+                                            {profile.orgType === 'startup' ? '🚀 Startup Venture' : profile.orgType === 'enterprise' ? '🌐 Enterprise / MNC' : profile.orgType === 'smb' ? '🏢 SMB' : '💚 Non-profit'}
+                                        </span>
+                                        {profile.orgType === 'startup' && profile.startupStage && (
+                                            <span style={{
+                                                fontSize: '11px',
+                                                fontWeight: 600,
+                                                padding: '3px 10px',
+                                                borderRadius: '6px',
+                                                background: '#fef3c7',
+                                                color: '#92400e',
+                                                border: '1px solid #fde68a'
+                                            }}>
+                                                Stage: {profile.startupStage}
+                                            </span>
+                                        )}
+                                        {profile.foundingYear && (
+                                            <span style={{
+                                                fontSize: '11px',
+                                                color: '#64748b',
+                                                background: '#f1f5f9',
+                                                padding: '3px 8px',
+                                                borderRadius: '6px'
+                                            }}>
+                                                Est. {profile.foundingYear}
+                                            </span>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
+                            <p className="emp-dash-sub" style={{ marginTop: '6px' }}>{summary}</p>
+                        </div>
+
+                        {isStartup && (
+                            <div style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '8px',
+                                background: 'linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%)',
+                                border: '1px solid #c4b5fd',
+                                padding: '8px 14px',
+                                borderRadius: '10px'
+                            }}>
+                                <Rocket size={18} color="#7c3aed" />
+                                <div>
+                                    <div style={{ fontSize: '11px', fontWeight: 700, color: '#5b21b6' }}>
+                                        FOUNDER & VENTURE MODE ACTIVE
+                                    </div>
+                                    <div style={{ fontSize: '11px', color: '#6d28d9' }}>
+                                        {startupRoles.length} Equity & Startup Postings Live
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                    </div>
                 </motion.div>
 
                 {/* New Employer Onboarding */}
                 <AnimatePresence>
                     {isNewEmployer && (
                         <motion.div className="emp-onboarding-card" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
-                            <div className="emp-onboarding-icon"><Sparkles size={28} /></div>
+                            <div className="emp-onboarding-icon">
+                                {isStartup ? <Rocket size={28} color="#7c3aed" /> : <Sparkles size={28} />}
+                            </div>
                             <div>
-                                <h2 className="emp-onboarding-title">Your Hiring Workspace is Ready</h2>
-                                <p className="emp-onboarding-desc">Create your first opportunity to start discovering verified talent through CapAble's capability intelligence.</p>
+                                <h2 className="emp-onboarding-title">
+                                    {isStartup ? "🚀 Your Startup & Founder Workspace is Ready" : "Your Hiring Workspace is Ready"}
+                                </h2>
+                                <p className="emp-onboarding-desc">
+                                    {isStartup
+                                        ? `Publish equity roles, recruit student co-founders, and connect with academic incubators for your ${profile?.startupStage || 'Early-Stage'} venture.`
+                                        : "Create your first opportunity to start discovering verified talent through CapAble's capability intelligence."
+                                    }
+                                </p>
                                 <div className="emp-onboarding-steps">
-                                    <div className="emp-onboarding-step"><span>1</span> Create Opportunity</div>
+                                    <div className="emp-onboarding-step"><span>1</span> {isStartup ? "Post Equity Role" : "Create Opportunity"}</div>
                                     <ArrowRight size={14} color="#94a3b8" />
-                                    <div className="emp-onboarding-step"><span>2</span> Discover Talent</div>
+                                    <div className="emp-onboarding-step"><span>2</span> {isStartup ? "Scout Builders" : "Discover Talent"}</div>
                                     <ArrowRight size={14} color="#94a3b8" />
-                                    <div className="emp-onboarding-step"><span>3</span> Build Pipeline</div>
+                                    <div className="emp-onboarding-step"><span>3</span> {isStartup ? "Incubator Match" : "Build Pipeline"}</div>
                                 </div>
                                 <div className="emp-onboarding-actions">
-                                    <Link to="/employer/roles" className="emp-btn">Create Opportunity</Link>
+                                    <Link 
+                                        to="/employer/roles" 
+                                        className="emp-btn"
+                                        style={isStartup ? { background: 'linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%)' } : {}}
+                                    >
+                                        {isStartup ? "🚀 Post Startup / Equity Role" : "Create Opportunity"}
+                                    </Link>
                                     <Link to="/employer/talent" className="emp-btn emp-btn-outline">Explore Talent</Link>
                                 </div>
                             </div>
@@ -256,6 +343,117 @@ export default function EmployerDashboard() {
                         <div className="emp-metric-data"><span className="emp-metric-value">3</span><span className="emp-metric-label">Hiring Team</span></div>
                     </div>
                 </motion.div>
+
+                {/* Startup & Venture Track Hub (When Startup profile or posting startup roles) */}
+                {isStartup && (
+                    <motion.div
+                        className="emp-card"
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        style={{
+                            background: 'linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%)',
+                            border: '1.5px solid #d8b4fe',
+                            marginBottom: '24px',
+                            padding: '20px 24px'
+                        }}
+                    >
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px', flexWrap: 'wrap', gap: '8px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                <div style={{ background: '#7c3aed', color: '#fff', padding: '8px', borderRadius: '10px' }}>
+                                    <Rocket size={20} />
+                                </div>
+                                <div>
+                                    <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 700, color: '#4c1d95' }}>
+                                        Startup Founder & Venture Workspace
+                                    </h3>
+                                    <p style={{ margin: 0, fontSize: '12px', color: '#6d28d9' }}>
+                                        Optimized for early-stage founders: co-founder equity roles, student builder matchmaking, and academic incubator partnerships.
+                                    </p>
+                                </div>
+                            </div>
+                            <span style={{ fontSize: '11px', background: '#ffffff', color: '#7c3aed', fontWeight: 700, padding: '4px 10px', borderRadius: '20px', border: '1px solid #c4b5fd' }}>
+                                Stage: {profile?.startupStage || 'Early-Stage'}
+                            </span>
+                        </div>
+
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '12px' }}>
+                            <Link
+                                to="/employer/roles"
+                                style={{
+                                    background: '#ffffff',
+                                    padding: '14px',
+                                    borderRadius: '10px',
+                                    border: '1px solid #e9d5ff',
+                                    textDecoration: 'none',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    gap: '6px',
+                                    transition: 'all 0.2s'
+                                }}
+                            >
+                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                    <span style={{ fontSize: '13px', fontWeight: 700, color: '#1e293b' }}>
+                                        Post Equity / Co-Founder Role
+                                    </span>
+                                    <PlusCircle size={15} color="#7c3aed" />
+                                </div>
+                                <span style={{ fontSize: '11px', color: '#64748b' }}>
+                                    Publish opportunities offering 1%–10% equity, sweat-equity, or co-founder stakes.
+                                </span>
+                            </Link>
+
+                            <Link
+                                to="/candidate/opportunities?tab=startups"
+                                style={{
+                                    background: '#ffffff',
+                                    padding: '14px',
+                                    borderRadius: '10px',
+                                    border: '1px solid #e9d5ff',
+                                    textDecoration: 'none',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    gap: '6px',
+                                    transition: 'all 0.2s'
+                                }}
+                            >
+                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                    <span style={{ fontSize: '13px', fontWeight: 700, color: '#1e293b' }}>
+                                        Browse Campus Ventures & Co-Founders
+                                    </span>
+                                    <ArrowRight size={15} color="#7c3aed" />
+                                </div>
+                                <span style={{ fontSize: '11px', color: '#64748b' }}>
+                                    Scout student-led startups and technical builders across universities.
+                                </span>
+                            </Link>
+
+                            <Link
+                                to="/institution/incubation"
+                                style={{
+                                    background: '#ffffff',
+                                    padding: '14px',
+                                    borderRadius: '10px',
+                                    border: '1px solid #e9d5ff',
+                                    textDecoration: 'none',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    gap: '6px',
+                                    transition: 'all 0.2s'
+                                }}
+                            >
+                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                    <span style={{ fontSize: '13px', fontWeight: 700, color: '#1e293b' }}>
+                                        Partner with Academic E-Cell Incubators
+                                    </span>
+                                    <Building2 size={15} color="#7c3aed" />
+                                </div>
+                                <span style={{ fontSize: '11px', color: '#64748b' }}>
+                                    Access university incubation programs, R&D labs, and state innovation grants.
+                                </span>
+                            </Link>
+                        </div>
+                    </motion.div>
+                )}
 
                 {/* Recruitment Pipeline */}
                 {allApps.length > 0 && (
