@@ -7,11 +7,11 @@ import {
     MapPin, Loader2, ChevronRight, CheckCircle2, TrendingUp,
     AlertTriangle, RotateCcw, Bell, CalendarCheck, Gift,
     ClipboardList, ArrowRight, Sparkles, Target, Building2, XCircle, DollarSign,
-    PieChart, BarChart2, Rocket
+    PieChart, BarChart2, Rocket, Edit3, Check
 } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import {
-    getPostedRoles, getEmployerProfile, getApplicationsForRole,
+    getPostedRoles, getEmployerProfile, saveEmployerProfile, getApplicationsForRole,
     type PostedRole, type EmployerProfile, type RoleApplication
 } from "../../services/employerService";
 import { getEmployerLinkRequests, updateLinkRequestStatus } from "../../services/institutionService";
@@ -65,18 +65,32 @@ export default function EmployerDashboard() {
     const [linkRequests, setLinkRequests] = useState<{ id: string; institutionCode: string; companyName: string; status: string }[]>([]);
     const [phase,       setPhase]       = useState<LoadPhase>("loading");
 
-    const companyName = profile?.companyName || user?.displayName || "Your Company";
+    // Company Name Inline Editing State
+    const [isEditingCompany, setIsEditingCompany] = useState(false);
+    const [editCompanyName, setEditCompanyName] = useState("");
+    const [savingCompany, setSavingCompany] = useState(false);
+
+    const resolvedCompanyName = profile?.companyName 
+        || localStorage.getItem('employer_companyName') 
+        || (user?.displayName && user.displayName !== 'User' ? user.displayName : null)
+        || "Your Company";
 
     const loadData = useCallback(async () => {
         if (!user) return;
         setPhase("loading");
         try {
+            const targetUid = dbUid || `${user.uid}_employer`;
             const [prof, roles, requests] = await Promise.all([
-                getEmployerProfile(dbUid!),
-                getPostedRoles(dbUid!),
-                getEmployerLinkRequests(dbUid!)
+                getEmployerProfile(targetUid),
+                getPostedRoles(targetUid),
+                getEmployerLinkRequests(targetUid)
             ]);
             setProfile(prof);
+            if (prof?.companyName) {
+                setEditCompanyName(prof.companyName);
+            } else {
+                setEditCompanyName(localStorage.getItem('employer_companyName') || '');
+            }
             setPostedRoles(roles);
             setLinkRequests(requests);
 
@@ -95,9 +109,27 @@ export default function EmployerDashboard() {
             console.error("[EmployerDashboard] load failed:", err);
             setPhase("error");
         }
-    }, [user]);
+    }, [user, dbUid]);
 
     useEffect(() => { loadData(); }, [loadData]);
+
+    const handleSaveCompanyName = async (e?: React.FormEvent) => {
+        if (e) e.preventDefault();
+        const trimmed = editCompanyName.trim();
+        if (!trimmed || !user) return;
+        setSavingCompany(true);
+        try {
+            const targetUid = dbUid || `${user.uid}_employer`;
+            await saveEmployerProfile(targetUid, { companyName: trimmed });
+            setProfile(prev => prev ? { ...prev, companyName: trimmed } : { uid: targetUid, companyName: trimmed, industry: 'Technology' });
+            localStorage.setItem('employer_companyName', trimmed);
+            setIsEditingCompany(false);
+        } catch (err) {
+            console.error("Failed to save company name:", err);
+        } finally {
+            setSavingCompany(false);
+        }
+    };
 
     const handleUpdateLinkRequest = async (reqId: string, instCode: string, newStatus: 'approved' | 'rejected') => {
         try {
@@ -190,7 +222,85 @@ export default function EmployerDashboard() {
                         <div>
                             <p className="emp-dash-greeting">{greeting},</p>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
-                                <h1 className="emp-dash-org" style={{ margin: 0 }}>{companyName}</h1>
+                                {isEditingCompany ? (
+                                    <form onSubmit={handleSaveCompanyName} style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+                                        <input
+                                            type="text"
+                                            value={editCompanyName}
+                                            onChange={(e) => setEditCompanyName(e.target.value)}
+                                            placeholder="Enter company name..."
+                                            autoFocus
+                                            style={{
+                                                fontSize: '22px',
+                                                fontWeight: 800,
+                                                color: '#0f172a',
+                                                padding: '4px 10px',
+                                                borderRadius: '8px',
+                                                border: '2px solid #6366f1',
+                                                outline: 'none',
+                                                background: '#ffffff'
+                                            }}
+                                        />
+                                        <button
+                                            type="submit"
+                                            disabled={savingCompany}
+                                            style={{
+                                                background: '#6366f1',
+                                                color: '#ffffff',
+                                                border: 'none',
+                                                borderRadius: '6px',
+                                                padding: '6px 12px',
+                                                fontSize: '12px',
+                                                fontWeight: 600,
+                                                cursor: 'pointer',
+                                                display: 'inline-flex',
+                                                alignItems: 'center',
+                                                gap: '4px'
+                                            }}
+                                        >
+                                            {savingCompany ? <Loader2 size={13} className="spin" /> : <Check size={13} />} Save
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => setIsEditingCompany(false)}
+                                            style={{
+                                                background: '#f1f5f9',
+                                                color: '#64748b',
+                                                border: 'none',
+                                                borderRadius: '6px',
+                                                padding: '6px 10px',
+                                                fontSize: '12px',
+                                                cursor: 'pointer'
+                                            }}
+                                        >
+                                            Cancel
+                                        </button>
+                                    </form>
+                                ) : (
+                                    <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+                                        <h1 className="emp-dash-org" style={{ margin: 0 }}>{resolvedCompanyName}</h1>
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                setEditCompanyName(resolvedCompanyName === 'Your Company' ? '' : resolvedCompanyName);
+                                                setIsEditingCompany(true);
+                                            }}
+                                            title="Edit Company Name"
+                                            style={{
+                                                background: '#f1f5f9',
+                                                border: '1px solid #e2e8f0',
+                                                borderRadius: '6px',
+                                                padding: '4px 6px',
+                                                cursor: 'pointer',
+                                                display: 'inline-flex',
+                                                alignItems: 'center',
+                                                color: '#64748b'
+                                            }}
+                                        >
+                                            <Edit3 size={13} />
+                                        </button>
+                                    </div>
+                                )}
                                 {profile?.orgType && (
                                     <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
                                         <span style={{

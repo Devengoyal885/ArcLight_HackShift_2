@@ -102,16 +102,80 @@ export interface RoleApplication {
 // ─── Employer Profile ─────────────────────────────────────────────────────────
 
 export async function getEmployerProfile(uid: string): Promise<EmployerProfile | null> {
-    const snap = await getDoc(doc(db, 'employers', uid, 'profile', 'data'));
-    return snap.exists() ? (snap.data() as EmployerProfile) : null;
+    const rawUid = uid.replace(/_(employer|candidate|academician|institution)$/, '');
+    const tryUids = [
+        uid,
+        `${rawUid}_employer`,
+        rawUid,
+        `${rawUid}_candidate`,
+    ];
+
+    for (const u of tryUids) {
+        try {
+            const snap = await getDoc(doc(db, 'employers', u, 'profile', 'data'));
+            if (snap.exists() && snap.data()?.companyName) {
+                return snap.data() as EmployerProfile;
+            }
+        } catch {}
+        try {
+            const snap2 = await getDoc(doc(db, 'employers', u));
+            if (snap2.exists() && snap2.data()?.companyName) {
+                return snap2.data() as EmployerProfile;
+            }
+        } catch {}
+        try {
+            const userSnap = await getDoc(doc(db, 'users', u, 'profile', 'data'));
+            if (userSnap.exists() && (userSnap.data() as any)?.companyName) {
+                return userSnap.data() as any as EmployerProfile;
+            }
+        } catch {}
+    }
+
+    // Check localStorage fallback
+    const localName = localStorage.getItem('employer_companyName');
+    if (localName) {
+        return {
+            uid,
+            companyName: localName,
+            industry: localStorage.getItem('employer_industry') || 'Technology',
+            orgType: (localStorage.getItem('employer_orgType') as OrgType) || 'enterprise',
+            startupStage: localStorage.getItem('employer_startupStage') as any,
+            foundingYear: localStorage.getItem('employer_foundingYear') || undefined,
+        };
+    }
+
+    return null;
 }
 
 export async function saveEmployerProfile(uid: string, data: Partial<EmployerProfile>): Promise<void> {
-    await setDoc(doc(db, 'employers', uid, 'profile', 'data'), {
+    const rawUid = uid.replace(/_(employer|candidate|academician|institution)$/, '');
+    if (data.companyName) {
+        localStorage.setItem('employer_companyName', data.companyName);
+    }
+    if (data.industry) {
+        localStorage.setItem('employer_industry', data.industry);
+    }
+    if (data.orgType) {
+        localStorage.setItem('employer_orgType', data.orgType);
+    }
+    if (data.startupStage) {
+        localStorage.setItem('employer_startupStage', data.startupStage);
+    }
+    if (data.foundingYear) {
+        localStorage.setItem('employer_foundingYear', data.foundingYear);
+    }
+
+    const payload = {
         ...data,
-        uid,
+        uid: `${rawUid}_employer`,
         updatedAt: serverTimestamp(),
-    }, { merge: true });
+    };
+
+    await Promise.allSettled([
+        setDoc(doc(db, 'employers', `${rawUid}_employer`, 'profile', 'data'), payload, { merge: true }),
+        setDoc(doc(db, 'employers', rawUid, 'profile', 'data'), payload, { merge: true }),
+        setDoc(doc(db, 'users', `${rawUid}_employer`, 'profile', 'data'), payload, { merge: true }),
+    ]);
 }
 
 export async function getAllEmployerProfiles(): Promise<EmployerProfile[]> {

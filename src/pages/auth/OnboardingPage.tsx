@@ -148,9 +148,10 @@ export default function OnboardingPage() {
             try {
                 if (user) {
                     const profileId = `${user.uid}_employer`;
+                    const resolvedName = companyName.trim() || user.displayName || 'My Company';
                     await saveEmployerProfile(profileId, {
                         uid: profileId,
-                        companyName: companyName || user.displayName || 'My Company',
+                        companyName: resolvedName,
                         industry: industry || 'Technology',
                         website: website || undefined,
                         size: companySize || undefined,
@@ -158,8 +159,13 @@ export default function OnboardingPage() {
                         startupStage: orgType === 'startup' && startupStage ? startupStage as EmployerProfile['startupStage'] : undefined,
                         foundingYear: foundingYear || undefined,
                     });
+                    localStorage.setItem('employer_companyName', resolvedName);
                     // Persist role to Firestore user profile
-                    await updateProfile(profileId, { role: 'employer', profileComplete: true });
+                    await updateProfile(profileId, { 
+                        role: 'employer', 
+                        profileComplete: true,
+                        companyName: resolvedName 
+                    } as any);
                 }
             } catch (e) {
                 console.warn('[onboarding] saveEmployerProfile failed (non-critical):', e);
