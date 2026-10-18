@@ -52,6 +52,7 @@ const CandidateProfilePage = lazy(() => import('./pages/employer/CandidateProfil
 const PipelinePage = lazy(() => import('./pages/employer/PipelinePage'));
 const InterviewSchedulerPage = lazy(() => import('./pages/employer/InterviewSchedulerPage'));
 const EmployerBrandingPage = lazy(() => import('./pages/employer/EmployerBrandingPage'));
+const FounderCollabPage = lazy(() => import('./pages/employer/FounderCollabPage'));
 
 // Shared / Marketing
 const LandingPage = lazy(() => import('./pages/marketing/LandingPage'));
@@ -178,6 +179,7 @@ export default function App() {
 
           {/* ─── Employer (Industry) ───────────────────────────────────────── */}
           <Route path="/employer" element={<ProtectedRoute allowedRoles={['employer']}><EmployerDashboard /></ProtectedRoute>} />
+          <Route path="/employer/founders" element={<ProtectedRoute allowedRoles={['employer']}><FounderCollabPage /></ProtectedRoute>} />
           <Route path="/employer/talent" element={<ProtectedRoute allowedRoles={['employer']}><TalentPage /></ProtectedRoute>} />
           <Route path="/employer/roles" element={<ProtectedRoute allowedRoles={['employer']}><RolesPage /></ProtectedRoute>} />
           <Route path="/employer/pipeline" element={<ProtectedRoute allowedRoles={['employer']}><PipelinePage /></ProtectedRoute>} />

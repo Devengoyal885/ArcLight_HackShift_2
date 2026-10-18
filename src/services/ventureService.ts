@@ -132,6 +132,26 @@ export interface VentureTeamMember {
     photoURL?: string;
 }
 
+export interface SystemArchitectureNode {
+    id: string;
+    label: string;
+    category: 'client' | 'gateway' | 'service' | 'event' | 'database' | 'infra';
+    technology: string;
+    protocol?: string;
+    description: string;
+    scalingPolicy?: string;
+    sla?: string;
+    status: 'planned' | 'in_development' | 'production';
+}
+
+export interface EquityAllocations {
+    founders: number;
+    coFounders: number;
+    esopPool: number;
+    advisors: number;
+    investors: number;
+}
+
 export interface VentureWorkspace {
     ventureId: string;
     title: string;
@@ -143,6 +163,11 @@ export interface VentureWorkspace {
     repoUrl?: string;
     notes?: string;
     updatedAt: string;
+    // Section 8.3 & Architecture & Co-Design extensions
+    architectureNodes?: SystemArchitectureNode[];
+    designNotes?: string;
+    equityAllocations?: EquityAllocations;
+    whiteboardNotes?: string;
 }
 
 export interface VentureReport {
@@ -669,6 +694,132 @@ const DEFAULT_WORKSPACE: VentureWorkspace = {
     repoUrl: 'https://github.com/capable-ventures/kavach-ai-core',
     notes: 'Primary focus this month: finalize core agent and secure E-Cell prototype grant.',
     updatedAt: new Date().toISOString(),
+    equityAllocations: {
+        founders: 55,
+        coFounders: 20,
+        esopPool: 15,
+        advisors: 2,
+        investors: 8,
+    },
+    designNotes: `# KavachAI System Architecture RFC (Rev 1.4)
+## 1. Executive Summary
+High-throughput kernel telemetry pipeline ingesting 150,000+ system calls/sec per node with sub-5ms anomaly classification.
+
+## 2. Ingestion & Protocol
+- **Telemetry Agent**: eBPF bytecode compiled via clang/LLVM in C.
+- **Transport**: Encrypted mutual-TLS (mTLS) over QUIC/HTTP3 to regional Envoy Ingress Gateway.
+- **Message Broker**: Partitioned Kafka topics keyed by Organization UUID.
+
+## 3. Storage Strategy
+- **Hot Tier**: Redis Cluster for dynamic IP blocklists and sliding window token buckets.
+- **Analytical Tier**: TimescaleDB / ClickHouse for immutable forensic audit logs.
+- **Vector Embeddings**: pgvector storing security playbook embeddings for automated mitigation.`,
+    whiteboardNotes: `TODO Architecture Checklist:
+- [x] eBPF socket filter verification on Linux 6.x kernels
+- [x] Envoy rate-limiter circuit breaker configuration
+- [ ] Multi-region Redis replica failover test
+- [ ] End-to-end telemetry encryption benchmark`,
+    architectureNodes: [
+        {
+            id: 'node-client-web',
+            label: 'Web Security Console',
+            category: 'client',
+            technology: 'React 19 / Vite / Tailwind',
+            protocol: 'HTTPS / WSS',
+            description: 'Real-time telemetry dashboard for bank CISO & SOC responders.',
+            scalingPolicy: 'Global CDN edge distribution via Cloudflare Pages',
+            sla: '99.95% Availability',
+            status: 'production'
+        },
+        {
+            id: 'node-client-agent',
+            label: 'Host eBPF Probe',
+            category: 'client',
+            technology: 'C / Rust / eBPF Kernel Bytecode',
+            protocol: 'mTLS QUIC/gRPC',
+            description: 'Zero-overhead kernel probe monitoring execve, connect, and bpf syscalls.',
+            scalingPolicy: 'DaemonSet per Linux server / container host',
+            sla: '< 1.5% CPU overhead',
+            status: 'in_development'
+        },
+        {
+            id: 'node-gateway',
+            label: 'Envoy Ingress & WAF',
+            category: 'gateway',
+            technology: 'Envoy Proxy / Cloudflare WAF',
+            protocol: 'HTTP/3 / gRPC',
+            description: 'Terminates TLS, performs JWT & API key verification, enforces token bucket rate-limits.',
+            scalingPolicy: 'Autoscale 3 to 12 replicas on CPU > 75%',
+            sla: '< 8ms p99 latency',
+            status: 'production'
+        },
+        {
+            id: 'node-core-api',
+            label: 'Telemetry Aggregation Service',
+            category: 'service',
+            technology: 'Go (Golang 1.23)',
+            protocol: 'gRPC internal',
+            description: 'Decompresses eBPF telemetry batches, sanitizes payload, pushes to Kafka.',
+            scalingPolicy: 'HPA 4 to 20 pods',
+            sla: '< 15ms response time',
+            status: 'production'
+        },
+        {
+            id: 'node-ai-engine',
+            label: 'AI Threat Analyzer (LLM)',
+            category: 'service',
+            technology: 'Python / FastAPI / PyTorch / ONNX',
+            protocol: 'REST / async worker',
+            description: 'Runs lightweight anomaly classifier & synthesizes remediation playbooks.',
+            scalingPolicy: 'GPU-backed nodes scaling on queue length > 500',
+            sla: '< 450ms inference time',
+            status: 'in_development'
+        },
+        {
+            id: 'node-kafka',
+            label: 'Event Streaming Broker',
+            category: 'event',
+            technology: 'Apache Kafka / Strimzi',
+            protocol: 'TCP / Kafka Protocol',
+            description: 'Distributed pub/sub log for audit events, alerts, and live agent configurations.',
+            scalingPolicy: '3-broker high-availability cluster with RF=3',
+            sla: 'Zero message loss guarantee',
+            status: 'production'
+        },
+        {
+            id: 'node-timescale',
+            label: 'Primary Audit Datastore',
+            category: 'database',
+            technology: 'PostgreSQL + TimescaleDB',
+            protocol: 'Postgres Wire Protocol',
+            description: 'Stores user accounts, tenant policies, historical forensic telemetry partitions.',
+            scalingPolicy: 'Primary instance + 2 read-replicas with pgBouncer pool',
+            sla: '99.99% Durability',
+            status: 'production'
+        },
+        {
+            id: 'node-redis',
+            label: 'Distributed Session & Cache',
+            category: 'database',
+            technology: 'Redis Cluster (Memory-Optimized)',
+            protocol: 'RESP3',
+            description: 'Fast IP blocklist cache, active WebSocket connection registry, and token buckets.',
+            scalingPolicy: '3-shard master-replica cluster',
+            sla: '< 2ms sub-millisecond latency',
+            status: 'production'
+        },
+        {
+            id: 'node-k8s',
+            label: 'Cloud Infrastructure & K8s',
+            category: 'infra',
+            technology: 'Kubernetes (AWS EKS / DigitalOcean)',
+            protocol: 'WireGuard / VPC Mesh',
+            description: 'Container orchestration, secret management, Prometheus & Grafana alerting.',
+            scalingPolicy: 'Cluster Autoscaler across multiple availability zones',
+            sla: '99.95% Infrastructure SLA',
+            status: 'production'
+        }
+    ]
 };
 
 /**

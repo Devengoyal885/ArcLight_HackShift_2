@@ -142,7 +142,7 @@ export default function EmployerDashboard() {
 
     const activeRoles         = postedRoles.filter(r => r.status === "active");
     const startupRoles        = postedRoles.filter(r => r.isStartupRole);
-    const isStartup           = profile?.orgType === 'startup' || startupRoles.length > 0;
+    const isStartup           = profile?.orgType === 'startup' || startupRoles.length > 0 || true;
     const needsReview         = allApps.filter(a => a.status === "Applied").length;
     const scheduledInterviews = allApps.filter(a => a.status === "Interview Scheduled").length;
     const offersCount         = allApps.filter(a => a.status === "Offer Extended").length;
@@ -487,6 +487,33 @@ export default function EmployerDashboard() {
                         </div>
 
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '12px' }}>
+                            <Link
+                                to="/employer/founders"
+                                style={{
+                                    background: 'linear-gradient(135deg, #7c3aed 0%, #6366f1 100%)',
+                                    color: '#ffffff',
+                                    padding: '14px',
+                                    borderRadius: '10px',
+                                    border: 'none',
+                                    textDecoration: 'none',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    gap: '6px',
+                                    boxShadow: '0 4px 14px rgba(124, 58, 237, 0.25)',
+                                    transition: 'all 0.2s'
+                                }}
+                            >
+                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                    <span style={{ fontSize: '13px', fontWeight: 700, color: '#ffffff' }}>
+                                        Open Founder Hub (Connect, Plan & Design)
+                                    </span>
+                                    <ArrowRight size={15} color="#ffffff" />
+                                </div>
+                                <span style={{ fontSize: '11px', color: '#ede9fe' }}>
+                                    Connect with co-founders, track sprint roadmaps, and co-design system architecture.
+                                </span>
+                            </Link>
+
                             <Link
                                 to="/employer/roles"
                                 style={{

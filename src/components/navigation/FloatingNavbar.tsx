@@ -32,6 +32,7 @@ const employerLinks: NavLink[] = [
     { to: '/employer', label: 'Home' },
     { to: '/employer/talent', label: 'Talent' },
     { to: '/employer/roles', label: 'Roles' },
+    { to: '/employer/founders', label: 'Founders' },
     { to: '/employer/pipeline', label: 'Pipeline' },
     { to: '/employer/schedule', label: 'Schedule' },
     { to: '/employer/workforce', label: 'Workforce' },

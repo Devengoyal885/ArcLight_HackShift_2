@@ -1,0 +1,857 @@
+/* ─── FounderCollabPage.css ────────────────────────────────────────────────────────── */
+
+.fcollab-page {
+    min-height: 100vh;
+    background-color: #f8fafc;
+    background-image: 
+        radial-gradient(at 0% 0%, rgba(224, 242, 254, 0.6) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(243, 232, 255, 0.6) 0px, transparent 50%),
+        radial-gradient(at 50% 50%, rgba(255, 255, 255, 1) 0px, transparent 100%);
+    background-attachment: fixed;
+    color: #334155;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.fcollab-main {
+    padding: calc(var(--navbar-height, 70px) + 32px) 24px 64px;
+    max-width: 1320px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+/* Header */
+.fcollab-header {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(245, 243, 255, 0.9) 100%);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(221, 214, 254, 0.8);
+    border-radius: 20px;
+    padding: 28px 32px;
+    box-shadow: 0 10px 30px rgba(124, 58, 237, 0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.fcollab-header-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.fcollab-header-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #7c3aed, #4f46e5);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 16px rgba(124, 58, 237, 0.25);
+}
+
+.fcollab-title {
+    font-size: 26px;
+    font-weight: 800;
+    color: #1e1b4b;
+    margin: 0;
+    letter-spacing: -0.5px;
+}
+
+.fcollab-sub {
+    font-size: 14px;
+    color: #64748b;
+    margin: 4px 0 0;
+}
+
+.fcollab-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.fcollab-btn-meet {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #059669;
+    color: #ffffff;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(5, 150, 105, 0.2);
+    transition: all 0.2s ease;
+}
+
+.fcollab-btn-meet:hover {
+    background: #047857;
+    transform: translateY(-1px);
+}
+
+.fcollab-btn-primary {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, #7c3aed, #6366f1);
+    color: #ffffff;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(124, 58, 237, 0.25);
+    transition: all 0.2s ease;
+}
+
+.fcollab-btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(124, 58, 237, 0.35);
+}
+
+/* Quick Metrics Row */
+.fcollab-metrics-bar {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+}
+
+.fcollab-metric-card {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(226, 232, 240, 0.8);
+    border-radius: 14px;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+}
+
+.fcollab-metric-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.fcollab-metric-val {
+    font-size: 22px;
+    font-weight: 800;
+    color: #0f172a;
+    line-height: 1.1;
+}
+
+.fcollab-metric-lbl {
+    font-size: 12px;
+    color: #64748b;
+    font-weight: 600;
+}
+
+/* Navigation Tabs */
+.fcollab-tabs {
+    display: flex;
+    gap: 8px;
+    background: rgba(241, 245, 249, 0.85);
+    padding: 6px;
+    border-radius: 14px;
+    border: 1px solid rgba(226, 232, 240, 0.8);
+    width: fit-content;
+}
+
+.fcollab-tab-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border-radius: 10px;
+    border: none;
+    background: transparent;
+    font-size: 14px;
+    font-weight: 600;
+    color: #64748b;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.fcollab-tab-btn.active {
+    background: #ffffff;
+    color: #7c3aed;
+    font-weight: 700;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+/* ─── TAB 1: CONNECT (Founder Network) ─── */
+.fcollab-filter-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    background: rgba(255, 255, 255, 0.85);
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 14px 20px;
+}
+
+.fcollab-search-input {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+    padding: 8px 14px;
+    flex: 1;
+    min-width: 260px;
+}
+
+.fcollab-search-input input {
+    border: none;
+    background: transparent;
+    outline: none;
+    width: 100%;
+    font-size: 14px;
+    color: #0f172a;
+}
+
+.fcollab-stage-pills {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.fcollab-stage-pill {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: 20px;
+    border: 1px solid #cbd5e1;
+    background: #ffffff;
+    color: #475569;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.fcollab-stage-pill.active {
+    background: #7c3aed;
+    color: #ffffff;
+    border-color: #7c3aed;
+}
+
+.fcollab-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+    gap: 20px;
+}
+
+.fcollab-card {
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+    transition: all 0.25s ease;
+}
+
+.fcollab-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(124, 58, 237, 0.08);
+    border-color: #c4b5fd;
+}
+
+.fcollab-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.fcollab-founder-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.fcollab-founder-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #e0e7ff, #ede9fe);
+    color: #4338ca;
+    font-weight: 800;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #c7d2fe;
+}
+
+.fcollab-card-title {
+    font-size: 18px;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0;
+}
+
+.fcollab-card-founder {
+    font-size: 12px;
+    color: #64748b;
+    margin: 2px 0 0;
+}
+
+.fcollab-tagline {
+    font-size: 13px;
+    color: #475569;
+    font-weight: 500;
+    margin: 0;
+    line-height: 1.45;
+}
+
+.fcollab-problem-box {
+    background: #f8fafc;
+    border-left: 3px solid #7c3aed;
+    padding: 10px 12px;
+    border-radius: 0 8px 8px 0;
+    font-size: 12px;
+    color: #334155;
+    line-height: 1.4;
+}
+
+.fcollab-looking-for {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.fcollab-looking-lbl {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #64748b;
+    letter-spacing: 0.5px;
+}
+
+.fcollab-role-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.fcollab-role-tag {
+    font-size: 11px;
+    font-weight: 600;
+    background: #f3e8ff;
+    color: #6b21a8;
+    padding: 3px 8px;
+    border-radius: 6px;
+    border: 1px solid #e9d5ff;
+}
+
+.fcollab-perks-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 12px;
+    color: #059669;
+    font-weight: 700;
+    background: #ecfdf5;
+    padding: 6px 12px;
+    border-radius: 8px;
+}
+
+.fcollab-card-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: auto;
+}
+
+.fcollab-btn-connect {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    background: #7c3aed;
+    color: #ffffff;
+    border: none;
+    padding: 9px 14px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.fcollab-btn-connect:hover {
+    background: #6d28d9;
+}
+
+.fcollab-btn-outline {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    background: #ffffff;
+    color: #475569;
+    border: 1px solid #cbd5e1;
+    padding: 9px 12px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.fcollab-btn-outline:hover {
+    background: #f8fafc;
+    color: #0f172a;
+    border-color: #94a3b8;
+}
+
+/* ─── TAB 2: PLAN (Roadmap & Backlog) ─── */
+.fplan-container {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.fplan-venture-selector {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 16px 20px;
+    flex-wrap: wrap;
+    gap: 14px;
+}
+
+.fplan-venture-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.fplan-section-title {
+    font-size: 18px;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0 0 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.fplan-roadmap-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+}
+
+.fplan-progress-bar-wrap {
+    background: #f1f5f9;
+    height: 10px;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+
+.fplan-progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #7c3aed, #10b981);
+    border-radius: 10px;
+    transition: width 0.3s ease;
+}
+
+.fplan-milestones-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.fplan-milestone-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    background: #f8fafc;
+    transition: all 0.2s;
+}
+
+.fplan-milestone-item:hover {
+    background: #ffffff;
+    border-color: #cbd5e1;
+}
+
+.fplan-milestone-item.completed {
+    background: #f0fdf4;
+    border-color: #bbf7d0;
+}
+
+.fplan-milestone-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.fplan-milestone-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0;
+}
+
+.fplan-milestone-desc {
+    font-size: 12px;
+    color: #64748b;
+    margin: 2px 0 0;
+}
+
+.fplan-status-pill {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 20px;
+    text-transform: capitalize;
+}
+
+.fplan-status-pill.completed { background: #dcfce7; color: #15803d; }
+.fplan-status-pill.in_progress { background: #fef3c7; color: #b45309; }
+.fplan-status-pill.pending { background: #f1f5f9; color: #64748b; }
+
+/* Equity Split Planner */
+.fplan-equity-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 24px;
+}
+
+.fplan-equity-bar {
+    display: flex;
+    height: 18px;
+    border-radius: 9px;
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+
+.fplan-equity-sliders {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+}
+
+.fplan-equity-item {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 12px 14px;
+}
+
+.fplan-equity-item label {
+    font-size: 12px;
+    font-weight: 700;
+    color: #475569;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 6px;
+}
+
+.fplan-equity-item input[type="range"] {
+    width: 100%;
+    accent-color: #7c3aed;
+}
+
+/* Tasks Backlog */
+.fplan-backlog-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 24px;
+}
+
+.fplan-tasks-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 12px;
+    margin-top: 16px;
+}
+
+.fplan-task-card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.fplan-task-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.fplan-task-priority {
+    font-size: 10px;
+    font-weight: 800;
+    padding: 2px 6px;
+    border-radius: 4px;
+    text-transform: uppercase;
+}
+
+.fplan-task-priority.high { background: #fee2e2; color: #b91c1c; }
+.fplan-task-priority.medium { background: #fef3c7; color: #b45309; }
+.fplan-task-priority.low { background: #e0f2fe; color: #0369a1; }
+
+.fplan-task-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: #0f172a;
+    margin: 0;
+}
+
+.fplan-task-assignee {
+    font-size: 11px;
+    color: #64748b;
+}
+
+/* ─── TAB 3: DESIGN (System Architecture Canvas) ─── */
+.fdesign-container {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.fdesign-canvas-header {
+    background: linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%);
+    color: #ffffff;
+    border-radius: 18px;
+    padding: 24px 28px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    box-shadow: 0 10px 25px rgba(15, 23, 42, 0.15);
+}
+
+.fdesign-canvas-header h2 {
+    font-size: 20px;
+    font-weight: 800;
+    margin: 0;
+    letter-spacing: -0.3px;
+}
+
+.fdesign-canvas-header p {
+    font-size: 13px;
+    color: #94a3b8;
+    margin: 4px 0 0;
+}
+
+.fdesign-topology-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 16px;
+}
+
+.fdesign-node-card {
+    background: #ffffff;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 18px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    position: relative;
+}
+
+.fdesign-node-card:hover {
+    border-color: #7c3aed;
+    box-shadow: 0 8px 20px rgba(124, 58, 237, 0.08);
+    transform: translateY(-2px);
+}
+
+.fdesign-node-card.selected {
+    border-color: #7c3aed;
+    background: #faf5ff;
+    box-shadow: 0 0 0 2px #c4b5fd;
+}
+
+.fdesign-node-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.fdesign-node-badge {
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 6px;
+    letter-spacing: 0.5px;
+}
+
+.fdesign-node-badge.client { background: #dbeafe; color: #1e40af; }
+.fdesign-node-badge.gateway { background: #fef3c7; color: #92400e; }
+.fdesign-node-badge.service { background: #ede9fe; color: #5b21b6; }
+.fdesign-node-badge.event { background: #ffedd5; color: #9a3412; }
+.fdesign-node-badge.database { background: #dcfce7; color: #166534; }
+.fdesign-node-badge.infra { background: #f1f5f9; color: #334155; }
+
+.fdesign-node-label {
+    font-size: 15px;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0;
+}
+
+.fdesign-node-tech {
+    font-size: 12px;
+    color: #7c3aed;
+    font-weight: 600;
+}
+
+.fdesign-node-desc {
+    font-size: 12px;
+    color: #64748b;
+    line-height: 1.4;
+    margin: 0;
+}
+
+.fdesign-node-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 11px;
+    color: #475569;
+    border-top: 1px dashed #e2e8f0;
+    padding-top: 8px;
+    margin-top: 4px;
+}
+
+/* Inspector Drawer / Card */
+.fdesign-inspector {
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 16px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+}
+
+.fdesign-rfc-editor {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.fdesign-rfc-textarea {
+    width: 100%;
+    min-height: 240px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 13px;
+    line-height: 1.6;
+    padding: 16px;
+    border-radius: 12px;
+    border: 1px solid #cbd5e1;
+    background: #f8fafc;
+    color: #0f172a;
+    resize: vertical;
+}
+
+/* Modal styles */
+.fcollab-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.fcollab-modal {
+    background: #ffffff;
+    border-radius: 20px;
+    width: 100%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    display: flex;
+    flex-direction: column;
+}
+
+.fcollab-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.fcollab-modal-body {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.fcollab-modal-footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    padding: 16px 24px;
+    border-top: 1px solid #e2e8f0;
+}
+
+@media (max-width: 768px) {
+    .fcollab-main {
+        padding: calc(var(--navbar-height, 70px) + 16px) 16px 40px;
+    }
+    .fcollab-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .fcollab-header-actions {
+        width: 100%;
+    }
+    .fcollab-btn-primary, .fcollab-btn-meet {
+        flex: 1;
+        justify-content: center;
+    }
+}
