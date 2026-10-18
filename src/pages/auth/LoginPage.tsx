@@ -11,6 +11,7 @@ import {
     sendPasswordResetEmail, sendEmailVerification
 } from '../../lib/firebase';
 import { getProfile } from '../../services/profileService';
+import { getEmployerProfile } from '../../services/employerService';
 import './LoginPage.css';
 
 // All possible auth steps for 4 roles
@@ -145,6 +146,45 @@ export default function LoginPage() {
         return map[role];
     };
 
+    const resolveUserDestination = async (u: any, preferredRole: RoleType): Promise<{ role: RoleType; destination: string }> => {
+        // 1. Check if preferred role has a completed profile
+        try {
+            if (preferredRole === 'employer') {
+                const empProf = await getEmployerProfile(`${u.uid}_employer`);
+                if (empProf?.companyName) {
+                    return { role: 'employer', destination: '/employer' };
+                }
+            }
+            const p = await getProfile(`${u.uid}_${preferredRole}`);
+            if (p?.profileComplete) {
+                return { role: preferredRole, destination: dashboardFor(preferredRole) };
+            }
+        } catch (e) {
+            console.warn('[LoginPage] Error checking preferred role profile:', e);
+        }
+
+        // 2. Check all other roles to see if user has already onboarded under a different role
+        const allRoles: RoleType[] = ['employer', 'candidate', 'academician', 'institution'];
+        for (const r of allRoles) {
+            if (r === preferredRole) continue;
+            try {
+                if (r === 'employer') {
+                    const empProf = await getEmployerProfile(`${u.uid}_employer`);
+                    if (empProf?.companyName) {
+                        return { role: 'employer', destination: '/employer' };
+                    }
+                }
+                const p = await getProfile(`${u.uid}_${r}`);
+                if (p?.profileComplete) {
+                    return { role: r, destination: dashboardFor(r) };
+                }
+            } catch {}
+        }
+
+        // 3. User has never completed onboarding in any role
+        return { role: preferredRole, destination: '/onboarding' };
+    };
+
     // ── Email Auth ────────────────────────────────────────────────────────────
     const handleEmailAuth = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -153,17 +193,13 @@ export default function LoginPage() {
         const role = currentRole;
 
         try {
-            localStorage.setItem('userRole', role);
             if (isLogin) {
                 const userCred = await signInWithEmailAndPassword(auth, email, password);
-                try {
-                    const dbUid = `${userCred.user.uid}_${role}`;
-                    const p = await getProfile(dbUid);
-                    navigate(p?.profileComplete ? dashboardFor(role) : '/onboarding', { replace: true });
-                } catch {
-                    navigate(dashboardFor(role), { replace: true });
-                }
+                const { role: resolvedRole, destination } = await resolveUserDestination(userCred.user, role);
+                localStorage.setItem('userRole', resolvedRole);
+                navigate(destination, { replace: true });
             } else {
+                localStorage.setItem('userRole', role);
                 const userCred = await createUserWithEmailAndPassword(auth, email, password);
                 await sendEmailVerification(userCred.user);
                 navigate('/onboarding', { replace: true });
@@ -222,12 +258,8 @@ export default function LoginPage() {
     };
 
     // ── On mount: check if user is returning from a Google redirect login ──────
-    // IMPORTANT: Only navigate away if the page was reached as part of the Google
-    // OAuth redirect flow (i.e., 'google_redirect_pending' was set in sessionStorage
-    // just before signInWithRedirect was called). Without this guard, getRedirectResult
-    // would redirect the user away EVERY time they intentionally visit /login.
     useEffect(() => {
-        getRedirectResult(auth).then((result) => {
+        getRedirectResult(auth).then(async (result) => {
             if (!result || !result.user) return;
             sessionStorage.removeItem('google_redirect_pending');
             redirectHandled.current = true;
@@ -236,10 +268,9 @@ export default function LoginPage() {
             if (additionalInfo?.isNewUser) {
                 navigate('/onboarding', { replace: true });
             } else {
-                const dbUid = `${result.user.uid}_${savedRole}`;
-                getProfile(dbUid)
-                    .then(p => navigate(p?.profileComplete ? dashboardFor(savedRole) : '/onboarding', { replace: true }))
-                    .catch(() => navigate(dashboardFor(savedRole), { replace: true }));
+                const { role: resolvedRole, destination } = await resolveUserDestination(result.user, savedRole);
+                localStorage.setItem('userRole', resolvedRole);
+                navigate(destination, { replace: true });
             }
         }).catch((err) => {
             console.error("Redirect login error:", err);
@@ -259,22 +290,18 @@ export default function LoginPage() {
     // ── Google sign-in: try popup first, auto-fall back to redirect if blocked ─
     const handleGoogleAuth = async () => {
         setError('');
-        localStorage.setItem('userRole', currentRole);
         try {
             // Attempt popup (best UX — stays on same tab)
             const result = await signInWithPopup(auth, googleProvider);
             const additionalInfo = getAdditionalUserInfo(result);
             const savedRole = currentRole;
             if (additionalInfo?.isNewUser) {
+                localStorage.setItem('userRole', savedRole);
                 navigate('/onboarding', { replace: true });
             } else {
-                try {
-                    const dbUid = `${result.user.uid}_${savedRole}`;
-                    const p = await getProfile(dbUid);
-                    navigate(p?.profileComplete ? dashboardFor(savedRole) : '/onboarding', { replace: true });
-                } catch {
-                    navigate(dashboardFor(savedRole), { replace: true });
-                }
+                const { role: resolvedRole, destination } = await resolveUserDestination(result.user, savedRole);
+                localStorage.setItem('userRole', resolvedRole);
+                navigate(destination, { replace: true });
             }
         } catch (err: any) {
             const code: string = err?.code || '';

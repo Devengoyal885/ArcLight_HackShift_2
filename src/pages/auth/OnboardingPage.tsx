@@ -9,7 +9,7 @@
  * Step 4: Done → navigate to dashboard
  */
 
-import { useState, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { auth } from '../../lib/firebase';
@@ -21,9 +21,9 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import {
-    createProfile, updateProfile, saveProjects, saveCapabilities, addWorkExperience
+    getProfile, createProfile, updateProfile, saveProjects, saveCapabilities, addWorkExperience
 } from '../../services/profileService';
-import { saveEmployerProfile } from '../../services/employerService';
+import { saveEmployerProfile, getEmployerProfile } from '../../services/employerService';
 import type { OrgType, EmployerProfile } from '../../services/employerService';
 import {
     parseResume, inferCapabilitiesFromResume,
@@ -48,6 +48,59 @@ export default function OnboardingPage() {
     const [role, setRole] = useState<Role>(preselectedRole || 'candidate');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+
+    // If user is already authenticated and has an existing completed profile, redirect them immediately to their dashboard
+    useEffect(() => {
+        if (!user) return;
+        let isCancelled = false;
+        const checkAlreadyOnboarded = async () => {
+            try {
+                // Check employer first
+                const empProf = await getEmployerProfile(`${user.uid}_employer`);
+                if (empProf?.companyName) {
+                    if (!isCancelled) {
+                        localStorage.setItem('userRole', 'employer');
+                        navigate('/employer', { replace: true });
+                    }
+                    return;
+                }
+
+                // Check candidate
+                const candProf = await getProfile(`${user.uid}_candidate`);
+                if (candProf?.profileComplete) {
+                    if (!isCancelled) {
+                        localStorage.setItem('userRole', 'candidate');
+                        navigate('/candidate', { replace: true });
+                    }
+                    return;
+                }
+
+                // Check faculty/academician
+                const acadProf = await getProfile(`${user.uid}_academician`);
+                if (acadProf?.profileComplete) {
+                    if (!isCancelled) {
+                        localStorage.setItem('userRole', 'academician');
+                        navigate('/faculty', { replace: true });
+                    }
+                    return;
+                }
+
+                // Check institution
+                const instProf = await getProfile(`${user.uid}_institution`);
+                if (instProf?.profileComplete) {
+                    if (!isCancelled) {
+                        localStorage.setItem('userRole', 'institution');
+                        navigate('/institution', { replace: true });
+                    }
+                    return;
+                }
+            } catch (err) {
+                console.warn('[OnboardingPage] checkAlreadyOnboarded error:', err);
+            }
+        };
+        checkAlreadyOnboarded();
+        return () => { isCancelled = true; };
+    }, [user, navigate]);
 
     // Resume step state
     const [resumeText, setResumeText] = useState('');
