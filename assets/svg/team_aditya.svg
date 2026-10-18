@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 200" width="260" height="200"><defs><linearGradient id="t" x1="0" x2="1" y1="0" y2="1"><stop offset="0" stop-color="#0f9d8a"/><stop offset="1" stop-color="#0c1f3d"/></linearGradient></defs>
+<rect width="260" height="200" rx="22" fill="url(#t)"/><circle cx="130" cy="70" r="40" fill="#fff" fill-opacity=".18"><animate attributeName="r" values="40;44;40" dur="3s" repeatCount="indefinite"/></circle>
+<text x="130" y="82" text-anchor="middle" font-size="34" font-weight="800" fill="#fff" font-family="'Segoe UI',Helvetica,Arial,sans-serif">AS</text>
+<text x="130" y="146" text-anchor="middle" font-size="22" font-weight="800" fill="#fff" font-family="'Segoe UI',Helvetica,Arial,sans-serif">Aditya Singh</text>
+<text x="130" y="172" text-anchor="middle" font-size="13" fill="#dbe7ff" font-family="'Segoe UI',Helvetica,Arial,sans-serif">Team ArcLight · Hackshift, IIIT Delhi</text></svg>
