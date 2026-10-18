@@ -159,7 +159,17 @@ onet_capabilities["description"] = (
 
 onet_capabilities["source"] = "O*NET"
 
-
+master_capabilities = pd.concat(
+    [
+        esco_capabilities[
+            ["source_id", "capability", "description", "category", "source"]
+        ],
+        onet_capabilities[
+            ["source_id", "capability", "description", "category", "source"]
+        ]
+    ],
+    ignore_index=True
+)
 
 master_capabilities["capability"] = (
     master_capabilities["capability"]
@@ -13761,15 +13771,6 @@ def infer_capabilities(request: InferenceRequest):
             ),
             "evidence_snippet": text
         })
-
-    return {
-        "success": True,
-        "input": text,
-        "capabilities": results,
-        "count": len(results),
-        "model": "accesshire-mpnet-final",
-        "taxonomy_size": len(capability_names)
-    }
 
 # ------------------------------------------------------------
 # START SERVER
