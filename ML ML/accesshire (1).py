@@ -13772,6 +13772,15 @@ def infer_capabilities(request: InferenceRequest):
             "evidence_snippet": text
         })
 
+    return {
+        "success": True,
+        "input": text,
+        "capabilities": results,
+        "count": len(results),
+        "model": "accesshire-mpnet-final",
+        "taxonomy_size": len(capability_names)
+    }
+
 # ------------------------------------------------------------
 # START SERVER
 # ------------------------------------------------------------
