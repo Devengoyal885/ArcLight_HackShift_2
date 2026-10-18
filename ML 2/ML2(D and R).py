@@ -1,4 +1,14 @@
-
+/*=================================================================*/
+/* SAS CU HACKATHON                                                */
+/* SUBTASK 1: JOB DEMAND BY ROLE                                   */
+/*                                                                 */
+/* DATASETS:                                                       */
+/*   1. DataScience Jobs.csv                                       */
+/*   2. Analytics Jobs.csv                                         */
+/*                                                                 */
+/* OBJECTIVE:                                                      */
+/* Identify the roles/designations with the highest job demand.    */
+/*=================================================================*/
 
 
 /*-----------------------------------------------------------------*/
@@ -172,6 +182,9 @@ proc freq
 run;
 
 
+/*-----------------------------------------------------------------*/
+/* 11. CHECK MISSING VALUES IN DATA SCIENCE JOBS                  */
+/*-----------------------------------------------------------------*/
 
 title "Data Science Jobs - Missing Value Check";
 
@@ -576,18 +589,5 @@ run;
 /*-----------------------------------------------------------------*/
 /* END OF SUBTASK 1                                               */
 /*-----------------------------------------------------------------*/
-/* this is our ml model actually 
 
-
-adfad
-
-
-adad
-
-adfa
-
-adad
-a
-
-adfdas
 title;
