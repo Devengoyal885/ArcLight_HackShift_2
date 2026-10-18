@@ -10,9 +10,17 @@ import {
 import {
     ArrowRight, Search, Loader2, Plus, Briefcase, BookOpen,
     GraduationCap, FlaskConical, CheckCircle2, Trash2,
-    Globe, Calendar, DollarSign, Users, AlertCircle, Copy,
+    Globe, Calendar, DollarSign, Users, AlertCircle, Copy, Clock,
+    Rocket,
 } from 'lucide-react';
 import './RolesPage.css';
+
+const TIME_PRESETS = [
+    { label: '11:59 PM', value: '23:59', desc: 'End of Day cutoff' },
+    { label: '06:00 PM', value: '18:00', desc: 'Office EOD cutoff' },
+    { label: '12:00 PM', value: '12:00', desc: 'Noon cutoff' },
+    { label: '09:00 AM', value: '09:00', desc: 'Morning cutoff' },
+];
 
 const TYPE_LABELS: Record<PostingType, string> = {
     placement: '💼 Placement',
@@ -49,11 +57,15 @@ export default function RolesPage() {
         salary: '',
         stipend: '',
         duration: '',
-        deadline: '',
+        deadline: '',          // date part: 'YYYY-MM-DD'
+        deadlineTime: '23:59', // time part: 'HH:mm'
         description: '',
         customQuestions: '',
         seatCapacity: '',
         autoCloseOnSeatCap: false,
+        isStartupRole: false,
+        startupStage: 'MVP' as 'Idea' | 'Prototype' | 'MVP' | 'Early Traction' | 'Growth',
+        equityRange: '',
     });
 
     // My posted roles
@@ -98,6 +110,11 @@ export default function RolesPage() {
         setPosting(true);
         setPostSuccess(false);
         
+        // Combine deadline date + time into a single ISO-like string
+        const deadlineValue = formData.deadline
+            ? `${formData.deadline}T${formData.deadlineTime || '23:59'}:00`
+            : undefined;
+
         const rolePayload: any = {
             employerUid: dbUid!,
             companyName,
@@ -111,12 +128,19 @@ export default function RolesPage() {
             tags: model.suggestedSkills || [],
             status: 'active',
         };
+        if (deadlineValue) rolePayload.deadline = deadlineValue;
         if (formData.salary) rolePayload.salary = formData.salary;
         if (formData.stipend) rolePayload.stipend = formData.stipend;
         if (formData.duration || model.suggestedDuration) rolePayload.duration = formData.duration || model.suggestedDuration;
-        if (formData.deadline) rolePayload.deadline = formData.deadline;
         if (formData.seatCapacity) rolePayload.seatCapacity = parseInt(formData.seatCapacity, 10);
         if (formData.autoCloseOnSeatCap) rolePayload.autoCloseOnSeatCap = true;
+
+        if (formData.isStartupRole) {
+            rolePayload.isStartupRole = true;
+            rolePayload.startupStage = formData.startupStage;
+            if (formData.equityRange) rolePayload.equityRange = formData.equityRange;
+            rolePayload.tags = Array.from(new Set([...(rolePayload.tags || []), 'Startup', formData.startupStage]));
+        }
 
         try {
             await postRole(dbUid!, rolePayload);
@@ -152,17 +176,22 @@ export default function RolesPage() {
 
     const handleCloneRole = (role: PostedRole) => {
         setRoleQuery(role.title + ' (Copy)');
+        const [dlDate, dlTime] = (role.deadline || '').split('T');
         setFormData({
             location: role.location || 'India',
             remote: !!role.remote,
             salary: role.salary || '',
             stipend: role.stipend || '',
             duration: role.duration || '',
-            deadline: role.deadline || '',
+            deadline: dlDate || '',
+            deadlineTime: dlTime ? dlTime.substring(0, 5) : '23:59',
             description: role.description || '',
             customQuestions: '',
             seatCapacity: role.seatCapacity ? String(role.seatCapacity) : '',
             autoCloseOnSeatCap: role.autoCloseOnSeatCap || false,
+            isStartupRole: role.isStartupRole || false,
+            startupStage: role.startupStage || 'MVP',
+            equityRange: role.equityRange || '',
         });
         setModel({
             role: role.title + ' (Copy)',
@@ -175,6 +204,34 @@ export default function RolesPage() {
         setShowPostForm(true);
         setActiveTab('generate');
         window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    // Quick Date Shortcuts
+    const setQuickDays = (days: number) => {
+        const d = new Date();
+        d.setDate(d.getDate() + days);
+        const yyyy = d.getFullYear();
+        const mm = String(d.getMonth() + 1).padStart(2, '0');
+        const dd = String(d.getDate()).padStart(2, '0');
+        setFormData(f => ({ ...f, deadline: `${yyyy}-${mm}-${dd}` }));
+    };
+
+    const setQuickMonthEnd = () => {
+        const d = new Date();
+        const end = new Date(d.getFullYear(), d.getMonth() + 1, 0);
+        const yyyy = end.getFullYear();
+        const mm = String(end.getMonth() + 1).padStart(2, '0');
+        const dd = String(end.getDate()).padStart(2, '0');
+        setFormData(f => ({ ...f, deadline: `${yyyy}-${mm}-${dd}` }));
+    };
+
+    // Format deadline for display in My Roles cards
+    const formatDeadline = (dl?: string) => {
+        if (!dl) return null;
+        try {
+            const d = new Date(dl);
+            return isNaN(d.getTime()) ? dl : d.toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' });
+        } catch { return dl; }
     };
 
     return (
@@ -195,13 +252,13 @@ export default function RolesPage() {
                         className={`roles-tab ${activeTab === 'generate' ? 'active' : ''}`}
                         onClick={() => setActiveTab('generate')}
                     >
-                        <Plus size={15} /> Post New Opportunity
+                        <Plus size={14} /> Post New Opportunity
                     </button>
                     <button
                         className={`roles-tab ${activeTab === 'my-roles' ? 'active' : ''}`}
                         onClick={() => setActiveTab('my-roles')}
                     >
-                        <Briefcase size={15} /> My Posted Roles {myRoles.length > 0 && <span className="roles-tab-badge">{myRoles.length}</span>}
+                        <Briefcase size={14} /> My Posted Roles {myRoles.length > 0 && <span className="roles-tab-badge">{myRoles.length}</span>}
                     </button>
                 </div>
 
@@ -209,58 +266,57 @@ export default function RolesPage() {
                 <AnimatePresence mode="wait">
                     {activeTab === 'generate' && (
                         <motion.div key="gen" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
-                            {/* Templates */}
-                            <div style={{ display: 'flex', gap: '8px', marginBottom: '16px', flexWrap: 'wrap' }}>
-                                <span style={{ fontSize: '14px', color: '#64748b', alignSelf: 'center' }}>Templates:</span>
-                                {['Frontend Engineer', 'Backend Developer', 'Data Scientist', 'Marketing Intern', 'Product Manager'].map(t => (
-                                    <button 
-                                        key={t}
-                                        style={{ background: '#f1f5f9', border: 'none', padding: '4px 12px', borderRadius: '16px', fontSize: '13px', color: '#334155', cursor: 'pointer' }}
-                                        onClick={() => setRoleQuery(t)}
-                                    >
-                                        {t}
-                                    </button>
-                                ))}
-                            </div>
-                            {/* Search input */}
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: 16, marginBottom: 24 }}>
-                                <div className="roles-search-row" style={{ marginBottom: 0 }}>
+
+                            {/* Search Card */}
+                            <div className="roles-search-card">
+                                {/* Templates */}
+                                <div className="roles-templates-row">
+                                    <span className="roles-template-label">Quick Templates:</span>
+                                    {['Frontend Engineer', 'Backend Developer', 'Data Scientist', 'Marketing Intern', 'Product Manager', 'ML Research Intern'].map(t => (
+                                        <button key={t} className="roles-template-chip" onClick={() => setRoleQuery(t)}>
+                                            {t}
+                                        </button>
+                                    ))}
+                                </div>
+
+                                {/* Search input */}
+                                <div className="roles-search-row">
                                     <div className="roles-search-wrap">
-                                        <Search size={16} className="roles-search-icon" />
+                                        <Search size={15} className="roles-search-icon" />
                                         <input
                                             className="roles-search-input"
                                             value={roleQuery}
                                             onChange={e => setRoleQuery(e.target.value)}
                                             onKeyDown={e => e.key === 'Enter' && handleAnalyze()}
-                                            placeholder="Job Title (e.g. Frontend Engineer, ML Internship…)"
+                                            placeholder="Job title — e.g. Frontend Engineer, ML Internship, FDP in AI…"
                                         />
                                     </div>
                                     <button className="roles-analyze-btn" onClick={handleAnalyze} disabled={analyzing || !roleQuery.trim()}>
                                         {analyzing
                                             ? <><Loader2 size={15} className="spin" /> Analysing…</>
-                                            : <>Extract Capability Model <ArrowRight size={15} /></>
+                                            : <>Extract Model <ArrowRight size={14} /></>
                                         }
                                     </button>
                                 </div>
+
                                 <textarea
-                                    className="roles-search-input"
-                                    style={{ width: '100%', minHeight: 120, padding: 16, borderRadius: 12, resize: 'vertical' }}
-                                    placeholder="Paste full Job Description here to extract skills and capabilities accurately..."
+                                    className="roles-desc-input"
+                                    placeholder="Paste full Job Description here to extract skills and capabilities more accurately (optional)…"
                                     value={formData.description}
                                     onChange={e => setFormData(f => ({ ...f, description: e.target.value }))}
                                 />
                             </div>
 
                             {error && (
-                                <div className="roles-error">
-                                    <AlertCircle size={16} /> {error}
+                                <div className="roles-error" style={{ marginTop: 12 }}>
+                                    <AlertCircle size={15} /> {error}
                                 </div>
                             )}
 
                             {analyzing && (
-                                <div className="roles-analyzing">
+                                <div className="roles-analyzing" style={{ marginTop: 12 }}>
                                     <div className="roles-analyzing-spinner" />
-                                    <p>Extracting capability model using AI…</p>
+                                    <span>Extracting capability model using AI — this takes a few seconds…</span>
                                 </div>
                             )}
 
@@ -322,12 +378,12 @@ export default function RolesPage() {
                                             </div>
                                         </div>
 
-                                        {/* Post form */}
+                                        {/* Post form — glassmorphism panel */}
                                         <div className="roles-post-form">
-                                            <p className="roles-result-label">POST THIS OPPORTUNITY</p>
+                                            <p className="roles-result-label">📤 Post This Opportunity</p>
 
                                             <div className="roles-form-group">
-                                                <label>Location</label>
+                                                <label>📍 Location</label>
                                                 <input
                                                     type="text"
                                                     value={formData.location}
@@ -335,79 +391,201 @@ export default function RolesPage() {
                                                     placeholder="e.g. Mumbai, India"
                                                 />
                                             </div>
-                                            <div className="roles-form-group">
-                                                <label>
-                                                    <input
-                                                        type="checkbox"
-                                                        checked={formData.remote}
-                                                        onChange={e => setFormData(f => ({ ...f, remote: e.target.checked }))}
-                                                    />{' '}
-                                                    Remote / Work from Home
-                                                </label>
-                                            </div>
-                                            {(model.type === 'placement') && (
+
+                                            <label className="roles-checkbox-label">
+                                                <input
+                                                    type="checkbox"
+                                                    checked={formData.remote}
+                                                    onChange={e => setFormData(f => ({ ...f, remote: e.target.checked }))}
+                                                />
+                                                🌐 Remote / Work from Home
+                                            </label>
+
+                                            {model.type === 'placement' && (
                                                 <div className="roles-form-group">
-                                                    <label>Salary / CTC (optional)</label>
-                                                    <input
-                                                        type="text"
-                                                        value={formData.salary}
+                                                    <label>💰 Salary / CTC (optional)</label>
+                                                    <input type="text" value={formData.salary}
                                                         onChange={e => setFormData(f => ({ ...f, salary: e.target.value }))}
-                                                        placeholder="e.g. ₹8-12 LPA"
-                                                    />
+                                                        placeholder="e.g. ₹8–12 LPA" />
                                                 </div>
                                             )}
+
                                             {(model.type === 'internship' || model.type === 'fdp' || model.type === 'apprenticeship') && (
                                                 <div className="roles-form-group">
-                                                    <label>Stipend (optional)</label>
-                                                    <input
-                                                        type="text"
-                                                        value={formData.stipend}
+                                                    <label>💵 Stipend (optional)</label>
+                                                    <input type="text" value={formData.stipend}
                                                         onChange={e => setFormData(f => ({ ...f, stipend: e.target.value }))}
-                                                        placeholder="e.g. ₹15,000/month"
-                                                    />
+                                                        placeholder="e.g. ₹15,000/month" />
                                                 </div>
                                             )}
+
                                             <div className="roles-form-group">
-                                                <label>Duration (optional)</label>
-                                                <input
-                                                    type="text"
-                                                    value={formData.duration}
+                                                <label>⏱ Duration (optional)</label>
+                                                <input type="text" value={formData.duration}
                                                     onChange={e => setFormData(f => ({ ...f, duration: e.target.value }))}
-                                                    placeholder={model.suggestedDuration || 'e.g. 6 months'}
-                                                />
+                                                    placeholder={model.suggestedDuration || 'e.g. 6 months'} />
                                             </div>
-                                            <div className="roles-form-group">
-                                                <label>Application Deadline (optional)</label>
-                                                <input
-                                                    type="date"
-                                                    value={formData.deadline}
-                                                    onChange={e => setFormData(f => ({ ...f, deadline: e.target.value }))}
-                                                />
+
+                                            {/* ── Startup & Venture Track Toggle ── */}
+                                            <div style={{
+                                                background: formData.isStartupRole ? '#f5f3ff' : '#f8fafc',
+                                                border: `1.5px solid ${formData.isStartupRole ? '#c4b5fd' : '#e2e8f0'}`,
+                                                borderRadius: '12px',
+                                                padding: '14px',
+                                                marginTop: '8px',
+                                                transition: 'all 0.2s ease'
+                                            }}>
+                                                <label style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer', margin: 0, userSelect: 'none' }}>
+                                                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                                        <Rocket size={16} color={formData.isStartupRole ? '#7c3aed' : '#64748b'} />
+                                                        <div>
+                                                            <strong style={{ fontSize: '13px', color: formData.isStartupRole ? '#5b21b6' : '#334155', display: 'block' }}>
+                                                                Startup & Venture Track
+                                                            </strong>
+                                                            <span style={{ fontSize: '11.5px', color: '#64748b' }}>
+                                                                Flag role for early-stage founding teams, co-founders & equity stakes
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={formData.isStartupRole}
+                                                        onChange={e => setFormData(f => ({ ...f, isStartupRole: e.target.checked }))}
+                                                        style={{ width: '18px', height: '18px', cursor: 'pointer', accentColor: '#7c3aed' }}
+                                                    />
+                                                </label>
+
+                                                {formData.isStartupRole && (
+                                                    <div style={{ marginTop: '12px', paddingTop: '12px', borderTop: '1px solid #ddd6fe', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                                                        <div className="roles-form-group">
+                                                            <label style={{ fontSize: '12px', fontWeight: 600, color: '#4c1d95' }}>Startup Venture Stage</label>
+                                                            <select
+                                                                value={formData.startupStage}
+                                                                onChange={e => setFormData(f => ({ ...f, startupStage: e.target.value as any }))}
+                                                                style={{ padding: '8px 12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '13px', background: '#fff' }}
+                                                            >
+                                                                <option value="Idea">Idea Stage (Pre-product)</option>
+                                                                <option value="Prototype">Prototype / Lab Stage</option>
+                                                                <option value="MVP">MVP (Working Beta)</option>
+                                                                <option value="Early Traction">Early Traction / Incubated</option>
+                                                                <option value="Growth">Growth / Seed Funded</option>
+                                                            </select>
+                                                        </div>
+                                                        <div className="roles-form-group">
+                                                            <label style={{ fontSize: '12px', fontWeight: 600, color: '#4c1d95' }}>Equity / Stake Offer (optional)</label>
+                                                            <input
+                                                                type="text"
+                                                                value={formData.equityRange}
+                                                                onChange={e => setFormData(f => ({ ...f, equityRange: e.target.value }))}
+                                                                placeholder="e.g. 2% – 5% or Co-Founder Equity"
+                                                                style={{ background: '#fff' }}
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                )}
                                             </div>
+
+                                            <div className="roles-form-divider" />
+
+                                            {/* ── Deadline: date + exact time ── */}
+                                            <div className="roles-form-group roles-deadline-section">
+                                                <div className="roles-section-header">
+                                                    <label><Calendar size={13} /> Application Deadline</label>
+                                                    {formData.deadline && (
+                                                        <button
+                                                            type="button"
+                                                            className="roles-clear-link"
+                                                            onClick={() => setFormData(f => ({ ...f, deadline: '', deadlineTime: '23:59' }))}
+                                                        >
+                                                            ✕ Clear
+                                                        </button>
+                                                    )}
+                                                </div>
+
+                                                {/* Quick Date Shortcuts */}
+                                                <div className="roles-quick-row">
+                                                    <span className="roles-quick-title">Quick:</span>
+                                                    <button type="button" className="roles-quick-chip" onClick={() => setQuickDays(3)}>+3 Days</button>
+                                                    <button type="button" className="roles-quick-chip" onClick={() => setQuickDays(7)}>+1 Wk</button>
+                                                    <button type="button" className="roles-quick-chip" onClick={() => setQuickDays(14)}>+2 Wks</button>
+                                                    <button type="button" className="roles-quick-chip" onClick={setQuickMonthEnd}>Month End</button>
+                                                </div>
+
+                                                {/* Side by side Date and Exact Cutoff Time (NEVER disabled!) */}
+                                                <div className="roles-deadline-row">
+                                                    <div className="roles-field-with-label">
+                                                        <span className="roles-field-sub">End Date</span>
+                                                        <input
+                                                            type="date"
+                                                            value={formData.deadline}
+                                                            onChange={e => setFormData(f => ({ ...f, deadline: e.target.value }))}
+                                                        />
+                                                    </div>
+                                                    <div className="roles-field-with-label">
+                                                        <span className="roles-field-sub">Cutoff Time</span>
+                                                        <input
+                                                            type="time"
+                                                            value={formData.deadlineTime}
+                                                            onChange={e => setFormData(f => ({ ...f, deadlineTime: e.target.value }))}
+                                                            title="Set exact cutoff time"
+                                                        />
+                                                    </div>
+                                                </div>
+
+                                                {/* Quick Time Presets */}
+                                                <div className="roles-quick-row">
+                                                    <span className="roles-quick-title">Time:</span>
+                                                    {TIME_PRESETS.map(p => (
+                                                        <button
+                                                            key={p.value}
+                                                            type="button"
+                                                            className={`roles-quick-chip ${formData.deadlineTime === p.value ? 'active' : ''}`}
+                                                            onClick={() => setFormData(f => ({ ...f, deadlineTime: p.value }))}
+                                                        >
+                                                            {p.label}
+                                                        </button>
+                                                    ))}
+                                                </div>
+
+                                                {formData.deadline ? (
+                                                    <div className="roles-cutoff-summary active">
+                                                        <CheckCircle2 size={13} />
+                                                        <span>
+                                                            Closes on <strong>{new Date(`${formData.deadline}T${formData.deadlineTime || '23:59'}:00`).toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short' })}</strong> at <strong>{new Date(`${formData.deadline}T${formData.deadlineTime || '23:59'}:00`).toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit', hour12: true })}</strong>
+                                                        </span>
+                                                    </div>
+                                                ) : (
+                                                    <span className="roles-deadline-hint">
+                                                        <Clock size={12} /> Cutoff set to <strong>{new Date(`1970-01-01T${formData.deadlineTime || '23:59'}:00`).toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit', hour12: true })}</strong>. Pick date above to apply.
+                                                    </span>
+                                                )}
+                                            </div>
+
                                             <div className="roles-form-group">
-                                                <label>Seat / Capacity Limit (optional)</label>
+                                                <label>🪑 Seat Limit (optional)</label>
                                                 <input
-                                                    type="number"
-                                                    min="1"
-                                                    placeholder="e.g. 10 (Close applications after 10 applied)"
+                                                    type="number" min="1"
+                                                    placeholder="e.g. 10 — auto-close after limit"
                                                     value={formData.seatCapacity || ''}
                                                     onChange={e => setFormData(f => ({ ...f, seatCapacity: e.target.value }))}
                                                 />
                                             </div>
+
                                             {formData.seatCapacity && (
-                                                <div className="roles-form-group">
-                                                    <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 500, cursor: 'pointer', fontSize: '13px' }}>
-                                                        <input 
-                                                            type="checkbox" 
-                                                            checked={!!formData.autoCloseOnSeatCap}
-                                                            onChange={e => setFormData(f => ({ ...f, autoCloseOnSeatCap: e.target.checked }))}
-                                                        />
-                                                        Auto-close role when limit is reached
-                                                    </label>
-                                                </div>
+                                                <label className="roles-checkbox-label">
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={!!formData.autoCloseOnSeatCap}
+                                                        onChange={e => setFormData(f => ({ ...f, autoCloseOnSeatCap: e.target.checked }))}
+                                                    />
+                                                    🔒 Auto-close when seat limit is reached
+                                                </label>
                                             )}
+
+                                            <div className="roles-form-divider" />
+
                                             <div className="roles-form-group">
-                                                <label>Description (optional — AI summary will be used if blank)</label>
+                                                <label>📝 Description override (AI summary used if blank)</label>
                                                 <textarea
                                                     value={formData.description}
                                                     onChange={e => setFormData(f => ({ ...f, description: e.target.value }))}
@@ -415,25 +593,25 @@ export default function RolesPage() {
                                                     placeholder={model.summary}
                                                 />
                                             </div>
+
                                             <div className="roles-form-group">
-                                                <label>Custom Application Questions (one per line, optional)</label>
+                                                <label>❓ Custom Questions (one per line)</label>
                                                 <textarea
                                                     value={formData.customQuestions}
                                                     onChange={e => setFormData(f => ({ ...f, customQuestions: e.target.value }))}
-                                                    rows={3}
+                                                    rows={2}
                                                     placeholder="e.g. Why do you want to join our company?"
                                                 />
                                             </div>
-                                            <div className="roles-form-group">
-                                                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 500, cursor: 'pointer' }}>
-                                                    <input type="checkbox" defaultChecked />
-                                                    Automatically notify eligible candidates upon posting
-                                                </label>
-                                            </div>
+
+                                            <label className="roles-checkbox-label">
+                                                <input type="checkbox" defaultChecked />
+                                                🔔 Notify eligible candidates automatically
+                                            </label>
 
                                             {postSuccess && (
                                                 <div className="roles-success">
-                                                    <CheckCircle2 size={16} /> Role posted successfully! Visible to students now.
+                                                    <CheckCircle2 size={15} /> Role posted! Now visible to students.
                                                 </div>
                                             )}
 
@@ -443,10 +621,10 @@ export default function RolesPage() {
                                                 disabled={posting || postSuccess}
                                             >
                                                 {posting
-                                                    ? <><Loader2 size={15} className="spin" /> Posting…</>
+                                                    ? <><Loader2 size={15} className="spin" /> Publishing…</>
                                                     : postSuccess
-                                                    ? <><CheckCircle2 size={15} /> Posted!</>
-                                                    : <>Post Live to Student Feed <ArrowRight size={15} /></>
+                                                    ? <><CheckCircle2 size={15} /> Published!</>
+                                                    : <>🚀 Post Live to Student Feed <ArrowRight size={14} /></>
                                                 }
                                             </button>
                                         </div>
@@ -489,6 +667,15 @@ export default function RolesPage() {
                                                 >
                                                     {TYPE_LABELS[role.type]}
                                                 </span>
+                                                {role.isStartupRole && (
+                                                    <span
+                                                        className="roles-type-badge"
+                                                        style={{ background: '#f5f3ff', color: '#7c3aed', border: '1px solid #ddd6fe', marginLeft: '6px' }}
+                                                    >
+                                                        <Rocket size={11} style={{ display: 'inline', marginRight: 4 }} />
+                                                        Startup {role.startupStage ? `• ${role.startupStage}` : ''}
+                                                    </span>
+                                                )}
                                             </div>
                                             <div className="roles-my-actions">
                                                 <button

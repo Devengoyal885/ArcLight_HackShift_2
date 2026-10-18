@@ -76,14 +76,17 @@ export default function CommandPalette({ isOpen, setIsOpen }: CommandPaletteProp
     };
 
     const commands = [
-        { icon: <LayoutDashboard />, label: 'Go to Community Hub', path: '/candidate/community', category: 'Navigation' },
-        { icon: <Briefcase />, label: 'Go to Jobs & Opportunities', path: '/candidate/opportunities', category: 'Navigation' },
-        { icon: <TrendingUp />, label: 'Go to Preparation Hub', path: '/candidate/preparation', category: 'Navigation' },
+        { icon: <LayoutDashboard />, label: 'Candidate Dashboard', path: '/candidate', category: 'Navigation' },
+        { icon: <Briefcase />, label: 'Opportunities & Jobs Hub', path: '/candidate/opportunities', category: 'Navigation' },
+        { icon: <TrendingUp />, label: 'Preparation Hub', path: '/candidate/preparation', category: 'Navigation' },
+        { icon: <GraduationCap />, label: 'Career & Learning Hub', path: '/candidate/career', category: 'Navigation' },
+        { icon: <Users />, label: 'Community & Mentors', path: '/candidate/community', category: 'Navigation' },
+        { icon: <FileText />, label: 'My Applications', path: '/candidate/applications', category: 'Navigation' },
         { icon: <User />, label: 'View My Profile', path: '/candidate/coding-profile', category: 'Navigation' },
-        { icon: <FileText />, label: 'AI Resume Review', path: '/candidate/preparation?tab=resume', category: 'Actions' },
+        { icon: <FileText />, label: 'AI Resume Review', path: '/candidate/career?tab=resume', category: 'Actions' },
         { icon: <MessageSquare />, label: 'Start Mock Interview', path: '/candidate/communication/interview', category: 'Actions' },
         { icon: <Award />, label: 'View College Leaderboard', path: '/candidate/community?tab=leaderboard', category: 'Navigation' },
-        { icon: <Settings />, label: 'Account Settings', path: '/candidate/settings', category: 'Preferences' }
+        { icon: <Settings />, label: 'Account Settings', path: '/settings', category: 'Preferences' }
     ];
 
     const filteredCommands = commands.filter(cmd =>

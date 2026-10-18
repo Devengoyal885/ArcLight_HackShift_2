@@ -24,6 +24,7 @@ import {
     createProfile, updateProfile, saveProjects, saveCapabilities, addWorkExperience
 } from '../../services/profileService';
 import { saveEmployerProfile } from '../../services/employerService';
+import type { OrgType, EmployerProfile } from '../../services/employerService';
 import {
     parseResume, inferCapabilitiesFromResume,
     parsedToProjects, inferencedToCapabilities
@@ -66,6 +67,9 @@ export default function OnboardingPage() {
     const [industry, setIndustry] = useState('');
     const [website, setWebsite] = useState('');
     const [companySize, setCompanySize] = useState('');
+    const [orgType, setOrgType] = useState<OrgType>('enterprise');
+    const [startupStage, setStartupStage] = useState<string>('');
+    const [foundingYear, setFoundingYear] = useState<string>('');
 
     // Faculty / Institution
     const [institutionCode, setInstitutionCode] = useState('');
@@ -150,6 +154,9 @@ export default function OnboardingPage() {
                         industry: industry || 'Technology',
                         website: website || undefined,
                         size: companySize || undefined,
+                        orgType,
+                        startupStage: orgType === 'startup' && startupStage ? startupStage as EmployerProfile['startupStage'] : undefined,
+                        foundingYear: foundingYear || undefined,
                     });
                     // Persist role to Firestore user profile
                     await updateProfile(profileId, { role: 'employer', profileComplete: true });
@@ -524,6 +531,72 @@ export default function OnboardingPage() {
                             </div>
 
                             <div className="onb-confirm-fields">
+                                {/* ── Org type selector ─────────────────────────────── */}
+                                <div className="onb-field">
+                                    <label className="onb-label">Organisation Type *</label>
+                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginTop: '4px' }}>
+                                        {([
+                                            { id: 'startup',    icon: '🚀', label: 'Startup',        desc: 'Early-stage / founder-led' },
+                                            { id: 'smb',        icon: '🏢', label: 'SMB',             desc: 'Small / mid-size business' },
+                                            { id: 'enterprise', icon: '🌐', label: 'Enterprise / MNC', desc: 'Established large company' },
+                                            { id: 'nonprofit',  icon: '💚', label: 'Non-profit / NGO', desc: 'Social enterprise' },
+                                        ] as { id: OrgType; icon: string; label: string; desc: string }[]).map(opt => (
+                                            <button
+                                                key={opt.id}
+                                                type="button"
+                                                onClick={() => setOrgType(opt.id)}
+                                                style={{
+                                                    padding: '10px 12px',
+                                                    borderRadius: '10px',
+                                                    border: `2px solid ${orgType === opt.id ? 'var(--color-accent-blue, #6366f1)' : 'var(--color-border, #e2e8f0)'}`,
+                                                    background: orgType === opt.id ? 'var(--color-accent-blue-10, #eef2ff)' : 'transparent',
+                                                    cursor: 'pointer',
+                                                    textAlign: 'left',
+                                                    transition: 'border 0.15s',
+                                                }}
+                                            >
+                                                <div style={{ fontSize: '18px', lineHeight: 1 }}>{opt.icon}</div>
+                                                <div style={{ fontSize: '13px', fontWeight: 600, marginTop: '4px', color: 'var(--color-ink-900, #0f172a)' }}>{opt.label}</div>
+                                                <div style={{ fontSize: '11px', color: 'var(--color-ink-400, #94a3b8)', marginTop: '2px' }}>{opt.desc}</div>
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                {/* ── Startup-specific fields (conditional) ─────── */}
+                                {orgType === 'startup' && (
+                                    <>
+                                        <div className="onb-field">
+                                            <label className="onb-label">Current Stage</label>
+                                            <select
+                                                className="onb-input"
+                                                value={startupStage}
+                                                onChange={e => setStartupStage(e.target.value)}
+                                            >
+                                                <option value="">Select stage</option>
+                                                <option value="Idea">💡 Idea — Concept stage</option>
+                                                <option value="Prototype">🔧 Prototype — Building MVP</option>
+                                                <option value="MVP">🚀 MVP — First users</option>
+                                                <option value="Early Traction">📈 Early Traction — Revenue / users</option>
+                                                <option value="Growth">⚡ Growth — Scaling</option>
+                                                <option value="Funded">💰 Funded — Raised investment</option>
+                                            </select>
+                                        </div>
+                                        <div className="onb-field">
+                                            <label className="onb-label">Founding Year</label>
+                                            <input
+                                                className="onb-input"
+                                                type="number"
+                                                placeholder="e.g. 2023"
+                                                min="2000"
+                                                max={new Date().getFullYear()}
+                                                value={foundingYear}
+                                                onChange={e => setFoundingYear(e.target.value)}
+                                            />
+                                        </div>
+                                    </>
+                                )}
+
                                 <div className="onb-field">
                                     <label className="onb-label">Company / Organisation Name *</label>
                                     <input
@@ -552,7 +625,7 @@ export default function OnboardingPage() {
                                     />
                                 </div>
                                 <div className="onb-field">
-                                    <label className="onb-label">Company Size</label>
+                                    <label className="onb-label">Team Size</label>
                                     <select
                                         className="onb-input"
                                         value={companySize}

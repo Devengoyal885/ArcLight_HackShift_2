@@ -49,8 +49,13 @@ export async function geminiGenerate(
         ? [{ role: 'user', parts: [{ text: prompt }] }]
         : prompt;
 
+    let model = opts.model || 'gemini-2.5-flash';
+    if (!model || model === 'gemini-2.0-flash' || model === 'gemini-1.5-flash') {
+        model = 'gemini-2.5-flash';
+    }
+
     const body = {
-        model: opts.model || 'gemini-2.0-flash',
+        model,
         contents,
         ...(opts.temperature !== undefined || opts.maxOutputTokens !== undefined
             ? { generationConfig: { temperature: opts.temperature, maxOutputTokens: opts.maxOutputTokens } }
@@ -70,7 +75,10 @@ export async function geminiGenerate(
         });
         if (res.ok) {
             const data = await res.json() as any;
-            return data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+            const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+            if (text) return text;
+        } else {
+            console.warn(`[Gemini Proxy] Backend returned ${res.status}, attempting fallback...`);
         }
     } catch {
         // Server not running — fall back to direct API call
@@ -102,8 +110,13 @@ export async function geminiStream(
         ? [{ role: 'user', parts: [{ text: prompt }] }]
         : prompt;
 
+    let model = opts.model || 'gemini-2.5-flash';
+    if (!model || model === 'gemini-2.0-flash' || model === 'gemini-1.5-flash') {
+        model = 'gemini-2.5-flash';
+    }
+
     const body = {
-        model: opts.model || 'gemini-2.0-flash',
+        model,
         contents,
         ...(opts.temperature !== undefined || opts.maxOutputTokens !== undefined
             ? { generationConfig: { temperature: opts.temperature, maxOutputTokens: opts.maxOutputTokens } }

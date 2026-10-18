@@ -103,6 +103,7 @@ const ProgramsPage = lazy(() => import('./pages/institution/ProgramsPage'));
 const DrivesAdminPage = lazy(() => import('./pages/institution/DrivesAdminPage'));
 const NAACReportPage = lazy(() => import('./pages/institution/NAACReportPage'));
 const CommunicationsPage = lazy(() => import('./pages/institution/CommunicationsPage'));
+const InstitutionIncubationPage = lazy(() => import('./pages/institution/InstitutionIncubationPage'));
 
 import { ThemeProvider } from './context/ThemeContext';
 
@@ -142,12 +143,12 @@ export default function App() {
           <Route path="/candidate/portfolio" element={<Navigate to="/candidate/career?tab=portfolio" replace />} />
           <Route path="/candidate/goals" element={<Navigate to="/candidate/career?tab=goals" replace />} />
 
-          {/* Jobs Hub & Redirects */}
-          <Route path="/candidate/opportunities" element={<Navigate to="/candidate/jobs" replace />} />
+          {/* Opportunities & Jobs Hub & Redirects */}
+          <Route path="/candidate/opportunities" element={<ProtectedRoute allowedRoles={['candidate']}><JobsHubPage /></ProtectedRoute>} />
           <Route path="/candidate/jobs" element={<ProtectedRoute allowedRoles={['candidate']}><JobsHubPage /></ProtectedRoute>} />
-          <Route path="/candidate/applications" element={<Navigate to="/candidate/jobs?tab=applications" replace />} />
-          <Route path="/candidate/placement-drives" element={<Navigate to="/candidate/jobs?tab=drives" replace />} />
-          <Route path="/candidate/off-campus" element={<Navigate to="/candidate/jobs?tab=off-campus" replace />} />
+          <Route path="/candidate/applications" element={<ProtectedRoute allowedRoles={['candidate']}><ApplicationsPage /></ProtectedRoute>} />
+          <Route path="/candidate/placement-drives" element={<Navigate to="/candidate/opportunities?tab=drives" replace />} />
+          <Route path="/candidate/off-campus" element={<Navigate to="/candidate/opportunities?tab=off-campus" replace />} />
           
           {/* Preparation Hub & Redirects */}
           <Route path="/candidate/preparation" element={<ProtectedRoute allowedRoles={['candidate']}><PreparationHubPage /></ProtectedRoute>} />
@@ -163,7 +164,8 @@ export default function App() {
           <Route path="/candidate/practice/solve/:titleSlug" element={<ProtectedRoute allowedRoles={['candidate']}><PracticeSolvePage /></ProtectedRoute>} />
           <Route path="/candidate/mailiq" element={<ProtectedRoute allowedRoles={['candidate']}><MailIQPage /></ProtectedRoute>} />
           <Route path="/candidate/oa/:appId" element={<ProtectedRoute allowedRoles={['candidate']}><OAPlatformPage /></ProtectedRoute>} />
-          <Route path="/candidate/coding-profile" element={<ProtectedRoute allowedRoles={['candidate']}><CodolioProfilePage /></ProtectedRoute>} />
+          <Route path="/candidate/coding-profile" element={<ProtectedRoute allowedRoles={['candidate', 'academician', 'employer', 'institution']}><CodolioProfilePage /></ProtectedRoute>} />
+          <Route path="/candidate/coding-profile/:uid" element={<ProtectedRoute allowedRoles={['candidate', 'academician', 'employer', 'institution']}><CodolioProfilePage /></ProtectedRoute>} />
           <Route path="/candidate/communication/interview" element={<ProtectedRoute allowedRoles={['candidate']}><AIInterviewSimulator /></ProtectedRoute>} />
           <Route path="/candidate/aptitude" element={<ProtectedRoute allowedRoles={['candidate']}><AptitudeTestPage /></ProtectedRoute>} />
           <Route path="/candidate/aptitude/history" element={<ProtectedRoute allowedRoles={['candidate']}><AptitudeHistoryPage /></ProtectedRoute>} />
@@ -197,7 +199,7 @@ export default function App() {
           <Route path="/academician/research" element={<ProtectedRoute allowedRoles={['academician']}><ResearchPage /></ProtectedRoute>} />
           <Route path="/academician/consultancy" element={<ProtectedRoute allowedRoles={['academician']}><ConsultancyPage /></ProtectedRoute>} />
           <Route path="/academician/internships" element={<ProtectedRoute allowedRoles={['academician']}><AcademicianInternshipsPage /></ProtectedRoute>} />
-          <Route path="/academician/mentorship" element={<ProtectedRoute allowedRoles={['academician']}><MentorshipPage /></ProtectedRoute>} />
+          <Route path="/academician/mentorship" element={<ProtectedRoute allowedRoles={['academician', 'candidate', 'institution']}><MentorshipPage /></ProtectedRoute>} />
           <Route path="/academician/workshops" element={<ProtectedRoute allowedRoles={['academician']}><WorkshopsPage /></ProtectedRoute>} />
 
           {/* ─── Institution (Admin) ───────────────────────────────────────── */}
@@ -210,6 +212,7 @@ export default function App() {
           <Route path="/institution/drives" element={<ProtectedRoute allowedRoles={['institution']}><DrivesAdminPage /></ProtectedRoute>} />
           <Route path="/institution/naac" element={<ProtectedRoute allowedRoles={['institution']}><NAACReportPage /></ProtectedRoute>} />
           <Route path="/institution/communications" element={<ProtectedRoute allowedRoles={['institution']}><CommunicationsPage /></ProtectedRoute>} />
+          <Route path="/institution/incubation" element={<ProtectedRoute allowedRoles={['institution']}><InstitutionIncubationPage /></ProtectedRoute>} />
 
           {/* Shared */}
           <Route path="/privacy" element={<PrivacyPage />} />

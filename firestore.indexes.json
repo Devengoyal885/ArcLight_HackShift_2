@@ -1,4 +1,39 @@
 {
-  "indexes": [],
+  "indexes": [
+    {
+      "collectionGroup": "postedRoles",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "status", "order": "ASCENDING" },
+        { "fieldPath": "postedAt", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "postedRoles",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "employerUid", "order": "ASCENDING" },
+        { "fieldPath": "status", "order": "ASCENDING" },
+        { "fieldPath": "postedAt", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "deadlineAlerts",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "callSent", "order": "ASCENDING" },
+        { "fieldPath": "deadline", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "interviewSlots",
+      "queryScope": "COLLECTION_GROUP",
+      "fields": [
+        { "fieldPath": "roleId", "order": "ASCENDING" },
+        { "fieldPath": "date", "order": "ASCENDING" },
+        { "fieldPath": "time", "order": "ASCENDING" }
+      ]
+    }
+  ],
   "fieldOverrides": []
 }

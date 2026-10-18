@@ -13,7 +13,7 @@ import {
     setPersistence,
     browserLocalPersistence
 } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
+import { initializeFirestore, getFirestore } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 
 const firebaseConfig = {
@@ -31,7 +31,14 @@ const auth = getAuth(app);
 // Explicitly set persistence to LocalStorage/IndexedDB to fix random logouts on refresh
 setPersistence(auth, browserLocalPersistence).catch(console.error);
 
-const db = getFirestore(app);
+let db: ReturnType<typeof getFirestore>;
+try {
+    db = initializeFirestore(app, {
+        ignoreUndefinedProperties: true,
+    });
+} catch {
+    db = getFirestore(app);
+}
 const storage = getStorage(app);
 
 const googleProvider = new GoogleAuthProvider();

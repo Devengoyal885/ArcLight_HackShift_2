@@ -53,6 +53,54 @@ export async function sendSMS(to: string, message: string): Promise<{ success: b
     }
 }
 
+export interface TwilioStatusResponse {
+    configured: boolean;
+    accountSid?: string;
+    accountType?: string;
+    balance?: string;
+    activeNumber?: string;
+    verifiedNumbers?: string[];
+    primaryVerifiedNumber?: string | null;
+    isTrial?: boolean;
+    trialNotice?: string;
+    capabilities?: {
+        voice: boolean;
+        sms: boolean;
+        inlineTwiml: boolean;
+    };
+    error?: string;
+}
+
+export async function getTwilioStatus(): Promise<TwilioStatusResponse> {
+    try {
+        const res = await fetch(`${SERVER_URL}/api/twilio/status`);
+        return await res.json();
+    } catch (err) {
+        return { configured: false, error: 'Could not connect to backend server' };
+    }
+}
+
+export async function triggerVoiceCall(opts: {
+    to?: string;
+    jobTitle?: string;
+    company?: string;
+    deadline?: string;
+    customMessage?: string;
+}): Promise<{ success: boolean; sid?: string; routedTo?: string; redirected?: boolean; trialNotice?: string; error?: string }> {
+    try {
+        const res = await fetch(`${SERVER_URL}/api/notify/call`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(opts),
+        });
+        const data = await res.json();
+        if (!res.ok) return { success: false, error: data.error || 'Failed to trigger voice call' };
+        return data;
+    } catch (err) {
+        return { success: false, error: 'Network error connecting to call server' };
+    }
+}
+
 // ── Pre-built notification templates ─────────────────────────────────────────
 
 /** Notify a candidate about a new placement drive they are eligible for */
@@ -165,4 +213,66 @@ export async function notifyPlacementWhatsApp(opts: {
 /** Send OTP/verification SMS */
 export async function sendOtpSMS(phone: string, otp: string): Promise<{ success: boolean; error?: string }> {
     return sendSMS(phone, `Your CapAble verification code is: *${otp}*. Valid for 10 minutes. Do not share with anyone.`);
+}
+
+/** Notify founder or applicant about co-founder pitch / match */
+export async function notifyCofounderMatchWhatsApp(opts: {
+    phone: string;
+    founderName?: string;
+    applicantName?: string;
+    ventureTitle: string;
+    roleOffered?: string;
+    action: 'requested' | 'accepted' | 'declined';
+}): Promise<{ success: boolean; error?: string }> {
+    try {
+        const res = await fetch(`${SERVER_URL}/api/notify/cofounder-match`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                to: opts.phone,
+                founderName: opts.founderName,
+                applicantName: opts.applicantName,
+                ventureTitle: opts.ventureTitle,
+                roleOffered: opts.roleOffered,
+                action: opts.action,
+            }),
+        });
+        const data = await res.json() as { success?: boolean; error?: string };
+        if (!res.ok) return { success: false, error: data.error || 'Failed to send notification' };
+        return { success: true };
+    } catch (err) {
+        console.warn('[Twilio co-founder]', err);
+        return { success: false, error: 'Network error' };
+    }
+}
+
+/** Notify founder about incubation pitch decision */
+export async function notifyIncubationStatusWhatsApp(opts: {
+    phone: string;
+    applicantName?: string;
+    ventureTitle: string;
+    institutionName?: string;
+    status: string;
+    feedback?: string;
+}): Promise<{ success: boolean; error?: string }> {
+    try {
+        const res = await fetch(`${SERVER_URL}/api/notify/incubation-status`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                to: opts.phone,
+                applicantName: opts.applicantName,
+                ventureTitle: opts.ventureTitle,
+                institutionName: opts.institutionName,
+                status: opts.status,
+                feedback: opts.feedback,
+            }),
+        });
+        const data = await res.json() as { success?: boolean; error?: string };
+        if (!res.ok) return { success: false, error: data.error || 'Failed to send incubation alert' };
+        return { success: true };
+    } catch (err) {
+        console.warn('[Twilio incubation]', err);
+        return { success: false, error: 'Network error' };
+    }
 }

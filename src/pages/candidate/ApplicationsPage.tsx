@@ -4,18 +4,24 @@ import { FloatingNavbar } from '../../components/navigation/FloatingNavbar';
 import { useAuth } from '../../context/AuthContext';
 import { getCandidateApplications, updateApplicationStatus } from '../../services/employerService';
 import { getSavedOpportunities, unsaveOpportunity, uploadOfferLetterToApplication } from '../../services/profileService';
+import {
+    getCandidateCollaborationRequests,
+    getCandidateIncubationApplications,
+    type CollaborationRequest,
+    type IncubationApplication
+} from '../../services/ventureService';
 import { Link, useNavigate } from 'react-router-dom';
 import {
     Loader2, Briefcase, Calendar, MapPin, ExternalLink,
     CheckCircle, XCircle, AlertCircle, PlayCircle, Clock,
     Bookmark, BookmarkX, TrendingUp, Award, Star, ChevronRight, Sparkles, Copy, CheckCircle2, MessageSquare,
-    Bell, Trash2, Upload
+    Bell, Trash2, Upload, Rocket, Building2, ShieldCheck, Users, DollarSign
 } from 'lucide-react';
 import { geminiGenerate } from '../../services/geminiProxyService';
 import { EmptyState } from '../../components/ui/EmptyState';
 import './ApplicationsPage.css';
 
-type AppTab = 'pipeline' | 'saved';
+type AppTab = 'pipeline' | 'ventures' | 'incubation' | 'saved';
 
 const PIPELINE_STAGES = [
     { key: 'Applied', label: 'Applied', color: '#3b82f6' },
@@ -32,8 +38,11 @@ export default function ApplicationsPage({ isEmbedded = false }: { isEmbedded?: 
     const [tab, setTab] = useState<AppTab>('pipeline');
     const [applications, setApplications] = useState<any[]>([]);
     const [savedOpps, setSavedOpps] = useState<any[]>([]);
+    const [collabRequests, setCollabRequests] = useState<CollaborationRequest[]>([]);
+    const [incubationApps, setIncubationApps] = useState<IncubationApplication[]>([]);
     const [loading, setLoading] = useState(true);
     const [savedLoading, setSavedLoading] = useState(true);
+    const [ventureLoading, setVentureLoading] = useState(true);
     const [unsaving, setUnsaving] = useState<string | null>(null);
 
     const [aiLoading, setAiLoading] = useState<string | null>(null);
@@ -60,15 +69,24 @@ export default function ApplicationsPage({ isEmbedded = false }: { isEmbedded?: 
     useEffect(() => {
         if (!user) return;
         loadApplications();
-    }, [user]);
+    }, [user, dbUid]);
 
     useEffect(() => {
-        if (!user) return;
-        getSavedOpportunities(dbUid!).then(saved => {
+        if (!user || !dbUid) return;
+        getSavedOpportunities(dbUid).then(saved => {
             setSavedOpps(saved);
             setSavedLoading(false);
         }).catch(() => setSavedLoading(false));
-    }, [user]);
+
+        Promise.all([
+            getCandidateCollaborationRequests(dbUid),
+            getCandidateIncubationApplications(dbUid),
+        ]).then(([collabs, incs]) => {
+            setCollabRequests(collabs);
+            setIncubationApps(incs);
+            setVentureLoading(false);
+        }).catch(() => setVentureLoading(false));
+    }, [user, dbUid]);
 
     const handleUnsave = async (opp: any) => {
         if (!opp.id) return;
@@ -268,8 +286,16 @@ Please act as a career advisor. Compare these offers in terms of likely compensa
                 {/* Tabs */}
                 <div className="app-tabs">
                     <button className={`app-tab ${tab === 'pipeline' ? 'active' : ''}`} onClick={() => setTab('pipeline')}>
-                        <TrendingUp size={16} /> Application Pipeline
+                        <TrendingUp size={16} /> Job Applications
                         {applications.length > 0 && <span className="app-tab-count">{applications.length}</span>}
+                    </button>
+                    <button className={`app-tab ${tab === 'ventures' ? 'active' : ''}`} onClick={() => setTab('ventures')}>
+                        <Rocket size={16} /> Co-Founder & Ventures
+                        {collabRequests.length > 0 && <span className="app-tab-count" style={{ background: '#7c3aed' }}>{collabRequests.length}</span>}
+                    </button>
+                    <button className={`app-tab ${tab === 'incubation' ? 'active' : ''}`} onClick={() => setTab('incubation')}>
+                        <Building2 size={16} /> Incubation Pitches
+                        {incubationApps.length > 0 && <span className="app-tab-count" style={{ background: '#d97706' }}>{incubationApps.length}</span>}
                     </button>
                     <button className={`app-tab ${tab === 'saved' ? 'active' : ''}`} onClick={() => setTab('saved')}>
                         <Bookmark size={16} /> Saved Jobs
@@ -573,6 +599,182 @@ Please act as a career advisor. Compare these offers in terms of likely compensa
                                                         </div>
                                                     </div>
                                                 )}
+                                            </motion.div>
+                                        );
+                                    })}
+                                </AnimatePresence>
+                            </div>
+                        )}
+                    </>
+                )}
+
+                {/* ── Co-Founder & Ventures Tab ── */}
+                {tab === 'ventures' && (
+                    <>
+                        {ventureLoading ? (
+                            <div className="app-track-loading">
+                                <Loader2 size={32} className="spin" />
+                                <p>Loading your startup & co-founder inquiries...</p>
+                            </div>
+                        ) : collabRequests.length === 0 ? (
+                            <EmptyState
+                                icon={Rocket}
+                                title="No Venture Inquiries Yet"
+                                description="You haven't requested to join any founding teams or early-stage startups yet. Browse student ventures to find co-founder and equity roles."
+                                actionElement={
+                                    <Link to="/candidate/opportunities?tab=startups" className="app-track-btn-primary">
+                                        Explore Startups & Co-Founders
+                                    </Link>
+                                }
+                            />
+                        ) : (
+                            <div className="app-track-list">
+                                <AnimatePresence>
+                                    {collabRequests.map((req, i) => {
+                                        const statusColor =
+                                            req.status === 'accepted' ? '#10b981' :
+                                            req.status === 'declined' ? '#64748b' : '#f59e0b';
+                                        const statusBg =
+                                            req.status === 'accepted' ? '#ecfdf5' :
+                                            req.status === 'declined' ? '#f1f5f9' : '#fffbeb';
+                                        const statusLabel =
+                                            req.status === 'accepted' ? 'Accepted — Founder Connected 🎉' :
+                                            req.status === 'declined' ? 'Declined' : 'Under Review by Founder';
+
+                                        return (
+                                            <motion.div
+                                                key={req.id}
+                                                className="app-track-card"
+                                                initial={{ opacity: 0, y: 16 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                transition={{ delay: i * 0.05 }}
+                                            >
+                                                <div className="app-track-card-main">
+                                                    <div className="app-track-info">
+                                                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
+                                                            <span style={{ fontSize: '11px', fontWeight: 800, color: '#7c3aed', background: '#f5f3ff', padding: '2px 8px', borderRadius: '6px', textTransform: 'uppercase' }}>
+                                                                Startup Venture
+                                                            </span>
+                                                        </div>
+                                                        <h3 className="app-track-role">{req.ventureTitle}</h3>
+                                                        <p className="app-track-company" style={{ color: '#6366f1' }}>
+                                                            Role Requested: <strong>{req.roleInterested}</strong>
+                                                        </p>
+                                                        <div className="app-track-meta">
+                                                            <span>
+                                                                <Calendar size={14} /> Submitted {new Date(req.createdAt).toLocaleDateString()}
+                                                            </span>
+                                                            {req.skills && req.skills.length > 0 && (
+                                                                <span>
+                                                                    <Sparkles size={14} color="#8b5cf6" /> {req.skills.join(', ')}
+                                                                </span>
+                                                            )}
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="app-track-status-box">
+                                                        <div className="app-track-badge" style={{ background: statusBg, color: statusColor }}>
+                                                            {req.status === 'accepted' ? <CheckCircle2 size={16} /> : <Clock size={16} />}
+                                                            {statusLabel}
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                {req.message && (
+                                                    <div className="app-track-message" style={{ borderLeftColor: '#7c3aed', background: '#faf5ff' }}>
+                                                        <strong style={{ color: '#6b21a8' }}>Your Pitch Message:</strong> {req.message}
+                                                    </div>
+                                                )}
+                                            </motion.div>
+                                        );
+                                    })}
+                                </AnimatePresence>
+                            </div>
+                        )}
+                    </>
+                )}
+
+                {/* ── Incubation & Grants Tab ── */}
+                {tab === 'incubation' && (
+                    <>
+                        {ventureLoading ? (
+                            <div className="app-track-loading">
+                                <Loader2 size={32} className="spin" />
+                                <p>Loading your incubation applications...</p>
+                            </div>
+                        ) : incubationApps.length === 0 ? (
+                            <EmptyState
+                                icon={Building2}
+                                title="No Incubation Pitches Yet"
+                                description="You haven't submitted your startup prototype to any institutional E-Cells or incubation grants yet."
+                                actionElement={
+                                    <Link to="/candidate/opportunities?tab=incubation" className="app-track-btn-primary">
+                                        Browse Incubation Cohorts
+                                    </Link>
+                                }
+                            />
+                        ) : (
+                            <div className="app-track-list">
+                                <AnimatePresence>
+                                    {incubationApps.map((app, i) => {
+                                        const statusMap: Record<string, { label: string; color: string; bg: string }> = {
+                                            submitted: { label: 'Pitch Submitted', color: '#2563eb', bg: '#eff6ff' },
+                                            under_review: { label: 'Committee Review', color: '#d97706', bg: '#fffbeb' },
+                                            shortlisted: { label: 'Shortlisted for Pitch Presentation', color: '#7c3aed', bg: '#f5f3ff' },
+                                            selected: { label: 'Selected for Incubation & Grant 🏆', color: '#059669', bg: '#ecfdf5' },
+                                            rejected: { label: 'Not Selected', color: '#64748b', bg: '#f1f5f9' },
+                                        };
+                                        const conf = statusMap[app.status] || statusMap.submitted;
+
+                                        return (
+                                            <motion.div
+                                                key={app.id}
+                                                className="app-track-card"
+                                                initial={{ opacity: 0, y: 16 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                transition={{ delay: i * 0.05 }}
+                                            >
+                                                <div className="app-track-card-main">
+                                                    <div className="app-track-info">
+                                                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
+                                                            <span style={{ fontSize: '11px', fontWeight: 800, color: '#b45309', background: '#fef3c7', padding: '2px 8px', borderRadius: '6px', textTransform: 'uppercase' }}>
+                                                                {app.institutionCode}
+                                                            </span>
+                                                        </div>
+                                                        <h3 className="app-track-role">{app.startupName}</h3>
+                                                        <p className="app-track-company" style={{ color: '#4338ca' }}>
+                                                            Applied to: <strong>{app.programTitle}</strong>
+                                                        </p>
+                                                        <div className="app-track-meta">
+                                                            <span>
+                                                                <Calendar size={14} /> Submitted {new Date(app.submittedAt).toLocaleDateString()}
+                                                            </span>
+                                                            <span>
+                                                                <Users size={14} /> Team Size: {app.teamSize}
+                                                            </span>
+                                                            {app.deckUrl && (
+                                                                <a
+                                                                    href={app.deckUrl}
+                                                                    target="_blank"
+                                                                    rel="noopener noreferrer"
+                                                                    style={{ color: '#4f46e5', display: 'flex', alignItems: 'center', gap: '4px', textDecoration: 'none' }}
+                                                                >
+                                                                    <ExternalLink size={13} /> Pitch Deck
+                                                                </a>
+                                                            )}
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="app-track-status-box">
+                                                        <div className="app-track-badge" style={{ background: conf.bg, color: conf.color }}>
+                                                            <Award size={16} /> {conf.label}
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div className="app-track-message" style={{ borderLeftColor: '#d97706', background: '#fffdf5' }}>
+                                                    <strong style={{ color: '#9a3412' }}>Executive Pitch:</strong> {app.pitchSummary}
+                                                </div>
                                             </motion.div>
                                         );
                                     })}

@@ -5,14 +5,15 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "server": "tsx server/index.ts",
+    "server": "tsx watch server/index.ts",
     "gateway": "omniroute",
     "dev:all": "concurrently \"npm run server\" \"npm run dev\"",
     "dev:gateway": "concurrently \"npm run gateway\" \"npm run server\" \"npm run dev\"",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "preview": "vite preview",
-    "cron:fetch-jobs": "tsx scripts/fetchJobsCron.ts"
+    "cron:fetch-jobs": "tsx scripts/fetchJobsCron.ts",
+    "test": "node scripts/verify_ecosystem.cjs"
   },
   "dependencies": {
     "@lottiefiles/dotlottie-react": "^0.20.0",

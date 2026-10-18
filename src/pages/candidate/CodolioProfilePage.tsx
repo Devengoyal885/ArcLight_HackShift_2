@@ -660,9 +660,9 @@ export default function CodolioProfilePage() {
             {isReadOnly && (
                 <div className="cp-readonly-bar">
                     <Link to={-1 as any} className="cp-back-btn">
-                        <ArrowLeft size={15} /> Back to Students
+                        <ArrowLeft size={15} /> Back
                     </Link>
-                    <span className="cp-readonly-label">Viewing student profile (read-only)</span>
+                    <span className="cp-readonly-label">Viewing profile (read-only)</span>
                 </div>
             )}
 

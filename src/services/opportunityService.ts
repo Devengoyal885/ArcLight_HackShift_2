@@ -221,65 +221,73 @@ async function fetchSerperJobs(query: string, location?: string, platform?: stri
 
 /** Fetch all active employer-posted roles using collectionGroup to search ALL employer subcollections */
 async function fetchEmployerPostedRoles(): Promise<OpportunityCard[]> {
+    let groupDocs: any[] = [];
+    let globalDocs: any[] = [];
+
+    // Strategy 1: collectionGroup across all employers/{uid}/postedRoles subcollections
+    // Requires the /{path=**}/postedRoles/{roleId} collectionGroup rule in firestore.rules
     try {
-        // collectionGroup queries ALL 'postedRoles' subcollections across ALL employers
-        // This bypasses the need for a global mirror collection entirely
         const groupSnap = await getDocs(collectionGroup(db, 'postedRoles'));
-        
-        // Also check the top-level postedRoles collection (the mirror) for any that were synced
-        let globalDocs: any[] = [];
-        try {
-            const globalSnap = await getDocs(collection(db, 'postedRoles'));
-            globalDocs = globalSnap.docs.map(d => ({ _docId: d.id, ...d.data() }));
-        } catch { /* non-critical */ }
-
-        // Merge both sources, deduplicate by ID
-        const allRaw = [
-            ...groupSnap.docs.map(d => ({ _docId: d.id, ...d.data() } as any)),
-            ...globalDocs,
-        ];
-        
-        const seen = new Set<string>();
-        const validDocs = allRaw
-            .filter(r => {
-                // Only active roles, deduplicated
-                if (!r.title || r.status !== 'active') return false;
-                const key = r._docId || r.id;
-                if (seen.has(key)) return false;
-                seen.add(key);
-                return true;
-            })
-            .sort((a, b) => {
-                const dateA = a.postedAt?.toMillis ? a.postedAt.toMillis() : 0;
-                const dateB = b.postedAt?.toMillis ? b.postedAt.toMillis() : 0;
-                return dateB - dateA;
-            });
-
-        console.log(`[opportunityService] Found ${validDocs.length} employer-posted active roles.`);
-
-        return validDocs.map(r => ({
-            id: `posted-${r._docId || r.id}`,
-            // §3.8: Self-posted roles always carry source='CapAble Portal'
-            // This is the formalized self-post path, distinct from ingestion.
-            source: 'CapAble Portal',
-            title: r.title,
-            company: r.companyName || 'Company',
-            location: r.location || 'India',
-            remote: r.remote || false,
-            type: r.type === 'internship' ? 'internship' : 'full-time',
-            url: '',
-            description: r.description,
-            tags: r.tags || r.requiredSkills || [],
-            salary: r.salary || r.stipend,
-            isInternalPosting: true,
-            internalRoleId: r._docId || r.id,
-            applicantCount: r.applicantCount || r.applicants || 0,
-            deadline: r.deadline,
-        } as OpportunityCard));
+        groupDocs = groupSnap.docs.map(d => ({ _docId: d.id, ...d.data() } as any));
+        console.log(`[opportunityService] collectionGroup found ${groupDocs.length} docs.`);
     } catch (e) {
-        console.warn('[opportunityService] Employer posted roles fetch skipped or restricted:', e);
+        console.error('[opportunityService] collectionGroup(postedRoles) FAILED — check firestore.rules for /{path=**}/postedRoles/{roleId} rule:', e);
+    }
+
+    // Strategy 2: Top-level mirror collection (postedRoles/{roleId}) — always try this independently
+    try {
+        const globalSnap = await getDocs(collection(db, 'postedRoles'));
+        globalDocs = globalSnap.docs.map(d => ({ _docId: d.id, ...d.data() }));
+        console.log(`[opportunityService] Top-level postedRoles found ${globalDocs.length} docs.`);
+    } catch (e) {
+        console.error('[opportunityService] Top-level postedRoles read FAILED:', e);
+    }
+
+    // Merge both sources, deduplicate by _docId
+    const allRaw = [...groupDocs, ...globalDocs];
+
+    if (allRaw.length === 0) {
+        console.warn('[opportunityService] No employer-posted roles found from any source. Is the employer account logged in and has posted roles?');
         return [];
     }
+
+    const seen = new Set<string>();
+    const validDocs = allRaw
+        .filter(r => {
+            // Keep active roles + roles with no status field (treat as active for backwards compat)
+            if (!r.title) return false;
+            const status = r.status ?? 'active'; // default missing status to 'active'
+            if (status === 'closed' || status === 'draft') return false;
+            const key = r._docId || r.id;
+            if (seen.has(key)) return false;
+            seen.add(key);
+            return true;
+        })
+        .sort((a, b) => {
+            const dateA = a.postedAt?.toMillis ? a.postedAt.toMillis() : 0;
+            const dateB = b.postedAt?.toMillis ? b.postedAt.toMillis() : 0;
+            return dateB - dateA;
+        });
+
+    console.log(`[opportunityService] ✅ ${validDocs.length} active employer-posted roles available to candidates.`);
+
+    return validDocs.map(r => ({
+        id: `posted-${r._docId || r.id}`,
+        source: 'CapAble Portal',
+        title: r.title,
+        company: r.companyName || 'Company',
+        location: r.location || 'India',
+        remote: r.remote || false,
+        type: r.type === 'internship' ? 'internship' : 'full-time',
+        url: '',
+        description: r.description,
+        tags: r.tags || r.requiredSkills || [],
+        salary: r.salary || r.stipend,
+        isInternalPosting: true,
+        internalRoleId: r._docId || r.id,
+        applicantCount: r.applicantCount || r.applicants || 0,
+        deadline: r.deadline,
+    } as OpportunityCard));
 }
 
 let globalJobsCache: { data: OpportunityCard[], timestamp: number } | null = null;

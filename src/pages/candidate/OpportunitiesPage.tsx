@@ -3,7 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FloatingNavbar } from '../../components/navigation/FloatingNavbar';
 import { useAuth } from '../../context/AuthContext';
-import { getCapabilities, getProjects, saveOpportunity, getSavedOpportunities, unsaveOpportunity } from '../../services/profileService';
+import { getCapabilities, getProjects, saveOpportunity, getSavedOpportunities, unsaveOpportunity, updateProfile } from '../../services/profileService';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { db } from '../../lib/firebase';
 import { getAllOpportunities, searchOpportunities, matchOpportunityToSkills } from '../../services/opportunityService';
 import { applyToRole, getCandidateApplications, getAllPostedRoles } from '../../services/employerService';
 import { getRoleRecommendations, type RoleRecommendation } from '../../services/jobRecommendationService';
@@ -13,7 +15,7 @@ import {
     Calendar, ExternalLink, ChevronDown, ChevronUp, MapPin, Building2,
     Briefcase, Search, Filter, Star, ChevronLeft, ChevronRight,
     Brain, TrendingUp, DollarSign, Target, AlertTriangle, X, Loader2,
-    BookmarkCheck, Bookmark, Zap, Sparkles, CheckCircle2, AlertCircle, User, Clock, SearchX, Map as MapIcon, List as ListIcon
+    BookmarkCheck, Bookmark, Zap, Sparkles, CheckCircle2, AlertCircle, User, Clock, SearchX, Map as MapIcon, List as ListIcon, Phone
 } from 'lucide-react';
 import { CompanyReviewsModal } from '../../components/ui/CompanyReviewsModal';
 import { SkillGapModal } from '../../components/ui/SkillGapModal';
@@ -67,6 +69,20 @@ export default function OpportunitiesPage({ isEmbedded = false }: { isEmbedded?:
     const [appliedIds, setAppliedIds] = useState<Set<string>>(new Set());
     const [applying, setApplying] = useState<string | null>(null);
 
+    // Twilio Deadline Call State
+    const [candidatePhone, setCandidatePhone] = useState<string>(() => {
+        return localStorage.getItem('capable_candidate_phone') || '';
+    });
+    const [deadlinePromptOpp, setDeadlinePromptOpp] = useState<OpportunityCard | null>(null);
+    const [phoneInput, setPhoneInput] = useState<string>('+91 ');
+    const [savingPhoneAlert, setSavingPhoneAlert] = useState<boolean>(false);
+    const [toastMessage, setToastMessage] = useState<{ text: string; type: 'success' | 'info' | 'error' } | null>(null);
+
+    const showToast = (text: string, type: 'success' | 'info' | 'error' = 'success') => {
+        setToastMessage({ text, type });
+        setTimeout(() => setToastMessage(null), 4500);
+    };
+
     // View mode
     const [viewMode, setViewMode] = useState<'list' | 'map'>('list');
 
@@ -76,7 +92,7 @@ export default function OpportunitiesPage({ isEmbedded = false }: { isEmbedded?:
     const [companySize, setCompanySize] = useState<'all' | 'startup' | 'mid' | 'enterprise'>('all');
     const [expanded, setExpanded] = useState<string | null>(null);
     
-    // Map viewport — for deep search (re-filter to visible bounds on pan/zoom)
+    // Map viewport â€” for deep search (re-filter to visible bounds on pan/zoom)
     const [mapViewport, setMapViewport] = useState<MapViewport | null>(null);
 
     const handleViewportChange = useCallback((v: MapViewport | null) => {
@@ -116,6 +132,24 @@ export default function OpportunitiesPage({ isEmbedded = false }: { isEmbedded?:
             setAppliedIds(appliedSet);
         }).catch(console.error);
     }, [user, dbUid]);
+
+    // Load candidate phone for deadline reminders
+    useEffect(() => {
+        if (!dbUid) return;
+        const fromProfile = (profile as any)?.phone;
+        if (fromProfile) {
+            setCandidatePhone(fromProfile);
+            localStorage.setItem('capable_candidate_phone', fromProfile);
+            return;
+        }
+        getDoc(doc(db, 'users', dbUid, 'settings', 'notifications')).then(snap => {
+            if (snap.exists() && snap.data().whatsappPhone) {
+                const p = snap.data().whatsappPhone;
+                setCandidatePhone(p);
+                localStorage.setItem('capable_candidate_phone', p);
+            }
+        }).catch(() => {});
+    }, [dbUid, profile]);
 
     // Load all jobs
     useEffect(() => {
@@ -182,9 +216,9 @@ export default function OpportunitiesPage({ isEmbedded = false }: { isEmbedded?:
         });
     }
 
-    // ── DEEP SEARCH: Viewport-aware filtering (map mode only) ────────────────
+    // â”€â”€ DEEP SEARCH: Viewport-aware filtering (map mode only) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     // When the user pans/zooms the map, re-filter to only jobs whose geocoded
-    // location falls within the visible bounds — mirrors job-find's /api/pins.
+    // location falls within the visible bounds â€” mirrors job-find's /api/pins.
     const jobsInViewport = (viewMode === 'map' && mapViewport)
         ? filtered.filter(job => {
             let lng = job.longitude;
@@ -202,44 +236,130 @@ export default function OpportunitiesPage({ isEmbedded = false }: { isEmbedded?:
         carouselRef.current?.scrollBy({ left: dir === 'left' ? -350 : 350, behavior: 'smooth' });
     };
 
-    const handleSave = async (opp: OpportunityCard) => {
-        if (!user) return;
-        const isCurrentlySaved = savedIds.has(opp.id);
-        
+    const formatE164Phone = (raw: string): string => {
+        if (!raw) return '';
+        const trimmed = raw.trim();
+        if (trimmed.startsWith('+')) {
+            return '+' + trimmed.replace(/\D/g, '');
+        }
+        const digits = trimmed.replace(/\D/g, '');
+        if (digits.length === 10) return `+91${digits}`;
+        if (digits.length > 10) return `+${digits}`;
+        return '';
+    };
+
+    const executeSave = async (opp: OpportunityCard, phoneToUse?: string) => {
+        if (!user || !dbUid) return;
+
         // Optimistic update
-        setSavedIds(prev => {
-            const s = new Set(prev);
-            if (isCurrentlySaved) s.delete(opp.id);
-            else s.add(opp.id);
-            return s;
-        });
+        setSavedIds(prev => new Set(prev).add(opp.id));
 
         try {
-            if (isCurrentlySaved) {
-                const docId = savedDocIds[opp.id];
-                if (docId) {
-                    await unsaveOpportunity(dbUid!, docId);
-                }
-            } else {
-                const newDocId = await saveOpportunity(dbUid!, {
-                    opportunityId: opp.id,
-                    title: opp.title,
-                    company: opp.company,
-                    url: opp.url,
+            const phone164 = phoneToUse ? formatE164Phone(phoneToUse) : '';
+            const newDocId = await saveOpportunity(dbUid, {
+                opportunityId: opp.id,
+                title: opp.title,
+                company: opp.company,
+                url: opp.url || '',
+                deadline: opp.deadline,
+                roleId: opp.internalRoleId,
+                candidatePhone: phone164 || undefined,
+            });
+
+            if (newDocId) {
+                setSavedDocIds(prev => ({ ...prev, [opp.id]: newDocId }));
+            }
+
+            if (opp.deadline && phone164) {
+                const formattedDate = new Date(opp.deadline).toLocaleString('en-IN', {
+                    dateStyle: 'medium',
+                    timeStyle: 'short',
                 });
-                // Assuming saveOpportunity returns the docId. If it returns void, we might need a fetch later, 
-                // but for now the optimistic update works for the UI state.
+                showToast(`⏰ Saved! You will receive a voice call 3 hours before deadline (${formattedDate}).`, 'success');
+            } else {
+                showToast('🔖 Opportunity saved to your bookmarks!', 'success');
             }
         } catch (err) {
-            console.error("Failed to save/unsave:", err);
+            console.error("Failed to save opportunity:", err);
             // Revert on error
             setSavedIds(prev => {
                 const s = new Set(prev);
-                if (isCurrentlySaved) s.add(opp.id);
-                else s.delete(opp.id);
+                s.delete(opp.id);
                 return s;
             });
+            showToast('Failed to save opportunity. Please try again.', 'error');
         }
+    };
+
+    const handleSave = async (opp: OpportunityCard) => {
+        if (!user || !dbUid) return;
+        const isCurrentlySaved = savedIds.has(opp.id);
+
+        if (isCurrentlySaved) {
+            // Unsave
+            setSavedIds(prev => {
+                const s = new Set(prev);
+                s.delete(opp.id);
+                return s;
+            });
+            try {
+                const docId = savedDocIds[opp.id];
+                if (docId) {
+                    await unsaveOpportunity(dbUid, docId);
+                }
+                showToast('Opportunity removed from bookmarks.', 'info');
+            } catch (err) {
+                console.error("Failed to unsave:", err);
+                setSavedIds(prev => new Set(prev).add(opp.id));
+                showToast('Failed to remove bookmark.', 'error');
+            }
+            return;
+        }
+
+        // If role has a deadline and candidate has no phone number, prompt for phone
+        const activePhone = candidatePhone || formatE164Phone((profile as any)?.phone || '');
+        if (opp.deadline && !activePhone) {
+            setPhoneInput('+91 ');
+            setDeadlinePromptOpp(opp);
+            return;
+        }
+
+        // Otherwise save immediately with active phone
+        await executeSave(opp, activePhone);
+    };
+
+    const handleConfirmPhoneAlert = async () => {
+        if (!deadlinePromptOpp || !dbUid) return;
+        const formatted = formatE164Phone(phoneInput);
+        if (!formatted || formatted.replace(/\D/g, '').length < 10) {
+            showToast('Please enter a valid 10-digit phone number with country code.', 'error');
+            return;
+        }
+
+        setSavingPhoneAlert(true);
+        try {
+            // Persist phone across profile, notifications, and localStorage
+            setCandidatePhone(formatted);
+            localStorage.setItem('capable_candidate_phone', formatted);
+            await updateProfile(dbUid, { phone: formatted }).catch(() => {});
+            await setDoc(doc(db, 'users', dbUid, 'settings', 'notifications'), {
+                whatsappPhone: formatted,
+                whatsappEnabled: true,
+            }, { merge: true }).catch(() => {});
+
+            const targetOpp = deadlinePromptOpp;
+            setDeadlinePromptOpp(null);
+            await executeSave(targetOpp, formatted);
+        } finally {
+            setSavingPhoneAlert(false);
+        }
+    };
+
+    const handleSaveWithoutCall = async () => {
+        if (!deadlinePromptOpp) return;
+        const targetOpp = deadlinePromptOpp;
+        setDeadlinePromptOpp(null);
+        await executeSave(targetOpp, undefined);
     };
 
     const handleApply = async (opp: OpportunityCard) => {
@@ -328,7 +448,7 @@ export default function OpportunitiesPage({ isEmbedded = false }: { isEmbedded?:
                     </button>
                 </div>
 
-                {/* ── AI RECOMMENDATIONS TAB ── */}
+                {/* â”€â”€ AI RECOMMENDATIONS TAB â”€â”€ */}
                 {pageTab === 'recommended' && (
                     <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}>
                         <div className="recs-header">
@@ -341,7 +461,7 @@ export default function OpportunitiesPage({ isEmbedded = false }: { isEmbedded?:
                         {recsLoading ? (
                             <div className="opp-state-center">
                                 <Loader2 size={28} className="spin" />
-                                <p>Analysing your profile against all available roles…</p>
+                                <p>Analysing your profile against all available rolesâ€¦</p>
                             </div>
                         ) : recommendations.length === 0 ? (
                             <div className="opp-state-center">
@@ -412,7 +532,7 @@ export default function OpportunitiesPage({ isEmbedded = false }: { isEmbedded?:
                                                         onClick={() => !isApplied && handleApplyRecommended(rec)}
                                                         style={isApplied ? { background: '#22c55e', cursor: 'not-allowed' } : {}}
                                                     >
-                                                        {isApplied ? <><CheckCircle2 size={14} /> Applied</> : applying === rid ? <><Loader2 size={14} className="spin" /> Applying…</> : <>Apply Now →</>}
+                                                        {isApplied ? <><CheckCircle2 size={14} /> Applied</> : applying === rid ? <><Loader2 size={14} className="spin" /> Applyingâ€¦</> : <>Apply Now â†’</>}
                                                     </button>
                                                     <button
                                                         className="rec-tailor-btn"
@@ -440,7 +560,7 @@ export default function OpportunitiesPage({ isEmbedded = false }: { isEmbedded?:
                     </motion.div>
                 )}
 
-                {/* ── ALL OPPORTUNITIES TAB ── */}
+                {/* â”€â”€ ALL OPPORTUNITIES TAB â”€â”€ */}
                 {pageTab === 'all' && (
                     <>
                         {/* Featured Carousel */}
@@ -525,7 +645,7 @@ export default function OpportunitiesPage({ isEmbedded = false }: { isEmbedded?:
                                             >
                                                 {f !== 'ALL' && <span className="filter-dot" style={{ background: stateColors[f] }} />}
                                                 <span className="filter-label">{f}</span>
-                                                {matchFilter === f && <span className="filter-check">✓</span>}
+                                                {matchFilter === f && <span className="filter-check">âœ“</span>}
                                             </button>
                                         ))}
                                     </div>
@@ -534,14 +654,14 @@ export default function OpportunitiesPage({ isEmbedded = false }: { isEmbedded?:
                                 <div className="sidebar-widget">
                                     <h3><Building2 size={16} /> Company Size</h3>
                                     <div className="filter-options">
-                                        {([['all', 'All Sizes'], ['startup', 'Startup (<200)'], ['mid', 'Mid-size (200–1k)'], ['enterprise', 'Enterprise (1k+)']] as const).map(([val, label]) => (
+                                        {([['all', 'All Sizes'], ['startup', 'Startup (<200)'], ['mid', 'Mid-size (200â€“1k)'], ['enterprise', 'Enterprise (1k+)']] as const).map(([val, label]) => (
                                             <button
                                                 key={val}
                                                 className={`sidebar-filter-btn ${companySize === val ? 'active' : ''}`}
                                                 onClick={() => setCompanySize(val)}
                                             >
                                                 <span className="filter-label">{label}</span>
-                                                {companySize === val && <span className="filter-check">✓</span>}
+                                                {companySize === val && <span className="filter-check">âœ“</span>}
                                             </button>
                                         ))}
                                     </div>
@@ -633,7 +753,7 @@ export default function OpportunitiesPage({ isEmbedded = false }: { isEmbedded?:
                                         {filtered.some(o => o.isInternalPosting) && (
                                     <div style={{ marginBottom: '16px' }}>
                                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
-                                            <span style={{ fontSize: '13px', fontWeight: 700, color: '#1d4ed8', background: '#dbeafe', padding: '4px 12px', borderRadius: '20px' }}>✨ CapAble Platform Postings</span>
+                                            <span style={{ fontSize: '13px', fontWeight: 700, color: '#1d4ed8', background: '#dbeafe', padding: '4px 12px', borderRadius: '20px' }}>âœ¨ CapAble Platform Postings</span>
                                             <span style={{ fontSize: '12px', color: '#64748b' }}>Posted directly by companies on CapAble</span>
                                         </div>
                                         {filtered.filter(o => o.isInternalPosting).map((opp, i) => {
@@ -655,7 +775,7 @@ export default function OpportunitiesPage({ isEmbedded = false }: { isEmbedded?:
                                                             <div className="opp-title-row">
                                                                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                                                                     <h3 className="opp-card-title">{opp.title}</h3>
-                                                                    <span style={{ background: '#1d4ed8', color: '#fff', fontSize: '11px', padding: '2px 8px', borderRadius: '12px', fontWeight: 600 }}>✨ CapAble Exclusive</span>
+                                                                    <span style={{ background: '#1d4ed8', color: '#fff', fontSize: '11px', padding: '2px 8px', borderRadius: '12px', fontWeight: 600 }}>âœ¨ CapAble Exclusive</span>
                                                                 </div>
                                                                 {opp.match !== undefined && (
                                                                     <span
@@ -678,9 +798,13 @@ export default function OpportunitiesPage({ isEmbedded = false }: { isEmbedded?:
                                                                 <span><MapPin size={14} /> {opp.location}</span>
                                                                 <span><Briefcase size={14} /> {opp.type}</span>
                                                                 {opp.salary && <span><DollarSign size={14} /> {opp.salary}</span>}
-                                                                {opp.remote && <span style={{ color: '#10b981', fontWeight: 600 }}>🌐 Remote</span>}
-                                                                {opp.applicantCount !== undefined && <span><User size={14} /> {opp.applicantCount} applicants</span>}
-                                                                {opp.deadline && <span><Clock size={14} /> Due: {new Date(opp.deadline).toLocaleDateString()}</span>}
+                                                                {opp.remote && <span style={{ color: '#10b981', fontWeight: 600 }}>ðŸŒ Remote</span>}
+                                                                {opp.deadline && <span><Clock size={14} /> Due: {new Date(opp.deadline).toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' })}</span>}
+                                                                {opp.deadline && isSaved && (
+                                                                    <span style={{ color: '#1d4ed8', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: 4, background: '#dbeafe', padding: '2px 8px', borderRadius: 6, fontSize: 11 }}>
+                                                                        <Phone size={11} /> 3h Call Active
+                                                                    </span>
+                                                                )}
                                                             </div>
                                                             <div className="opp-card-tags">
                                                                 {opp.tags.map(tag => <span key={tag} className="opp-tag">{tag}</span>)}
@@ -697,7 +821,7 @@ export default function OpportunitiesPage({ isEmbedded = false }: { isEmbedded?:
                                                                 disabled={applying === opp.id || appliedIds.has(opp.internalRoleId!)}
                                                                 onClick={e => { e.stopPropagation(); if (!appliedIds.has(opp.internalRoleId!)) handleApply(opp); }}
                                                             >
-                                                                {appliedIds.has(opp.internalRoleId!) ? <>Already Applied ✓</> : applying === opp.id ? <><Loader2 size={13} className="spin" /> Applying…</> : <>Apply Now →</>}
+                                                                {appliedIds.has(opp.internalRoleId!) ? <>Already Applied âœ“</> : applying === opp.id ? <><Loader2 size={13} className="spin" /> Applyingâ€¦</> : <>Apply Now â†’</>}
                                                             </button>
                                                             <div style={{ display: 'flex', gap: '4px' }}>
                                                                 <button
@@ -818,7 +942,7 @@ export default function OpportunitiesPage({ isEmbedded = false }: { isEmbedded?:
                                                                         <div className="opp-skill-breakdown">
                                                                             {opp.matchingSkills && opp.matchingSkills.length > 0 && (
                                                                                 <div>
-                                                                                    <p className="opp-skills-label opp-skills-match">✓ Strong matches</p>
+                                                                                    <p className="opp-skills-label opp-skills-match">âœ“ Strong matches</p>
                                                                                     <div className="opp-skills-chips">
                                                                                         {opp.matchingSkills.map(s => <span key={s} className="opp-skill-chip match">{s}</span>)}
                                                                                     </div>
@@ -826,7 +950,7 @@ export default function OpportunitiesPage({ isEmbedded = false }: { isEmbedded?:
                                                                             )}
                                                                             {opp.missingSkills && opp.missingSkills.length > 0 && (
                                                                                 <div>
-                                                                                    <p className="opp-skills-label opp-skills-gap">△ Potential gaps</p>
+                                                                                    <p className="opp-skills-label opp-skills-gap">â–³ Potential gaps</p>
                                                                                     <div className="opp-skills-chips">
                                                                                         {opp.missingSkills.map(s => <span key={s} className="opp-skill-chip gap">{s}</span>)}
                                                                                     </div>
@@ -846,7 +970,7 @@ export default function OpportunitiesPage({ isEmbedded = false }: { isEmbedded?:
                                                                             disabled={applying === opp.id || (opp.isInternalPosting && appliedIds.has(opp.internalRoleId!))}
                                                                             style={(opp.isInternalPosting && appliedIds.has(opp.internalRoleId!)) ? { background: '#22c55e', color: 'white', border: 'none' } : {}}
                                                                         >
-                                                                            {(opp.isInternalPosting && appliedIds.has(opp.internalRoleId!)) ? <>Already Applied ✓</> : applying === opp.id ? <><Loader2 size={16} className="spin" /> Applying...</> : <>Apply Now <ExternalLink size={16} /></>}
+                                                                            {(opp.isInternalPosting && appliedIds.has(opp.internalRoleId!)) ? <>Already Applied âœ“</> : applying === opp.id ? <><Loader2 size={16} className="spin" /> Applying...</> : <>Apply Now <ExternalLink size={16} /></>}
                                                                         </button>
                                                                         <button
                                                                             onClick={(e) => {
@@ -894,6 +1018,225 @@ export default function OpportunitiesPage({ isEmbedded = false }: { isEmbedded?:
                 onClose={() => setSelectedRecommendation(null)}
                 recommendation={selectedRecommendation}
             />
+
+            {/* Twilio Deadline Call Phone Prompt Modal */}
+            <AnimatePresence>
+                {deadlinePromptOpp && (
+                    <motion.div
+                        className="modal-backdrop"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        style={{
+                            position: 'fixed',
+                            inset: 0,
+                            zIndex: 9999,
+                            background: 'rgba(15, 23, 42, 0.65)',
+                            backdropFilter: 'blur(8px)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            padding: '16px',
+                        }}
+                        onClick={() => setDeadlinePromptOpp(null)}
+                    >
+                        <motion.div
+                            initial={{ scale: 0.94, opacity: 0, y: 16 }}
+                            animate={{ scale: 1, opacity: 1, y: 0 }}
+                            exit={{ scale: 0.94, opacity: 0, y: 16 }}
+                            style={{
+                                background: '#ffffff',
+                                borderRadius: '24px',
+                                maxWidth: '480px',
+                                width: '100%',
+                                padding: '28px',
+                                boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+                                border: '1px solid #e2e8f0',
+                                position: 'relative',
+                            }}
+                            onClick={e => e.stopPropagation()}
+                        >
+                            <button
+                                onClick={() => setDeadlinePromptOpp(null)}
+                                style={{
+                                    position: 'absolute',
+                                    top: 20,
+                                    right: 20,
+                                    background: '#f1f5f9',
+                                    border: 'none',
+                                    borderRadius: '50%',
+                                    width: 32,
+                                    height: 32,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    cursor: 'pointer',
+                                    color: '#64748b',
+                                }}
+                            >
+                                <X size={18} />
+                            </button>
+
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 18 }}>
+                                <div style={{
+                                    width: 48,
+                                    height: 48,
+                                    borderRadius: '14px',
+                                    background: 'linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%)',
+                                    color: '#1d4ed8',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    flexShrink: 0,
+                                }}>
+                                    <Phone size={24} />
+                                </div>
+                                <div>
+                                    <h3 style={{ fontSize: '18px', fontWeight: 800, color: '#0f172a', margin: 0 }}>
+                                        3-Hour Deadline Voice Call
+                                    </h3>
+                                    <p style={{ fontSize: '13px', color: '#64748b', margin: '2px 0 0 0' }}>
+                                        Never miss this application cutoff
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div style={{
+                                background: '#f8fafc',
+                                border: '1.5px solid #e2e8f0',
+                                borderRadius: '14px',
+                                padding: '14px 16px',
+                                marginBottom: 20,
+                            }}>
+                                <div style={{ fontSize: '14px', fontWeight: 700, color: '#1e293b', marginBottom: 4 }}>
+                                    {deadlinePromptOpp.title}
+                                </div>
+                                <div style={{ fontSize: '13px', color: '#475569', marginBottom: 8 }}>
+                                    {deadlinePromptOpp.company}
+                                </div>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: '12px', color: '#dc2626', fontWeight: 700 }}>
+                                    <Clock size={14} />
+                                    Application Deadline: {new Date(deadlinePromptOpp.deadline!).toLocaleString('en-IN', {
+                                        dateStyle: 'medium',
+                                        timeStyle: 'short',
+                                    })}
+                                </div>
+                            </div>
+
+                            <p style={{ fontSize: '13px', color: '#475569', lineHeight: 1.5, marginBottom: 16 }}>
+                                CapAble will <strong>call your mobile phone automatically exactly 3 hours before this deadline</strong> with an automated AI voice reminder so you can finish and submit your application on time.
+                            </p>
+
+                            <div style={{ marginBottom: 20 }}>
+                                <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#334155', marginBottom: 6 }}>
+                                    Your Phone Number (with Country Code)
+                                </label>
+                                <input
+                                    type="tel"
+                                    value={phoneInput}
+                                    onChange={e => setPhoneInput(e.target.value)}
+                                    placeholder="+91 98765 43210"
+                                    autoFocus
+                                    style={{
+                                        width: '100%',
+                                        padding: '12px 14px',
+                                        borderRadius: '10px',
+                                        border: '1.5px solid #cbd5e1',
+                                        fontSize: '14px',
+                                        outline: 'none',
+                                        fontFamily: 'inherit',
+                                        fontWeight: 600,
+                                        color: '#0f172a',
+                                        background: '#fff',
+                                        boxSizing: 'border-box',
+                                    }}
+                                />
+                                <span style={{ fontSize: '11px', color: '#64748b', marginTop: 4, display: 'block' }}>
+                                    We save this securely to your profile so future saves activate reminders automatically.
+                                </span>
+                            </div>
+
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                                <button
+                                    onClick={handleConfirmPhoneAlert}
+                                    disabled={savingPhoneAlert || phoneInput.trim().length < 8}
+                                    style={{
+                                        width: '100%',
+                                        padding: '12px 16px',
+                                        borderRadius: '12px',
+                                        background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
+                                        color: '#ffffff',
+                                        fontWeight: 700,
+                                        fontSize: '14px',
+                                        border: 'none',
+                                        cursor: 'pointer',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        gap: 8,
+                                        boxShadow: '0 4px 12px rgba(37, 99, 235, 0.25)',
+                                    }}
+                                >
+                                    {savingPhoneAlert ? (
+                                        <><Loader2 size={16} className="spin" /> Setting Reminder...</>
+                                    ) : (
+                                        <><Phone size={16} /> Save & Activate 3h Voice Call</>
+                                    )}
+                                </button>
+                                <button
+                                    onClick={handleSaveWithoutCall}
+                                    disabled={savingPhoneAlert}
+                                    style={{
+                                        width: '100%',
+                                        padding: '10px 16px',
+                                        borderRadius: '12px',
+                                        background: '#f8fafc',
+                                        color: '#475569',
+                                        fontWeight: 600,
+                                        fontSize: '13px',
+                                        border: '1px solid #e2e8f0',
+                                        cursor: 'pointer',
+                                    }}
+                                >
+                                    Save Opportunity Without Voice Call
+                                </button>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            {/* Toast Feedback */}
+            <AnimatePresence>
+                {toastMessage && (
+                    <motion.div
+                        initial={{ opacity: 0, y: -20, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: -20, scale: 0.95 }}
+                        style={{
+                            position: 'fixed',
+                            top: 24,
+                            left: '50%',
+                            transform: 'translateX(-50%)',
+                            zIndex: 10000,
+                            background: toastMessage.type === 'error' ? '#ef4444' : toastMessage.type === 'info' ? '#3b82f6' : '#059669',
+                            color: '#ffffff',
+                            padding: '12px 24px',
+                            borderRadius: '9999px',
+                            boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.25)',
+                            fontWeight: 600,
+                            fontSize: '14px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px',
+                            maxWidth: '90vw',
+                            textAlign: 'center',
+                        }}
+                    >
+                        {toastMessage.text}
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
     );
 }

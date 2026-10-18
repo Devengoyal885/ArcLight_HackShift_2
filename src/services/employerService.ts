@@ -23,7 +23,8 @@ import {
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-export type PostingType = 'placement' | 'internship' | 'training' | 'fdp' | 'research' | 'apprenticeship';
+export type PostingType = 'placement' | 'internship' | 'training' | 'fdp' | 'research' | 'apprenticeship' | 'startup_equity' | 'co_founder';
+export type OrgType = 'startup' | 'smb' | 'enterprise' | 'nonprofit' | 'other';
 
 export interface EmployerProfile {
     uid: string;
@@ -35,6 +36,12 @@ export interface EmployerProfile {
     logoUrl?: string;
     location?: string;
     contactEmail?: string;
+    /** Organization type: startup / smb / enterprise / nonprofit / other */
+    orgType?: OrgType;
+    /** Current startup stage — only relevant when orgType === 'startup' */
+    startupStage?: 'Idea' | 'Prototype' | 'MVP' | 'Early Traction' | 'Growth' | 'Funded';
+    /** Founding year — helps surface early-stage companies to candidates */
+    foundingYear?: string;
     createdAt?: unknown;
     updatedAt?: unknown;
 }
@@ -62,6 +69,9 @@ export interface PostedRole {
     updatedAt?: unknown;
     seatCapacity?: number;
     autoCloseOnSeatCap?: boolean;
+    isStartupRole?: boolean;
+    startupStage?: 'Idea' | 'Prototype' | 'MVP' | 'Early Traction' | 'Growth';
+    equityRange?: string;
 }
 
 export interface RoleApplication {
@@ -253,12 +263,20 @@ export async function deletePostedRole(employerUid: string, roleId: string): Pro
 export async function getAllPostedRoles(): Promise<PostedRole[]> {
     try {
         const col = collection(db, 'postedRoles');
-        const snap = await getDocs(query(
-            col,
-            where('status', '==', 'active'),
-            orderBy('postedAt', 'desc')
-        ));
-        return snap.docs.map(d => ({ id: d.id, ...d.data() } as PostedRole));
+        // Avoid compound query (status filter + orderBy) which needs a composite index.
+        // Instead: fetch all, filter and sort client-side. Collection is small.
+        const snap = await getDocs(col);
+        const all = snap.docs.map(d => ({ id: d.id, ...d.data() } as PostedRole));
+        return all
+            .filter(r => {
+                const status = r.status ?? 'active';
+                return status === 'active';
+            })
+            .sort((a, b) => {
+                const dateA = (a.postedAt as any)?.toMillis ? (a.postedAt as any).toMillis() : 0;
+                const dateB = (b.postedAt as any)?.toMillis ? (b.postedAt as any).toMillis() : 0;
+                return dateB - dateA;
+            });
     } catch (e) {
         console.error('[employerService] Failed to fetch posted roles:', e);
         return [];

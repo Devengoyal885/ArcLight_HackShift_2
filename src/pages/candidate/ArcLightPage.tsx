@@ -118,7 +118,7 @@ function SliderInput({
 }
 
 // ─── Main Page ─────────────────────────────────────────────────────────────────
-export default function ArcLightPage() {
+export default function ArcLightPage({ isEmbedded = false }: { isEmbedded?: boolean }) {
   const [apiStatus, setApiStatus] = useState<'loading' | 'online' | 'offline'>('loading');
   const [activeTab, setActiveTab] = useState<'market' | 'salary' | 'skills' | 'personality' | 'models'>('market');
 
@@ -837,9 +837,9 @@ export default function ArcLightPage() {
   );
 
   return (
-    <div className="arc-page">
-      <FloatingNavbar variant="candidate" />
-      <div className="arc-inner">
+    <div className={`arc-page ${isEmbedded ? 'arc-embedded' : ''}`}>
+      {!isEmbedded && <FloatingNavbar variant="candidate" />}
+      <div className="arc-inner" style={isEmbedded ? { paddingTop: 0 } : undefined}>
         {/* Header */}
         <div className="arc-header">
           <div className="arc-header-left">

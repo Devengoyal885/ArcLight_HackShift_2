@@ -4,7 +4,8 @@ import { FloatingNavbar } from '../../components/navigation/FloatingNavbar';
 import ForumPage from './ForumPage';
 import EventsPage from './EventsPage';
 import LeaderboardPage from './LeaderboardPage';
-import { MessageSquare, Calendar, ChevronRight, Trophy } from 'lucide-react';
+import AlumniNetworkPage from './AlumniNetworkPage';
+import { MessageSquare, Calendar, ChevronRight, Trophy, Users } from 'lucide-react';
 import { LottieBackground } from '../../components/ui/LottieBackground';
 import './PreparationHubPage.css'; // reuse shared hub styles
 
@@ -26,6 +27,12 @@ const TABS = [
         label: 'Events & Webinars',
         icon: Calendar,
         description: 'Upcoming career events',
+    },
+    {
+        id: 'mentors',
+        label: 'Mentors & Alumni',
+        icon: Users,
+        description: 'Direct 1-on-1 alumni mentorship',
     },
 ];
 
@@ -97,6 +104,7 @@ export default function CommunityHubPage() {
                             {activeTab === 'leaderboard' && <LeaderboardPage isEmbedded />}
                             {activeTab === 'forum' && <ForumPage isEmbedded />}
                             {activeTab === 'events' && <EventsPage isEmbedded />}
+                            {activeTab === 'mentors' && <AlumniNetworkPage isEmbedded />}
                         </motion.div>
                     </AnimatePresence>
                 </main>

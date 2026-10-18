@@ -5,22 +5,30 @@ import OpportunitiesPage from './OpportunitiesPage';
 import ApplicationsPage from './ApplicationsPage';
 import PlacementDrivesPage from './PlacementDrivesPage';
 import OffCampusPage from './OffCampusPage';
-import { Search, FileText, Zap, Globe, ChevronRight } from 'lucide-react';
+import StartupVenturesView from '../../components/opportunities/StartupVenturesView';
+import IncubationHubView from '../../components/opportunities/IncubationHubView';
+import { Search, Rocket, Building2, Zap, Globe, FileText, ChevronRight } from 'lucide-react';
 import { LottieBackground } from '../../components/ui/LottieBackground';
 import './PreparationHubPage.css'; // reuse shared hub styles
 
 const TABS = [
     {
         id: 'jobs',
-        label: 'All Jobs',
+        label: 'All Jobs & Roles',
         icon: Search,
-        description: 'AI-matched job opportunities',
+        description: 'AI-matched jobs & internships',
     },
     {
-        id: 'applications',
-        label: 'Applications',
-        icon: FileText,
-        description: 'Track your application pipeline',
+        id: 'startups',
+        label: 'Startups & Co-Founders',
+        icon: Rocket,
+        description: 'Early ventures, founding teams & equity roles',
+    },
+    {
+        id: 'incubation',
+        label: 'Incubation & E-Cells',
+        icon: Building2,
+        description: 'Grants, prototyping labs & cohorts',
     },
     {
         id: 'drives',
@@ -30,9 +38,15 @@ const TABS = [
     },
     {
         id: 'off-campus',
-        label: 'Off-Campus',
+        label: 'Off-Campus Tracker',
         icon: Globe,
-        description: 'Track jobs you find on your own',
+        description: 'Track external job applications',
+    },
+    {
+        id: 'applications',
+        label: 'Applications Pipeline',
+        icon: FileText,
+        description: 'Track your submitted applications',
     },
 ];
 
@@ -46,7 +60,7 @@ export default function JobsHubPage() {
         setSearchParams({ tab });
     };
 
-    const activeTabInfo = TABS.find(t => t.id === activeTab)!;
+    const activeTabInfo = TABS.find(t => t.id === activeTab) || TABS[0];
 
     return (
         <div className="hub-page">
@@ -57,7 +71,7 @@ export default function JobsHubPage() {
                 {/* Sidebar */}
                 <aside className="hub-sidebar">
                     <div className="hub-sidebar-header">
-                        <p className="hub-sidebar-label">JOBS & OPPORTUNITIES</p>
+                        <p className="hub-sidebar-label">OPPORTUNITIES & VENTURES</p>
                     </div>
 
                     <nav className="hub-sidebar-nav">
@@ -88,7 +102,7 @@ export default function JobsHubPage() {
                 <main className="hub-main">
                     {/* Breadcrumb */}
                     <div className="hub-breadcrumb">
-                        <span>Jobs</span>
+                        <span>Opportunities</span>
                         <ChevronRight size={13} />
                         <span className="hub-breadcrumb-active">{activeTabInfo.label}</span>
                     </div>
@@ -103,9 +117,11 @@ export default function JobsHubPage() {
                             className="hub-content"
                         >
                             {activeTab === 'jobs' && <OpportunitiesPage isEmbedded />}
-                            {activeTab === 'applications' && <ApplicationsPage isEmbedded />}
+                            {activeTab === 'startups' && <StartupVenturesView />}
+                            {activeTab === 'incubation' && <IncubationHubView />}
                             {activeTab === 'drives' && <PlacementDrivesPage isEmbedded />}
                             {activeTab === 'off-campus' && <OffCampusPage isEmbedded />}
+                            {activeTab === 'applications' && <ApplicationsPage isEmbedded />}
                         </motion.div>
                     </AnimatePresence>
                 </main>

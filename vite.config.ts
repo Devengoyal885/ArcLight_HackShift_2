@@ -47,6 +47,10 @@ export default defineConfig({
       'Cross-Origin-Opener-Policy': 'same-origin-allow-popups',
     },
     proxy: {
+      '/api': {
+        target: 'http://localhost:5000',
+        changeOrigin: true,
+      },
       '/lc-api': {
         target: 'https://leetcode.com',
         changeOrigin: true,

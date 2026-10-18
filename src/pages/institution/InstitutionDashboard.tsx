@@ -5,7 +5,7 @@ import { useAuth } from '../../context/AuthContext';
 import {
     Users, GraduationCap, Building2, Briefcase, TrendingUp,
     BarChart3, Handshake, BookOpen, Loader2, CalendarDays,
-    Bell, Award,
+    Bell, Award, Rocket,
 } from 'lucide-react';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../../lib/firebase';
@@ -142,6 +142,7 @@ export default function InstitutionDashboard() {
     const modules = [
         { label: 'Student Directory', desc: 'Records, skills, progress', icon: <Users size={18} />, to: '/institution/students', color: '#2563eb' },
         { label: 'Placement Tracking', desc: 'Applications, offers, pipeline', icon: <TrendingUp size={18} />, to: '/institution/placements', color: '#10b981' },
+        { label: 'E-Cell & Incubation', desc: 'Seed grants, cohorts & student pitches', icon: <Rocket size={18} />, to: '/institution/incubation', color: '#8b5cf6' },
         { label: 'Industry & Companies', desc: 'Linked companies, roles', icon: <Building2 size={18} />, to: '/institution/industry', color: '#7c3aed' },
         { label: 'Placement Drives', desc: 'Create drives, eligibility rules', icon: <Briefcase size={18} />, to: '/institution/drives', color: '#f59e0b' },
         { label: 'Analytics', desc: 'Skill gaps, readiness scores', icon: <BarChart3 size={18} />, to: '/institution/analytics', color: '#ef4444' },

@@ -98,6 +98,30 @@ Below is the exhaustive documentation of all features built across the entire ec
 - Integrated coding problems, MCQs, and automated scoring.
 - Real-time submission validation and anti-cheat telemetry.
 
+### 1.7 🚀 Entrepreneurship, Ventures & Incubation Ecosystem (SIH 2026 PS-2)
+- **Startup Ventures & Co-Founder Board (`/candidate/opportunities?tab=ventures`)**:
+  - Discover student-founded ventures across Idea, Prototype, MVP, and Seed-Funded stages.
+  - Complementary skill discovery: Filter ventures seeking technical co-founders, UI/UX designers, AI researchers, or growth marketers.
+  - **1-Click Co-Founder Pitch Modal**: Submit direct collaboration proposals detailing relevant capabilities, GitHub projects, and weekly time commitment.
+  - **Venture Pitch Publisher**: Students can post early-stage venture ideas with intellectual property protection disclosures, stage markers, and required co-founder roles.
+- **Institutional Incubation Hub (`/candidate/opportunities?tab=incubation`)**:
+  - Direct access to premier campus TBIs and state accelerators (IIT Delhi TBI, IIM Bangalore NSRCEL, T-Hub Hyderabad, etc.).
+  - Seed grant discovery (e.g., ₹25 Lakhs NIDHI-PRAYAS / DST prototyping grants).
+  - Facility perks transparency: Prototyping FabLabs, GPU compute clusters, legal incorporation credits, and investor demo day access.
+  - **One-Click Executive Pitch Submission**: Formal incubation application with problem statement, target market, prototype URL, and funding request.
+- **Unified 4-Track Application Matrix (`/candidate/applications`)**:
+  - Consolidated status board tracking:
+    1. *Job Applications* (Campus & Off-Campus drives)
+    2. *Co-Founder & Venture Applications* (Collaborator interest requests)
+    3. *Incubation Pitches* (Institutional cohort submissions with stage badges)
+    4. *Saved Bookmarks & Saved Opportunities*
+- **Founders & Angel Mentor Network (`/candidate/community?tab=mentors`)**:
+  - Connect with verified alumni founders, angel investors, seed advisors, and E-Cell mentors.
+  - Filter by "Founders & Advisors" to unlock early-stage venture guidance and pitch feedback.
+- **Dynamic Startup Feed on Candidate Dashboard (`/candidate/dashboard`)**:
+  - Dedicated "Startups & Ventures" feed tab in the opportunity matrix.
+  - Quick-launch venture capsule in the personal identity rail.
+
 ---
 
 ## 2. 🏢 Employer & Industry Recruiter Portal
@@ -128,6 +152,11 @@ Below is the exhaustive documentation of all features built across the entire ec
 - Customize university-facing company profile, campus drive presentations, and perks.
 - Manage institutional partnerships and Memorandum of Understanding (MoU) records.
 
+### 2.7 🚀 Startup & Venture Roles Track (`RolesPage.tsx` & `employerService.ts`)
+- **Early-Stage Founder Posting**: Dedicated toggle to classify postings as "Startup & Early-Stage Venture Track".
+- **Venture Stage & Equity Attributes**: Configure startup stage (`Idea`, `Prototype`, `MVP`, `Seed Funded`, `Series A`) and equity ranges (e.g. `1.0% - 3.5% equity`).
+- **Startup Badges & Signals**: Renders dedicated `Startup • MVP` and equity badges on role cards and candidate opportunity feeds.
+
 ---
 
 ## 3. 🏛️ Institution & University TPO Operations
@@ -157,6 +186,12 @@ Below is the exhaustive documentation of all features built across the entire ec
 ### 3.6 Automated Multi-Channel Communications (`CommunicationsPage.tsx`)
 - Broadcast urgent placement notices, drive changes, and interview alerts to students.
 - Multi-channel delivery support via In-App Alerts, Push Notifications (VAPID), Email, and WhatsApp/SMS.
+
+### 3.7 🏛️ E-Cell & Institutional Incubation Workspace (`/institution/incubation`)
+- **Student Pitch Review Pipeline**: Centralized institutional dashboard for reviewing early-stage student venture and prototype pitches.
+- **5-Stage Review Lifecycle**: Progress pitches through `Pending Review` ➔ `In Review` ➔ `Shortlisted for Pitch Day` ➔ `Accepted into Cohort` ➔ `Rejected`.
+- **Reviewer Feedback & Notes**: Attach institutional reviewer comments, internal scoring, and seed grant recommendations.
+- **Cohort Deployment**: Launch new incubation cohorts (e.g., Summer Pre-Incubation 2026, DeepTech Accelerator) with application deadlines and grant budgets.
 
 ---
 
@@ -203,6 +238,10 @@ ArcLight is CapAble's proprietary Python FastAPI data science microservice (`arc
    - Forecasts appraisal and role-switch percentage increments.
 3. **Senior Success Potential** (Mirrors `sds_success_model.sas7bdat`):
    - Evaluates leadership readiness and complex project execution capability.
+
+### 5.4 Candidate Career Hub Integration (`/candidate/career?tab=insights`)
+- ArcLight SAS predictive models are integrated directly into the candidate's canonical Career & Learning Hub.
+- Accessible via the "Market Insights & ArcLight ML" tab alongside Career Goals, Learning Paths, and Digital Portfolio without disjointed navigation.
 
 ---
 

@@ -1,6 +1,6 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Briefcase, GraduationCap, Building2, ArrowRight, LogOut, Search, BadgeCheck, Sun, Moon, Settings2, Home, Compass, Users, BarChart2 } from 'lucide-react';
+import { Briefcase, GraduationCap, Building2, ArrowRight, LogOut, Search, BadgeCheck, Sun, Moon, Settings2, Home, Compass, Users, BarChart2, FileText } from 'lucide-react';
 import { signOut } from 'firebase/auth';
 import { auth } from '../../lib/firebase';
 import { useAuth } from '../../context/AuthContext';
@@ -21,12 +21,12 @@ type NavLink = {
 };
 
 const candidateLinks: NavLink[] = [
-    { to: '/candidate', label: 'Home', icon: <Home size={18} /> },
-    { to: '/candidate/career', label: 'Career', icon: <Compass size={18} /> },
-    { to: '/candidate/jobs', label: 'Jobs', icon: <Briefcase size={18} /> },
+    { to: '/candidate', label: 'Dashboard', icon: <Home size={18} /> },
+    { to: '/candidate/opportunities', label: 'Opportunities', icon: <Briefcase size={18} /> },
     { to: '/candidate/preparation', label: 'Preparation', icon: <GraduationCap size={18} /> },
-    { to: '/candidate/community', label: 'Community', icon: <Users size={18} /> },
-    { to: '/candidate/insights', label: 'Insights', icon: <BarChart2 size={18} /> },
+    { to: '/candidate/career', label: 'Career & Learning', icon: <Compass size={18} /> },
+    { to: '/candidate/community', label: 'Community & Mentors', icon: <Users size={18} /> },
+    { to: '/candidate/applications', label: 'My Applications', icon: <FileText size={18} /> },
 ];
 const employerLinks: NavLink[] = [
     { to: '/employer', label: 'Home' },
@@ -51,6 +51,7 @@ const institutionLinks: NavLink[] = [
     { to: '/institution', label: 'Dashboard' },
     { to: '/institution/students', label: 'Students' },
     { to: '/institution/placements', label: 'Placements' },
+    { to: '/institution/incubation', label: 'E-Cell' },
     { to: '/institution/drives', label: 'Drives' },
     { to: '/institution/analytics', label: 'Analytics' },
     { to: '/institution/communications', label: 'Comms' },
@@ -221,7 +222,41 @@ export function FloatingNavbar({ variant }: FloatingNavbarProps) {
                 {/* Nav Links with animated active pill */}
                 <div className="navbar-links">
                     {links.map((link) => {
-                        const isActive = location.pathname === link.to || location.pathname.startsWith(link.to + '/');
+                        const isCandidateLinkActive = (linkTo: string, currentPath: string) => {
+                            if (linkTo === '/candidate') return currentPath === '/candidate';
+                            if (linkTo === '/candidate/opportunities') {
+                                return currentPath === '/candidate/opportunities' || currentPath.startsWith('/candidate/opportunities/') ||
+                                       currentPath === '/candidate/jobs' || currentPath.startsWith('/candidate/jobs/') ||
+                                       currentPath === '/candidate/placement-drives' || currentPath === '/candidate/off-campus';
+                            }
+                            if (linkTo === '/candidate/preparation') {
+                                return currentPath === '/candidate/preparation' || currentPath.startsWith('/candidate/preparation/') ||
+                                       currentPath === '/candidate/practice' || currentPath.startsWith('/candidate/practice/') ||
+                                       currentPath === '/candidate/case-study' || currentPath === '/candidate/gd-topics' ||
+                                       currentPath === '/candidate/communication' || currentPath.startsWith('/candidate/communication/') ||
+                                       currentPath === '/candidate/aptitude' || currentPath.startsWith('/candidate/aptitude/');
+                            }
+                            if (linkTo === '/candidate/career') {
+                                return currentPath === '/candidate/career' || currentPath.startsWith('/candidate/career/') ||
+                                       currentPath === '/candidate/learning' || currentPath === '/candidate/resume' ||
+                                       currentPath === '/candidate/portfolio' || currentPath === '/candidate/goals' ||
+                                       currentPath === '/candidate/resume-builder' || currentPath === '/candidate/insights' ||
+                                       currentPath === '/candidate/capability';
+                            }
+                            if (linkTo === '/candidate/community') {
+                                return currentPath === '/candidate/community' || currentPath.startsWith('/candidate/community/') ||
+                                       currentPath === '/candidate/forum' || currentPath === '/candidate/events' ||
+                                       currentPath === '/candidate/alumni';
+                            }
+                            if (linkTo === '/candidate/applications') {
+                                return currentPath === '/candidate/applications' || currentPath.startsWith('/candidate/applications/');
+                            }
+                            return currentPath === linkTo || currentPath.startsWith(linkTo + '/');
+                        };
+
+                        const isActive = variant === 'candidate'
+                            ? isCandidateLinkActive(link.to, location.pathname)
+                            : (location.pathname === link.to || location.pathname.startsWith(link.to + '/'));
                         return (
                             <Link
                                 key={link.to}

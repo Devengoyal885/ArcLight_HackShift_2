@@ -6,7 +6,8 @@ import GoalsPage from './GoalsPage';
 import LearningPage from './LearningPage';
 import PortfolioPage from './PortfolioPage';
 import ResumeAIPage from './ResumeAIPage';
-import { Map, Target, BookOpen, FolderDot, FileText, ChevronRight } from 'lucide-react';
+import ArcLightPage from './ArcLightPage';
+import { Map, Target, BookOpen, FolderDot, FileText, ChevronRight, BarChart2 } from 'lucide-react';
 import { LottieBackground } from '../../components/ui/LottieBackground';
 import './PreparationHubPage.css'; // reuse shared hub styles
 
@@ -40,6 +41,12 @@ const TABS = [
         label: 'Resume AI',
         icon: FileText,
         description: 'Tailor your resume for any role',
+    },
+    {
+        id: 'insights',
+        label: 'ArcLight ML Insights',
+        icon: BarChart2,
+        description: 'Predictive salary & career analytics',
     }
 ];
 
@@ -114,6 +121,7 @@ export default function CareerHubPage() {
                             {activeTab === 'learning' && <LearningPage isEmbedded={true} />}
                             {activeTab === 'portfolio' && <PortfolioPage isEmbedded={true} />}
                             {activeTab === 'resume' && <ResumeAIPage isEmbedded={true} />}
+                            {activeTab === 'insights' && <ArcLightPage isEmbedded={true} />}
                         </motion.div>
                     </AnimatePresence>
                 </main>

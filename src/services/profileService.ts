@@ -1,6 +1,6 @@
 /**
  * profileService.ts
- * ─────────────────
+ * â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
  * All Firestore read/write operations for the candidate profile.
  * Data lives at: users/{uid}/profile (document)
  *                users/{uid}/projects (subcollection)
@@ -20,7 +20,7 @@ import {
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { db, storage } from '../lib/firebase';
 
-// ─── Types ────────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export type UserRole = 'candidate' | 'employer' | 'academician' | 'institution';
 
@@ -104,6 +104,12 @@ export interface SavedOpportunity {
     company: string;
     url?: string;
     savedAt?: unknown;
+    // Twilio deadline reminder fields
+    deadline?: string;          // ISO string e.g. '2024-10-17T17:59:00'
+    roleId?: string;             // postedRoles Firestore doc ID
+    candidatePhone?: string;     // E.164 format e.g. '+919876543210'
+    callSent?: boolean;          // true after Twilio call dispatched
+    callScheduledAt?: unknown;
 }
 
 export interface WorkExperience {
@@ -185,7 +191,7 @@ export interface LearningResource {
     addedAt?: unknown;
 }
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 /**
  * Firestore does not accept `undefined` values.
@@ -198,13 +204,57 @@ function stripUndefined<T extends Record<string, unknown>>(obj: T): Partial<T> {
     ) as Partial<T>;
 }
 
-// ─── Profile ──────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Profile â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export async function getProfile(uid: string): Promise<UserProfile | null> {
-    const ref = doc(db, 'users', uid, 'profile', 'data');
-    const snap = await getDoc(ref);
-    if (!snap.exists()) return null;
-    return snap.data() as UserProfile;
+    const tryUids = uid.endsWith('_candidate') 
+        ? [uid, uid.replace(/_candidate$/, '')] 
+        : [uid, `${uid}_candidate`];
+
+    for (const u of tryUids) {
+        try {
+            const ref = doc(db, 'users', u, 'profile', 'data');
+            const snap = await getDoc(ref);
+            if (snap.exists()) {
+                const data = snap.data() as UserProfile;
+                if (data.name || data.headline || data.bio) {
+                    return data;
+                }
+            }
+        } catch {
+            // Ignore error and try next
+        }
+    }
+
+    // Fallback: check users/{uid} root doc
+    for (const u of tryUids) {
+        try {
+            const userRef = doc(db, 'users', u);
+            const userSnap = await getDoc(userRef);
+            if (userSnap.exists()) {
+                const data = userSnap.data();
+                return {
+                    uid,
+                    name: data.name || data.displayName || 'Candidate',
+                    email: data.email || '',
+                    role: data.role || 'candidate',
+                    headline: data.headline || data.role || '',
+                    bio: data.bio || '',
+                    avatar: data.avatar || data.photoURL || '',
+                    branch: data.branch || '',
+                    institutionCode: data.institutionCode || '',
+                    institutionName: data.institutionName || '',
+                    githubUsername: data.githubUsername,
+                    leetcodeUsername: data.leetcodeUsername,
+                    linkedinUrl: data.linkedinUrl,
+                    ...data,
+                } as UserProfile;
+            }
+        } catch {
+            // Ignore fallback error
+        }
+    }
+    return null;
 }
 
 export async function createProfile(uid: string, data: Partial<UserProfile>): Promise<void> {
@@ -234,12 +284,24 @@ export async function endorseCandidate(candidateUid: string, facultyUid: string,
     });
 }
 
-// ─── Projects ─────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Projects â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export async function getProjects(uid: string): Promise<UserProject[]> {
-    const col = collection(db, 'users', uid, 'projects');
-    const snap = await getDocs(query(col, orderBy('updatedAt', 'desc')));
-    return snap.docs.map(d => ({ id: d.id, ...d.data() } as UserProject));
+    const tryUids = uid.endsWith('_candidate') 
+        ? [uid, uid.replace(/_candidate$/, '')] 
+        : [uid, `${uid}_candidate`];
+    for (const u of tryUids) {
+        try {
+            const col = collection(db, 'users', u, 'projects');
+            const snap = await getDocs(query(col, orderBy('updatedAt', 'desc')));
+            if (!snap.empty) {
+                return snap.docs.map(d => ({ id: d.id, ...d.data() } as UserProject));
+            }
+        } catch {
+            // Try next
+        }
+    }
+    return [];
 }
 
 export async function saveProjects(uid: string, projects: UserProject[]): Promise<void> {
@@ -267,12 +329,24 @@ export async function updateProject(uid: string, projectId: string, updates: Par
     await updateDoc(doc(db, 'users', uid, 'projects', projectId), { ...updates, updatedAt: serverTimestamp() });
 }
 
-// ─── Capabilities ─────────────────────────────────────────────────────────────
+// â”€â”€â”€ Capabilities â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export async function getCapabilities(uid: string): Promise<UserCapability[]> {
-    const col = collection(db, 'users', uid, 'capabilities');
-    const snap = await getDocs(col);
-    return snap.docs.map(d => ({ id: d.id, ...d.data() } as UserCapability));
+    const tryUids = uid.endsWith('_candidate') 
+        ? [uid, uid.replace(/_candidate$/, '')] 
+        : [uid, `${uid}_candidate`];
+    for (const u of tryUids) {
+        try {
+            const col = collection(db, 'users', u, 'capabilities');
+            const snap = await getDocs(col);
+            if (!snap.empty) {
+                return snap.docs.map(d => ({ id: d.id, ...d.data() } as UserCapability));
+            }
+        } catch {
+            // Try next
+        }
+    }
+    return [];
 }
 
 export async function saveCapabilities(uid: string, caps: UserCapability[]): Promise<void> {
@@ -295,7 +369,7 @@ export async function deleteCapability(uid: string, capId: string): Promise<void
     await deleteDoc(doc(db, 'users', uid, 'capabilities', capId));
 }
 
-// ─── Certifications ───────────────────────────────────────────────────────────
+// â”€â”€â”€ Certifications â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export async function getCertifications(uid: string): Promise<UserCertification[]> {
     const col = collection(db, 'users', uid, 'certifications');
@@ -313,7 +387,7 @@ export async function deleteCertification(uid: string, certId: string): Promise<
     await deleteDoc(doc(db, 'users', uid, 'certifications', certId));
 }
 
-// ─── Saved Opportunities ──────────────────────────────────────────────────────
+// â”€â”€â”€ Saved Opportunities â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export async function getSavedOpportunities(uid: string): Promise<SavedOpportunity[]> {
     const col = collection(db, 'users', uid, 'savedOpportunities');
@@ -321,16 +395,61 @@ export async function getSavedOpportunities(uid: string): Promise<SavedOpportuni
     return snap.docs.map(d => ({ id: d.id, ...d.data() } as SavedOpportunity));
 }
 
-export async function saveOpportunity(uid: string, opp: Omit<SavedOpportunity, 'id'>): Promise<void> {
+export async function saveOpportunity(uid: string, opp: Omit<SavedOpportunity, 'id'>): Promise<string> {
     const col = collection(db, 'users', uid, 'savedOpportunities');
-    await addDoc(col, { ...opp, savedAt: serverTimestamp() });
+    
+    // Explicitly construct clean payload without any undefined values
+    const cleanData: Record<string, any> = {
+        opportunityId: opp.opportunityId || '',
+        title: opp.title || 'Untitled Opportunity',
+        company: opp.company || 'Unknown Company',
+        callSent: false,
+        savedAt: serverTimestamp(),
+    };
+    if (opp.url) cleanData.url = opp.url;
+    if (opp.deadline) cleanData.deadline = opp.deadline;
+    if (opp.roleId) cleanData.roleId = opp.roleId;
+    if (opp.candidatePhone) cleanData.candidatePhone = opp.candidatePhone;
+
+    const docRef = await addDoc(col, cleanData);
+
+    // Register in global deadlineAlerts so server cron can trigger Twilio call
+    if (cleanData.deadline && cleanData.candidatePhone) {
+        try {
+            await addDoc(collection(db, 'deadlineAlerts'), {
+                uid,
+                opportunityId: cleanData.opportunityId,
+                roleId: cleanData.roleId || cleanData.opportunityId,
+                title: cleanData.title,
+                company: cleanData.company,
+                deadline: cleanData.deadline,
+                candidatePhone: cleanData.candidatePhone,
+                savedDocId: docRef.id,
+                callSent: false,
+                savedAt: serverTimestamp(),
+            });
+            console.log(`[saveOpportunity] ⏰ deadlineAlert registered for ${cleanData.candidatePhone} (deadline: ${cleanData.deadline})`);
+        } catch (e) {
+            console.warn('[saveOpportunity] Failed to register deadlineAlert:', e);
+        }
+    }
+    return docRef.id;
 }
 
 export async function unsaveOpportunity(uid: string, savedId: string): Promise<void> {
     await deleteDoc(doc(db, 'users', uid, 'savedOpportunities', savedId));
+    try {
+        const alertsCol = collection(db, 'deadlineAlerts');
+        const q = query(alertsCol, where('savedDocId', '==', savedId));
+        const snap = await getDocs(q);
+        const deletes = snap.docs.map(d => deleteDoc(d.ref));
+        await Promise.all(deletes);
+    } catch (e) {
+        console.warn('[unsaveOpportunity] Failed to clean up deadlineAlert:', e);
+    }
 }
 
-// ─── Applications ─────────────────────────────────────────────────────────────
+// â”€â”€â”€ Applications â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export async function getApplications(uid: string): Promise<Application[]> {
     const col = collection(db, 'users', uid, 'applications');
@@ -347,7 +466,7 @@ export async function updateApplicationStatus(uid: string, appId: string, status
     await updateDoc(doc(db, 'users', uid, 'applications', appId), { status, updatedAt: serverTimestamp() });
 }
 
-// ─── Career Target ────────────────────────────────────────────────────────────
+// â”€â”€â”€ Career Target â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export async function getCareerTarget(uid: string): Promise<CareerTarget | null> {
     const ref = doc(db, 'users', uid, 'career', 'target');
@@ -362,7 +481,7 @@ export async function setCareerTarget(uid: string, target: CareerTarget): Promis
     });
 }
 
-// ─── Learning Path ────────────────────────────────────────────────────────────
+// â”€â”€â”€ Learning Path â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export async function getLearningPath(uid: string): Promise<LearningResource[]> {
     const col = collection(db, 'users', uid, 'learningPath');
@@ -383,7 +502,7 @@ export async function markLearningComplete(uid: string, resourceId: string): Pro
     });
 }
 
-// ─── Assessment Results ───────────────────────────────────────────────────────
+// â”€â”€â”€ Assessment Results â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export interface AssessmentRecord {
     id?: string;
@@ -415,13 +534,13 @@ export async function getLatestScoreForDomain(uid: string, domain: string): Prom
     return (snap.docs[0].data() as AssessmentRecord).score;
 }
 
-// ─── Institution-scoped Discovery (for faculty/admin) ────────────────────────
+// â”€â”€â”€ Institution-scoped Discovery (for faculty/admin) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 /**
  * Uses collectionGroup to query across ALL users' profile subcollections.
  * Intentionally avoids a where() on the collectionGroup query since that
  * would require a Firestore composite index. Instead we fetch all profile/data
- * docs and filter by role + institutionCode in JS — zero index setup required.
+ * docs and filter by role + institutionCode in JS â€” zero index setup required.
  */
 async function getAllProfilesFromGroup(): Promise<UserProfile[]> {
     const { collectionGroup: cg } = await import('firebase/firestore');
@@ -469,7 +588,7 @@ export async function getAllEmployers(): Promise<UserProfile[]> {
     }
 }
 
-// ─── Coding Submissions & Stats ───────────────────────────────────────────────
+// â”€â”€â”€ Coding Submissions & Stats â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export interface CodingSubmissionRecord {
     id?: string;
@@ -508,10 +627,22 @@ export async function getCodingSubmissions(
     uid: string,
     limitCount = 50
 ): Promise<CodingSubmissionRecord[]> {
-    const col = collection(db, 'users', uid, 'codingSubmissions');
-    const q = query(col, orderBy('submittedAt', 'desc'), limit(limitCount));
-    const snap = await getDocs(q);
-    return snap.docs.map(d => ({ id: d.id, ...d.data() } as CodingSubmissionRecord));
+    const tryUids = uid.endsWith('_candidate') 
+        ? [uid, uid.replace(/_candidate$/, '')] 
+        : [uid, `${uid}_candidate`];
+    for (const u of tryUids) {
+        try {
+            const col = collection(db, 'users', u, 'codingSubmissions');
+            const q = query(col, orderBy('submittedAt', 'desc'), limit(limitCount));
+            const snap = await getDocs(q);
+            if (!snap.empty) {
+                return snap.docs.map(d => ({ id: d.id, ...d.data() } as CodingSubmissionRecord));
+            }
+        } catch {
+            // Try next
+        }
+    }
+    return [];
 }
 
 /** Compute coding stats from all submissions */
@@ -608,7 +739,7 @@ export async function getResumeSkillVerification(
                 const avg = langSubs.reduce((s, sub) => s + sub.score, 0) / langSubs.length;
                 return { skill, status: avg >= 70 ? 'verified' : 'mismatch' as const, score: Math.round(avg), evidence: `${langSubs.length} problems solved` };
             }
-            return { skill, status: 'unverified' as const, score: 0, evidence: langSubs.length > 0 ? `Only ${langSubs.length} problem(s) — needs more` : 'No submissions found' };
+            return { skill, status: 'unverified' as const, score: 0, evidence: langSubs.length > 0 ? `Only ${langSubs.length} problem(s) â€” needs more` : 'No submissions found' };
         }
         const domainMap: Record<string, string[]> = {
             dsa: ['data structures', 'algorithms', 'dsa', 'leetcode'],
@@ -620,18 +751,30 @@ export async function getResumeSkillVerification(
             if (aliases.some(a => sl.includes(a) || a.includes(sl))) {
                 const domSubs = accepted.filter(s => s.domain === domain);
                 if (domSubs.length >= 3) return { skill, status: 'verified' as const, score: Math.min(100, domSubs.length * 10), evidence: `${domSubs.length} problems solved` };
-                if (domSubs.length > 0) return { skill, status: 'unverified' as const, score: 0, evidence: `${domSubs.length} problem(s) — needs more` };
+                if (domSubs.length > 0) return { skill, status: 'unverified' as const, score: 0, evidence: `${domSubs.length} problem(s) â€” needs more` };
             }
         }
         return { skill, status: 'unverified' as const, score: 0, evidence: 'No related activity found' };
     });
 }
-// ─── Work Experience ──────────────────────────────────────────────────────────
+// â”€â”€â”€ Work Experience â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export async function getWorkExperiences(uid: string): Promise<WorkExperience[]> {
-    const col = collection(db, 'users', uid, 'workExperiences');
-    const snap = await getDocs(query(col, orderBy('addedAt', 'desc')));
-    return snap.docs.map(d => ({ id: d.id, ...d.data() } as WorkExperience));
+    const tryUids = uid.endsWith('_candidate') 
+        ? [uid, uid.replace(/_candidate$/, '')] 
+        : [uid, `${uid}_candidate`];
+    for (const u of tryUids) {
+        try {
+            const col = collection(db, 'users', u, 'workExperiences');
+            const snap = await getDocs(query(col, orderBy('addedAt', 'desc')));
+            if (!snap.empty) {
+                return snap.docs.map(d => ({ id: d.id, ...d.data() } as WorkExperience));
+            }
+        } catch {
+            // Try next
+        }
+    }
+    return [];
 }
 
 export async function addWorkExperience(uid: string, data: Omit<WorkExperience, 'id' | 'addedAt'>): Promise<string> {
@@ -648,7 +791,7 @@ export async function updateWorkExperience(uid: string, id: string, data: Partia
     await setDoc(doc(db, 'users', uid, 'workExperiences', id), { ...data, updatedAt: serverTimestamp() }, { merge: true });
 }
 
-// ─── Awards & Honors ─────────────────────────────────────────────────────────
+// â”€â”€â”€ Awards & Honors â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export async function getAwards(uid: string): Promise<Award[]> {
     const col = collection(db, 'users', uid, 'awards');
@@ -666,7 +809,7 @@ export async function deleteAward(uid: string, id: string): Promise<void> {
     await deleteDoc(doc(db, 'users', uid, 'awards', id));
 }
 
-// ─── Languages ────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Languages â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export async function getLanguages(uid: string): Promise<Language[]> {
     const col = collection(db, 'users', uid, 'languages');
@@ -684,7 +827,7 @@ export async function deleteLanguage(uid: string, id: string): Promise<void> {
     await deleteDoc(doc(db, 'users', uid, 'languages', id));
 }
 
-// ─── Publications ─────────────────────────────────────────────────────────────
+// â”€â”€â”€ Publications â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export async function getPublications(uid: string): Promise<Publication[]> {
     const col = collection(db, 'users', uid, 'publications');
@@ -702,7 +845,7 @@ export async function deletePublication(uid: string, id: string): Promise<void> 
     await deleteDoc(doc(db, 'users', uid, 'publications', id));
 }
 
-// ─── Profile Views ────────────────────────────────────────────────────────────
+// â”€â”€â”€ Profile Views â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export async function recordProfileView(viewedUid: string, viewer: Omit<ProfileView, 'viewedAt'>): Promise<void> {
     try {
@@ -714,7 +857,7 @@ export async function recordProfileView(viewedUid: string, viewer: Omit<ProfileV
         const snap = await getDoc(profileRef);
         const current = snap.exists() ? (snap.data().profileViews || 0) : 0;
         await setDoc(profileRef, { profileViews: current + 1 }, { merge: true });
-    } catch { /* fail silently — view tracking is non-critical */ }
+    } catch { /* fail silently â€” view tracking is non-critical */ }
 }
 
 export async function getRecentProfileViews(uid: string, limitCount = 10): Promise<ProfileView[]> {
@@ -723,7 +866,7 @@ export async function getRecentProfileViews(uid: string, limitCount = 10): Promi
     return snap.docs.map(d => d.data() as ProfileView);
 }
 
-// ─── Profile Completeness ─────────────────────────────────────────────────────
+// â”€â”€â”€ Profile Completeness â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export function computeProfileCompleteness(profile: UserProfile | null, extras: {
     hasCapabilities: boolean;
@@ -741,7 +884,7 @@ export function computeProfileCompleteness(profile: UserProfile | null, extras: 
         [!!profile.name?.trim(), 'Add your full name', 'Edit your profile to add your name', 5],
         [!!profile.headline?.trim(), 'Add a professional headline', 'e.g. "Final Year CSE Student | MERN Developer"', 5],
         [!!profile.bio?.trim(), 'Write a bio / summary', 'Add 2-3 sentences about yourself and your goals', 5],
-        [!!profile.location?.trim(), 'Add your location', 'City, State — helps with local opportunity matching', 5],
+        [!!profile.location?.trim(), 'Add your location', 'City, State â€” helps with local opportunity matching', 5],
         [!!profile.linkedinUrl?.trim(), 'Connect LinkedIn', 'Link your LinkedIn profile for social proof', 5],
         [!!profile.githubUsername?.trim(), 'Connect GitHub', 'Sync your repos for automatic skill detection', 10],
         [!!profile.resumeUrl, 'Upload your resume', 'Upload a PDF resume for AI parsing', 10],

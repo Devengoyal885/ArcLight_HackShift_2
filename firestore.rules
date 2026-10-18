@@ -35,6 +35,11 @@ service cloud.firestore {
       allow read, write: if true;
     }
     
+    // Deadline call alerts — written by client when saving a job, read/updated by server cron
+    match /deadlineAlerts/{alertId} {
+      allow read, write: if true;
+    }
+    
     match /geocache/{docId} {
       allow read, write: if true;
     }
@@ -47,6 +52,12 @@ service cloud.firestore {
         allow read: if request.auth != null;
         allow write: if request.auth != null;
       }
+    }
+
+    // collectionGroup rule: allows candidates to query ALL 'postedRoles' subcollections
+    // across ALL employer documents (required for collectionGroup(db, 'postedRoles'))
+    match /{path=**}/postedRoles/{roleId} {
+      allow read: if request.auth != null;
     }
 
     // Employer profile & subcollections
@@ -71,6 +82,53 @@ service cloud.firestore {
           allow read, write: if request.auth != null;
         }
       }
+    }
+
+    // Entrepreneurship, Mentorship & Incubation collections
+    match /ventures/{ventureId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null;
+    }
+
+    match /ventureWorkspaces/{workspaceId} {
+      allow read, write: if request.auth != null;
+    }
+
+    match /collaborationRequests/{requestId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null;
+    }
+
+    match /incubationPrograms/{programId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null;
+    }
+
+    match /incubationApplications/{appId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null;
+    }
+
+    match /mentors/{mentorId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
+    match /mentorshipRequests/{mentorUid}/{document=**} {
+      allow read, write: if request.auth != null;
+    }
+
+    match /mentorSessions/{sessionId} {
+      allow read, write: if request.auth != null;
+    }
+
+    match /academicProjects/{projectId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
+    match /moderationReports/{reportId} {
+      allow read, write: if request.auth != null;
     }
 
     // Default deny for everything else
