@@ -1,6 +1,6 @@
 # 🌟 CapAble Platform — Complete Features & Capabilities Catalog
 
-CapAble is an AI-augmented, telemetry-driven **Campus Placement Intelligence & Talent Operating System** developed for the **Smart India Hackathon (SIH 2026)**. It shifts recruitment from unverified, self-claimed PDF resumes to **verifiable capability fingerprints, live telemetry, and autonomous intelligence**.
+CapAble is an AI-augmented, telemetry-driven **Campus Placement Intelligence & Talent Operating System** developed for the **HACK SHIFT**. It shifts recruitment from unverified, self-claimed PDF resumes to **verifiable capability fingerprints, live telemetry, and autonomous intelligence**.
 
 Below is the exhaustive documentation of all features built across the entire ecosystem.
 
