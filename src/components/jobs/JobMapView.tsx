@@ -288,7 +288,7 @@ export default function JobMapView({ jobs, onApply, onViewportChange }: JobMapVi
             {/* Status badge — mirrors job-find's result count */}
             <div className="jmv-status-badge">
                 <MapPin size={12} />
-                <span>{allPins.length} office{allPins.length !== 1 ? 's' : ''} worldwide</span>
+                <span>{jobs.length} open role{jobs.length !== 1 ? 's' : ''} across {allPins.length} office{allPins.length !== 1 ? 's' : ''} worldwide</span>
             </div>
 
             {/* Office detail drawer */}
