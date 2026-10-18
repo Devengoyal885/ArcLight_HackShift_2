@@ -734,7 +734,7 @@ export default function CandidateDashboard() {
                                             const anySession = session as any;
                                             const mentorName = anySession.mentorName || 'Faculty / Alumni Mentor';
                                             const sessionTopic = anySession.topic || 'Career & Technical Mentorship';
-                                            const meetLink = anySession.meetUrl || anySession.meetLink;
+                                            const meetLink = anySession.googleMeetUrl || anySession.meetUrl || anySession.meetLink;
                                             const sessionDate = anySession.date || anySession.sessionDate || 'Scheduled';
                                             const sessionTime = anySession.time || '';
 
@@ -782,12 +782,12 @@ export default function CandidateDashboard() {
                                                                     display: 'inline-flex', 
                                                                     alignItems: 'center', 
                                                                     gap: '3px', 
-                                                                    color: '#2563EB', 
-                                                                    fontWeight: 600, 
+                                                                    color: '#059669', 
+                                                                    fontWeight: 700, 
                                                                     textDecoration: 'none' 
                                                                 }}
                                                             >
-                                                                <Video size={11} /> Join Call
+                                                                <Video size={11} /> Join Google Meet
                                                             </a>
                                                         ) : (
                                                             <span style={{ color: '#64748B' }}>Link confirmed</span>

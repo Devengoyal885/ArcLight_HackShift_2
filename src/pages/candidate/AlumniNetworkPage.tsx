@@ -19,8 +19,9 @@ import { db } from '../../lib/firebase';
 import {
     Users, GraduationCap, Briefcase, MapPin, Link2, MessageCircle,
     Search, Filter, Loader2, Star, CheckCircle2, Building2, Rocket,
-    Calendar, Clock, Video, X, ExternalLink, Sparkles, User
+    Calendar, Clock, Video, X, ExternalLink, Sparkles, User, Copy, Check
 } from 'lucide-react';
+import { subscribeToCandidateMentorSessions, MentorSessionItem } from '../../services/academicianService';
 import './AlumniNetworkPage.css';
 
 interface AlumniProfile {
@@ -69,6 +70,9 @@ export default function AlumniNetworkPage({ isEmbedded = false }: { isEmbedded?:
     });
     const [sessionTime, setSessionTime] = useState('05:00 PM');
     const [sessionNotes, setSessionNotes] = useState('');
+    const [googleMeetUrl, setGoogleMeetUrl] = useState('');
+    const [copiedMeet, setCopiedMeet] = useState(false);
+    const [mySessions, setMySessions] = useState<MentorSessionItem[]>([]);
     const [bookingLoading, setBookingLoading] = useState(false);
     const [confirmedSession, setConfirmedSession] = useState<{
         meetUrl: string;
@@ -77,6 +81,20 @@ export default function AlumniNetworkPage({ isEmbedded = false }: { isEmbedded?:
         time: string;
         topic: string;
     } | null>(null);
+
+    const generateGoogleMeetLink = () => {
+        const chars = 'abcdefghijklmnopqrstuvwxyz';
+        const randStr = (len: number) => Array.from({ length: len }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
+        return `https://meet.google.com/${randStr(3)}-${randStr(4)}-${randStr(3)}`;
+    };
+
+    useEffect(() => {
+        if (!dbUid) return;
+        const unsub = subscribeToCandidateMentorSessions(dbUid, profile?.email || '', (sessions) => {
+            setMySessions(sessions);
+        });
+        return () => unsub();
+    }, [dbUid, profile?.email]);
 
     const instCode = profile?.institutionCode || '';
 
@@ -130,19 +148,22 @@ export default function AlumniNetworkPage({ isEmbedded = false }: { isEmbedded?:
         e.preventDefault();
         if (!bookingMentor || !dbUid) return;
         setBookingLoading(true);
-        const roomId = `capable-${bookingMentor.uid.slice(0, 6)}-${Date.now().toString(36)}`;
-        const meetUrl = `https://meet.jit.si/${roomId}`;
+        const finalMeetUrl = googleMeetUrl.trim() || generateGoogleMeetLink();
         const payload = {
             mentorUid: bookingMentor.uid,
             mentorName: bookingMentor.name,
             menteeUid: dbUid,
+            candidateUid: dbUid,
             menteeName: profile?.name || 'Student Candidate',
+            candidateName: profile?.name || 'Student Candidate',
             menteeEmail: profile?.email || '',
+            candidateEmail: profile?.email || '',
             topic: sessionTopic,
             date: sessionDate,
             time: sessionTime,
             notes: sessionNotes,
-            meetUrl,
+            meetUrl: finalMeetUrl,
+            googleMeetUrl: finalMeetUrl,
             status: 'confirmed',
             createdAt: new Date().toISOString(),
         };
@@ -160,7 +181,7 @@ export default function AlumniNetworkPage({ isEmbedded = false }: { isEmbedded?:
         } finally {
             setBookingLoading(false);
             setConfirmedSession({
-                meetUrl,
+                meetUrl: finalMeetUrl,
                 mentorName: bookingMentor.name,
                 date: sessionDate,
                 time: sessionTime,
@@ -217,6 +238,114 @@ export default function AlumniNetworkPage({ isEmbedded = false }: { isEmbedded?:
                         <Users size={16} /> {alumni.length} active mentors & alumni
                     </div>
                 </motion.header>
+
+                {/* Candidate Scheduled Google Meet Sessions */}
+                {mySessions.length > 0 && (
+                    <div style={{
+                        background: 'linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%)',
+                        border: '1px solid #bbf7d0',
+                        borderRadius: '16px',
+                        padding: '16px 20px',
+                        marginBottom: '22px',
+                        boxShadow: '0 4px 12px rgba(16, 185, 129, 0.08)'
+                    }}>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px', flexWrap: 'wrap', gap: '8px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#10b981', display: 'inline-block' }} />
+                                <h4 style={{ margin: 0, fontSize: '14.5px', fontWeight: 700, color: '#065f46' }}>
+                                    Your Scheduled Mentorship Sessions ({mySessions.length})
+                                </h4>
+                            </div>
+                            <span style={{ fontSize: '11.5px', color: '#047857', fontWeight: 600 }}>
+                                🎥 Google Meet active — you or anyone interested can join
+                            </span>
+                        </div>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(290px, 1fr))', gap: '12px' }}>
+                            {mySessions.map((session, idx) => {
+                                const s = session as any;
+                                const mName = s.mentorName || 'Mentor';
+                                const meet = s.googleMeetUrl || s.meetUrl || s.meetLink;
+                                const dateStr = s.date || s.sessionDate || 'Scheduled';
+                                const timeStr = s.time || '';
+                                return (
+                                    <div
+                                        key={session.id || idx}
+                                        style={{
+                                            background: '#ffffff',
+                                            borderRadius: '12px',
+                                            padding: '14px',
+                                            border: '1px solid #a7f3d0',
+                                            display: 'flex',
+                                            flexDirection: 'column',
+                                            gap: '8px',
+                                            boxShadow: '0 2px 4px rgba(0,0,0,0.03)'
+                                        }}
+                                    >
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                            <span style={{ fontSize: '13.5px', fontWeight: 700, color: '#0f172a' }}>{mName}</span>
+                                            <span style={{ fontSize: '10px', background: '#dcfce7', color: '#15803d', padding: '2px 8px', borderRadius: '999px', fontWeight: 700 }}>
+                                                CONFIRMED
+                                            </span>
+                                        </div>
+                                        <p style={{ margin: 0, fontSize: '12px', color: '#475569', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                            {s.topic || 'Mentorship & Venture Guidance'}
+                                        </p>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11.5px', color: '#64748b' }}>
+                                            <Calendar size={13} color="#059669" /> {dateStr} {timeStr}
+                                        </div>
+                                        {meet && (
+                                            <div style={{ display: 'flex', gap: '8px', marginTop: '4px' }}>
+                                                <a
+                                                    href={meet}
+                                                    target="_blank"
+                                                    rel="noreferrer"
+                                                    style={{
+                                                        flex: 1,
+                                                        background: '#059669',
+                                                        color: '#ffffff',
+                                                        fontSize: '12px',
+                                                        fontWeight: 700,
+                                                        padding: '7px 12px',
+                                                        borderRadius: '8px',
+                                                        textDecoration: 'none',
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        justifyContent: 'center',
+                                                        gap: '5px'
+                                                    }}
+                                                >
+                                                    <Video size={14} /> Join Google Meet
+                                                </a>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => {
+                                                        navigator.clipboard.writeText(meet);
+                                                        setCopiedMeet(true);
+                                                        setTimeout(() => setCopiedMeet(false), 2000);
+                                                    }}
+                                                    style={{
+                                                        background: '#f1f5f9',
+                                                        border: '1px solid #cbd5e1',
+                                                        borderRadius: '8px',
+                                                        padding: '7px 10px',
+                                                        fontSize: '11px',
+                                                        cursor: 'pointer',
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        color: '#475569'
+                                                    }}
+                                                    title="Copy Google Meet Link"
+                                                >
+                                                    <Copy size={13} />
+                                                </button>
+                                            </div>
+                                        )}
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+                )}
 
                 {/* Tabs + Filters */}
                 <div className="alum-controls">
@@ -326,7 +455,10 @@ export default function AlumniNetworkPage({ isEmbedded = false }: { isEmbedded?:
                                     {alum.mentorAvailable && (
                                         <button
                                             className={`alum-btn alum-btn--mentor ${sentRequests.has(alum.uid) ? 'sent' : ''}`}
-                                            onClick={() => setBookingMentor(alum)}
+                                            onClick={() => {
+                                                setBookingMentor(alum);
+                                                setGoogleMeetUrl(generateGoogleMeetLink());
+                                            }}
                                         >
                                             {sentRequests.has(alum.uid) ? (
                                                 <><CheckCircle2 size={13} /> Session Scheduled</>
@@ -480,6 +612,7 @@ export default function AlumniNetworkPage({ isEmbedded = false }: { isEmbedded?:
                                         style={{ flex: 1, padding: '10px', fontSize: '13px' }}
                                         onClick={() => {
                                             setBookingMentor(viewingProfile);
+                                            setGoogleMeetUrl(generateGoogleMeetLink());
                                             setViewingProfile(null);
                                         }}
                                     >
@@ -563,9 +696,65 @@ export default function AlumniNetworkPage({ isEmbedded = false }: { isEmbedded?:
                                 />
                             </div>
 
-                            <div style={{ background: '#f8fafc', padding: '10px 14px', borderRadius: '10px', fontSize: '12px', color: '#64748b', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                <Video size={16} color="#2563eb" />
-                                <span>A dedicated encrypted video meeting room will be auto-generated upon booking.</span>
+                            {/* Google Meet Link Field */}
+                            <div className="alum-field">
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                    <label style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                        <Video size={14} color="#059669" /> Google Meet Link
+                                    </label>
+                                    <div style={{ display: 'flex', gap: '8px' }}>
+                                        <a
+                                            href="https://meet.google.com/new"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            style={{
+                                                fontSize: '11px',
+                                                color: '#2563eb',
+                                                textDecoration: 'none',
+                                                fontWeight: 600,
+                                                display: 'inline-flex',
+                                                alignItems: 'center',
+                                                gap: '3px'
+                                            }}
+                                            title="Open Google Meet to create or schedule a new meeting"
+                                        >
+                                            <ExternalLink size={11} /> Create on Google Meet
+                                        </a>
+                                        <button
+                                            type="button"
+                                            onClick={() => setGoogleMeetUrl(generateGoogleMeetLink())}
+                                            style={{
+                                                background: 'none',
+                                                border: 'none',
+                                                color: '#059669',
+                                                fontSize: '11px',
+                                                fontWeight: 600,
+                                                cursor: 'pointer',
+                                                display: 'inline-flex',
+                                                alignItems: 'center',
+                                                gap: '3px',
+                                                padding: 0
+                                            }}
+                                        >
+                                            <Sparkles size={11} /> Auto-Generate
+                                        </button>
+                                    </div>
+                                </div>
+                                <input
+                                    type="url"
+                                    className="alum-input"
+                                    placeholder="e.g. https://meet.google.com/abc-defg-hij"
+                                    value={googleMeetUrl}
+                                    onChange={e => setGoogleMeetUrl(e.target.value)}
+                                />
+                                <p style={{ margin: '2px 0 0', fontSize: '11px', color: '#64748b' }}>
+                                    Paste a custom Google Meet URL, click auto-generate, or leave blank to assign a room automatically so anyone interested can join.
+                                </p>
+                            </div>
+
+                            <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', padding: '10px 14px', borderRadius: '10px', fontSize: '12px', color: '#166534', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <Video size={16} color="#16a34a" />
+                                <span>A dedicated Google Meet room will be attached. Both you and {bookingMentor.name} can join immediately.</span>
                             </div>
 
                             <div className="alum-modal-actions">
@@ -576,9 +765,9 @@ export default function AlumniNetworkPage({ isEmbedded = false }: { isEmbedded?:
                                     type="submit"
                                     className="alum-btn alum-btn--mentor"
                                     disabled={bookingLoading}
-                                    style={{ padding: '10px 20px' }}
+                                    style={{ padding: '10px 20px', background: '#059669' }}
                                 >
-                                    {bookingLoading ? <Loader2 size={15} className="spin" /> : <><Calendar size={15} /> Confirm Booking</>}
+                                    {bookingLoading ? <Loader2 size={15} className="spin" /> : <><Calendar size={15} /> Confirm Booking & Meet</>}
                                 </button>
                             </div>
                         </form>
@@ -591,7 +780,9 @@ export default function AlumniNetworkPage({ isEmbedded = false }: { isEmbedded?:
                 <div className="alum-modal-backdrop" onClick={() => setConfirmedSession(null)}>
                     <div className="alum-modal" onClick={e => e.stopPropagation()}>
                         <div className="alum-session-confirmed">
-                            <CheckCircle2 size={52} color="#10b981" />
+                            <div style={{ width: '56px', height: '56px', borderRadius: '50%', background: '#dcfce7', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                <CheckCircle2 size={36} color="#16a34a" />
+                            </div>
                             <h3>Mentorship Session Confirmed!</h3>
                             <p>
                                 Your 1-on-1 session with <strong>{confirmedSession.mentorName}</strong> is scheduled for{' '}
@@ -601,27 +792,104 @@ export default function AlumniNetworkPage({ isEmbedded = false }: { isEmbedded?:
                                 Topic: {confirmedSession.topic}
                             </p>
 
-                            <div className="alum-meet-box">
-                                <span>📹 Meeting Room Link:</span>
+                            <div style={{
+                                width: '100%',
+                                background: '#f8fafc',
+                                border: '1px solid #e2e8f0',
+                                borderRadius: '14px',
+                                padding: '14px',
+                                textAlign: 'left',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                gap: '10px',
+                                boxSizing: 'border-box'
+                            }}>
+                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                    <span style={{ fontSize: '12px', fontWeight: 700, color: '#0f172a', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                        <Video size={16} color="#059669" /> Google Meet Link
+                                    </span>
+                                    <span style={{ fontSize: '10px', background: '#dcfce7', color: '#15803d', padding: '2px 8px', borderRadius: '999px', fontWeight: 700 }}>
+                                        READY TO JOIN
+                                    </span>
+                                </div>
+
+                                <div style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'space-between',
+                                    background: '#ffffff',
+                                    border: '1px solid #cbd5e1',
+                                    borderRadius: '8px',
+                                    padding: '8px 12px',
+                                    gap: '8px'
+                                }}>
+                                    <span style={{ fontSize: '12.5px', fontFamily: 'monospace', color: '#1e293b', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                        {confirmedSession.meetUrl}
+                                    </span>
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            navigator.clipboard.writeText(confirmedSession.meetUrl);
+                                            setCopiedMeet(true);
+                                            setTimeout(() => setCopiedMeet(false), 2000);
+                                        }}
+                                        style={{
+                                            background: copiedMeet ? '#10b981' : '#f1f5f9',
+                                            color: copiedMeet ? '#ffffff' : '#334155',
+                                            border: 'none',
+                                            borderRadius: '6px',
+                                            padding: '5px 9px',
+                                            fontSize: '11px',
+                                            fontWeight: 600,
+                                            cursor: 'pointer',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '4px',
+                                            flexShrink: 0,
+                                            transition: 'all 0.15s ease'
+                                        }}
+                                    >
+                                        {copiedMeet ? <Check size={12} /> : <Copy size={12} />}
+                                        {copiedMeet ? 'Copied!' : 'Copy'}
+                                    </button>
+                                </div>
+
+                                <p style={{ fontSize: '11px', color: '#64748b', margin: 0, lineHeight: 1.4 }}>
+                                    Anyone interested can join this meet link. Both you and your mentor can enter at your scheduled time.
+                                </p>
+
                                 <a
                                     href={confirmedSession.meetUrl}
                                     target="_blank"
                                     rel="noreferrer"
-                                    style={{ color: '#1d4ed8', textDecoration: 'underline', display: 'inline-flex', alignItems: 'center', gap: '4px' }}
+                                    className="alum-btn alum-btn--mentor"
+                                    style={{
+                                        background: '#059669',
+                                        color: '#ffffff',
+                                        textDecoration: 'none',
+                                        padding: '10px 16px',
+                                        borderRadius: '8px',
+                                        fontSize: '13px',
+                                        fontWeight: 700,
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        gap: '6px'
+                                    }}
                                 >
-                                    Open Call <ExternalLink size={13} />
+                                    <Video size={16} /> Join Google Meet Now <ExternalLink size={14} />
                                 </a>
                             </div>
 
                             <button
-                                className="alum-btn alum-btn--mentor"
-                                style={{ marginTop: '14px', width: '100%', padding: '10px' }}
+                                className="alum-btn"
+                                style={{ marginTop: '4px', width: '100%', padding: '10px', background: '#0f172a', color: '#ffffff' }}
                                 onClick={() => {
                                     setConfirmedSession(null);
                                     setBookingMentor(null);
                                 }}
                             >
-                                Done & Add to Calendar
+                                Done & Close
                             </button>
                         </div>
                     </div>
