@@ -21,7 +21,7 @@ import {
     Search, Filter, Loader2, Star, CheckCircle2, Building2, Rocket,
     Calendar, Clock, Video, X, ExternalLink, Sparkles, User, Copy, Check
 } from 'lucide-react';
-import { subscribeToCandidateMentorSessions, MentorSessionItem } from '../../services/academicianService';
+import { subscribeToCandidateMentorSessions, type MentorSessionItem } from '../../services/academicianService';
 import './AlumniNetworkPage.css';
 
 interface AlumniProfile {
